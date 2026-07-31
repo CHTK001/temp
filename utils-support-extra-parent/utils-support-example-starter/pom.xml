@@ -462,6 +462,9 @@
             <id>tui-dashboard-example</id>
             <configuration>
                 <mainClass>com.chua.example.tui.TuiDashboardExample</mainClass>
+                <arguments>
+                    <argument>run</argument>
+                </arguments>
             </configuration>
         </execution>
     </executions>
