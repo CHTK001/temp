@@ -27,6 +27,6 @@ public class TuiLauncher {
         dashboard.start();
         Thread.sleep(3000);
         dashboard.stop();
-        System.out.println("[TuiLauncher] smoke test passed");
+        System.out.println("[TuiLauncher] ok");
     }
 }
