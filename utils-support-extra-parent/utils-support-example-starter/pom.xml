@@ -462,7 +462,6 @@
             <id>tui-dashboard-example</id>
             <configuration>
                 <mainClass>com.chua.example.tui.TuiDashboardExample</mainClass>
-                <timeout>0</timeout>
             </configuration>
         </execution>
     </executions>
