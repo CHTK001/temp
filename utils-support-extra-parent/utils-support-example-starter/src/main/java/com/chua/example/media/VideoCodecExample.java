@@ -184,13 +184,24 @@ public class VideoCodecExample {
         // 生成测试帧并编码
         List<byte[]> encodedFrames = new ArrayList<>();
         long totalEncodeTime = 0;
+        long totalBytes = 0;
+        long warmupTime = 0;
 
         for (int i = 0; i < TEST_FRAME_COUNT; i++) {
             BufferedImage frame = createTestFrame(width, height, i + 1);
+
+            // 第一帧含编码器初始化，单独记录耗时但不计入统计
+            boolean isWarmup = (i == 0);
             long start = System.nanoTime();
             byte[] encoded = encoder.encode(frame);
             long elapsed = System.nanoTime() - start;
-            totalEncodeTime += elapsed;
+
+            if (isWarmup) {
+                warmupTime = elapsed;
+            } else {
+                totalEncodeTime += elapsed;
+            }
+            totalBytes += (encoded == null ? 0 : encoded.length);
 
             if (encoded == null || encoded.length == 0) {
                 System.err.println("[FAIL] 帧 " + i + " 编码失败，返回空数据");
@@ -198,32 +209,46 @@ public class VideoCodecExample {
                 return false;
             }
             encodedFrames.add(encoded);
-            log.info("帧 {} 编码完成: {} bytes, 耗时 {}ms", i + 1, encoded.length, elapsed / 1_000_000);
+            log.info("帧 {} 编码完成: {} bytes, 耗时 {}ms{}",
+                    i + 1, encoded.length, elapsed / 1_000_000,
+                    isWarmup ? "（预热，含编码器初始化）" : "");
         }
 
-        double avgEncodeTime = totalEncodeTime / (double) TEST_FRAME_COUNT / 1_000_000;
-        log.info("平均编码耗时: {} ms", String.format("%.2f", avgEncodeTime));
+        int statFrames = TEST_FRAME_COUNT - 1;
+        double avgEncodeTime = statFrames > 0 ? totalEncodeTime / (double) statFrames / 1_000_000 : 0;
+        double avgFps = avgEncodeTime > 0 ? 1000.0 / avgEncodeTime : 0;
+        double avgBytes = statFrames > 0 ? totalBytes / (double) statFrames : 0;
+        log.info("--- 编码性能统计 ---");
+        log.info("编码器: {} 分辨率: {}x{} 帧率设置: {}fps", encoderType, width, height, fps);
+        log.info("预热耗时: {}ms（含编码器初始化）", warmupTime / 1_000_000);
+        log.info("统计帧数: {} 帧（不含预热）", statFrames);
+        log.info("平均编码耗时: {} ms/帧", String.format("%.2f", avgEncodeTime));
+        log.info("平均帧率: {} fps", String.format("%.1f", avgFps));
+        log.info("平均帧大小: {} bytes", String.format("%.0f", avgBytes));
+        log.info("总编码数据: {} bytes / {} 帧", totalBytes, TEST_FRAME_COUNT);
 
-        // 尝试解码（仅支持 javacv 解码器）
+        // 尝试解码
+        VideoDecoder decoder = null;
         if (codecId != 0) {
-            VideoDecoder decoder = createDecoder(codecId, width, height);
-            if (decoder != null) {
-                byte[] firstPacket = encodedFrames.get(0);
-                long start = System.nanoTime();
-                java.nio.ByteBuffer decoded = decoder.decode(firstPacket);
-                long decodeElapsed = System.nanoTime() - start;
-
-                if (decoded != null) {
-                    log.info("解码成功: {} bytes, 耗时 {}ms", decoded.remaining(), decodeElapsed / 1_000_000);
-                } else {
-                    log.warn("解码返回 null（H.264 需要完整的 NAL 单元序列，单帧可能无法解码）");
-                }
-                decoder.close();
-            } else {
-                log.warn("未找到对应解码器，跳过解码测试");
-            }
+            decoder = createDecoder(codecId, width, height);
         } else {
-            log.info("JPEG 编码器无对应解码器，跳过解码测试");
+            // JPEG 编码器使用 "jpeg" 解码器名
+            decoder = ServiceProvider.of(VideoDecoder.class).getNewExtension("jpeg");
+        }
+        if (decoder != null) {
+            byte[] firstPacket = encodedFrames.get(0);
+            long start = System.nanoTime();
+            java.nio.ByteBuffer decoded = decoder.decode(firstPacket);
+            long decodeElapsed = System.nanoTime() - start;
+
+            if (decoded != null) {
+                log.info("解码成功: {} bytes, 耗时 {}ms", decoded.remaining(), decodeElapsed / 1_000_000);
+            } else {
+                log.warn("解码返回 null");
+            }
+            decoder.close();
+        } else {
+            log.warn("未找到对应解码器，跳过解码测试");
         }
 
         encoder.close();
