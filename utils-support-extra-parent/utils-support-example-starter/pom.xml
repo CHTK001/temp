@@ -223,12 +223,6 @@
             <artifactId>utils-support-undertow-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- Engine 核心模块，供 EngineExample 使用 -->
-        <dependency>
-            <groupId>com.chua</groupId>
-            <artifactId>utils-support-datasource-starter</artifactId>
-            <version>${project.version}</version>
-        </dependency>
         <!-- Engine 实现模块，供 EngineExample 独立运行 -->
         <dependency>
             <groupId>com.chua</groupId>
@@ -353,12 +347,6 @@
         <dependency>
             <groupId>com.github.oshi</groupId>
             <artifactId>oshi-core</artifactId>
-        </dependency>
-        <!-- Datalake 示例依赖 datasource-starter 解析 MemoryDispatcherProvider SPI -->
-        <dependency>
-            <groupId>com.chua</groupId>
-            <artifactId>utils-support-datasource-starter</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.chua</groupId>
