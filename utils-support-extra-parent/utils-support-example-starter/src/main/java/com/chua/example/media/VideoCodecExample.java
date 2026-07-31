@@ -145,13 +145,16 @@ public class VideoCodecExample {
      */
     private static VideoDecoder createDecoder(int codecId, int width, int height) {
         try {
-            VideoDecoder decoder = ServiceProvider.of(VideoDecoder.class)
-                    .getNewExtension("javacv", codecId, width, height);
-            if (decoder == null) {
-                System.err.println("[ERROR] 未找到 VideoDecoder 实现: javacv");
-                return null;
+            // 先尝试匹配的编解码器解码器
+            for (String name : new String[]{"javacv", "rust-h264", "jpeg"}) {
+                VideoDecoder decoder = ServiceProvider.of(VideoDecoder.class)
+                        .getNewExtension(name, codecId, width, height);
+                if (decoder != null) {
+                    return decoder;
+                }
             }
-            return decoder;
+            System.err.println("[ERROR] 未找到 VideoDecoder 实现");
+            return null;
         } catch (Exception e) {
             System.err.println("[ERROR] 创建解码器失败: " + e.getMessage());
             return null;
