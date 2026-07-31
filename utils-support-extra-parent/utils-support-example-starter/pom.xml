@@ -70,6 +70,11 @@
         </dependency>
         <dependency>
             <groupId>com.chua</groupId>
+            <artifactId>utils-support-tui-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.chua</groupId>
             <artifactId>utils-support-word-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -177,11 +182,6 @@
         </dependency>
         <dependency>
             <groupId>com.chua</groupId>
-            <artifactId>utils-support-remote-starter</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.chua</groupId>
             <artifactId>utils-support-ffmpeg-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -204,12 +204,6 @@
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-ngrok-starter</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <!-- FileSystem 扩展（YAML / INI 等）-->
-        <dependency>
-            <groupId>com.chua</groupId>
-            <artifactId>utils-support-filesystem-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
         <!-- FileStorage 预览服务，供 FileStorageExample / FileStorageServer 独立运行 -->
@@ -236,6 +230,11 @@
             <version>${project.version}</version>
         </dependency>
         <!-- Engine 实现模块，供 EngineExample 独立运行 -->
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-nitrite-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-neo4j-starter</artifactId>
@@ -434,13 +433,19 @@
             </configuration>
         </execution>
         <execution>
-            <id>ai-proxy-detector-example</id>
-            <configuration>
-                <mainClass>com.chua.example.ai.chat.AiProxyDetectorExample</mainClass>
-            </configuration>
-        </execution>
-        <execution>
-            <id>video-codec-example</id>
+        <id>ai-proxy-detector-example</id>
+        <configuration>
+            <mainClass>com.chua.example.ai.chat.AiProxyDetectorExample</mainClass>
+        </configuration>
+    </execution>
+    <execution>
+        <id>engine-example</id>
+        <configuration>
+            <mainClass>com.chua.example.engine.EngineExample</mainClass>
+        </configuration>
+    </execution>
+    <execution>
+        <id>video-codec-example</id>
             <configuration>
                 <mainClass>com.chua.example.media.VideoCodecExample</mainClass>
             </configuration>
@@ -451,7 +456,13 @@
                 <mainClass>com.chua.example.media.ScreenCaptureExample</mainClass>
             </configuration>
         </execution>
-                </executions>
+        <execution>
+            <id>tui-dashboard-example</id>
+            <configuration>
+                <mainClass>com.chua.example.tui.TuiDashboardExample</mainClass>
+            </configuration>
+        </execution>
+    </executions>
             </plugin>
 <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -459,8 +470,21 @@
                 <configuration>
                     <release>25</release>
                     <includes>
+                        <include>**/OffsetFlowExample.java</include>
+                        <include>**/DataSinkExample.java</include>
+                        <include>**/PipelineEngineExample.java</include>
+                        <include>**/DatalakeServerExample.java</include>
+                        <include>**/SubscriberExample.java</include>
+                        <include>**/HttpDatalakeQueryEngineExample.java</include>
+                        <include>**/DatalakeIntegratedExample.java</include>
+                        <include>**/DataSyncExample.java</include>
+                        <include>**/AiProxyDetectorExample.java</include>
+                        <include>**/DocumentExample.java</include>
+                        <include>**/VectorStorageChainExample.java</include>
+                        <include>**/EngineExample.java</include>
                         <include>**/VideoCodecExample.java</include>
                         <include>**/ScreenCaptureExample.java</include>
+                        <include>**/TuiDashboardExample.java</include>
                     </includes>
                 </configuration>
             </plugin>

@@ -27,6 +27,7 @@ import java.util.Random;
  *   <li>memory 后端：默认构建 / 指定算法 / 名称字符串</li>
  *   <li>jvector 后端：MEMORY / ON_DISK / LARGER_THAN_MEMORY 三种模式</li>
  *   <li>等价性校验：of().build() 与 create() 结果一致</li>
+ *   <li>更新/删除：remove(id)、update(id, vector)（含不存在返回 false）</li>
  *   <li>错误处理：无效 SPI 名称 / 无效算法名 / 清空 / 大小</li>
  * </ul>
  *
@@ -54,6 +55,8 @@ public class VectorStorageChainExample {
         testJVectorMemory();
         testJVectorLargerThanMemory();
         testJVectorOnDisk();
+        testRemove();
+        testUpdate();
         testClear();
         testSize();
         testInvalidProvider();
@@ -194,6 +197,68 @@ public class VectorStorageChainExample {
         }
     }
 
+    // ── 更新 / 删除 ─────────────────────────────────────────────
+
+    private static void testRemove() {
+        System.out.println("── [memory] remove(id) ──");
+        try {
+            VectorStorage s = VectorStorageProvider.of("memory")
+                    .dimension(DIM)
+                    .build();
+            s.add("keep", randomVector());
+            s.add("drop", randomVector());
+            assertEquals(2, s.size(), "删除前 size");
+
+            boolean removed = s.remove("drop");
+            assertEquals(true, removed, "删除存在的 id");
+            assertEquals(1, s.size(), "删除后 size");
+
+            boolean removedAgain = s.remove("drop");
+            assertEquals(false, removedAgain, "删除不存在的 id");
+
+            List<Vector> results = s.search(randomVector(), TOP_K);
+            boolean dropGone = results.stream().noneMatch(v -> "drop".equals(v.id()));
+            if (!dropGone) {
+                fail("删除后不应再搜到 drop");
+            } else {
+                pass();
+            }
+        } catch (Exception e) {
+            fail("remove 异常: " + e.getMessage());
+        }
+    }
+
+    private static void testUpdate() {
+        System.out.println("── [memory] update(id, vector) ──");
+        try {
+            VectorStorage s = VectorStorageProvider.of("memory")
+                    .dimension(DIM)
+                    .algorithm(VectorCompareAlgorithm.euclidean())
+                    .build();
+            float[] v1 = new float[]{1f, 0f, 0f, 0f};
+            float[] v2 = new float[]{0f, 1f, 0f, 0f};
+            s.add("a", v1);
+            s.add("b", v2);
+
+            boolean updated = s.update("a", v2);
+            assertEquals(true, updated, "更新存在的 id");
+            assertEquals(2, s.size(), "更新不改 size");
+
+            boolean missing = s.update("nope", v1);
+            assertEquals(false, missing, "更新不存在的 id");
+
+            List<Vector> results = s.search(v2, 1);
+            boolean bestMatchesA = results.stream().anyMatch(v -> "a".equals(v.id()));
+            if (!bestMatchesA) {
+                fail("更新后 a 应最接近 v2");
+            } else {
+                pass();
+            }
+        } catch (Exception e) {
+            fail("update 异常: " + e.getMessage());
+        }
+    }
+
     // ── 基础操作 ─────────────────────────────────────────────────
 
     private static void testClear() {
@@ -282,6 +347,12 @@ public class VectorStorageChainExample {
     // ── 断言工具（纯 main 风格，不依赖 JUnit）────────────────────
 
     private static void assertEquals(int expected, int actual, String msg) {
+        if (expected != actual) {
+            fail("断言失败: " + msg + " — 期望 " + expected + "，实际 " + actual);
+        }
+    }
+
+    private static void assertEquals(boolean expected, boolean actual, String msg) {
         if (expected != actual) {
             fail("断言失败: " + msg + " — 期望 " + expected + "，实际 " + actual);
         }
