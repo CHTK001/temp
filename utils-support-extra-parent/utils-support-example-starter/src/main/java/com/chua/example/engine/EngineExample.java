@@ -18,6 +18,7 @@ import com.chua.parquet.support.engine.ParquetEngine;
 import com.chua.elasticsearch.support.engine.ElasticsearchEngine;
 import com.chua.tablesaw.support.engine.TablesawEngine;
 import com.chua.solr.support.engine.SolrEngine;
+import com.chua.nitrite.support.engine.NitriteEngine;
 import com.chua.common.support.lang.datasource.engine.EngineDataSource;
 import lombok.extern.slf4j.Slf4j;
 
@@ -46,6 +47,11 @@ public class EngineExample {
             new User(4, "David", 28, "admin"),
             new User(5, "Eve", 22, "user")
     );
+
+    /**
+     * Nitrite 默认数据库文件路径
+     */
+    private static final String DEFAULT_NITRITE_FILE = "data/nitrite.db";
 
     private static void printStep(String step) {
         System.out.println("\n========================================");
@@ -124,6 +130,7 @@ public class EngineExample {
             case "elasticsearch" -> setupElasticsearch();
             case "tablesaw" -> setupTablesaw();
             case "solr"   -> setupSolr();
+            case "nitrite" -> setupNitrite();
             default -> throw new IllegalArgumentException("Unsupported engine type: " + engineType);
         };
     }
@@ -224,10 +231,16 @@ private static Engine setupFile() {
         return new TablesawEngine().load("test", csvFile);
     }
 
-        private static Engine setupSolr() {
+    private static Engine setupSolr() {
         String solrUrl = "http://172.16.0.40:18983/solr";
         System.out.println("[SETUP] Solr engine: " + solrUrl);
         return new SolrEngine().addDataSource("default", new SimpleEngineDataSource(solrUrl));
+    }
+
+    private static Engine setupNitrite() {
+        String filePath = System.getProperty("nitrite.file", DEFAULT_NITRITE_FILE);
+        System.out.println("[SETUP] Nitrite file: " + filePath);
+        return new NitriteEngine().addDataSource("default", filePath);
     }
 
     private static void storeData(String engineType, Engine engine) throws Exception {
