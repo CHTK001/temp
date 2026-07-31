@@ -235,23 +235,68 @@ public class VectorStorageChainExample {
                     .dimension(DIM)
                     .algorithm(VectorCompareAlgorithm.euclidean())
                     .build();
+            // 三个互不相同的基向量，保证更新后搜索判定是确定性的（无同分歧义）
             float[] v1 = new float[]{1f, 0f, 0f, 0f};
             float[] v2 = new float[]{0f, 1f, 0f, 0f};
+            float[] v3 = new float[]{0f, 0f, 1f, 0f};
+            float[] v4 = new float[]{0f, 0f, 0f, 1f};
             s.add("a", v1);
             s.add("b", v2);
+            s.add("c", v3);
+            assertEquals(3, s.size(), "更新前 size");
 
-            boolean updated = s.update("a", v2);
+            // 1. 更新存在的 id → true，size 不变
+            boolean updated = s.update("a", v4);
             assertEquals(true, updated, "更新存在的 id");
-            assertEquals(2, s.size(), "更新不改 size");
+            assertEquals(3, s.size(), "更新不改 size");
 
+            // 2. 更新后搜索 v4：唯一命中 a（b=v2、c=v3），且返回的向量数据就是新向量 v4
+            List<Vector> results = s.search(v4, 1);
+            boolean bestIsA = !results.isEmpty() && "a".equals(results.get(0).id());
+            if (!bestIsA) {
+                fail("更新后 a 应最接近 v4");
+            } else if (!equalsVector(results.get(0).data(), v4)) {
+                fail("更新后返回的向量数据应与新向量 v4 一致");
+            }
+
+            // 3. 更新不存在的 id → false
             boolean missing = s.update("nope", v1);
             assertEquals(false, missing, "更新不存在的 id");
 
-            List<Vector> results = s.search(v2, 1);
-            boolean bestMatchesA = results.stream().anyMatch(v -> "a".equals(v.id()));
-            if (!bestMatchesA) {
-                fail("更新后 a 应最接近 v2");
-            } else {
+            // 4. 维度不匹配 → IllegalArgumentException（统一校验顺序：先维度后 exists）
+            //    即使 id 不存在，维度错误也应先抛异常（与 jvector/milvus 一致）
+            boolean dimThrownExisting = false;
+            try {
+                s.update("a", new float[2]);
+            } catch (IllegalArgumentException e) {
+                dimThrownExisting = true;
+            }
+            if (!dimThrownExisting) {
+                fail("存在的 id 更新维度不匹配应抛 IllegalArgumentException");
+            }
+            boolean dimThrownMissing = false;
+            try {
+                s.update("nope", new float[2]);
+            } catch (IllegalArgumentException e) {
+                dimThrownMissing = true;
+            }
+            if (!dimThrownMissing) {
+                fail("不存在的 id 更新维度不匹配仍应抛 IllegalArgumentException（先校验维度）");
+            }
+
+            // 5. 再次更新回 v1 → true，搜索 v1 唯一命中 a（数据已回滚）
+            boolean revert = s.update("a", v1);
+            assertEquals(true, revert, "重复更新存在的 id");
+            List<Vector> revertResults = s.search(v1, 1);
+            boolean revertBestIsA = !revertResults.isEmpty()
+                    && "a".equals(revertResults.get(0).id())
+                    && equalsVector(revertResults.get(0).data(), v1);
+            if (!revertBestIsA) {
+                fail("回滚更新后 a 应最接近 v1 且返回 v1 数据");
+            }
+
+            // 所有断言全部通过才整体计为通过（与其余测试方法一致：仅成功路径 +1）
+            if (failed == 0) {
                 pass();
             }
         } catch (Exception e) {
@@ -342,6 +387,18 @@ public class VectorStorageChainExample {
             v[i] = RND.nextFloat();
         }
         return v;
+    }
+
+    private static boolean equalsVector(float[] a, float[] b) {
+        if (a == null || b == null || a.length != b.length) {
+            return false;
+        }
+        for (int i = 0; i < a.length; i++) {
+            if (Float.compare(a[i], b[i]) != 0) {
+                return false;
+            }
+        }
+        return true;
     }
 
     // ── 断言工具（纯 main 风格，不依赖 JUnit）────────────────────
