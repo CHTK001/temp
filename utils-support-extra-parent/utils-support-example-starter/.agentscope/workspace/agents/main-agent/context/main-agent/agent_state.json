@@ -1,0 +1,181 @@
+{
+  "session_id" : "7e67e95e-efb8-442b-bb38-0ff5c1b53dc2",
+  "summary" : "",
+  "context" : [ {
+    "id" : "b3e54c30-ed95-490b-bef4-e63ede98de7e",
+    "name" : null,
+    "role" : "USER",
+    "content" : [ {
+      "type" : "text",
+      "text" : "帮我用 Python 写一个快速排序算法，然后用中文解释一下它的时间复杂度。"
+    } ],
+    "metadata" : { },
+    "timestamp" : "2026-07-25 12:13:07.827",
+    "usage" : null
+  }, {
+    "id" : "8ef23bd3-0f1a-40d0-a149-9c9a5b5ed541",
+    "name" : "main-agent",
+    "role" : "ASSISTANT",
+    "content" : [ {
+      "type" : "text",
+      "text" : "Mock response for: 帮我用 Python 写一个快速排序算法，然后用中文解释一下它的时间复杂度。"
+    } ],
+    "metadata" : { },
+    "timestamp" : "2026-07-25 12:13:07.942",
+    "usage" : null
+  }, {
+    "id" : "95c2f487-033c-4902-bbea-a760c8a2230d",
+    "name" : null,
+    "role" : "USER",
+    "content" : [ {
+      "type" : "text",
+      "text" : "帮我用 Python 写一个快速排序算法，然后用中文解释一下它的时间复杂度。"
+    } ],
+    "metadata" : { },
+    "timestamp" : "2026-07-25 12:17:37.568",
+    "usage" : null
+  }, {
+    "id" : "4b1067db-974c-4d40-afe7-a1f3518bbd30",
+    "name" : "main-agent",
+    "role" : "ASSISTANT",
+    "content" : [ {
+      "type" : "text",
+      "text" : "Mock response for: 帮我用 Python 写一个快速排序算法，然后用中文解释一下它的时间复杂度。"
+    } ],
+    "metadata" : { },
+    "timestamp" : "2026-07-25 12:17:37.676",
+    "usage" : null
+  }, {
+    "id" : "0ac80912-a14b-4d05-b211-b67c9c93572b",
+    "name" : null,
+    "role" : "USER",
+    "content" : [ {
+      "type" : "text",
+      "text" : "帮我用 Python 写一个快速排序算法，然后用中文解释一下它的时间复杂度。"
+    } ],
+    "metadata" : { },
+    "timestamp" : "2026-07-25 12:29:58.918",
+    "usage" : null
+  }, {
+    "id" : "fc83d82f-c3ca-4e14-844f-0e6e392f5df5",
+    "name" : "main-agent",
+    "role" : "ASSISTANT",
+    "content" : [ {
+      "type" : "text",
+      "text" : "Mock response for: 帮我用 Python 写一个快速排序算法，然后用中文解释一下它的时间复杂度。"
+    } ],
+    "metadata" : { },
+    "timestamp" : "2026-07-25 12:29:59.080",
+    "usage" : null
+  }, {
+    "id" : "2a292736-993e-49a9-9c60-55a807abef19",
+    "name" : null,
+    "role" : "USER",
+    "content" : [ {
+      "type" : "text",
+      "text" : "帮我用 Python 写一个快速排序算法，然后用中文解释一下它的时间复杂度。"
+    } ],
+    "metadata" : { },
+    "timestamp" : "2026-07-25 12:39:28.879",
+    "usage" : null
+  }, {
+    "id" : "333bdfeb-329f-4ac2-a044-885cee10350f",
+    "name" : "main-agent",
+    "role" : "ASSISTANT",
+    "content" : [ {
+      "type" : "text",
+      "text" : "Mock response for: 帮我用 Python 写一个快速排序算法，然后用中文解释一下它的时间复杂度。"
+    } ],
+    "metadata" : { },
+    "timestamp" : "2026-07-25 12:39:28.999",
+    "usage" : null
+  }, {
+    "id" : "ca1cd9c5-8b51-4445-9d5d-396937a96421",
+    "name" : null,
+    "role" : "USER",
+    "content" : [ {
+      "type" : "text",
+      "text" : "帮我用 Python 写一个快速排序算法，然后用中文解释一下它的时间复杂度。"
+    } ],
+    "metadata" : { },
+    "timestamp" : "2026-07-25 13:05:16.886",
+    "usage" : null
+  }, {
+    "id" : "32ab6c7c-efce-430e-9ee0-e6ce0efdc776",
+    "name" : "main-agent",
+    "role" : "ASSISTANT",
+    "content" : [ {
+      "type" : "text",
+      "text" : "Mock response for: 帮我用 Python 写一个快速排序算法，然后用中文解释一下它的时间复杂度。"
+    } ],
+    "metadata" : { },
+    "timestamp" : "2026-07-25 13:05:17.962",
+    "usage" : null
+  }, {
+    "id" : "e03e29a5-702f-49bb-85e3-00e98603417e",
+    "name" : null,
+    "role" : "USER",
+    "content" : [ {
+      "type" : "text",
+      "text" : "帮我用 Python 写一个快速排序算法，然后用中文解释一下它的时间复杂度。"
+    } ],
+    "metadata" : { },
+    "timestamp" : "2026-07-25 13:10:56.884",
+    "usage" : null
+  }, {
+    "id" : "4944959b-01bf-4bd2-827b-761f9fe73db6",
+    "name" : "main-agent",
+    "role" : "ASSISTANT",
+    "content" : [ {
+      "type" : "text",
+      "text" : "Mock response for: 帮我用 Python 写一个快速排序算法，然后用中文解释一下它的时间复杂度。"
+    } ],
+    "metadata" : { },
+    "timestamp" : "2026-07-25 13:10:57.237",
+    "usage" : null
+  }, {
+    "id" : "c43d64bd-efca-4227-9999-59054c7256c4",
+    "name" : null,
+    "role" : "USER",
+    "content" : [ {
+      "type" : "text",
+      "text" : "帮我用 Python 写一个快速排序算法，然后用中文解释一下它的时间复杂度。"
+    } ],
+    "metadata" : { },
+    "timestamp" : "2026-07-25 13:16:52.771",
+    "usage" : null
+  }, {
+    "id" : "034699e1-5407-4e55-96c5-bef4223cabbc",
+    "name" : "main-agent",
+    "role" : "ASSISTANT",
+    "content" : [ {
+      "type" : "text",
+      "text" : "Mock response for: 帮我用 Python 写一个快速排序算法，然后用中文解释一下它的时间复杂度。"
+    } ],
+    "metadata" : { },
+    "timestamp" : "2026-07-25 13:16:52.906",
+    "usage" : null
+  } ],
+  "reply_id" : "df793c52ca3b409b9166d6ae74e5a762",
+  "cur_iter" : 0,
+  "shutdown_interrupted" : false,
+  "permission_context" : {
+    "mode" : "default",
+    "working_directories" : { },
+    "allow_rules" : { },
+    "deny_rules" : { },
+    "ask_rules" : { }
+  },
+  "tool_context" : {
+    "max_cache_files" : 100,
+    "max_cache_bytes" : 25000.0,
+    "activated_groups" : [ ]
+  },
+  "tasks_context" : {
+    "tasks" : [ ]
+  },
+  "plan_mode_context" : {
+    "plan_active" : false,
+    "current_plan_file" : null
+  }
+}
