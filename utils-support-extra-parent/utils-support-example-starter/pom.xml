@@ -420,7 +420,7 @@
                     <mainClass>com.chua.example.datasync.DataSyncExample</mainClass>
                     <arguments>
                         <argument>--type</argument>
-                        <argument>basic</argument>
+                        <argument>direct</argument>
                     </arguments>
                     <jvmArgs>
                         <jvmArg>--add-opens=java.base/java.lang=ALL-UNNAMED</jvmArg>
@@ -462,6 +462,7 @@
             <id>tui-dashboard-example</id>
             <configuration>
                 <mainClass>com.chua.example.tui.TuiDashboardExample</mainClass>
+                <timeout>0</timeout>
             </configuration>
         </execution>
     </executions>

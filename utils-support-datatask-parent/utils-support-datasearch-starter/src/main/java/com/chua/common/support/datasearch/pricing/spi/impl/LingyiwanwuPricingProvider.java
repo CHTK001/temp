@@ -8,15 +8,15 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * 字节豆包系列模型定价提供者。
+ * 零一万物 Lingyiwanwu 系列模型定价提供者。
  *
- * <p>包含豆包-Pro、豆包-Lite 等模型定价。</p>
+ * <p>包含 Yi 等模型定价。</p>
  *
  * @author CH
  * @since 4.0.0.42
  */
-@Spi("doubao")
-public class DoubaoPricingProvider extends AbstractPricingProvider {
+@Spi("lingyiwanwu")
+public class LingyiwanwuPricingProvider extends AbstractPricingProvider {
 
     @Override
     protected List<ModelDefinition> fetchOnlinePricing() {
