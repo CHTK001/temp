@@ -57,6 +57,7 @@ public class VectorStorageChainExample {
         testJVectorOnDisk();
         testRemove();
         testUpdate();
+        testJVectorUpdate();
         testClear();
         testSize();
         testInvalidProvider();
@@ -301,6 +302,79 @@ public class VectorStorageChainExample {
             }
         } catch (Exception e) {
             fail("update 异常: " + e.getMessage());
+        }
+    }
+
+    private static void testJVectorUpdate() {
+        System.out.println("── [jvector] update(id, vector) 维度顺序 ──");
+        try {
+            var props = new JVectorStorageProperties();
+            props.setMode(JVectorStorageProperties.Mode.MEMORY);
+
+            VectorStorage s = VectorStorageProvider.of("jvector")
+                    .dimension(DIM)
+                    .algorithm(VectorCompareAlgorithm.euclidean())
+                    .properties(props)
+                    .build();
+            assertNotNull(s);
+            try {
+                // 三个互不相同的基向量，保证更新后搜索判定确定（无同分歧义）
+                float[] v1 = new float[]{1f, 0f, 0f, 0f};
+                float[] v2 = new float[]{0f, 1f, 0f, 0f};
+                float[] v3 = new float[]{0f, 0f, 1f, 0f};
+                float[] v4 = new float[]{0f, 0f, 0f, 1f};
+                s.add("a", v1);
+                s.add("b", v2);
+                s.add("c", v3);
+                assertEquals(3, s.size(), "jvector 更新前 size");
+
+                // 1. 更新存在的 id → true，size 不变
+                boolean updated = s.update("a", v4);
+                assertEquals(true, updated, "jvector 更新存在的 id");
+                assertEquals(3, s.size(), "jvector 更新不改 size");
+
+                // 2. 更新后搜索 v4 唯一命中 a（b=v2、c=v3），且返回的向量数据就是新向量 v4
+                List<Vector> results = s.search(v4, 1);
+                boolean bestIsA = !results.isEmpty() && "a".equals(results.get(0).id());
+                if (!bestIsA) {
+                    fail("jvector 更新后 a 应最接近 v4");
+                } else if (!equalsVector(results.get(0).data(), v4)) {
+                    fail("jvector 更新后返回的向量数据应与新向量 v4 一致");
+                }
+
+                // 3. 更新不存在的 id → false
+                boolean missing = s.update("nope", v1);
+                assertEquals(false, missing, "jvector 更新不存在的 id");
+
+                // 4. 维度不匹配 → IllegalArgumentException（统一校验顺序：先维度后 exists，与 memory/milvus 一致）
+                boolean dimThrownExisting = false;
+                try {
+                    s.update("a", new float[2]);
+                } catch (IllegalArgumentException e) {
+                    dimThrownExisting = true;
+                }
+                if (!dimThrownExisting) {
+                    fail("jvector 存在的 id 更新维度不匹配应抛 IllegalArgumentException");
+                }
+                boolean dimThrownMissing = false;
+                try {
+                    s.update("nope", new float[2]);
+                } catch (IllegalArgumentException e) {
+                    dimThrownMissing = true;
+                }
+                if (!dimThrownMissing) {
+                    fail("jvector 不存在的 id 更新维度不匹配仍应抛 IllegalArgumentException（先校验维度）");
+                }
+
+                // 所有断言全部通过才整体计为通过
+                if (failed == 0) {
+                    pass();
+                }
+            } finally {
+                s.close();
+            }
+        } catch (Exception e) {
+            fail("jvector update 异常: " + e.getMessage());
         }
     }
 

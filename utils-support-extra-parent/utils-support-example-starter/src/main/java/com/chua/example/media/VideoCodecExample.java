@@ -202,7 +202,7 @@ public class VideoCodecExample {
         }
 
         double avgEncodeTime = totalEncodeTime / (double) TEST_FRAME_COUNT / 1_000_000;
-        log.info("平均编码耗时: {:.2f}ms", avgEncodeTime);
+        log.info("平均编码耗时: {} ms", String.format("%.2f", avgEncodeTime));
 
         // 尝试解码（仅支持 javacv 解码器）
         if (codecId != 0) {
