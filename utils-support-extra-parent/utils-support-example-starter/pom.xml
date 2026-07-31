@@ -485,7 +485,7 @@
                         <include>**/DataSyncExample.java</include>
                         <include>**/AiProxyDetectorExample.java</include>
                         <include>**/DocumentExample.java</include>
-                        <include>**/VectorStorageChainExample.java</include>
+                        <include>**/VectorStorageExample.java</include>
                         <include>**/EngineExample.java</include>
                         <include>**/VideoCodecExample.java</include>
                         <include>**/ScreenCaptureExample.java</include>
