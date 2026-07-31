@@ -414,12 +414,26 @@
                             <mainClass>com.chua.example.datalake.query.HttpDatalakeQueryEngineExample</mainClass>
                         </configuration>
                     </execution>
-        <execution>
-            <id>data-sync-example</id>
-            <configuration>
-                <mainClass>com.chua.example.datasync.DataSyncExample</mainClass>
-            </configuration>
-        </execution>
+<execution>
+                <id>data-sync-example</id>
+                <configuration>
+                    <mainClass>com.chua.example.datasync.DataSyncExample</mainClass>
+                    <arguments>
+                        <argument>--type</argument>
+                        <argument>basic</argument>
+                    </arguments>
+                    <jvmArgs>
+                        <jvmArg>--add-opens=java.base/java.lang=ALL-UNNAMED</jvmArg>
+                        <jvmArg>--add-opens=java.base/java.nio=ALL-UNNAMED</jvmArg>
+                        <jvmArg>--add-opens=java.base/java.lang.reflect=ALL-UNNAMED</jvmArg>
+                        <jvmArg>--add-opens=java.base/java.io=ALL-UNNAMED</jvmArg>
+                        <jvmArg>--add-opens=java.base/java.util=ALL-UNNAMED</jvmArg>
+                        <jvmArg>--add-opens=java.base/sun.nio.ch=ALL-UNNAMED</jvmArg>
+                        <jvmArg>--add-exports=java.base/sun.nio.ch=ALL-UNNAMED</jvmArg>
+                        <jvmArg>--add-exports=java.base/java.lang.invoke=ALL-UNNAMED</jvmArg>
+                    </jvmArgs>
+                </configuration>
+            </execution>
         <execution>
         <id>ai-proxy-detector-example</id>
         <configuration>
