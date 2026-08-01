@@ -341,9 +341,10 @@
             <version>${project.version}</version>
         </dependency>
         <!-- OSHI 本机指标采集 -->
+        <!-- Syslog 实时日志监听 -->
         <dependency>
             <groupId>com.chua</groupId>
-            <artifactId>utils-support-oshi-starter</artifactId>
+            <artifactId>utils-support-syslog-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -353,6 +354,11 @@
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-jvector-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-milvus-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
         <!-- 向量存储 SPI 模式切换示例 -->
@@ -443,6 +449,16 @@
         </configuration>
     </execution>
     <execution>
+        <id>polled-directory-example</id>
+        <configuration>
+            <mainClass>com.chua.example.directory.PolledDirectoryExample</mainClass>
+            <arguments>
+                <argument>--duration</argument>
+                <argument>30</argument>
+            </arguments>
+        </configuration>
+    </execution>
+    <execution>
         <id>engine-example</id>
         <configuration>
             <mainClass>com.chua.example.engine.EngineExample</mainClass>
@@ -469,6 +485,13 @@
                 </arguments>
             </configuration>
         </execution>
+        <execution>
+            <id>vector-storage-example</id>
+            <configuration>
+                <mainClass>com.chua.example.vector.VectorStorageExample</mainClass>
+                <classpathScope>runtime</classpathScope>
+            </configuration>
+        </execution>
     </executions>
             </plugin>
 <plugin>
@@ -489,6 +512,7 @@
                         <include>**/DocumentExample.java</include>
                         <include>**/VectorStorageExample.java</include>
                         
+                        <include>**/PolledDirectoryExample.java</include>
                         <include>**/EngineExample.java</include>
                         <include>**/VideoCodecExample.java</include>
                         <include>**/ScreenCaptureExample.java</include>

@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.nio.ByteBuffer;
 import java.io.File;
 
 import java.io.IOException;
@@ -147,13 +148,13 @@ public class ScreenCaptureExample {
 
         int successCount = 0;
         for (int i = 0; i < TEST_FRAME_COUNT; i++) {
-            BufferedImage frame = capture.grabFrame();
-            if (frame == null) {
+            ByteBuffer buf = capture.grabFrame();
+            if (buf == null) {
                 log.warn("帧 {} 采集失败（null）", i + 1);
                 continue;
             }
             successCount++;
-            log.info("帧 {}: {}x{}", i + 1, capture.getWidth(), capture.getHeight());
+            log.info("帧 {}: {}x{} size={}", i + 1, capture.getWidth(), capture.getHeight(), buf.remaining());
         }
 
         capture.close();
@@ -196,19 +197,24 @@ public class ScreenCaptureExample {
 
         int successCount = 0;
         for (int i = 0; i < frameCount; i++) {
-            BufferedImage frame = capture.grabFrame();
-            if (frame == null) {
+            ByteBuffer buf = capture.grabFrame();
+            if (buf == null) {
                 log.warn("帧 {} 采集失败（null）", i + 1);
                 continue;
             }
             successCount++;
             if (outputDir != null) {
-                File saved = saveFrame(frame, outputDir, i + 1);
+                // ByteBuffer → BufferedImage 保存
+                BufferedImage image = new BufferedImage(capture.getWidth(), capture.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
+                byte[] pixels = new byte[buf.remaining()];
+                buf.get(pixels);
+                image.getRaster().setDataElements(0, 0, capture.getWidth(), capture.getHeight(), pixels);
+                File saved = saveFrame(image, outputDir, i + 1);
                 if (saved != null) {
                     log.info("帧 {} 已保存: {}", i + 1, saved.getAbsolutePath());
                 }
             } else {
-                log.info("帧 {}: {}x{}", i + 1, frame.getWidth(), frame.getHeight());
+                log.info("帧 {}: {}x{} size={}", i + 1, capture.getWidth(), capture.getHeight(), buf.remaining());
             }
         }
 

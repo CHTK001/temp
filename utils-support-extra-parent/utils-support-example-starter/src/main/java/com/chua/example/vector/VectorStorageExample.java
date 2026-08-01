@@ -5,6 +5,7 @@ import com.chua.common.support.vector.VectorCompareAlgorithm;
 import com.chua.common.support.vector.VectorStorage;
 import com.chua.common.support.vector.VectorStorageProvider;
 import com.chua.jvector.support.configuration.JVectorStorageProperties;
+import com.chua.milvus.support.storage.MilvusVectorStorage;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Files;
@@ -79,6 +80,8 @@ public class VectorStorageExample {
      */
     private static final String TYPE_JVECTOR = "jvector";
 
+    private static final String TYPE_MILVUS = "milvus";
+
     /**
      * 程序退出码：成功
      */
@@ -102,9 +105,12 @@ public class VectorStorageExample {
         String type = parsed.type() != null ? parsed.type() : DEFAULT_TYPE;
         JVectorStorageProperties.Mode mode = parsed.mode() != null
                 ? parsed.mode() : JVectorStorageProperties.Mode.MEMORY;
+        String host = parsed.host();
+        int port = parsed.port();
+        String collection = parsed.collection();
 
         VectorStorageExample example = new VectorStorageExample();
-        boolean passed = example.runTest(type, mode);
+        boolean passed = example.runTest(type, mode, host, port, collection);
         System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
     }
 
@@ -117,7 +123,8 @@ public class VectorStorageExample {
      * @param mode JVector 存储模式（非 jvector 实现时忽略）
      * @return 全部测试通过返回 true
      */
-    public boolean runTest(String type, JVectorStorageProperties.Mode mode) {
+    public boolean runTest(String type, JVectorStorageProperties.Mode mode,
+                           String host, int port, String collection) {
         log.info("===== VectorStorageExample --test [type={}, mode={}] =====", type, mode);
 
         // 打印已注册实现列表
@@ -129,8 +136,10 @@ public class VectorStorageExample {
             return testMemoryCapabilities();
         } else if (TYPE_JVECTOR.equalsIgnoreCase(type)) {
             return testJVectorCapabilities(mode);
+        } else if (TYPE_MILVUS.equalsIgnoreCase(type)) {
+            return testMilvusCapabilities(host, port, collection);
         } else {
-            log.info("不支持的 SPI 类型: {}，可选: {} / {}", type, TYPE_MEMORY, TYPE_JVECTOR);
+            log.info("不支持的 SPI 类型: {}，可选: {} / {} / {}", type, TYPE_MEMORY, TYPE_JVECTOR, TYPE_MILVUS);
             return false;
         }
     }
@@ -650,6 +659,71 @@ public class VectorStorageExample {
         return v;
     }
 
+    // ==================== milvus 能力集 ====================
+
+    private boolean testMilvusCapabilities(String host, int port, String collection) {
+        log.info("\n[milvus] 基础能力矩阵 [host={}:{}, collection={}]", host, port, collection);
+        boolean passed = true;
+
+        passed &= testMilvusBuildAndSearch(host, port, collection);
+        passed &= testMilvusDelete(host, port, collection);
+        passed &= testMilvusUpsert(host, port, collection);
+
+        return passed;
+    }
+
+    private boolean testMilvusBuildAndSearch(String host, int port, String collection) {
+        log.info("  [TC-21] milvus 构建 + 搜索");
+        MilvusVectorStorage s = null;
+        try {
+            s = new MilvusVectorStorage(DIM, VectorCompareAlgorithm.cosine(), host, port, collection);
+            seedAndSearch(s, "milvus");
+            pass();
+            return true;
+        } catch (Exception e) {
+            fail("milvus 构建异常: " + e.getMessage());
+            return false;
+        } finally {
+            closeQuietly(s);
+        }
+    }
+
+    private boolean testMilvusDelete(String host, int port, String collection) {
+        log.info("  [TC-22] milvus 删除");
+        MilvusVectorStorage s = null;
+        try {
+            s = new MilvusVectorStorage(DIM, VectorCompareAlgorithm.cosine(), host, port, collection);
+            s.add("del_test", new float[]{1f, 0f, 0f, 0f});
+            boolean removed = s.remove("del_test");
+            assertEquals(true, removed, "milvus 删除存在的 id");
+            pass();
+            return true;
+        } catch (Exception e) {
+            fail("milvus 删除异常: " + e.getMessage());
+            return false;
+        } finally {
+            closeQuietly(s);
+        }
+    }
+
+    private boolean testMilvusUpsert(String host, int port, String collection) {
+        log.info("  [TC-23] milvus upsert");
+        MilvusVectorStorage s = null;
+        try {
+            s = new MilvusVectorStorage(DIM, VectorCompareAlgorithm.cosine(), host, port, collection);
+            s.add("upsert_key", new float[]{1f, 0f, 0f, 0f});
+            boolean updated = s.update("upsert_key", new float[]{0f, 1f, 0f, 0f});
+            assertEquals(true, updated, "milvus 更新存在的 id");
+            pass();
+            return true;
+        } catch (Exception e) {
+            fail("milvus upsert 异常: " + e.getMessage());
+            return false;
+        } finally {
+            closeQuietly(s);
+        }
+    }
+
     // ==================== 断言工具 ====================
 
     private static void assertEquals(int expected, int actual, String msg) {
@@ -708,6 +782,21 @@ public class VectorStorageExample {
                                 JVectorStorageProperties.Mode.valueOf(args[++index].toUpperCase()));
                     }
                 }
+                case "--host", "-H" -> {
+                    if (index + 1 < args.length) {
+                        result = result.withHost(args[++index]);
+                    }
+                }
+                case "--port", "-P" -> {
+                    if (index + 1 < args.length) {
+                        result = result.withPort(Integer.parseInt(args[++index]));
+                    }
+                }
+                case "--collection", "-c" -> {
+                    if (index + 1 < args.length) {
+                        result = result.withCollection(args[++index]);
+                    }
+                }
                 case "--help", "-h" -> result = result.withHelp(true);
                 default -> System.err.println("[WARN] 未知参数: " + args[index]);
             }
@@ -725,8 +814,11 @@ public class VectorStorageExample {
         System.out.println("用法: java VectorStorageExample [选项]");
         System.out.println();
         System.out.println("选项:");
-        System.out.println("  --type, -t <key>    实现类型（默认: memory，可选: memory / jvector）");
+        System.out.println("  --type, -t <key>    实现类型（默认: memory，可选: memory / jvector / milvus）");
         System.out.println("  --mode, -m <mode>    JVector 存储模式（默认: MEMORY，可选: MEMORY / ON_DISK / LARGER_THAN_MEMORY）");
+        System.out.println("  --host, -H <host>    Milvus 服务地址（默认: 127.0.0.1）");
+        System.out.println("  --port, -P <port>    Milvus 服务端口（默认: 19530）");
+        System.out.println("  --collection, -c <name>  Milvus collection 名称（默认: vector_store）");
         System.out.println("  --help, -h           显示此帮助");
     }
 
@@ -744,34 +836,58 @@ public class VectorStorageExample {
     private record Args(
         String type,
         JVectorStorageProperties.Mode mode,
-        boolean help
+        boolean help,
+        String host,
+        int port,
+        String collection
     ) {
         /**
          * 带默认值的空参构造。
          */
         Args() {
-            this(null, null, false);
+            this(null, null, false, "127.0.0.1", 19530, "vector_store");
         }
 
         /**
          * 替换 type 字段，返回新实例。
          */
         public Args withType(String type) {
-            return new Args(type, mode, help);
+            return new Args(type, mode, help, host, port, collection);
         }
 
         /**
          * 替换 mode 字段，返回新实例。
          */
         public Args withMode(JVectorStorageProperties.Mode mode) {
-            return new Args(type, mode, help);
+            return new Args(type, mode, help, host, port, collection);
         }
 
         /**
          * 替换 help 字段，返回新实例。
          */
         public Args withHelp(boolean help) {
-            return new Args(type, mode, help);
+            return new Args(type, mode, help, host, port, collection);
+        }
+
+        /**
+         * 替换 host 字段，返回新实例。
+         */
+        public Args withHost(String host) {
+            return new Args(type, mode, help, host, port, collection);
+        }
+
+        /**
+         * 替换 port 字段，返回新实例。
+         */
+        public Args withPort(int port) {
+            return new Args(type, mode, help, host, port, collection);
+        }
+
+        /**
+         * 替换 collection 字段，返回新实例。
+         */
+        public Args withCollection(String collection) {
+            return new Args(type, mode, help, host, port, collection);
         }
     }
 }
