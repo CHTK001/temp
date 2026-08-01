@@ -103,6 +103,7 @@
             <artifactId>utils-support-tshark-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!--
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-deeplearning-starter</artifactId>
@@ -118,6 +119,7 @@
             <artifactId>utils-support-deeplearning-agentscope-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
+        -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-remote-starter</artifactId>
@@ -490,6 +492,7 @@
                         <include>**/VideoCodecExample.java</include>
                         <include>**/ScreenCaptureExample.java</include>
                         <include>**/TuiDashboardExample.java</include>
+                        <include>**/usage/*.java</include>
                     </includes>
                 </configuration>
             </plugin>

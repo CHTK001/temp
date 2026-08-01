@@ -467,7 +467,8 @@ public class VectorStorageExample {
         try {
             var props = new JVectorStorageProperties();
             props.setMode(mode);
-            props.setIndexPath("./example-vector-on-disk");
+            java.nio.file.Path tmp = Files.createTempDirectory("jvector-disk-");
+            props.setIndexPath(tmp.resolve("index").toString());
 
             VectorStorage s = VectorStorageProvider.of("jvector")
                     .dimension(DIM)
@@ -510,7 +511,27 @@ public class VectorStorageExample {
     private VectorStorage createJVectorStorage(JVectorStorageProperties.Mode mode) {
         var props = new JVectorStorageProperties();
         props.setMode(mode);
-        props.setIndexPath("./example-vector-" + mode.name().toLowerCase());
+        String indexPath;
+        if (mode == JVectorStorageProperties.Mode.ON_DISK
+                || mode == JVectorStorageProperties.Mode.LARGER_THAN_MEMORY) {
+            try {
+                java.nio.file.Path tmp = Files.createTempDirectory("jvector-example-");
+                indexPath = tmp.resolve("index").toString();
+            } catch (java.io.IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            indexPath = "./example-vector-" + mode.name().toLowerCase();
+        }
+        props.setIndexPath(indexPath);
+
+        if (mode == JVectorStorageProperties.Mode.ON_DISK) {
+            try {
+                java.nio.file.Files.deleteIfExists(java.nio.file.Paths.get(indexPath));
+                java.nio.file.Files.deleteIfExists(java.nio.file.Paths.get(indexPath + ".vec"));
+            } catch (java.io.IOException ignored) {
+            }
+        }
 
         return VectorStorageProvider.of("jvector")
                 .dimension(DIM)
