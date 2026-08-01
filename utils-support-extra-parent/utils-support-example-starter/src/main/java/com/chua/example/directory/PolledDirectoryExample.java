@@ -4,12 +4,15 @@ import com.chua.common.support.lang.directory.environment.DirectoryPollerEnviron
 import com.chua.common.support.lang.directory.EventObserver;
 import com.chua.common.support.lang.directory.PolledListener;
 import com.chua.common.support.lang.directory.WatcherEvent;
+import com.chua.filesystem.log.support.SystemLogService;
 import com.chua.filesystem.log.support.model.LogEntry;
 import com.chua.filesystem.log.support.model.LogLevel;
+import com.chua.filesystem.log.support.model.LogQuery;
 import com.chua.filesystem.log.support.polling.SyslogPolledDirectory;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -39,11 +42,35 @@ public class PolledDirectoryExample {
         int duration = parseDuration(args);
         System.out.println("=== PolledDirectory 系统日志监听示例 ===\n");
 
+        dumpAllLogs();
         testAllLogs(duration);
         testErrorOnly(duration);
         testFiltered(duration);
 
         System.out.println("\n=== 全部示例运行完成 ===");
+    }
+
+    /**
+     * 直接调用 SystemLogService 拉取系统日志条目并打印到控制台
+     */
+    private static void dumpAllLogs() {
+        System.out.println("【直查】SystemLogService.getInstance().search(...) ===");
+        SystemLogService service = SystemLogService.getInstance();
+        if (!service.isAvailable()) {
+            System.out.println("系统日志服务不可用");
+            return;
+        }
+        List<LogEntry> entries = service.search(LogQuery.builder().maxResults(20).order(LogQuery.ORDER_DESC).build());
+        if (entries == null || entries.isEmpty()) {
+            System.out.println("无日志条目");
+            return;
+        }
+        System.out.println("共获取 " + entries.size() + " 条日志：");
+        for (LogEntry entry : entries) {
+            System.out.printf("[%s] [%s] [%s] %s%n",
+                    entry.timestamp(), entry.level(), entry.source(), entry.message());
+        }
+        System.out.println();
     }
 
     /**

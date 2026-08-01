@@ -108,9 +108,10 @@ public class VectorStorageExample {
         String host = parsed.host();
         int port = parsed.port();
         String collection = parsed.collection();
+        String token = parsed.token();
 
         VectorStorageExample example = new VectorStorageExample();
-        boolean passed = example.runTest(type, mode, host, port, collection);
+        boolean passed = example.runTest(type, mode, host, port, collection, token);
         System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
     }
 
@@ -124,7 +125,7 @@ public class VectorStorageExample {
      * @return 全部测试通过返回 true
      */
     public boolean runTest(String type, JVectorStorageProperties.Mode mode,
-                           String host, int port, String collection) {
+                           String host, int port, String collection, String token) {
         log.info("===== VectorStorageExample --test [type={}, mode={}] =====", type, mode);
 
         // 打印已注册实现列表
@@ -137,7 +138,7 @@ public class VectorStorageExample {
         } else if (TYPE_JVECTOR.equalsIgnoreCase(type)) {
             return testJVectorCapabilities(mode);
         } else if (TYPE_MILVUS.equalsIgnoreCase(type)) {
-            return testMilvusCapabilities(host, port, collection);
+            return testMilvusCapabilities(host, port, collection, token);
         } else {
             log.info("不支持的 SPI 类型: {}，可选: {} / {} / {}", type, TYPE_MEMORY, TYPE_JVECTOR, TYPE_MILVUS);
             return false;
@@ -661,22 +662,22 @@ public class VectorStorageExample {
 
     // ==================== milvus 能力集 ====================
 
-    private boolean testMilvusCapabilities(String host, int port, String collection) {
+    private boolean testMilvusCapabilities(String host, int port, String collection, String token) {
         log.info("\n[milvus] 基础能力矩阵 [host={}:{}, collection={}]", host, port, collection);
         boolean passed = true;
 
-        passed &= testMilvusBuildAndSearch(host, port, collection);
-        passed &= testMilvusDelete(host, port, collection);
-        passed &= testMilvusUpsert(host, port, collection);
+        passed &= testMilvusBuildAndSearch(host, port, collection, token);
+        passed &= testMilvusDelete(host, port, collection, token);
+        passed &= testMilvusUpsert(host, port, collection, token);
 
         return passed;
     }
 
-    private boolean testMilvusBuildAndSearch(String host, int port, String collection) {
+    private boolean testMilvusBuildAndSearch(String host, int port, String collection, String token) {
         log.info("  [TC-21] milvus 构建 + 搜索");
         MilvusVectorStorage s = null;
         try {
-            s = new MilvusVectorStorage(DIM, VectorCompareAlgorithm.cosine(), host, port, collection);
+            s = new MilvusVectorStorage(DIM, VectorCompareAlgorithm.cosine(), host, port, collection, token);
             seedAndSearch(s, "milvus");
             pass();
             return true;
@@ -688,11 +689,11 @@ public class VectorStorageExample {
         }
     }
 
-    private boolean testMilvusDelete(String host, int port, String collection) {
+    private boolean testMilvusDelete(String host, int port, String collection, String token) {
         log.info("  [TC-22] milvus 删除");
         MilvusVectorStorage s = null;
         try {
-            s = new MilvusVectorStorage(DIM, VectorCompareAlgorithm.cosine(), host, port, collection);
+            s = new MilvusVectorStorage(DIM, VectorCompareAlgorithm.cosine(), host, port, collection, token);
             s.add("del_test", new float[]{1f, 0f, 0f, 0f});
             boolean removed = s.remove("del_test");
             assertEquals(true, removed, "milvus 删除存在的 id");
@@ -706,11 +707,11 @@ public class VectorStorageExample {
         }
     }
 
-    private boolean testMilvusUpsert(String host, int port, String collection) {
+    private boolean testMilvusUpsert(String host, int port, String collection, String token) {
         log.info("  [TC-23] milvus upsert");
         MilvusVectorStorage s = null;
         try {
-            s = new MilvusVectorStorage(DIM, VectorCompareAlgorithm.cosine(), host, port, collection);
+            s = new MilvusVectorStorage(DIM, VectorCompareAlgorithm.cosine(), host, port, collection, token);
             s.add("upsert_key", new float[]{1f, 0f, 0f, 0f});
             boolean updated = s.update("upsert_key", new float[]{0f, 1f, 0f, 0f});
             assertEquals(true, updated, "milvus 更新存在的 id");
@@ -797,6 +798,11 @@ public class VectorStorageExample {
                         result = result.withCollection(args[++index]);
                     }
                 }
+                case "--token" -> {
+                    if (index + 1 < args.length) {
+                        result = result.withToken(args[++index]);
+                    }
+                }
                 case "--help", "-h" -> result = result.withHelp(true);
                 default -> System.err.println("[WARN] 未知参数: " + args[index]);
             }
@@ -819,6 +825,7 @@ public class VectorStorageExample {
         System.out.println("  --host, -H <host>    Milvus 服务地址（默认: 127.0.0.1）");
         System.out.println("  --port, -P <port>    Milvus 服务端口（默认: 19530）");
         System.out.println("  --collection, -c <name>  Milvus collection 名称（默认: vector_store）");
+        System.out.println("  --token, -t <token>    Milvus 认证令牌（可选）");
         System.out.println("  --help, -h           显示此帮助");
     }
 
@@ -839,55 +846,60 @@ public class VectorStorageExample {
         boolean help,
         String host,
         int port,
-        String collection
+        String collection,
+        String token
     ) {
         /**
          * 带默认值的空参构造。
          */
         Args() {
-            this(null, null, false, "127.0.0.1", 19530, "vector_store");
+            this(null, null, false, "127.0.0.1", 19530, "vector_store", null);
         }
 
         /**
          * 替换 type 字段，返回新实例。
          */
         public Args withType(String type) {
-            return new Args(type, mode, help, host, port, collection);
+            return new Args(type, mode, help, host, port, collection, token);
         }
 
         /**
          * 替换 mode 字段，返回新实例。
          */
         public Args withMode(JVectorStorageProperties.Mode mode) {
-            return new Args(type, mode, help, host, port, collection);
+            return new Args(type, mode, help, host, port, collection, token);
         }
 
         /**
          * 替换 help 字段，返回新实例。
          */
         public Args withHelp(boolean help) {
-            return new Args(type, mode, help, host, port, collection);
+            return new Args(type, mode, help, host, port, collection, token);
         }
 
         /**
          * 替换 host 字段，返回新实例。
          */
         public Args withHost(String host) {
-            return new Args(type, mode, help, host, port, collection);
+            return new Args(type, mode, help, host, port, collection, token);
         }
 
         /**
          * 替换 port 字段，返回新实例。
          */
         public Args withPort(int port) {
-            return new Args(type, mode, help, host, port, collection);
+            return new Args(type, mode, help, host, port, collection, token);
         }
 
         /**
          * 替换 collection 字段，返回新实例。
          */
         public Args withCollection(String collection) {
-            return new Args(type, mode, help, host, port, collection);
+            return new Args(type, mode, help, host, port, collection, token);
+        }
+
+        public Args withToken(String token) {
+            return new Args(type, mode, help, host, port, collection, token);
         }
     }
 }
