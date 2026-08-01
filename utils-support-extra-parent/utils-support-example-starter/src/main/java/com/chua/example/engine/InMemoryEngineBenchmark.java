@@ -7,6 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * 内存引擎基准测试：在 10k ~ 1M 多档数据量下，输出 store/index/query/update/delete 等操作的耗时。
+ *
+ * @author CH
+ * @since 4.0.0
+ */
 public class InMemoryEngineBenchmark {
 
     public record User(Long id, String name, Integer age, String role) {

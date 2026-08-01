@@ -13,6 +13,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
 
+/**
+ * 文件存储实时预览服务器示例，启动 JDK HttpServer 并挂载 View/Download 两个过滤器。
+ *
+ * @author CH
+ * @since 4.0.0
+ */
 public class FileStorageServer {
     public static void main(String[] args) throws Exception {
         Path root = Path.of(System.getProperty("java.io.tmpdir"), "filestorage-live-" + UUID.randomUUID());

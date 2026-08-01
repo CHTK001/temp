@@ -3,6 +3,12 @@ package com.chua.example.ai.usage;
 import com.chua.common.support.ai.AiUsage;
 import com.chua.common.support.ai.chat.usage.AiUsageRecord;
 
+/**
+ * AI 用量记录示例：构造 AiUsage 并通过 AiUsageRecord 打印字段。
+ *
+ * @author CH
+ * @since 4.0.0
+ */
 public class AiUsageRecordExample {
 
     public static void main(String[] args) {

@@ -7,6 +7,12 @@ import com.chua.common.support.lang.cmd.CmdResult;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 命令异步执行示例：演示 CmdExecutors.executeAsync 的回调与 CompletableFuture 两种异步模式。
+ *
+ * @author CH
+ * @since 4.0.0
+ */
 public class CmdAsyncExample {
 
     public static void main(String[] args) throws Exception {

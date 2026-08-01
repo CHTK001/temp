@@ -5,6 +5,12 @@ import com.chua.common.support.lang.cmd.LineCallback;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 命令同步执行示例（基于 ConPTY），演示 LineCallback 实时行级回调与 进度条覆盖帧捕获。
+ *
+ * @author CH
+ * @since 4.0.0
+ */
 public class CmdSyncExample {
 
     public static void main(String[] args) throws Exception {

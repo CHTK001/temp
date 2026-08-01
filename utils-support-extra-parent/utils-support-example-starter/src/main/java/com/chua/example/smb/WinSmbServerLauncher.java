@@ -9,6 +9,9 @@ import java.lang.ProcessBuilder;
 
 /**
  * Win SMB server launcher with full classpath from cp.txt.
+ *
+ * @author CH
+ * @since 4.0.0
  */
 public class WinSmbServerLauncher {
     public static void main(String[] args) throws Exception {

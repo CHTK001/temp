@@ -6,6 +6,12 @@ import com.chua.common.support.spi.annotations.Extension;
 
 import java.math.BigDecimal;
 
+/**
+ * 示例用的模型定价提供器，仅内置 {@code openai/gpt-4} 一种定价，其他模型返回 null。
+ *
+ * @author CH
+ * @since 4.0.0
+ */
 @Extension("openai")
 public class ExampleModelPricingProvider implements ModelPricingProvider {
 

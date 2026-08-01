@@ -7,6 +7,12 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
+/**
+ * 数据库文档导出示例：从 JDBC 抓取 schema 并按 html/markdown/word/pdf 格式输出。
+ *
+ * @author CH
+ * @since 4.0.0
+ */
 public class DocumentExample {
 
     public static void main(String[] args) throws Exception {

@@ -8,6 +8,9 @@ import java.io.File;
 /**
  * Long-running SMB server on a configurable port.
  * Usage: java -Dsmb.host=0.0.0.0 -Dsmb.port=1448 -Dsmb.share=testshare -Dsmb.root=PATH com.chua.example.smb.SmbServerLong
+ *
+ * @author CH
+ * @since 4.0.0
  */
 @Slf4j
 public class SmbServerLong {

@@ -13,6 +13,9 @@ import java.util.List;
 
 /**
  * Cross-platform test: Win client → Linux server (172.16.0.40:1447).
+ *
+ * @author CH
+ * @since 4.0.0
  */
 @Slf4j
 public class LinuxSmbClientTest {

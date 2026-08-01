@@ -9,6 +9,12 @@ import com.chua.tui.support.widgets.DiskWidget;
 import com.chua.tui.support.widgets.HtopWidget;
 import com.chua.tui.support.widgets.MemoryWidget;
 
+/**
+ * TUI 仪表盘启动示例：构造 2x2 网格展示 CPU / 内存 / 磁盘 / Htop 四个组件。
+ *
+ * @author CH
+ * @since 4.0.0
+ */
 public class TuiLauncher {
     public static void main(String[] args) throws Exception {
         SystemMonitorService monitorService = new SystemMonitorService();

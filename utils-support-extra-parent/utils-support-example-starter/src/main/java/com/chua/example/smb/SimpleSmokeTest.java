@@ -1,6 +1,15 @@
 package com.chua.example.smb;
+
 import com.chua.smb.client.SmbClient;
+
 import java.util.List;
+
+/**
+ * SmbClient 冒烟测试：连接 SMB 服务、列出根目录、退出码标识成功/失败。
+ *
+ * @author CH
+ * @since 4.0.0
+ */
 public class SimpleSmokeTest {
     public static void main(String[] args) throws Exception {
         String host = args.length > 0 ? args[0] : "127.0.0.1";

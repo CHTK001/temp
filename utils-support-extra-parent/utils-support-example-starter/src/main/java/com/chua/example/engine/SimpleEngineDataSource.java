@@ -3,6 +3,12 @@ package com.chua.example.engine;
 import com.chua.common.support.lang.datasource.dialect.Dialect;
 import com.chua.common.support.lang.datasource.engine.EngineDataSource;
 
+/**
+ * 简化的 EngineDataSource 实现，构造时不连接任何后端，仅用于单元测试与示例代码。
+ *
+ * @author CH
+ * @since 4.0.0
+ */
 public class SimpleEngineDataSource implements EngineDataSource<Object> {
 
     private final String name;

@@ -5,12 +5,11 @@ import com.chua.common.support.vector.VectorCompareAlgorithm;
 import com.chua.common.support.vector.VectorStorage;
 import com.chua.common.support.vector.VectorStorageProvider;
 import com.chua.jvector.support.configuration.JVectorStorageProperties;
+import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 /**
@@ -47,6 +46,7 @@ import java.util.Random;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public class VectorStorageExample {
 
     /**
@@ -68,6 +68,16 @@ public class VectorStorageExample {
      * 默认 SPI 类型
      */
     private static final String DEFAULT_TYPE = "memory";
+
+    /**
+     * SPI 类型：内存实现
+     */
+    private static final String TYPE_MEMORY = "memory";
+
+    /**
+     * SPI 类型：JVector 实现
+     */
+    private static final String TYPE_JVECTOR = "jvector";
 
     /**
      * 程序退出码：成功
@@ -108,19 +118,19 @@ public class VectorStorageExample {
      * @return 全部测试通过返回 true
      */
     public boolean runTest(String type, JVectorStorageProperties.Mode mode) {
-        log("===== VectorStorageExample --test [type=" + type + ", mode=" + mode + "] =====");
+        log.info("===== VectorStorageExample --test [type={}, mode={}] =====", type, mode);
 
         // 打印已注册实现列表
-        log("[1] 已注册的向量存储实现:");
-        VectorStorageProvider.providers().forEach(p -> log("    - " + p));
+        log.info("[1] 已注册的向量存储实现:");
+        VectorStorageProvider.providers().forEach(p -> log.info("    - {}", p));
 
         // 根据 type 选择测试集
-        if ("memory".equalsIgnoreCase(type)) {
+        if (TYPE_MEMORY.equalsIgnoreCase(type)) {
             return testMemoryCapabilities();
-        } else if ("jvector".equalsIgnoreCase(type)) {
+        } else if (TYPE_JVECTOR.equalsIgnoreCase(type)) {
             return testJVectorCapabilities(mode);
         } else {
-            log("不支持的 SPI 类型: " + type + "，可选: memory / jvector");
+            log.info("不支持的 SPI 类型: {}，可选: {} / {}", type, TYPE_MEMORY, TYPE_JVECTOR);
             return false;
         }
     }
@@ -128,7 +138,7 @@ public class VectorStorageExample {
     // ==================== memory 能力集 ====================
 
     private boolean testMemoryCapabilities() {
-        log("\n[memory] 基础能力矩阵");
+        log.info("\n[memory] 基础能力矩阵");
         boolean passed = true;
 
         // 默认构建 + 搜索
@@ -147,9 +157,9 @@ public class VectorStorageExample {
     }
 
     private boolean testMemoryDefaultBuild() {
-        log("  [TC-01] memory 默认构建 + 搜索");
+        log.info("  [TC-01] memory 默认构建 + 搜索");
         try {
-            VectorStorage s = VectorStorageProvider.of("memory")
+            VectorStorage s = VectorStorageProvider.of(TYPE_MEMORY)
                     .dimension(DIM)
                     .build();
             seedAndSearch(s, "memory-default");
@@ -163,9 +173,9 @@ public class VectorStorageExample {
     }
 
     private boolean testMemoryAlgorithmBuild() {
-        log("  [TC-02] memory 指定算法(COSINE)构建 + 搜索");
+        log.info("  [TC-02] memory 指定算法(COSINE)构建 + 搜索");
         try {
-            VectorStorage s = VectorStorageProvider.of("memory")
+            VectorStorage s = VectorStorageProvider.of(TYPE_MEMORY)
                     .dimension(DIM)
                     .algorithm(VectorCompareAlgorithm.cosine())
                     .build();
@@ -180,14 +190,14 @@ public class VectorStorageExample {
     }
 
     private boolean testMemoryChainVsCreate() {
-        log("  [TC-03] 等价比对: of().build() == create()");
+        log.info("  [TC-03] 等价比对: of().build() == create()");
         try {
-            VectorStorage chain = VectorStorageProvider.of("memory")
+            VectorStorage chain = VectorStorageProvider.of(TYPE_MEMORY)
                     .dimension(DIM)
                     .algorithm(VectorCompareAlgorithm.euclidean())
                     .build();
             VectorStorage direct = VectorStorageProvider.create(
-                    "memory", DIM, VectorCompareAlgorithm.euclidean());
+                    TYPE_MEMORY, DIM, VectorCompareAlgorithm.euclidean());
             assertNotNull(chain);
             assertNotNull(direct);
             assertEquals(chain.dimension(), direct.dimension(), "dimension 一致");
@@ -200,7 +210,7 @@ public class VectorStorageExample {
     }
 
     private boolean testMemoryRemove() {
-        log("  [TC-04] memory remove(id)");
+        log.info("  [TC-04] memory remove(id)");
         VectorStorage s = null;
         try {
             s = createMemoryStorage();
@@ -232,7 +242,7 @@ public class VectorStorageExample {
     }
 
     private boolean testMemoryUpdate() {
-        log("  [TC-05] memory update(id, vector)");
+        log.info("  [TC-05] memory update(id, vector)");
         VectorStorage s = null;
         try {
             s = createMemoryStorage();
@@ -278,7 +288,7 @@ public class VectorStorageExample {
     }
 
     private boolean testMemoryClear() {
-        log("  [TC-06] memory clear()");
+        log.info("  [TC-06] memory clear()");
         try {
             VectorStorage s = createMemoryStorage();
             s.add("x", randomVector(new Random(1), DIM));
@@ -295,7 +305,7 @@ public class VectorStorageExample {
     }
 
     private boolean testMemorySize() {
-        log("  [TC-07] memory size()");
+        log.info("  [TC-07] memory size()");
         try {
             VectorStorage s = createMemoryStorage();
             assertEquals(0, s.size(), "初始 size");
@@ -315,7 +325,7 @@ public class VectorStorageExample {
     // ==================== jvector 能力集 ====================
 
     private boolean testJVectorCapabilities(JVectorStorageProperties.Mode mode) {
-        log("\n[jvector] 模式=" + mode + " 能力矩阵");
+        log.info("\n[jvector] 模式={} 能力矩阵", mode);
         boolean passed = true;
 
         // 基础 add/search
@@ -326,16 +336,17 @@ public class VectorStorageExample {
         passed &= testJVectorClear(mode);
         passed &= testJVectorSize(mode);
 
-        // ON_DISK 验证磁盘文件
+        // ON_DISK 验证磁盘文件 + 持久化往返
         if (mode == JVectorStorageProperties.Mode.ON_DISK) {
             passed &= testJVectorDiskFile(mode);
+            passed &= testJVectorPersistence(mode);
         }
 
         return passed;
     }
 
     private boolean testJVectorAddSearch(JVectorStorageProperties.Mode mode) {
-        log("  [TC-11] jvector " + mode + " add + search");
+        log.info("  [TC-11] jvector {} add + search", mode);
         try {
             VectorStorage s = createJVectorStorage(mode);
             seedJVector(s, "jv-addsearch");
@@ -350,7 +361,7 @@ public class VectorStorageExample {
     }
 
     private boolean testJVectorUpdate(JVectorStorageProperties.Mode mode) {
-        log("  [TC-12] jvector " + mode + " update(id, vector)");
+        log.info("  [TC-12] jvector {} update(id, vector)", mode);
         VectorStorage s = null;
         try {
             s = createJVectorStorage(mode);
@@ -396,7 +407,7 @@ public class VectorStorageExample {
     }
 
     private boolean testJVectorRemove(JVectorStorageProperties.Mode mode) {
-        log("  [TC-13] jvector " + mode + " remove(id)");
+        log.info("  [TC-13] jvector {} remove(id)", mode);
         VectorStorage s = null;
         try {
             s = createJVectorStorage(mode);
@@ -428,7 +439,7 @@ public class VectorStorageExample {
     }
 
     private boolean testJVectorClear(JVectorStorageProperties.Mode mode) {
-        log("  [TC-14] jvector " + mode + " clear()");
+        log.info("  [TC-14] jvector {} clear()", mode);
         try {
             VectorStorage s = createJVectorStorage(mode);
             s.add("x", randomVector(new Random(3), DIM));
@@ -445,7 +456,7 @@ public class VectorStorageExample {
     }
 
     private boolean testJVectorSize(JVectorStorageProperties.Mode mode) {
-        log("  [TC-15] jvector " + mode + " size()");
+        log.info("  [TC-15] jvector {} size()", mode);
         try {
             VectorStorage s = createJVectorStorage(mode);
             assertEquals(0, s.size(), "jvector 初始 size");
@@ -463,14 +474,14 @@ public class VectorStorageExample {
     }
 
     private boolean testJVectorDiskFile(JVectorStorageProperties.Mode mode) {
-        log("  [TC-16] jvector ON_DISK 磁盘文件验证");
+        log.info("  [TC-16] jvector ON_DISK 磁盘文件验证");
         try {
             var props = new JVectorStorageProperties();
             props.setMode(mode);
             java.nio.file.Path tmp = Files.createTempDirectory("jvector-disk-");
             props.setIndexPath(tmp.resolve("index").toString());
 
-            VectorStorage s = VectorStorageProvider.of("jvector")
+            VectorStorage s = VectorStorageProvider.of(TYPE_JVECTOR)
                     .dimension(DIM)
                     .algorithm(VectorCompareAlgorithm.cosine())
                     .properties(props)
@@ -478,11 +489,12 @@ public class VectorStorageExample {
             seedJVector(s, "jv-disk");
             s.close();
 
-            var indexPath = Paths.get(props.getIndexPath());
-            boolean exists = Files.exists(indexPath);
-            log("    磁盘文件: " + indexPath.toAbsolutePath() + " exists=" + exists);
+            // jvector 内部把图写到 indexPath
+            var graphPath = Paths.get(props.getIndexPath());
+            boolean exists = Files.exists(graphPath);
+            log.info("    磁盘图文件: {} exists={}", graphPath.toAbsolutePath(), exists);
             if (!exists) {
-                fail("ON_DISK 模式下索引文件未生成");
+                fail("ON_DISK 模式下索引图文件未生成");
                 return false;
             }
             pass();
@@ -493,13 +505,65 @@ public class VectorStorageExample {
         }
     }
 
+    private boolean testJVectorPersistence(JVectorStorageProperties.Mode mode) {
+        log.info("  [TC-17] jvector {} 持久化往返 (close -> 重新打开)", mode);
+        try {
+            java.nio.file.Path tmp = Files.createTempDirectory("jvector-persist-");
+            String indexPath = tmp.resolve("index").toString();
+
+            // 第一阶段：写入 5 个向量后关闭
+            var props1 = new JVectorStorageProperties();
+            props1.setMode(mode);
+            props1.setIndexPath(indexPath);
+            VectorStorage s1 = VectorStorageProvider.of(TYPE_JVECTOR)
+                    .dimension(DIM)
+                    .algorithm(VectorCompareAlgorithm.cosine())
+                    .properties(props1)
+                    .build();
+            float[] target = new float[]{1f, 0f, 0f, 0f};
+            for (int i = 0; i < 5; i++) {
+                s1.add("p-" + i, randomVector(new Random(11 + i), DIM));
+            }
+            s1.add("target", target);
+            assertEquals(6, s1.size(), "jvector 关闭前 size");
+            s1.close();
+
+            // 第二阶段：用同一路径重新打开，验证数据被回填
+            var props2 = new JVectorStorageProperties();
+            props2.setMode(mode);
+            props2.setIndexPath(indexPath);
+            VectorStorage s2 = VectorStorageProvider.of(TYPE_JVECTOR)
+                    .dimension(DIM)
+                    .algorithm(VectorCompareAlgorithm.cosine())
+                    .properties(props2)
+                    .build();
+            assertEquals(6, s2.size(), "jvector 重启后 size 应为 6");
+
+            // 第三阶段：搜索 target，最相似的应是 target 自身
+            List<Vector> results = s2.search(target, 1);
+            boolean top1IsTarget = !results.isEmpty() && "target".equals(results.get(0).id());
+            if (!top1IsTarget) {
+                fail("jvector 重启后 target 应是最相似");
+                s2.close();
+                return false;
+            }
+
+            s2.close();
+            pass();
+            return true;
+        } catch (Exception e) {
+            fail("jvector 持久化往返异常: " + e.getMessage());
+            return false;
+        }
+    }
+
     // ==================== 辅助方法 ====================
 
     /**
      * 创建 memory 存储（每次新建，避免状态污染）。
      */
     private VectorStorage createMemoryStorage() {
-        return VectorStorageProvider.of("memory")
+        return VectorStorageProvider.of(TYPE_MEMORY)
                 .dimension(DIM)
                 .algorithm(VectorCompareAlgorithm.cosine())
                 .build();
@@ -533,7 +597,7 @@ public class VectorStorageExample {
             }
         }
 
-        return VectorStorageProvider.of("jvector")
+        return VectorStorageProvider.of(TYPE_JVECTOR)
                 .dimension(DIM)
                 .algorithm(VectorCompareAlgorithm.cosine())
                 .properties(props)
@@ -549,8 +613,8 @@ public class VectorStorageExample {
             storage.add(label + "-" + i, randomVector(rnd, DIM));
         }
         List<Vector> results = storage.search(randomVector(rnd, DIM), TOP_K);
-        log("    搜索 Top-" + TOP_K + " 结果: "
-                + (results.isEmpty() ? "空" : "id=" + results.get(0).id()));
+        String firstId = results.isEmpty() ? "<empty>" : results.get(0).id();
+        log.info("    搜索 Top-{} 结果: firstId={}", TOP_K, firstId);
     }
 
     /**
@@ -569,8 +633,9 @@ public class VectorStorageExample {
     private void searchAndLogTop1(VectorStorage storage) {
         List<Vector> results = storage.search(randomVector(new Random(7), DIM), TOP_K);
         if (!results.isEmpty()) {
-            log("    Top-1 id=" + results.get(0).id()
-                    + ", score=" + results.get(0).metadata().get("score"));
+            Object rawScore = results.get(0).metadata().get("score");
+            double score = rawScore instanceof Number ? ((Number) rawScore).doubleValue() : 0d;
+            log.info("    Top-1 id={}, score={}", results.get(0).id(), score);
         }
     }
 
@@ -606,15 +671,11 @@ public class VectorStorageExample {
     }
 
     private static void pass() {
-        log("  ✓ 通过");
+        log.info("  ✓ 通过");
     }
 
     private static void fail(String msg) {
-        log("  ✗ 失败: " + msg);
-    }
-
-    private static void log(String msg) {
-        System.out.println(msg);
+        log.info("  ✗ 失败: {}", msg);
     }
 
     private static void closeQuietly(VectorStorage s) {
@@ -714,3 +775,4 @@ public class VectorStorageExample {
         }
     }
 }
+

@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
+
 import java.io.IOException;
 
 /**
@@ -152,7 +153,7 @@ public class ScreenCaptureExample {
                 continue;
             }
             successCount++;
-            log.info("帧 {}: {}x{} channels={}", i + 1, frame.getWidth(), frame.getHeight(), frame.getColorModel().getPixelSize());
+            log.info("帧 {}: {}x{}", i + 1, capture.getWidth(), capture.getHeight());
         }
 
         capture.close();
