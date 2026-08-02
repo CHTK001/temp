@@ -36,6 +36,8 @@ public class PolledDirectoryLiveExample {
         System.out.println("=== PolledDirectory 实时触发示例（" + duration + "s）===\n");
 
         SyslogPolledDirectory watcher = SyslogPolledDirectory.builder()
+                .source("Application")
+                .minLevel(com.chua.filesystem.log.support.model.LogLevel.WARNING)
                 .pollIntervalSeconds(2)
                 .build();
         watcher.addListener(new PolledListener() {
