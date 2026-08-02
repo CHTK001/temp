@@ -479,6 +479,16 @@
         </configuration>
     </execution>
     <execution>
+        <id>polled-directory-live-example</id>
+        <configuration>
+            <mainClass>com.chua.example.directory.PolledDirectoryLiveExample</mainClass>
+            <arguments>
+                <argument>--duration</argument>
+                <argument>20</argument>
+            </arguments>
+        </configuration>
+    </execution>
+    <execution>
         <id>engine-example</id>
         <configuration>
             <mainClass>com.chua.example.engine.EngineExample</mainClass>
@@ -533,6 +543,7 @@
                         <include>**/VectorStorageExample.java</include>
                         
                         <include>**/PolledDirectoryExample.java</include>
+                        <include>**/PolledDirectoryLiveExample.java</include>
                         <include>**/EngineExample.java</include>
                         <include>**/VideoCodecExample.java</include>
                         <include>**/ScreenCaptureExample.java</include>
