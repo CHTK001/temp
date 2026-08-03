@@ -419,7 +419,15 @@
                         <jvmArg>--add-exports=java.base/sun.nio.ch=ALL-UNNAMED</jvmArg>
                         <jvmArg>--add-exports=java.base/java.lang.invoke=ALL-UNNAMED</jvmArg>
                     </jvmArgs>
-                </configuration>
+                
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>com.uber.nullaway</groupId>
+                                <artifactId>nullaway</artifactId>
+                                <version>${nullaway.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
+</configuration>
             </plugin>
 <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
