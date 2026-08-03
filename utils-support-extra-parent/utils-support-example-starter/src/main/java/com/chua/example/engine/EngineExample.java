@@ -38,6 +38,16 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class EngineExample {
 
+    /**
+     * 测试用户实体。
+     *
+     * @param id   主键
+     * @param name 姓名
+     * @param age  年龄
+     * @param role 角色
+     * @author CH
+     * @since 4.0.0.42
+     */
     public record User(Integer id, String name, Integer age, String role) {}
 
     private static final List<User> TEST_USERS = List.of(
@@ -168,7 +178,7 @@ public class EngineExample {
         return new LuceneEngine(java.nio.file.Paths.get(indexPath));
     }
 
-private static Engine setupFile() {
+    private static Engine setupFile() {
         String dataDir = System.getProperty("file.dir", "data/filestore");
         System.out.println("[SETUP] File store: " + dataDir);
         return new FileEngine();
@@ -344,21 +354,19 @@ private static Engine setupFile() {
             storeData(engineType, engine);
             runCommonCrudTests(engineType, engine);
         } catch (Exception e) {
-        System.err.println("[ERROR] " + e.getMessage());
-        e.printStackTrace();
-        throw e;
-    } finally {
-        if (engine != null) {
-            try {
-                engine.close();
-                System.out.println("[MAIN] Engine closed.");
-            } catch (Exception e) {
-                System.err.println("[WARN] Error closing engine: " + e.getMessage());
+            System.err.println("[ERROR] " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        } finally {
+            if (engine != null) {
+                try {
+                    engine.close();
+                    System.out.println("[MAIN] Engine closed.");
+                } catch (Exception e) {
+                    System.err.println("[WARN] Error closing engine: " + e.getMessage());
+                }
             }
         }
     }
-}
-
-    
 }
 

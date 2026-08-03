@@ -1,6 +1,6 @@
 package com.chua.example.file;
 
-import com.chua.common.support.file.FileSystem;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -28,41 +28,72 @@ import java.util.List;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public class Zip4jFileSystemExample {
 
+    /**
+     * 加密 ZIP 使用的密码
+     */
     private static final String PASSWORD = "mySecret123";
+
+    /**
+     * 测试用错误密码
+     */
     private static final String WRONG_PASSWORD = "wrongPassword";
 
+    /**
+     * 程序退出码：成功
+     */
+    private static final int EXIT_CODE_SUCCESS = 0;
+
+    /**
+     * 程序退出码：失败
+     */
+    private static final int EXIT_CODE_FAILURE = 1;
+
+    /**
+     * 临时工作目录
+     */
     private File workDir;
+
+    /**
+     * 全部测试是否通过
+     */
     private boolean allPassed = true;
 
     public static void main(String[] args) throws Exception {
         Zip4jFileSystemExample example = new Zip4jFileSystemExample();
-        example.setUp();
-        example.testEncryptedWriteAndRead();
-        example.testReadWithoutPasswordFails();
-        example.testReadWithWrongPasswordFails();
-        example.testExtractEncrypted();
-        example.testAddMultipleEntries();
-        example.cleanUp();
+        boolean passed = example.runTest();
+        System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+    }
 
-        System.out.println("\n========================================");
-        System.out.println("[Zip4jFileSystemExample] 全部测试 "
-                + (example.allPassed ? "✅ PASS" : "❌ FAIL"));
-        System.exit(example.allPassed ? 0 : 1);
+    public boolean runTest() throws Exception {
+        setUp();
+        testEncryptedWriteAndRead();
+        testReadWithoutPasswordFails();
+        testReadWithWrongPasswordFails();
+        testExtractEncrypted();
+        testAddMultipleEntries();
+        cleanUp();
+
+        log.info("========================================");
+        log.info("[Zip4jFileSystemExample] 全部测试 {}", allPassed ? "✅ PASS" : "❌ FAIL");
+        return allPassed;
     }
 
     void setUp() throws Exception {
         workDir = Files.createTempDirectory("zip4j-example-").toFile();
-        System.out.println("[Zip4j] 工作目录: " + workDir);
+        log.info("[Zip4j] 工作目录: {}", workDir);
     }
 
-    /** 1. 加密写入 + 正确密码读取 */
+    /**
+     * 1. 加密写入 + 正确密码读取
+     */
     void testEncryptedWriteAndRead() throws Exception {
-        System.out.println("\n===== 1. 加密写入 + 正确密码读取 =====");
+        log.info("\n===== 1. 加密写入 + 正确密码读取 =====");
         File zip = new File(workDir, "encrypted.zip");
         Zip4jWriteBuilderCaster.cast(
-                FileSystem.create("zip4j").write(zip))
+                com.chua.common.support.file.FileSystem.create("zip4j").write(zip))
                 .password(PASSWORD)
                 .addBytes("hello.txt", "Hello, 加密世界!".getBytes(StandardCharsets.UTF_8))
                 .addBytes("data/numbers.txt", "12345\n67890".getBytes(StandardCharsets.UTF_8))
@@ -70,87 +101,90 @@ public class Zip4jFileSystemExample {
 
         check(zip.length() > 0, "ZIP 为空");
 
-        // 用正确密码列出条目
         List<String> entries = Zip4jReadBuilderCaster.cast(
-                FileSystem.create("zip4j").read(zip))
+                com.chua.common.support.file.FileSystem.create("zip4j").read(zip))
                 .password(PASSWORD)
                 .listEntries();
-        System.out.println("  [条目] " + entries);
+        log.info("  [条目] {}", entries);
         check(entries.size() == 2, "期望 2 个条目");
 
-        // 用正确密码读取条目内容
         String content1 = Zip4jReadBuilderCaster.cast(
-                FileSystem.create("zip4j").read(zip))
+                com.chua.common.support.file.FileSystem.create("zip4j").read(zip))
                 .password(PASSWORD)
                 .readEntry("hello.txt");
-        System.out.println("  [hello.txt] " + content1);
+        log.info("  [hello.txt] {}", content1);
         check("Hello, 加密世界!".equals(content1), "内容不匹配");
 
-        System.out.println("  [PASS]");
+        log.info("  [PASS]");
     }
 
-    /** 2. 无密码读取应失败 */
+    /**
+     * 2. 无密码读取应失败
+     */
     void testReadWithoutPasswordFails() throws Exception {
-        System.out.println("\n===== 2. 无密码读取应失败 =====");
+        log.info("\n===== 2. 无密码读取应失败 =====");
         File zip = new File(workDir, "no-pw.zip");
         Zip4jWriteBuilderCaster.cast(
-                FileSystem.create("zip4j").write(zip))
+                com.chua.common.support.file.FileSystem.create("zip4j").write(zip))
                 .password(PASSWORD)
                 .addBytes("secret.txt", "机密数据".getBytes(StandardCharsets.UTF_8))
                 .finish();
 
         try {
             Zip4jReadBuilderCaster.cast(
-                    FileSystem.create("zip4j").read(zip))
+                    com.chua.common.support.file.FileSystem.create("zip4j").read(zip))
                     .listEntries();
-            System.err.println("  [FAIL] 应抛出异常但未抛");
+            log.info("  [FAIL] 应抛出异常但未抛");
             allPassed = false;
         } catch (Exception e) {
-            System.out.println("  [正确] 无密码时读取失败: " + e.getClass().getSimpleName());
-            System.out.println("  [PASS]");
+            log.info("  [正确] 无密码时读取失败: {}", e.getClass().getSimpleName());
+            log.info("  [PASS]");
         }
     }
 
-    /** 3. 错误密码读取应失败 */
+    /**
+     * 3. 错误密码读取应失败
+     */
     void testReadWithWrongPasswordFails() throws Exception {
-        System.out.println("\n===== 3. 错误密码读取应失败 =====");
+        log.info("\n===== 3. 错误密码读取应失败 =====");
         File zip = new File(workDir, "wrong-pw.zip");
         Zip4jWriteBuilderCaster.cast(
-                FileSystem.create("zip4j").write(zip))
+                com.chua.common.support.file.FileSystem.create("zip4j").write(zip))
                 .password(PASSWORD)
                 .addBytes("data.txt", "敏感数据".getBytes(StandardCharsets.UTF_8))
                 .finish();
 
         try {
             Zip4jReadBuilderCaster.cast(
-                    FileSystem.create("zip4j").read(zip))
+                    com.chua.common.support.file.FileSystem.create("zip4j").read(zip))
                     .password(WRONG_PASSWORD)
                     .listEntries();
-            System.err.println("  [FAIL] 应抛出异常但未抛");
+            log.info("  [FAIL] 应抛出异常但未抛");
             allPassed = false;
         } catch (Exception e) {
-            System.out.println("  [正确] 错误密码时读取失败: " + e.getClass().getSimpleName());
-            System.out.println("  [PASS]");
+            log.info("  [正确] 错误密码时读取失败: {}", e.getClass().getSimpleName());
+            log.info("  [PASS]");
         }
     }
 
-    /** 4. 提取加密 ZIP */
+    /**
+     * 4. 提取加密 ZIP
+     */
     void testExtractEncrypted() throws Exception {
-        System.out.println("\n===== 4. 提取加密 ZIP =====");
+        log.info("\n===== 4. 提取加密 ZIP =====");
         File zip = new File(workDir, "extract.zip");
         File extractDir = new File(workDir, "extracted");
         extractDir.mkdirs();
 
         Zip4jWriteBuilderCaster.cast(
-                FileSystem.create("zip4j").write(zip))
+                com.chua.common.support.file.FileSystem.create("zip4j").write(zip))
                 .password(PASSWORD)
                 .addBytes("doc.txt", "文档内容".getBytes(StandardCharsets.UTF_8))
                 .addBytes("sub/config.ini", "[app]\nname=test\n".getBytes(StandardCharsets.UTF_8))
                 .finish();
 
-        // 提取全部
         Zip4jReadBuilderCaster.cast(
-                FileSystem.create("zip4j").read(zip))
+                com.chua.common.support.file.FileSystem.create("zip4j").read(zip))
                 .password(PASSWORD)
                 .extractAll(extractDir);
 
@@ -158,53 +192,68 @@ public class Zip4jFileSystemExample {
         File config = new File(extractDir, "sub/config.ini");
         check(doc.exists(), "doc.txt 未提取");
         check(config.exists(), "sub/config.ini 未提取");
-        System.out.println("  [PASS]");
+        log.info("  [PASS]");
     }
 
-    /** 5. 多条条目写入 */
+    /**
+     * 5. 多条条目写入
+     */
     void testAddMultipleEntries() throws Exception {
-        System.out.println("\n===== 5. 多条条目写入 =====");
+        log.info("\n===== 5. 多条条目写入 =====");
         File zip = new File(workDir, "multi.zip");
         File sourceFile = new File(workDir, "source.txt");
         Files.write(sourceFile.toPath(), "来自文件的内容".getBytes(StandardCharsets.UTF_8));
 
         Zip4jWriteBuilderCaster.cast(
-                FileSystem.create("zip4j").write(zip))
+                com.chua.common.support.file.FileSystem.create("zip4j").write(zip))
                 .password(PASSWORD)
                 .addBytes("直接写入.txt", "直接写入的字节数据".getBytes(StandardCharsets.UTF_8))
                 .addFile("来自文件.txt", sourceFile)
                 .finish();
 
         List<String> entries = Zip4jReadBuilderCaster.cast(
-                FileSystem.create("zip4j").read(zip))
+                com.chua.common.support.file.FileSystem.create("zip4j").read(zip))
                 .password(PASSWORD)
                 .listEntries();
-        System.out.println("  [条目] " + entries);
+        log.info("  [条目] {}", entries);
         check(entries.size() == 2, "期望 2 个条目");
         check(entries.contains("直接写入.txt"), "缺少直接写入.txt");
         check(entries.contains("来自文件.txt"), "缺少来自文件.txt");
 
-        // 提取单个条目
         String content = Zip4jReadBuilderCaster.cast(
-                FileSystem.create("zip4j").read(zip))
+                com.chua.common.support.file.FileSystem.create("zip4j").read(zip))
                 .password(PASSWORD)
                 .readEntry("来自文件.txt");
         check("来自文件的内容".equals(content), "文件内容不匹配");
-        System.out.println("  [PASS]");
+        log.info("  [PASS]");
     }
 
-    void cleanUp() { deleteDir(workDir); }
+    void cleanUp() {
+        deleteDir(workDir);
+    }
 
     private void check(boolean condition, String msg) {
-        if (!condition) { System.err.println("  [FAIL] " + msg); allPassed = false; }
-        else { System.out.println("  [PASS]"); }
+        if (!condition) {
+            log.info("  [FAIL] {}", msg);
+            allPassed = false;
+        } else {
+            log.info("  [PASS]");
+        }
     }
 
     private static void deleteDir(File dir) {
-        if (dir == null || !dir.exists()) return;
+        if (dir == null || !dir.exists()) {
+            return;
+        }
         File[] files = dir.listFiles();
-        if (files != null) for (File f : files) {
-            if (f.isDirectory()) deleteDir(f); else f.delete();
+        if (files != null) {
+            for (File f : files) {
+                if (f.isDirectory()) {
+                    deleteDir(f);
+                } else {
+                    f.delete();
+                }
+            }
         }
         dir.delete();
     }

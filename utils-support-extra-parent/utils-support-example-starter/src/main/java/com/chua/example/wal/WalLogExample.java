@@ -17,10 +17,10 @@ import java.util.Optional;
 /**
  * WAL 综合示例 — 基于 common-support WAL，演示追加、回放、链式、分片、索引定位。
  *
- * &lt;p&gt;通过命令行参数指定实现类型：{@code --type simple|segment}，自检覆盖 WAL 全能力矩阵。&lt;/p&gt;
+ * <p>通过命令行参数指定实现类型：{@code --type simple|segment}，自检覆盖 WAL 全能力矩阵。</p>
  *
- * &lt;h2&gt;用法&lt;/h2&gt;
- * &lt;pre&gt;
+ * <h2>用法</h2>
+ * <pre>
  *   # 单文件 WAL 自检
  *   java WalLogExample --type simple --test
  *
@@ -32,14 +32,14 @@ import java.util.Optional;
  *
  *   # 打印帮助
  *   java WalLogExample --help
- * &lt;/pre&gt;
+ * </pre>
  *
- * &lt;h2&gt;实现类型与能力&lt;/h2&gt;
- * &lt;table border="1"&gt;
- *   &lt;tr&gt;&lt;th&gt;--type&lt;/th&gt;&lt;th&gt;实现类&lt;/th&gt;&lt;th&gt;append&lt;/th&gt;&lt;th&gt;replay&lt;/th&gt;&lt;th&gt;appendChain&lt;/th&gt;&lt;th&gt;findByLsn&lt;/th&gt;&lt;th&gt;分片&lt;/th&gt;&lt;/tr&gt;
- *   &lt;tr&gt;&lt;td&gt;simple&lt;/td&gt;&lt;td&gt;SimpleWalLog&lt;/td&gt;&lt;td&gt;✅&lt;/td&gt;&lt;td&gt;✅&lt;/td&gt;&lt;td&gt;✅&lt;/td&gt;&lt;td&gt;顺序扫描&lt;/td&gt;&lt;td&gt;❌&lt;/td&gt;&lt;/tr&gt;
- *   &lt;tr&gt;&lt;td&gt;segment&lt;/td&gt;&lt;td&gt;SegmentWalLog&lt;/td&gt;&lt;td&gt;✅&lt;/td&gt;&lt;td&gt;✅&lt;/td&gt;&lt;td&gt;✅&lt;/td&gt;&lt;td&gt;分片定位&lt;/td&gt;&lt;td&gt;✅&lt;/td&gt;&lt;/tr&gt;
- * &lt;/table&gt;
+ * <h2>实现类型与能力</h2>
+ * <table border="1">
+ *   <tr><th>--type</th><th>实现类</th><th>append</th><th>replay</th><th>appendChain</th><th>findByLsn</th><th>分片</th></tr>
+ *   <tr><td>simple</td><td>SimpleWalLog</td><td>✅</td><td>✅</td><td>✅</td><td>顺序扫描</td><td>❌</td></tr>
+ *   <tr><td>segment</td><td>SegmentWalLog</td><td>✅</td><td>✅</td><td>✅</td><td>分片定位</td><td>✅</td></tr>
+ * </table>
  *
  * @author CH
  * @since 4.0.0.42
@@ -47,12 +47,39 @@ import java.util.Optional;
 @Slf4j
 public class WalLogExample {
 
+    /**
+     * 默认 WAL 类型
+     */
     private static final String DEFAULT_TYPE = "segment";
+
+    /**
+     * SPI 类型：单文件 WAL
+     */
     private static final String TYPE_SIMPLE = "simple";
+
+    /**
+     * SPI 类型：分片 WAL
+     */
     private static final String TYPE_SEGMENT = "segment";
+
+    /**
+     * 自检写入记录数
+     */
     private static final int TEST_RECORD_COUNT = 50;
+
+    /**
+     * 分片大小阈值（字节）
+     */
     private static final long SMALL_SEGMENT_BYTES = 1024L;
+
+    /**
+     * 程序退出码：成功
+     */
     private static final int EXIT_CODE_SUCCESS = 0;
+
+    /**
+     * 程序退出码：失败
+     */
     private static final int EXIT_CODE_FAILURE = 1;
 
     public static void main(String[] args) {
@@ -408,16 +435,26 @@ public class WalLogExample {
     }
 
     private static void printHelp() {
-        System.out.println("WAL 综合示例 — 基于 common-support WAL");
-        System.out.println();
-        System.out.println("用法: java WalLogExample [选项]");
-        System.out.println();
-        System.out.println("选项:");
-        System.out.println("  --type, -t <key>    实现类型（默认: " + DEFAULT_TYPE + "，可选: " + TYPE_SIMPLE + " / " + TYPE_SEGMENT + " / all）");
-        System.out.println("  --test                 运行自检并退出");
-        System.out.println("  --help,  -h            显示此帮助");
+        log.info("WAL 综合示例 — 基于 common-support WAL");
+        log.info("");
+        log.info("用法: java WalLogExample [选项]");
+        log.info("");
+        log.info("选项:");
+        log.info("  --type, -t <key>    实现类型（默认: {}，可选: {} / {} / all）",
+                DEFAULT_TYPE, TYPE_SIMPLE, TYPE_SEGMENT);
+        log.info("  --test                 运行自检并退出");
+        log.info("  --help,  -h            显示此帮助");
     }
 
+    /**
+     * 命令行参数容器。
+     *
+     * @param type WAL 类型
+     * @param test 是否自检
+     * @param help 是否打印帮助
+     * @author CH
+     * @since 4.0.0.42
+     */
     private record Args(String type, boolean test, boolean help) {
         Args() {
             this(null, true, false);

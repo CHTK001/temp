@@ -174,6 +174,8 @@ public class SyslogPolledDirectoryExampleTest {
         r.run("closeStopsPolling", SyslogPolledDirectoryExampleTest::t8);
         r.run("unavailableService_upgradeIsNoop", SyslogPolledDirectoryExampleTest::t9);
         r.run("isDelegatedOperatingSystem_returnsFalse", SyslogPolledDirectoryExampleTest::t10);
+        r.run("concurrent_upgradeAndClose_safeAndConsistent", SyslogPolledDirectoryExampleTest::t11);
+        r.run("concurrent_addListenerAndUpgrade_noLostCallbacks", SyslogPolledDirectoryExampleTest::t12);
         r.summary();
         if (!r.failures.isEmpty()) {
             System.err.println("FAILURES:");
@@ -424,5 +426,83 @@ public class SyslogPolledDirectoryExampleTest {
     private static void t10() {
         SyslogPolledDirectory watcher = SyslogPolledDirectory.builder().build();
         assertEquals(false, watcher.isDelegatedOperatingSystem(), "应使用定时轮询而非 OS 事件");
+    }
+
+    /**
+     * 并发：一个线程持续 upgrade，另一个线程调用 close，最终 close 必须生效，
+     * 且不会触发任何后续 listener、cursor 必须被清空。
+     */
+    private static void t11() {
+        FakeProvider provider = new FakeProvider(
+                List.of("System"),
+                new ArrayList<>(List.of(entry("2026-08-03T00:00:01.000", LogLevel.INFO, "System", "old")))
+        );
+        SyslogPolledDirectory watcher = SyslogPolledDirectory.builder()
+                .pollIntervalSeconds(1)
+                .service(serviceWith(provider))
+                .build();
+        AtomicInteger count = new AtomicInteger();
+        watcher.addListener(listener((e, o) -> count.incrementAndGet()));
+
+        // 启动 cursor
+        watcher.upgrade();
+
+        try {
+            Thread upgradeThread = new Thread(() -> {
+                for (int i = 0; i < 500; i++) {
+                    watcher.upgrade();
+                }
+            }, "upgrader");
+            Thread closeThread = new Thread(watcher::close, "closer");
+            upgradeThread.start();
+            Thread.sleep(5);
+            closeThread.start();
+            upgradeThread.join();
+            closeThread.join();
+        } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+            throw new AssertionError("并发测试被中断: " + ie.getMessage());
+        }
+
+        assertEquals(null, watcher.getLastTimestamp(), "close 后游标必须为 null");
+        // close 后 listener 列表被清空，所以即便 upgrade 仍跑也无处触发
+        int afterClose = count.get();
+        provider.setSnapshot(List.of(entry("2026-08-03T00:00:99.000", LogLevel.INFO, "System", "new")));
+        for (int i = 0; i < 10; i++) {
+            watcher.upgrade();
+        }
+        assertEquals(afterClose, count.get(), "close 后不应再分发任何事件");
+    }
+
+    /**
+     * 并发：upgrade 在跑时 addListener 持续注册新 listener，每个 listener 都应被通知到。
+     * 由于 listeners 是 CopyOnWriteArrayList，遍历快照保证一致性。
+     */
+    private static void t12() {
+        FakeProvider provider = new FakeProvider(
+                List.of("System"),
+                new ArrayList<>(List.of(entry("2026-08-03T00:00:01.000", LogLevel.INFO, "System", "old")))
+        );
+        SyslogPolledDirectory watcher = SyslogPolledDirectory.builder()
+                .pollIntervalSeconds(1)
+                .service(serviceWith(provider))
+                .build();
+        watcher.upgrade();
+
+        List<String> seen = Collections.synchronizedList(new ArrayList<>());
+        for (int i = 0; i < 50; i++) {
+            final int idx = i;
+            watcher.addListener(listener((e, o) -> seen.add("L" + idx + ":" + ((LogEntry) o.getSource()).message())));
+            String ts = String.format("2026-08-03T00:00:%02d.000", i + 2);
+            provider.setSnapshot(List.of(entry(ts, LogLevel.INFO, "System", "msg-" + i)));
+            watcher.upgrade();
+        }
+
+        assertTrue(seen.size() > 0, "至少应有一次回调被分发, seen=" + seen.size());
+        for (int i = 0; i < 50; i++) {
+            String msg = "msg-" + i;
+            assertTrue(seen.stream().anyMatch(s -> s.endsWith(":" + msg)),
+                    "消息 " + msg + " 应至少被某个 listener 收到");
+        }
     }
 }

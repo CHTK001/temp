@@ -172,6 +172,9 @@ public class WindowsEventLogProviderExampleTest {
         r.run("noMessageFallback", WindowsEventLogProviderExampleTest::t7);
         r.run("truncatedRecordStopsParsing", WindowsEventLogProviderExampleTest::t8);
         r.run("emptyBufferReturnsNothing", WindowsEventLogProviderExampleTest::t9);
+        r.run("corruptLengthZeroStopsLoop", WindowsEventLogProviderExampleTest::t10);
+        r.run("corruptLengthOverflowsStopsLoop", WindowsEventLogProviderExampleTest::t11);
+        r.run("remainingLimitStopsParsing", WindowsEventLogProviderExampleTest::t12);
         r.summary();
         if (!r.failures.isEmpty()) {
             System.err.println("FAILURES:");
@@ -331,5 +334,59 @@ public class WindowsEventLogProviderExampleTest {
                     null, null, 100, out);
             assertEquals(0, out.size(), "空 buffer 返回 0 条");
         }
+    }
+
+    /**
+     * length=0 的损坏记录应停止解析，不抛异常。
+     */
+    private static void t10() {
+        byte[] rec1 = buildRecord(4, 1700000600L, "good");
+        byte[] rec2 = buildRecord(4, 1700000601L, "after-zero");
+        // 强制把 rec2 的 length 字段清零
+        byte[] zeroLen = rec2.clone();
+        writeInt(zeroLen, 0, 0);
+        MemorySegment buf = wrap(rec1, zeroLen);
+        List<LogEntry> out = new ArrayList<>();
+        int total = rec1.length + zeroLen.length;
+        WindowsEventLogProvider.parseEventLogRecords(buf, total, "System",
+                null, null, 100, out);
+
+        assertEquals(1, out.size(), "length=0 应停止解析");
+        assertEquals("good", out.get(0).message(), "应保留 length=0 之前的记录");
+    }
+
+    /**
+     * length 超出 buffer 剩余空间应停止解析（不读越界、不抛异常）。
+     */
+    private static void t11() {
+        byte[] rec1 = buildRecord(4, 1700000700L, "good");
+        // 篡改 rec1 的 length 字段为巨大值
+        byte[] badLen = rec1.clone();
+        writeInt(badLen, 0, 0x7FFFFFFF);
+        MemorySegment buf = wrap(badLen);
+        List<LogEntry> out = new ArrayList<>();
+        WindowsEventLogProvider.parseEventLogRecords(buf, badLen.length, "System",
+                null, null, 100, out);
+
+        assertEquals(0, out.size(), "length 越界应放弃解析");
+    }
+
+    /**
+     * remaining 限制：到达上限后停止解析，不再读后续 record。
+     */
+    private static void t12() {
+        byte[] r1 = buildRecord(4, 1700000800L, "first");
+        byte[] r2 = buildRecord(4, 1700000801L, "second");
+        byte[] r3 = buildRecord(4, 1700000802L, "third");
+        MemorySegment buf = wrap(r1, r2, r3);
+        List<LogEntry> out = new ArrayList<>();
+        int total = r1.length + r2.length + r3.length;
+        // 只允许解析 2 条
+        WindowsEventLogProvider.parseEventLogRecords(buf, total, "System",
+                null, null, 2, out);
+
+        assertEquals(2, out.size(), "应只解析 2 条");
+        assertEquals("first", out.get(0).message(), "顺序正确");
+        assertEquals("second", out.get(1).message(), "顺序正确");
     }
 }

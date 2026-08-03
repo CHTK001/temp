@@ -1,11 +1,15 @@
 package com.chua.example.file;
 
 import com.chua.common.support.file.FileSystem;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.nio.file.Files;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * IniFileSystem 独立完整测试示例。
@@ -26,36 +30,60 @@ import java.util.*;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public class IniFileSystemExample {
 
+    /**
+     * 程序退出码：成功
+     */
+    private static final int EXIT_CODE_SUCCESS = 0;
+
+    /**
+     * 程序退出码：失败
+     */
+    private static final int EXIT_CODE_FAILURE = 1;
+
+    /**
+     * 临时工作目录
+     */
     private File workDir;
+
+    /**
+     * 全部测试是否通过
+     */
     private boolean allPassed = true;
 
     public static void main(String[] args) throws Exception {
         IniFileSystemExample example = new IniFileSystemExample();
-        example.setUp();
-        example.testWriteAndReadNested();
-        example.testWriteRowList();
-        example.testReadSections();
-        example.testFilter();
-        example.testMapRows();
-        example.testReadSection();
-        example.cleanUp();
+        boolean passed = example.runTest();
+        System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+    }
 
-        System.out.println("\n========================================");
-        System.out.println("[IniFileSystemExample] 全部测试 "
-                + (example.allPassed ? "✅ PASS" : "❌ FAIL"));
-        System.exit(example.allPassed ? 0 : 1);
+    public boolean runTest() throws Exception {
+        setUp();
+        testWriteAndReadNested();
+        testWriteRowList();
+        testReadSections();
+        testFilter();
+        testMapRows();
+        testReadSection();
+        cleanUp();
+
+        log.info("========================================");
+        log.info("[IniFileSystemExample] 全部测试 {}", allPassed ? "✅ PASS" : "❌ FAIL");
+        return allPassed;
     }
 
     void setUp() throws Exception {
         workDir = Files.createTempDirectory("ini-example-").toFile();
-        System.out.println("[INI] 工作目录: " + workDir);
+        log.info("[INI] 工作目录: {}", workDir);
     }
 
-    /** 1. 写入嵌套 Map → 读取验证 */
+    /**
+     * 1. 写入嵌套 Map → 读取验证
+     */
     void testWriteAndReadNested() throws Exception {
-        System.out.println("\n===== 1. 写入嵌套 Map + 读取 =====");
+        log.info("\n===== 1. 写入嵌套 Map + 读取 =====");
         File ini = new File(workDir, "config.ini");
 
         Map<String, Object> database = new LinkedHashMap<>();
@@ -74,17 +102,19 @@ public class IniFileSystemExample {
         FileSystem.create("ini").write(ini).write(data).finish();
 
         String content = new String(Files.readAllBytes(ini.toPath()), StandardCharsets.UTF_8);
-        System.out.println("  [写入内容]\n" + content);
+        log.info("  [写入内容]\n{}", content);
 
         Map<String, Object> loaded = FileSystem.create("ini").read(ini).toMap();
-        System.out.println("  [toMap] " + loaded);
+        log.info("  [toMap] {}", loaded);
         check(loaded.containsKey("database"), "缺少 [database]");
         check(loaded.containsKey("logging"), "缺少 [logging]");
     }
 
-    /** 2. 写入行列表格式（含 __section__） */
+    /**
+     * 2. 写入行列表格式（含 __section__）
+     */
     void testWriteRowList() throws Exception {
-        System.out.println("\n===== 2. 写入行列表格式 =====");
+        log.info("\n===== 2. 写入行列表格式 =====");
         File ini = new File(workDir, "rows.ini");
 
         List<Map<String, Object>> rows = List.of(
@@ -95,17 +125,19 @@ public class IniFileSystemExample {
         FileSystem.create("ini").write(ini).write(rows).finish();
 
         String content = new String(Files.readAllBytes(ini.toPath()), StandardCharsets.UTF_8);
-        System.out.println("  [内容]\n" + content);
+        log.info("  [内容]\n{}", content);
 
         List<Map<String, Object>> loaded = FileSystem.create("ini").read(ini).rows();
-        System.out.println("  [rows] " + loaded.size() + " 行");
-        loaded.forEach(row -> System.out.println("    " + row));
+        log.info("  [rows] {} 行", loaded.size());
+        loaded.forEach(row -> log.info("    {}", row));
         check(loaded.size() == 2, "期望 2 行");
     }
 
-    /** 3. 读取所有 Section 名称 */
+    /**
+     * 3. 读取所有 Section 名称
+     */
     void testReadSections() throws Exception {
-        System.out.println("\n===== 3. 读取 Section 名称 =====");
+        log.info("\n===== 3. 读取 Section 名称 =====");
         File ini = new File(workDir, "sections.ini");
         FileSystem.create("ini").write(ini).write(Map.of(
                 "section1", Map.of("key1", "val1"),
@@ -114,14 +146,16 @@ public class IniFileSystemExample {
         )).finish();
 
         Set<String> sections = FileSystem.create("ini").read(ini).sections();
-        System.out.println("  [sections] " + sections);
+        log.info("  [sections] {}", sections);
         check(sections.size() == 3, "期望 3 个 section");
         check(sections.contains("section1"), "缺少 section1");
     }
 
-    /** 4. 行过滤 */
+    /**
+     * 4. 行过滤
+     */
     void testFilter() throws Exception {
-        System.out.println("\n===== 4. 行过滤 =====");
+        log.info("\n===== 4. 行过滤 =====");
         File ini = new File(workDir, "filter.ini");
         FileSystem.create("ini").write(ini).write(List.of(
                 Map.of("__section__", "dev", "env", "development"),
@@ -133,14 +167,16 @@ public class IniFileSystemExample {
                 .filter(row -> !"production".equals(row.get("env")))
                 .rows();
 
-        System.out.println("  [过滤后] " + rows.size() + " 行");
-        rows.forEach(row -> System.out.println("    " + row));
+        log.info("  [过滤后] {} 行", rows.size());
+        rows.forEach(row -> log.info("    {}", row));
         check(rows.size() == 2, "期望 2 行");
     }
 
-    /** 5. 行数据转换 */
+    /**
+     * 5. 行数据转换
+     */
     void testMapRows() throws Exception {
-        System.out.println("\n===== 5. 行数据转换 =====");
+        log.info("\n===== 5. 行数据转换 =====");
         File ini = new File(workDir, "maprows.ini");
         FileSystem.create("ini").write(ini).write(List.of(
                 Map.of("__section__", "db1", "size", "100"),
@@ -155,14 +191,16 @@ public class IniFileSystemExample {
                 })
                 .rows();
 
-        System.out.println("  [mapRows] " + rows.size() + " 行");
-        rows.forEach(row -> System.out.println("    " + row));
+        log.info("  [mapRows] {} 行", rows.size());
+        rows.forEach(row -> log.info("    {}", row));
         check(!rows.isEmpty() && rows.get(0).containsKey("size_kb"), "缺少 size_kb");
     }
 
-    /** 6. 读取指定 Section */
+    /**
+     * 6. 读取指定 Section
+     */
     void testReadSection() throws Exception {
-        System.out.println("\n===== 6. 读取指定 Section =====");
+        log.info("\n===== 6. 读取指定 Section =====");
         File ini = new File(workDir, "section-read.ini");
         FileSystem.create("ini").write(ini).write(Map.of(
                 "server", Map.of("host", "localhost", "port", "8080"),
@@ -170,23 +208,37 @@ public class IniFileSystemExample {
         )).finish();
 
         Map<String, String> server = FileSystem.create("ini").read(ini).section("server");
-        System.out.println("  [section server] " + server);
+        log.info("  [section server] {}", server);
         check("localhost".equals(server.get("host")), "host 不匹配");
         check("8080".equals(server.get("port")), "port 不匹配");
     }
 
-    void cleanUp() { deleteDir(workDir); }
+    void cleanUp() {
+        deleteDir(workDir);
+    }
 
     private void check(boolean condition, String msg) {
-        if (!condition) { System.err.println("  [FAIL] " + msg); allPassed = false; }
-        else { System.out.println("  [PASS]"); }
+        if (!condition) {
+            log.info("  [FAIL] {}", msg);
+            allPassed = false;
+        } else {
+            log.info("  [PASS]");
+        }
     }
 
     private static void deleteDir(File dir) {
-        if (dir == null || !dir.exists()) return;
+        if (dir == null || !dir.exists()) {
+            return;
+        }
         File[] files = dir.listFiles();
-        if (files != null) for (File f : files) {
-            if (f.isDirectory()) deleteDir(f); else f.delete();
+        if (files != null) {
+            for (File f : files) {
+                if (f.isDirectory()) {
+                    deleteDir(f);
+                } else {
+                    f.delete();
+                }
+            }
         }
         dir.delete();
     }

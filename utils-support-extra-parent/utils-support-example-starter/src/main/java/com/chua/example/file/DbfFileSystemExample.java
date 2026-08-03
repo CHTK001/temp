@@ -1,10 +1,14 @@
 package com.chua.example.file;
 
 import com.chua.common.support.file.FileSystem;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * DBF (dBASE) 文件系统独立完整测试示例。
@@ -26,8 +30,12 @@ import java.util.*;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public class DbfFileSystemExample {
 
+    /**
+     * 测试数据
+     */
     private static final List<Map<String, Object>> TEST_DATA = List.of(
             Map.of("code", "A001", "name", "原料甲", "qty", 100, "price", 12.5),
             Map.of("code", "A002", "name", "原料乙", "qty", 200, "price", 8.0),
@@ -35,46 +43,67 @@ public class DbfFileSystemExample {
             Map.of("code", "A004", "name", "原料丁", "qty", 0, "price", 15.5)
     );
 
+    /**
+     * 程序退出码：成功
+     */
+    private static final int EXIT_CODE_SUCCESS = 0;
+
+    /**
+     * 程序退出码：失败
+     */
+    private static final int EXIT_CODE_FAILURE = 1;
+
+    /**
+     * 临时工作目录
+     */
     private File workDir;
+
+    /**
+     * 全部测试是否通过
+     */
     private boolean allPassed = true;
 
     public static void main(String[] args) throws Exception {
         DbfFileSystemExample example = new DbfFileSystemExample();
-        example.setUp();
-        System.out.println("\n===== 注意 =====\nDBF 字段名最长 10 字符，自动截断。");
+        boolean passed = example.runTest();
+        System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+    }
 
-        example.testWriteAndRead();
-        example.testFilter();
-        example.testMapRows();
-        example.testPojoWrite();
-        example.testWriteFilter();
-        example.cleanUp();
+    public boolean runTest() throws Exception {
+        setUp();
+        log.info("\n===== 注意 =====\nDBF 字段名最长 10 字符，自动截断。");
 
-        System.out.println("\n========================================");
-        System.out.println("[DbfFileSystemExample] 全部测试 "
-                + (example.allPassed ? "✅ PASS" : "❌ FAIL"));
-        System.exit(example.allPassed ? 0 : 1);
+        testWriteAndRead();
+        testFilter();
+        testMapRows();
+        testPojoWrite();
+        testWriteFilter();
+        cleanUp();
+
+        log.info("========================================");
+        log.info("[DbfFileSystemExample] 全部测试 {}", allPassed ? "✅ PASS" : "❌ FAIL");
+        return allPassed;
     }
 
     void setUp() throws Exception {
         workDir = Files.createTempDirectory("dbf-example-").toFile();
-        System.out.println("[DBF] 工作目录: " + workDir);
+        log.info("[DBF] 工作目录: {}", workDir);
     }
 
     void testWriteAndRead() throws Exception {
-        System.out.println("\n===== 1. 基础写入 + 读取 =====");
+        log.info("\n===== 1. 基础写入 + 读取 =====");
         File dbf = new File(workDir, "materials.dbf");
         FileSystem.create("dbf").write(dbf).write(TEST_DATA).finish();
-        System.out.println("  [写入] " + dbf.length() + " bytes");
+        log.info("  [写入] {} bytes", dbf.length());
 
         List<Map<String, Object>> rows = FileSystem.create("dbf").read(dbf).rows();
-        System.out.println("  [读取] " + rows.size() + " 行");
-        rows.forEach(row -> System.out.println("    " + row));
+        log.info("  [读取] {} 行", rows.size());
+        rows.forEach(row -> log.info("    {}", row));
         check(rows.size() == TEST_DATA.size(), "行数不匹配");
     }
 
     void testFilter() throws Exception {
-        System.out.println("\n===== 2. 行过滤 (qty>0) =====");
+        log.info("\n===== 2. 行过滤 (qty>0) =====");
         File dbf = new File(workDir, "filter.dbf");
         FileSystem.create("dbf").write(dbf).write(TEST_DATA).finish();
 
@@ -82,12 +111,12 @@ public class DbfFileSystemExample {
                 .filter(row -> ((Number) row.get("qty")).intValue() > 0)
                 .rows();
 
-        rows.forEach(row -> System.out.println("    " + row.get("name") + " qty=" + row.get("qty")));
+        rows.forEach(row -> log.info("    {} qty={}", row.get("name"), row.get("qty")));
         check(rows.size() == 3, "期望 3 行");
     }
 
     void testMapRows() throws Exception {
-        System.out.println("\n===== 3. 行数据转换 =====");
+        log.info("\n===== 3. 行数据转换 =====");
         File dbf = new File(workDir, "maprows.dbf");
         FileSystem.create("dbf").write(dbf).write(TEST_DATA).finish();
 
@@ -100,12 +129,12 @@ public class DbfFileSystemExample {
                 })
                 .rows();
 
-        rows.forEach(row -> System.out.println("    " + row.get("name") + " status=" + row.get("status")));
+        rows.forEach(row -> log.info("    {} status={}", row.get("name"), row.get("status")));
         check(!rows.isEmpty() && rows.get(0).containsKey("status"), "缺少 status");
     }
 
     void testPojoWrite() throws Exception {
-        System.out.println("\n===== 4. POJO 写入 =====");
+        log.info("\n===== 4. POJO 写入 =====");
         File dbf = new File(workDir, "pojo.dbf");
         List<Material> materials = List.of(
                 new Material("B001", "钢材", 500, 3.5),
@@ -114,13 +143,13 @@ public class DbfFileSystemExample {
         FileSystem.create("dbf").write(dbf).write(materials).finish();
 
         List<Map<String, Object>> rows = FileSystem.create("dbf").read(dbf).rows();
-        System.out.println("  [POJO] " + rows.size() + " 行");
-        rows.forEach(row -> System.out.println("    " + row));
+        log.info("  [POJO] {} 行", rows.size());
+        rows.forEach(row -> log.info("    {}", row));
         check(rows.size() == materials.size(), "行数不匹配");
     }
 
     void testWriteFilter() throws Exception {
-        System.out.println("\n===== 5. 写入行过滤 (qty>=100) =====");
+        log.info("\n===== 5. 写入行过滤 (qty>=100) =====");
         File dbf = new File(workDir, "write-filter.dbf");
         FileSystem.create("dbf").write(dbf)
                 .filter(row -> ((Number) row.get("qty")).intValue() >= 100)
@@ -128,42 +157,81 @@ public class DbfFileSystemExample {
                 .finish();
 
         List<Map<String, Object>> rows = FileSystem.create("dbf").read(dbf).rows();
-        System.out.println("  [写过滤] " + rows.size() + " 行");
+        log.info("  [写过滤] {} 行", rows.size());
         check(rows.size() == 2, "期望 2 行");
     }
 
-    void cleanUp() { deleteDir(workDir); }
+    void cleanUp() {
+        deleteDir(workDir);
+    }
 
     private void check(boolean condition, String msg) {
-        if (!condition) { System.err.println("  [FAIL] " + msg); allPassed = false; }
-        else { System.out.println("  [PASS]"); }
+        if (!condition) {
+            log.info("  [FAIL] {}", msg);
+            allPassed = false;
+        } else {
+            log.info("  [PASS]");
+        }
     }
 
     private static void deleteDir(File dir) {
-        if (dir == null || !dir.exists()) return;
+        if (dir == null || !dir.exists()) {
+            return;
+        }
         File[] files = dir.listFiles();
-        if (files != null) for (File f : files) {
-            if (f.isDirectory()) deleteDir(f); else f.delete();
+        if (files != null) {
+            for (File f : files) {
+                if (f.isDirectory()) {
+                    deleteDir(f);
+                } else {
+                    f.delete();
+                }
+            }
         }
         dir.delete();
     }
 
+    /**
+     * 测试物料实体。
+     *
+     * @author CH
+     * @since 4.0.0.42
+     */
+    @Data
     public static class Material {
+        /**
+         * 编码
+         */
         private String code;
+
+        /**
+         * 名称
+         */
         private String name;
+
+        /**
+         * 数量
+         */
         private int qty;
+
+        /**
+         * 单价
+         */
         private double price;
-        public Material() {}
+
+        /**
+         * 全参构造。
+         *
+         * @param code  编码
+         * @param name  名称
+         * @param qty   数量
+         * @param price 单价
+         */
         public Material(String code, String name, int qty, double price) {
-            this.code = code; this.name = name; this.qty = qty; this.price = price;
+            this.code = code;
+            this.name = name;
+            this.qty = qty;
+            this.price = price;
         }
-        public String getCode() { return code; }
-        public void setCode(String code) { this.code = code; }
-        public String getName() { return name; }
-        public void setName(String name) { this.name = name; }
-        public int getQty() { return qty; }
-        public void setQty(int qty) { this.qty = qty; }
-        public double getPrice() { return price; }
-        public void setPrice(double price) { this.price = price; }
     }
 }

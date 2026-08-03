@@ -1,10 +1,15 @@
 package com.chua.example.file;
 
 import com.chua.common.support.file.FileSystem;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * YamlFileSystem 独立完整测试示例。
@@ -23,32 +28,54 @@ import java.util.*;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public class YamlFileSystemExample {
 
+    /**
+     * 程序退出码：成功
+     */
+    private static final int EXIT_CODE_SUCCESS = 0;
+
+    /**
+     * 程序退出码：失败
+     */
+    private static final int EXIT_CODE_FAILURE = 1;
+
+    /**
+     * 临时工作目录
+     */
     private File workDir;
+
+    /**
+     * 全部测试是否通过
+     */
     private boolean allPassed = true;
 
     public static void main(String[] args) throws Exception {
         YamlFileSystemExample example = new YamlFileSystemExample();
-        example.setUp();
-        example.testWriteAndRead();
-        example.testWritePojo();
-        example.testReadWithSection();
-        example.cleanUp();
+        boolean passed = example.runTest();
+        System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+    }
 
-        System.out.println("\n========================================");
-        System.out.println("[YamlFileSystemExample] 全部测试 "
-                + (example.allPassed ? "✅ PASS" : "❌ FAIL"));
-        System.exit(example.allPassed ? 0 : 1);
+    public boolean runTest() throws Exception {
+        setUp();
+        testWriteAndRead();
+        testWritePojo();
+        testReadWithSection();
+        cleanUp();
+
+        log.info("========================================");
+        log.info("[YamlFileSystemExample] 全部测试 {}", allPassed ? "✅ PASS" : "❌ FAIL");
+        return allPassed;
     }
 
     void setUp() throws Exception {
         workDir = Files.createTempDirectory("yaml-example-").toFile();
-        System.out.println("[YAML] 工作目录: " + workDir);
+        log.info("[YAML] 工作目录: {}", workDir);
     }
 
     void testWriteAndRead() throws Exception {
-        System.out.println("\n===== 1. 写入 + 读取 Map =====");
+        log.info("\n===== 1. 写入 + 读取 Map =====");
         File yml = new File(workDir, "config.yml");
 
         Map<String, Object> data = new LinkedHashMap<>();
@@ -63,33 +90,33 @@ public class YamlFileSystemExample {
 
         FileSystem.create("yaml").write(yml).write(data);
 
-        System.out.println("  [写入] " + yml.length() + " bytes");
+        log.info("  [写入] {} bytes", yml.length());
         String content = new String(Files.readAllBytes(yml.toPath()));
-        System.out.println("  [内容]\n" + content);
+        log.info("  [内容]\n{}", content);
 
         Map<String, Object> loaded = FileSystem.create("yaml").read(yml).toMap();
-        System.out.println("  [读取] name=" + loaded.get("name") + ", age=" + loaded.get("age"));
+        log.info("  [读取] name={}, age={}", loaded.get("name"), loaded.get("age"));
 
         check("张三".equals(loaded.get("name")), "name 不匹配");
     }
 
     void testWritePojo() throws Exception {
-        System.out.println("\n===== 2. 写入 POJO =====");
+        log.info("\n===== 2. 写入 POJO =====");
         File yml = new File(workDir, "pojo.yml");
 
         Config config = new Config("MyApp", 1.0, Arrays.asList("dev", "prod"));
         FileSystem.create("yaml").write(yml).write(config);
 
         String content = new String(Files.readAllBytes(yml.toPath()));
-        System.out.println("  [POJO 内容]\n" + content);
+        log.info("  [POJO 内容]\n{}", content);
 
         Map<String, Object> loaded = FileSystem.create("yaml").read(yml).toMap();
-        System.out.println("  [读取] " + loaded);
+        log.info("  [读取] {}", loaded);
         check(loaded.containsKey("name") && loaded.containsKey("version"), "缺少字段");
     }
 
     void testReadWithSection() throws Exception {
-        System.out.println("\n===== 3. 带层级结构 =====");
+        log.info("\n===== 3. 带层级结构 =====");
         File yml = new File(workDir, "app.yml");
 
         Map<String, Object> app = new LinkedHashMap<>();
@@ -104,42 +131,64 @@ public class YamlFileSystemExample {
         FileSystem.create("yaml").write(yml).write(app);
 
         String content = new String(Files.readAllBytes(yml.toPath()));
-        System.out.println("  [层级内容]\n" + content);
+        log.info("  [层级内容]\n{}", content);
 
         Map<String, Object> loaded = FileSystem.create("yaml").read(yml).toMap();
         check(loaded.containsKey("database"), "缺少 database");
-        System.out.println("  [PASS]");
+        log.info("  [PASS]");
     }
 
-    void cleanUp() { deleteDir(workDir); }
+    void cleanUp() {
+        deleteDir(workDir);
+    }
 
     private void check(boolean condition, String msg) {
-        if (!condition) { System.err.println("  [FAIL] " + msg); allPassed = false; }
-        else { System.out.println("  [PASS]"); }
+        if (!condition) {
+            log.info("  [FAIL] {}", msg);
+            allPassed = false;
+        } else {
+            log.info("  [PASS]");
+        }
     }
 
     private static void deleteDir(File dir) {
-        if (dir == null || !dir.exists()) return;
+        if (dir == null || !dir.exists()) {
+            return;
+        }
         File[] files = dir.listFiles();
-        if (files != null) for (File f : files) {
-            if (f.isDirectory()) deleteDir(f); else f.delete();
+        if (files != null) {
+            for (File f : files) {
+                if (f.isDirectory()) {
+                    deleteDir(f);
+                } else {
+                    f.delete();
+                }
+            }
         }
         dir.delete();
     }
 
+    /**
+     * 测试配置实体。
+     *
+     * @author CH
+     * @since 4.0.0.42
+     */
+    @Data
     public static class Config {
+        /**
+         * 应用名称
+         */
         private String name;
+
+        /**
+         * 版本号
+         */
         private double version;
+
+        /**
+         * 启用的 profiles
+         */
         private List<String> profiles;
-        public Config() {}
-        public Config(String name, double version, List<String> profiles) {
-            this.name = name; this.version = version; this.profiles = profiles;
-        }
-        public String getName() { return name; }
-        public void setName(String name) { this.name = name; }
-        public double getVersion() { return version; }
-        public void setVersion(double version) { this.version = version; }
-        public List<String> getProfiles() { return profiles; }
-        public void setProfiles(List<String> profiles) { this.profiles = profiles; }
     }
 }
