@@ -58,7 +58,7 @@ public class WindowsEventLogProviderExampleTest {
      * @param messageUtf16 字符串（已 UTF-16 LE 编码）
      * @return MemorySegment + bytesRead
      */
-    private static byte[] buildRecord(short eventType, long epochSec, String message) {
+    private static byte[] buildRecord(int eventType, long epochSec, String message) {
         byte[] msgBytes = message.getBytes(StandardCharsets.UTF_16LE);
         int msgLen = msgBytes.length;
         // header(56) + 双 null 终止符(4)
@@ -72,10 +72,10 @@ public class WindowsEventLogProviderExampleTest {
         writeInt(rec, 12, (int) (epochSec & 0xFFFFFFFFL));// TimeGenerated
         writeInt(rec, 16, (int) (epochSec & 0xFFFFFFFFL));// TimeWritten
         writeInt(rec, 20, 1000);                          // EventID
-        writeShort(rec, 24, eventType);                   // EventType
-        writeShort(rec, 26, 1);                           // NumStrings
-        writeShort(rec, 28, 0);                           // EventCategory
-        writeShort(rec, 30, 0);                           // ReservedFlags
+        writeShort(rec, 24, (short) eventType);           // EventType
+        writeShort(rec, 26, (short) 1);                  // NumStrings
+        writeShort(rec, 28, (short) 0);                  // EventCategory
+        writeShort(rec, 30, (short) 0);                  // ReservedFlags
         writeInt(rec, 32, 1);                             // ClosingRecordNumber
         writeInt(rec, 36, 56);                            // StringOffset = header size
         writeInt(rec, 40, 0);                             // UserSidLength
