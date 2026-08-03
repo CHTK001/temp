@@ -25,10 +25,34 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SmbClientExample {
 
+    /**
+     * 程序退出码：成功
+     */
+    private static final int EXIT_CODE_SUCCESS = 0;
+
+    /**
+     * 程序退出码：失败
+     */
+    private static final int EXIT_CODE_FAILURE = 1;
+
+    /**
+     * 默认 SMB 目标 URL（系统属性 smb.url 可覆盖）
+     */
+    private static final String DEFAULT_SMB_URL = "smb://" + System.getProperty("user.name", "guest")
+            + "@127.0.0.1:445/C$";
+
+    /**
+     * 默认根目录路径
+     */
+    private static final String ROOT_PATH = "/";
+
+    /**
+     * 列表最大展示条目数
+     */
+    private static final int MAX_SHOW_FILES = 15;
+
     public static void main(String[] args) {
-        String smbUrl = System.getProperty("smb.url",
-                "smb://" + System.getProperty("user.name", "guest")
-                        + "@127.0.0.1:445/C$");
+        String smbUrl = System.getProperty("smb.url", DEFAULT_SMB_URL);
 
         log.info("========== SMB 客户端示例 ==========");
         log.info("目标: {}", smbUrl);
@@ -48,7 +72,7 @@ public class SmbClientExample {
             log.info("  - Linux:   可启动 SmbServerExample 服务端");
             log.info("  - 配置:    -Dsmb.url=smb://user:pass@host:port/share");
             log.info("----------------------------------------");
-            System.exit(1);
+            System.exit(EXIT_CODE_FAILURE);
         }
 
         try {
@@ -63,9 +87,9 @@ public class SmbClientExample {
             log.info("    ✅ openShare() 成功");
 
             // 列目录
-            java.util.List<SmbClient.SmbFileEntry> files = client.listFiles("/");
+            java.util.List<SmbClient.SmbFileEntry> files = client.listFiles(ROOT_PATH);
             log.info(">>> 根目录: {} 项", files.size());
-            int maxShow = 15;
+            int maxShow = MAX_SHOW_FILES;
             int count = 0;
             for (SmbClient.SmbFileEntry f : files) {
                 if (count++ >= maxShow) {

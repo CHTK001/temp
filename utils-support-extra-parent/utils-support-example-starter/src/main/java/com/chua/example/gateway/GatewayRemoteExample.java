@@ -371,25 +371,25 @@ public class GatewayRemoteExample {
      */
     private static void printAccessInfo(GatewayProperties props) {
         String localIp = getLocalIp();
-        System.out.println();
-        System.out.println("============================================");
-        System.out.println("  Gateway 远程控制服务已启动");
-        System.out.println("============================================");
-        System.out.println();
-        System.out.println("  访问地址:");
-        System.out.println("    管理 API:    http://" + localIp + ":" + props.getHttpManagementPort() + "/health");
-        System.out.println("    HTTP API:    http://" + localIp + ":" + props.getHttpApiPort() + "/health");
-        System.out.println("    WebSocket:   ws://" + localIp + ":" + props.getWsApiGatewayPort());
-        System.out.println("    远程控制:    ws://" + localIp + ":" + props.getDwsRemoteControlPort());
-        System.out.println("    SOCKS5:      " + localIp + ":" + props.getSocks5GatewayPort());
-        System.out.println("    TCP Agent:   " + localIp + ":" + props.getTcpAgentPort());
-        System.out.println("    TCP Control: " + localIp + ":" + props.getTcpControlPort());
-        System.out.println();
-        System.out.println("  测试命令:");
-        System.out.println("    curl http://" + localIp + ":" + props.getHttpManagementPort() + "/health");
-        System.out.println("    curl http://" + localIp + ":" + props.getHttpApiPort() + "/api/agents");
-        System.out.println("============================================");
-        System.out.println();
+        log.info("");
+        log.info("============================================");
+        log.info("  Gateway 远程控制服务已启动");
+        log.info("============================================");
+        log.info("");
+        log.info("  访问地址:");
+        log.info("    管理 API:    http://{}:{}/health", localIp, props.getHttpManagementPort());
+        log.info("    HTTP API:    http://{}:{}/health", localIp, props.getHttpApiPort());
+        log.info("    WebSocket:   ws://{}:{}", localIp, props.getWsApiGatewayPort());
+        log.info("    远程控制:    ws://{}:{}", localIp, props.getDwsRemoteControlPort());
+        log.info("    SOCKS5:      {}:{}", localIp, props.getSocks5GatewayPort());
+        log.info("    TCP Agent:   {}:{}", localIp, props.getTcpAgentPort());
+        log.info("    TCP Control: {}:{}", localIp, props.getTcpControlPort());
+        log.info("");
+        log.info("  测试命令:");
+        log.info("    curl http://{}:{}/health", localIp, props.getHttpManagementPort());
+        log.info("    curl http://{}:{}/api/agents", localIp, props.getHttpApiPort());
+        log.info("============================================");
+        log.info("");
     }
 
     /**
@@ -466,7 +466,7 @@ public class GatewayRemoteExample {
                     }
                 }
                 case "--help", "-h" -> result = result.withHelp(true);
-                default -> System.err.println("[WARN] 未知参数: " + arg);
+                default -> log.warn("[WARN] 未知参数: {}", arg);
             }
             index++;
         }
@@ -477,25 +477,25 @@ public class GatewayRemoteExample {
      * 打印帮助信息。
      */
     private static void printHelp() {
-        System.out.println("GatewayRemoteExample — 本地启动网关 + 远程部署被控端");
-        System.out.println();
-        System.out.println("用法: java GatewayRemoteExample [选项]");
-        System.out.println();
-        System.out.println("选项:");
-        System.out.println("  --remote-host     <host>     远程主机地址（默认: 172.16.9.194）");
-        System.out.println("  --remote-port     <port>     WinRM 端口（默认: 5985）");
-        System.out.println("  --remote-username <user>     远程用户名（默认: Administrator）");
-        System.out.println("  --remote-password <pass>     远程密码（必填）");
-        System.out.println("  --remote-work-dir <dir>      远程工作目录（默认: C:\\utils-remote-agent）");
-        System.out.println("  --gateway-only               仅启动网关，不部署被控端");
-        System.out.println("  --agent-port      <port>     Agent 端口（默认: 9001）");
-        System.out.println("  --web-port        <port>     WebSocket 远程控制端口（默认: 8082）");
-        System.out.println("  --api-port        <port>     HTTP API 端口（默认: 8083）");
-        System.out.println("  --ws-port         <port>     WebSocket API 端口（默认: 8081）");
-        System.out.println("  --socks5-port     <port>     SOCKS5 端口（默认: 1080）");
-        System.out.println("  --control-port    <port>     TCP 控制端口（默认: 9000）");
-        System.out.println("  --mgmt-port       <port>     管理 API 端口（默认: 3000）");
-        System.out.println("  --help, -h                   显示此帮助");
+        log.info("GatewayRemoteExample — 本地启动网关 + 远程部署被控端");
+        log.info("");
+        log.info("用法: java GatewayRemoteExample [选项]");
+        log.info("");
+        log.info("选项:");
+        log.info("  --remote-host     <host>     远程主机地址（默认: 172.16.9.194）");
+        log.info("  --remote-port     <port>     WinRM 端口（默认: 5985）");
+        log.info("  --remote-username <user>     远程用户名（默认: Administrator）");
+        log.info("  --remote-password <pass>     远程密码（必填）");
+        log.info("  --remote-work-dir <dir>      远程工作目录（默认: C:\\utils-remote-agent）");
+        log.info("  --gateway-only               仅启动网关，不部署被控端");
+        log.info("  --agent-port      <port>     Agent 端口（默认: 9001）");
+        log.info("  --web-port        <port>     WebSocket 远程控制端口（默认: 8082）");
+        log.info("  --api-port        <port>     HTTP API 端口（默认: 8083）");
+        log.info("  --ws-port         <port>     WebSocket API 端口（默认: 8081）");
+        log.info("  --socks5-port     <port>     SOCKS5 端口（默认: 1080）");
+        log.info("  --control-port    <port>     TCP 控制端口（默认: 9000）");
+        log.info("  --mgmt-port       <port>     管理 API 端口（默认: 3000）");
+        log.info("  --help, -h                   显示此帮助");
     }
 
     /**

@@ -125,12 +125,12 @@ public class VideoCodecExample {
             VideoEncoder encoder = ServiceProvider.of(VideoEncoder.class)
                     .getNewExtension(encoderType, width, height, fps);
             if (encoder == null) {
-                System.err.println("[ERROR] 未找到 VideoEncoder 实现: " + encoderType);
+                log.error("[ERROR] 未找到 VideoEncoder 实现: {}", encoderType);
                 return null;
             }
             return encoder;
         } catch (Exception e) {
-            System.err.println("[ERROR] 创建编码器失败: " + e.getMessage());
+            log.error("[ERROR] 创建编码器失败: {}", e.getMessage());
             return null;
         }
     }
@@ -153,10 +153,10 @@ public class VideoCodecExample {
                     return decoder;
                 }
             }
-            System.err.println("[ERROR] 未找到 VideoDecoder 实现");
+            log.error("[ERROR] 未找到 VideoDecoder 实现");
             return null;
         } catch (Exception e) {
-            System.err.println("[ERROR] 创建解码器失败: " + e.getMessage());
+            log.error("[ERROR] 创建解码器失败: {}", e.getMessage());
             return null;
         }
     }
@@ -176,7 +176,7 @@ public class VideoCodecExample {
 
         VideoEncoder encoder = createEncoder(encoderType, width, height, fps);
         if (encoder == null) {
-            System.err.println("[FAIL] 无法创建编码器");
+            log.error("[FAIL] 无法创建编码器");
             return false;
         }
 
@@ -207,7 +207,7 @@ public class VideoCodecExample {
             totalBytes += (encoded == null ? 0 : encoded.length);
 
             if (encoded == null || encoded.length == 0) {
-                System.err.println("[FAIL] 帧 " + i + " 编码失败，返回空数据");
+                log.error("[FAIL] 帧 {} 编码失败，返回空数据", i);
                 encoder.close();
                 return false;
             }
@@ -263,22 +263,22 @@ public class VideoCodecExample {
      * 打印帮助信息。
      */
     private static void printHelp() {
-        System.out.println("视频编解码器综合示例 — 基于 VideoEncoder / VideoDecoder / ScreenCature SPI");
-        System.out.println();
-        System.out.println("用法: java VideoCodecExample [选项]");
-        System.out.println();
-        System.out.println("选项:");
-        System.out.println(" --encoder, -e <key> 编码器类型（默认: " + DEFAULT_ENCODER_TYPE + "）");
-        System.out.println(" --width, -w <width> 视频宽度（默认: " + DEFAULT_WIDTH + "）");
-        System.out.println(" --height, -h <height> 视频高度（默认: " + DEFAULT_HEIGHT + "）");
-        System.out.println(" --fps, -f <fps> 帧率（默认: " + DEFAULT_FPS + "）");
-        System.out.println(" --test 运行自检并退出");
-        System.out.println(" --help, -? 显示此帮助");
-        System.out.println();
-        System.out.println("支持的编码器类型:");
-        System.out.println("  javacv-ffmpeg  JavaCV FFmpeg H.264 编码器");
-        System.out.println("  rust-h264      Rust native H.264 编码器");
-        System.out.println("  jpeg           Java ImageIO JPEG/MJPEG 编码器");
+        log.info("视频编解码器综合示例 — 基于 VideoEncoder / VideoDecoder / ScreenCature SPI");
+        log.info("");
+        log.info("用法: java VideoCodecExample [选项]");
+        log.info("");
+        log.info("选项:");
+        log.info(" --encoder, -e <key> 编码器类型（默认: {}）", DEFAULT_ENCODER_TYPE);
+        log.info(" --width, -w <width> 视频宽度（默认: {}）", DEFAULT_WIDTH);
+        log.info(" --height, -h <height> 视频高度（默认: {}）", DEFAULT_HEIGHT);
+        log.info(" --fps, -f <fps> 帧率（默认: {}）", DEFAULT_FPS);
+        log.info(" --test 运行自检并退出");
+        log.info(" --help, -? 显示此帮助");
+        log.info("");
+        log.info("支持的编码器类型:");
+        log.info("  javacv-ffmpeg  JavaCV FFmpeg H.264 编码器");
+        log.info("  rust-h264      Rust native H.264 编码器");
+        log.info("  jpeg           Java ImageIO JPEG/MJPEG 编码器");
     }
 
     /**
@@ -314,7 +314,7 @@ public class VideoCodecExample {
                 }
                 case "--test" -> result = result.withTest(true);
                 case "--help", "-?", "?" -> result = result.withHelp(true);
-                default -> System.err.println("[WARN] 未知参数: " + args[index]);
+                default -> log.warn("[WARN] 未知参数: {}", args[index]);
             }
             index++;
         }
@@ -346,7 +346,7 @@ public class VideoCodecExample {
         // 演示模式：创建编码器并处理几帧
         VideoEncoder encoder = createEncoder(encoderType, width, height, fps);
         if (encoder == null) {
-            System.err.println("[ERROR] 无法创建编码器，请检查依赖是否完整");
+            log.error("[ERROR] 无法创建编码器，请检查依赖是否完整");
             System.exit(1);
         }
 

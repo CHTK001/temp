@@ -93,8 +93,27 @@ public class DatalakeIntegratedExample {
         }
         int duration = parsed.duration() > 0 ? parsed.duration() : DEFAULT_DURATION_SECONDS;
 
-        boolean passed = runIntegrated(duration);
+        DatalakeIntegratedExample example = new DatalakeIntegratedExample();
+        boolean passed = example.runTest(duration);
+        log.info("[DatalakeIntegratedExample] self-test duration={}s, passed={}", duration, passed);
         System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+    }
+
+    /**
+     * 自检入口：端到端跑通 Datalake + DataSync 集成演示。
+     *
+     * @param durationSeconds 运行时长（秒）
+     * @return true 表示集成演示通过
+     */
+    public boolean runTest(int durationSeconds) {
+        boolean passed;
+        try {
+            passed = runIntegrated(durationSeconds);
+        } catch (Exception e) {
+            log.error("[DatalakeIntegratedExample] 集成测试异常: {}", e.getMessage(), e);
+            passed = false;
+        }
+        return passed;
     }
 
     /**
@@ -172,7 +191,7 @@ public class DatalakeIntegratedExample {
     }
 
     private static void printResult(String name, boolean passed) {
-        System.out.println((passed ? "[PASS]" : "[FAIL]") + " " + name);
+        log.info("{}{}", (passed ? "[PASS]" : "[FAIL]"), name);
     }
 
     private static Args parseArgs(String[] args) {
@@ -186,7 +205,7 @@ public class DatalakeIntegratedExample {
                     }
                 }
                 case "--help", "-h" -> result = result.withHelp(true);
-                default -> System.err.println("[WARN] 未知参数: " + args[index]);
+                default -> log.warn("[WARN] 未知参数: {}", args[index]);
             }
             index++;
         }
@@ -194,13 +213,13 @@ public class DatalakeIntegratedExample {
     }
 
     private static void printHelp() {
-        System.out.println("Datalake 集成示例");
-        System.out.println();
-        System.out.println("用法: java DatalakeIntegratedExample [选项]");
-        System.out.println();
-        System.out.println("选项:");
-        System.out.println("  --duration, -d <sec>    运行时长（默认 5）");
-        System.out.println("  --help,  -h             打印帮助");
+        log.info("Datalake 集成示例");
+        log.info("");
+        log.info("用法: java DatalakeIntegratedExample [选项]");
+        log.info("");
+        log.info("选项:");
+        log.info("  --duration, -d <sec>    运行时长（默认 5）");
+        log.info("  --help,  -h             打印帮助");
     }
 
     /**

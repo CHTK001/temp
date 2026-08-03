@@ -5,6 +5,7 @@ import com.chua.common.support.network.container.DeployUnitType;
 import com.chua.common.support.network.container.WebContainer;
 import com.chua.common.support.network.container.WebContainerSetting;
 import com.chua.common.support.spi.ServiceProvider;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -47,6 +48,7 @@ import java.util.List;
  * @author CH
  * @since 4.0.0.43
  */
+@Slf4j
 public class WebContainerExample {
 
     /** Apache Guacamole 1.5.5 WAR — 轻量级远程桌面网关，约 30MB */
@@ -83,15 +85,15 @@ public class WebContainerExample {
             mode = "all";
         }
 
-        System.out.println("╔══════════════════════════════════════════════════════════╗");
-        System.out.println("║       WebContainer 容器化测试                             ║");
-        System.out.println("╠══════════════════════════════════════════════════════════╣");
-        System.out.println("║  容器类型 : " + padRight(containerType, 42) + "║");
-        System.out.println("║  端口     : " + padRight(String.valueOf(port), 42) + "║");
-        System.out.println("║  测试模式 : " + padRight(mode, 42) + "║");
-        System.out.println("║  WAR 源   : " + padRight(truncate(warSource, 40), 42) + "║");
-        System.out.println("╚══════════════════════════════════════════════════════════╝");
-        System.out.println();
+        log.info("╔══════════════════════════════════════════════════════════╗");
+        log.info("║       WebContainer 容器化测试                             ║");
+        log.info("╠══════════════════════════════════════════════════════════╣");
+        log.info("║  容器类型 : {}║", padRight(containerType, 42));
+        log.info("║  端口     : {}║", padRight(String.valueOf(port), 42));
+        log.info("║  测试模式 : {}║", padRight(mode, 42));
+        log.info("║  WAR 源   : {}║", padRight(truncate(warSource, 40), 42));
+        log.info("╚══════════════════════════════════════════════════════════╝");
+        log.info("");
 
         WebContainerExample example = new WebContainerExample();
         long startTime = System.currentTimeMillis();
@@ -114,19 +116,19 @@ public class WebContainerExample {
                     break;
             }
         } catch (Throwable e) {
-            System.err.println("\n[FAIL] 测试异常: " + e.getMessage());
+            log.error("\n[FAIL] 测试异常: {}", e.getMessage());
             e.printStackTrace(System.err);
             passed = false;
         }
 
         long elapsed = System.currentTimeMillis() - startTime;
-        System.out.println();
-        System.out.println("═══════════════════════════════════════════════════════════");
-        System.out.println("  测试结果  : " + (passed ? "\u2714 PASS" : "\u2718 FAIL"));
-        System.out.println("  容器类型  : " + containerType);
-        System.out.println("  测试模式  : " + mode);
-        System.out.println("  总耗时    : " + formatDuration(elapsed));
-        System.out.println("═══════════════════════════════════════════════════════════");
+        log.info("");
+        log.info("═══════════════════════════════════════════════════════════");
+        log.info("  测试结果  : {}", (passed ? "\u2714 PASS" : "\u2718 FAIL"));
+        log.info("  容器类型  : {}", containerType);
+        log.info("  测试模式  : {}", mode);
+        log.info("  总耗时    : {}", formatDuration(elapsed));
+        log.info("═══════════════════════════════════════════════════════════");
 
         System.exit(passed ? 0 : 1);
     }
@@ -321,9 +323,9 @@ public class WebContainerExample {
             if (errorOk) passed++;
         }
 
-        System.out.println();
-        System.out.println("---------------------------------------------------");
-        System.out.println("  总计: " + passed + " / " + total + " 通过");
+        log.info("");
+        log.info("---------------------------------------------------");
+        log.info("  总计: {} / {} 通过", passed, total);
         return passed == total;
     }
 
@@ -425,9 +427,9 @@ public class WebContainerExample {
         // 使用 getNewExtension 获取全新实例，避免 SPI 缓存单例导致状态污染
         WebContainer container = provider.getNewExtension(containerType);
         if (container == null) {
-            System.err.println("[FAIL] 未找到 SPI 实现: " + containerType);
-            System.err.println("  可用: " + provider.getExtensions());
-            System.err.println("  提示: 请确保对应中间件模块在 classpath 中");
+            log.error("[FAIL] 未找到 SPI 实现: {}", containerType);
+            log.error("  可用: {}", provider.getExtensions());
+            log.error("  提示: 请确保对应中间件模块在 classpath 中");
         }
         return container;
     }
@@ -467,11 +469,11 @@ public class WebContainerExample {
     // ==================== 输出辅助 ====================
 
     private static void println(String prefix, String msg) {
-        System.out.println(String.format("[WebContainer] %-12s %s", prefix, msg));
+        log.info(String.format("[WebContainer] %-12s %s", prefix, msg));
     }
 
     private static void println(String msg) {
-        System.out.println(msg);
+        log.info(msg);
     }
 
     private static String padRight(String s, int len) {

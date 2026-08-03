@@ -102,7 +102,7 @@ public class WinRmInstallAgentExample {
         String agentId = StringUtils.defaultString(parsed.agentId(), "winrm-agent-" + shortId());
 
         if (StringUtils.isBlank(remotePassword)) {
-            System.err.println("[ERROR] 请提供远程密码: --remote-password <password>");
+            log.error("[ERROR] 请提供远程密码: --remote-password <password>");
             System.exit(1);
         }
 
@@ -496,7 +496,7 @@ public class WinRmInstallAgentExample {
                     }
                 }
                 case "--help", "-h" -> result = result.withHelp(true);
-                default -> System.err.println("[WARN] 未知参数: " + arg);
+                default -> log.warn("[WARN] 未知参数: {}", arg);
             }
             index++;
         }
@@ -507,21 +507,21 @@ public class WinRmInstallAgentExample {
      * 打印帮助信息。
      */
     private static void printHelp() {
-        System.out.println("WinRmInstallAgentExample — 通过 WinRM 部署 Agent 到远程 Windows 主机");
-        System.out.println();
-        System.out.println("用法: java WinRmInstallAgentExample [选项]");
-        System.out.println();
-        System.out.println("选项:");
-        System.out.println("  --remote-host     <host>     远程主机地址（默认: 172.16.9.194）");
-        System.out.println("  --remote-port     <port>     WinRM 端口（默认: 5985）");
-        System.out.println("  --remote-username <user>     远程用户名（默认: Administrator）");
-        System.out.println("  --remote-password <pass>     远程密码（必填）");
-        System.out.println("  --remote-work-dir <dir>      远程工作目录（默认: C:\\utils-remote-agent）");
-        System.out.println("  --gateway-host    <host>     网关地址（默认: 127.0.0.1）");
-        System.out.println("  --gateway-port    <port>     网关 Agent 端口（默认: 9001）");
-        System.out.println("  --agent-id        <id>       Agent ID（默认: 自动生成）");
-        System.out.println("  --agent-secret    <secret>   Agent 注册密钥（默认: gateway-agent-secret）");
-        System.out.println("  --help, -h                   显示此帮助");
+        log.info("WinRmInstallAgentExample — 通过 WinRM 部署 Agent 到远程 Windows 主机");
+        log.info("");
+        log.info("用法: java WinRmInstallAgentExample [选项]");
+        log.info("");
+        log.info("选项:");
+        log.info("  --remote-host     <host>     远程主机地址（默认: 172.16.9.194）");
+        log.info("  --remote-port     <port>     WinRM 端口（默认: 5985）");
+        log.info("  --remote-username <user>     远程用户名（默认: Administrator）");
+        log.info("  --remote-password <pass>     远程密码（必填）");
+        log.info("  --remote-work-dir <dir>      远程工作目录（默认: C:\\utils-remote-agent）");
+        log.info("  --gateway-host    <host>     网关地址（默认: 127.0.0.1）");
+        log.info("  --gateway-port    <port>     网关 Agent 端口（默认: 9001）");
+        log.info("  --agent-id        <id>       Agent ID（默认: 自动生成）");
+        log.info("  --agent-secret    <secret>   Agent 注册密钥（默认: gateway-agent-secret）");
+        log.info("  --help, -h                   显示此帮助");
     }
 
     /**

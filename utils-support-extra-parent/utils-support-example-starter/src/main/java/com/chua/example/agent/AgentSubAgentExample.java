@@ -8,6 +8,7 @@ import com.chua.common.support.ai.agent.ImageDefinition;
 import com.chua.common.support.ai.chat.ChatClient;
 import com.chua.common.support.ai.chat.ChatResponse;
 import com.chua.common.support.ai.image.ImageClient;
+import lombok.extern.slf4j.Slf4j;
 
 import java.awt.image.BufferedImage;
 import java.util.List;
@@ -26,7 +27,18 @@ import java.util.function.Consumer;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public class AgentSubAgentExample {
+
+    /**
+     * 程序退出码：成功
+     */
+    private static final int EXIT_CODE_SUCCESS = 0;
+
+    /**
+     * 程序退出码：失败
+     */
+    private static final int EXIT_CODE_FAILURE = 1;
 
     static {
         if (!Boolean.getBoolean("io.agentscope.shutdown.hook.enabled")) {
@@ -36,8 +48,20 @@ public class AgentSubAgentExample {
 
     public static void main(String[] args) {
         boolean debug = isDebug(args);
-        System.out.println("\n=== 开始运行 Agent ===\n");
+        AgentSubAgentExample example = new AgentSubAgentExample();
+        boolean passed = example.runTest(debug);
+        log.info("[AgentSubAgentExample] self-test debug={}, passed={}", debug, passed);
+        System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+    }
 
+    /**
+     * 启动 Agent 路由演示自检：注册 math/sum/product/image 四个子 Agent，由 Router 主 Agent 分发求和与乘法任务。
+     *
+     * @param debug 是否启用调试日志
+     * @return true 表示 Agent 成功执行并返回结果
+     */
+    public boolean runTest(boolean debug) {
+        log.info("\n=== 开始运行 Agent ===\n");
         try (Agent agent = Agent.create("agentscope")) {
             agent.chatClient(new MockChatClient())
                     .subAgent(mathAgent())
@@ -58,8 +82,12 @@ public class AgentSubAgentExample {
                     .mode(AgentMode.ROUTER);
 
             AgentResponse response = agent.run("请帮我计算 1+2+3 和 2*3*4");
-            System.out.println("\n=== 最终结果 ===");
-            System.out.println(response.getOutput());
+            log.info("\n=== 最终结果 ===");
+            log.info("{}", response.getOutput());
+            return response != null && response.getOutput() != null;
+        } catch (Exception e) {
+            log.error("[AgentSubAgentExample] Agent 执行异常: {}", e.getMessage(), e);
+            return false;
         }
     }
 

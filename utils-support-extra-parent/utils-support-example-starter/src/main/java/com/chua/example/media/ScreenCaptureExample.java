@@ -89,12 +89,12 @@ public class ScreenCaptureExample {
             ScreenCature capture = ServiceProvider.of(ScreenCature.class)
                     .getNewExtension(captureType);
             if (capture == null) {
-                System.err.println("[ERROR] 未找到 ScreenCature 实现: " + captureType);
+                log.error("[ERROR] 未找到 ScreenCature 实现: {}", captureType);
                 return null;
             }
             return capture;
         } catch (Exception e) {
-            System.err.println("[ERROR] 创建采集器失败: " + e.getMessage());
+            log.error("[ERROR] 创建采集器失败: {}", e.getMessage());
             return null;
         }
     }
@@ -116,7 +116,7 @@ public class ScreenCaptureExample {
             ImageIO.write(image, "png", file);
             return file;
         } catch (IOException e) {
-            System.err.println("[ERROR] 保存帧失败: " + e.getMessage());
+            log.error("[ERROR] 保存帧失败: {}", e.getMessage());
             return null;
         }
     }
@@ -136,12 +136,12 @@ public class ScreenCaptureExample {
 
         ScreenCature capture = createScreenCapture(captureType);
         if (capture == null) {
-            System.err.println("[FAIL] 无法创建采集器");
+            log.error("[FAIL] 无法创建采集器");
             return false;
         }
 
         if (!capture.init(width, height, fps)) {
-            System.err.println("[FAIL] 采集器初始化失败");
+            log.error("[FAIL] 采集器初始化失败");
             capture.close();
             return false;
         }
@@ -161,7 +161,7 @@ public class ScreenCaptureExample {
         log.info("采集器已关闭");
 
         if (successCount == 0) {
-            System.err.println("[FAIL] 所有帧采集失败");
+            log.error("[FAIL] 所有帧采集失败");
             return false;
         }
 
@@ -182,12 +182,12 @@ public class ScreenCaptureExample {
     private static void runDemo(String captureType, int width, int height, int fps, int frameCount, File outputDir) {
         ScreenCature capture = createScreenCapture(captureType);
         if (capture == null) {
-            System.err.println("[ERROR] 无法创建采集器，请检查依赖是否完整");
+            log.error("[ERROR] 无法创建采集器，请检查依赖是否完整");
             System.exit(1);
         }
 
         if (!capture.init(width, height, fps)) {
-            System.err.println("[ERROR] 采集器初始化失败");
+            log.error("[ERROR] 采集器初始化失败");
             capture.close();
             System.exit(1);
         }
@@ -226,19 +226,19 @@ public class ScreenCaptureExample {
      * 打印帮助信息。
      */
     private static void printHelp() {
-        System.out.println("屏幕采集综合示例 — 基于 ScreenCature SPI");
-        System.out.println();
-        System.out.println("用法: java ScreenCaptureExample [选项]");
-        System.out.println();
-        System.out.println("选项:");
-        System.out.println(" --type, -t <key> 采集器类型（默认: " + DEFAULT_CAPTURE_TYPE + "）");
-        System.out.println(" --width, -w <width> 采集宽度（默认: " + DEFAULT_WIDTH + "）");
-        System.out.println(" --height, -h <height> 采集高度（默认: " + DEFAULT_HEIGHT + "）");
-        System.out.println(" --fps, -f <fps> 帧率（默认: " + DEFAULT_FPS + "）");
-        System.out.println(" --frames, -n <count> 采集帧数（默认: " + DEFAULT_FRAME_COUNT + "）");
-        System.out.println(" --output, -o <dir> 保存帧到目录（PNG 格式）");
-        System.out.println(" --test 运行自检并退出");
-        System.out.println(" --help, -? 显示此帮助");
+        log.info("屏幕采集综合示例 — 基于 ScreenCature SPI");
+        log.info("");
+        log.info("用法: java ScreenCaptureExample [选项]");
+        log.info("");
+        log.info("选项:");
+        log.info(" --type, -t <key> 采集器类型（默认: {}）", DEFAULT_CAPTURE_TYPE);
+        log.info(" --width, -w <width> 采集宽度（默认: {}）", DEFAULT_WIDTH);
+        log.info(" --height, -h <height> 采集高度（默认: {}）", DEFAULT_HEIGHT);
+        log.info(" --fps, -f <fps> 帧率（默认: {}）", DEFAULT_FPS);
+        log.info(" --frames, -n <count> 采集帧数（默认: {}）", DEFAULT_FRAME_COUNT);
+        log.info(" --output, -o <dir> 保存帧到目录（PNG 格式）");
+        log.info(" --test 运行自检并退出");
+        log.info(" --help, -? 显示此帮助");
     }
 
     /**
@@ -284,7 +284,7 @@ public class ScreenCaptureExample {
                 }
                 case "--test" -> result = result.withTest(true);
                 case "--help", "-?", "?" -> result = result.withHelp(true);
-                default -> System.err.println("[WARN] 未知参数: " + args[index]);
+                default -> log.warn("[WARN] 未知参数: {}", args[index]);
             }
             index++;
         }

@@ -62,20 +62,37 @@ public class DataSyncExample {
             return;
         }
         String type = parsed.type() != null ? parsed.type() : "basic";
-        boolean passed = switch (type.toLowerCase()) {
-            case "basic" -> testBasic();
-            case "repeat" -> testRepeat();
-            case "direct" -> testDirectExecutor();
-            case "all" -> testBasic() && testRepeat() && testDirectExecutor();
-            default -> {
-                System.err.println("[FAIL] 未知 type: " + type);
-                yield false;
-            }
-        };
+        DataSyncExample example = new DataSyncExample();
+        boolean passed = example.runTest(type);
         printResult("总结果", passed);
         System.out.flush();
         System.err.flush();
         System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+    }
+
+    /**
+     * 自检入口：根据能力点类型分发到对应测试方法。
+     *
+     * @param type 能力点类型（basic / repeat / direct / all）
+     * @return true 表示所选能力点全部通过
+     */
+    public boolean runTest(String type) {
+        if (type == null || type.isEmpty()) {
+            type = "basic";
+        }
+        switch (type.toLowerCase()) {
+            case "basic":
+                return testBasic();
+            case "repeat":
+                return testRepeat();
+            case "direct":
+                return testDirectExecutor();
+            case "all":
+                return testBasic() && testRepeat() && testDirectExecutor();
+            default:
+                log.error("[DataSyncExample] 未知 type: {}", type);
+                return false;
+        }
     }
 
     /**
@@ -131,7 +148,7 @@ public class DataSyncExample {
         }
 
         int count = received.get();
-        System.out.println("basic 接收记录数: " + count);
+        log.info("basic 接收记录数: {}", count);
         printResult("basic", count > 0);
         return count > 0;
     }
@@ -180,7 +197,7 @@ public class DataSyncExample {
                 } catch (Exception ignored) {
                 }
             }
-            System.out.println("第 " + (i + 1) + " 轮 接收: " + received.get());
+            log.info("第 {} 轮 接收: {}", (i + 1), received.get());
         }
         return true;
     }
@@ -209,7 +226,7 @@ public class DataSyncExample {
     }
 
     private static void printResult(String name, boolean passed) {
-        System.out.println((passed ? "[PASS]" : "[FAIL]") + " " + name);
+        log.info("{}{}", (passed ? "[PASS]" : "[FAIL]"), name);
     }
 
     private static Args parseArgs(String[] args) {
@@ -223,7 +240,7 @@ public class DataSyncExample {
                     }
                 }
                 case "--help", "-h" -> result = result.withHelp(true);
-                default -> System.err.println("[WARN] 未知参数: " + args[index]);
+                default -> log.warn("[WARN] 未知参数: {}", args[index]);
             }
             index++;
         }
@@ -231,17 +248,22 @@ public class DataSyncExample {
     }
 
     private static void printHelp() {
-        System.out.println("DataSync 综合示例");
-        System.out.println();
-        System.out.println("用法: java DataSyncExample [选项]");
-        System.out.println();
-        System.out.println("选项:");
-        System.out.println("  --type, -t <key>    能力点（basic|repeat|direct|all）");
-        System.out.println("  --help,  -h          打印帮助");
+        log.info("DataSync 综合示例");
+        log.info("");
+        log.info("用法: java DataSyncExample [选项]");
+        log.info("");
+        log.info("选项:");
+        log.info("  --type, -t <key>    能力点（basic|repeat|direct|all）");
+        log.info("  --help,  -h          打印帮助");
     }
 
     /**
      * 命令行参数容器。
+     *
+     * @param type 能力点类型
+     * @param help 是否打印帮助
+     * @author CH
+     * @since 4.0.0.42
      */
     private record Args(String type, boolean help) {
         Args() {
@@ -259,6 +281,12 @@ public class DataSyncExample {
 
     /**
      * 简单字段映射。
+     *
+     * @param sourceField 源字段
+     * @param targetField 目标字段
+     * @param converter   转换器
+     * @author CH
+     * @since 4.0.0.42
      */
     private record SimpleField(String sourceField, String targetField, String converter)
             implements DataSyncFieldMapping {
@@ -266,6 +294,18 @@ public class DataSyncExample {
 
     /**
      * 简单配置定义（record 实现 DataSyncConfigDefinition）。
+     *
+     * @param inputId   输入 ID
+     * @param sourceId  源 ID
+     * @param outputId  输出 ID
+     * @param sinkId    目标 ID
+     * @param mappings  字段映射列表
+     * @param batch     批大小
+     * @param cronType  调度类型
+     * @param cron      cron 表达式
+     * @param params    额外参数
+     * @author CH
+     * @since 4.0.0.42
      */
     private record SimpleConfig(
             String inputId,
@@ -300,16 +340,32 @@ public class DataSyncExample {
             this.inputId = inputId;
         }
 
+        /**
+         * 获取 Source ID。
+         *
+         * @return Source ID
+         */
         @Override
         public String sourceId() {
             return id;
         }
 
+        /**
+         * 获取输入 ID。
+         *
+         * @return 输入 ID
+         */
         @Override
         public String inputId() {
             return inputId;
         }
 
+        /**
+         * 读取所有测试数据。
+         *
+         * @param params 额外参数（本示例忽略）
+         * @return 3 行测试数据的 Flux
+         */
         @Override
         public Flux<Map<String, Object>> read(Map<String, Object> params) {
             return Flux.just(
@@ -353,7 +409,7 @@ public class DataSyncExample {
         public void write(Flux<Map<String, Object>> data) {
             data.doOnNext(row -> {
                 counter.incrementAndGet();
-                System.out.println("[SINK.row] sink=" + id + " row=" + row);
+                log.info("[SINK.row] sink={} row={}", id, row);
             }).subscribe();
         }
 

@@ -31,46 +31,78 @@ import java.util.concurrent.TimeUnit;
  * </pre>
  *
  * @author CH
- * @since 4.0.0
+ * @since 4.0.0.43
  */
 @Slf4j
 public class PolledDirectoryExample {
 
+    /**
+     * 默认运行时长（秒）
+     */
     private static final int DEFAULT_DURATION_SECONDS = 30;
+
+    /**
+     * 程序退出码：成功
+     */
+    private static final int EXIT_CODE_SUCCESS = 0;
+
+    /**
+     * 程序退出码：失败
+     */
+    private static final int EXIT_CODE_FAILURE = 1;
 
     public static void main(String[] args) throws Exception {
         int duration = parseDuration(args);
-        System.out.println("=== PolledDirectory 系统日志监听示例 ===\n");
+        log.info("=== PolledDirectory 系统日志监听示例 ===\n");
 
-        dumpAllLogs();
-        testAllLogs(duration);
-        testErrorOnly(duration);
-        testFiltered(duration);
+        PolledDirectoryExample example = new PolledDirectoryExample();
+        boolean passed = example.runTest(duration);
+        log.info("=== 自检完成，通过={} ===", passed);
+        System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+    }
 
-        System.out.println("\n=== 全部示例运行完成 ===");
+    /**
+     * 自检入口：依次执行直查日志、监听所有级别、监听 ERROR 级别、按模式过滤三个场景。
+     *
+     * @param duration 每个监听场景的运行时长（秒）
+     * @return true 表示全部场景执行成功
+     */
+    public boolean runTest(int duration) {
+        boolean passed = true;
+        try {
+            dumpAllLogs();
+            testAllLogs(duration);
+            testErrorOnly(duration);
+            testFiltered(duration);
+        } catch (Exception e) {
+            log.error("[PolledDirectoryExample] 自检异常: {}", e.getMessage(), e);
+            passed = false;
+        }
+        log.info("\n=== 全部示例运行完成 ===");
+        return passed;
     }
 
     /**
      * 直接调用 SystemLogService 拉取系统日志条目并打印到控制台
      */
     private static void dumpAllLogs() {
-        System.out.println("【直查】SystemLogService.getInstance().search(...) ===");
+        log.info("【直查】SystemLogService.getInstance().search(...) ===");
         SystemLogService service = SystemLogService.getInstance();
         if (!service.isAvailable()) {
-            System.out.println("系统日志服务不可用");
+            log.info("系统日志服务不可用");
             return;
         }
         List<LogEntry> entries = service.search(LogQuery.builder().maxResults(20).order(LogQuery.ORDER_DESC).build());
         if (entries == null || entries.isEmpty()) {
-            System.out.println("无日志条目");
+            log.info("无日志条目");
             return;
         }
-        System.out.println("共获取 " + entries.size() + " 条日志：");
+        log.info("共获取 {} 条日志：", entries.size());
         for (LogEntry entry : entries) {
-            System.out.printf("[%s] [%s] [%s] %s%n",
+            log.info("[{}] [{}] [{}] {}",
                     entry.timestamp(), entry.level(), entry.source(), entry.message());
         }
-        System.out.println();
+        log.info("");
     }
 
     /**
@@ -82,7 +114,7 @@ public class PolledDirectoryExample {
                 try {
                     return Integer.parseInt(args[i + 1]);
                 } catch (NumberFormatException e) {
-                    System.err.println("无效的 --duration 参数: " + args[i + 1]);
+                    log.error("无效的 --duration 参数: {}", args[i + 1]);
                 }
             }
         }
@@ -93,7 +125,7 @@ public class PolledDirectoryExample {
      * 测试监听所有级别系统日志
      */
     private static void testAllLogs(int duration) throws Exception {
-        System.out.println("【测试1】监听所有级别系统日志 (运行 " + duration + " 秒)...");
+        log.info("【测试1】监听所有级别系统日志 (运行 {} 秒)...", duration);
         SyslogPolledDirectory watcher = SyslogPolledDirectory.builder()
                 .pollIntervalSeconds(3)
                 .build();
@@ -102,7 +134,7 @@ public class PolledDirectoryExample {
             @Override
             public void onModify(WatcherEvent event, EventObserver observer) {
                 LogEntry entry = (LogEntry) observer.getSource();
-                System.out.printf("[%s] [%s] [%s] %s%n",
+                log.info("[{}] [{}] [{}] {}",
                         entry.timestamp(), entry.level(), entry.source(), entry.message());
             }
         });
@@ -112,14 +144,14 @@ public class PolledDirectoryExample {
 
         Thread.sleep(duration * 1000L);
         watcher.close();
-        System.out.println("【测试1】完成\n");
+        log.info("【测试1】完成\n");
     }
 
     /**
      * 测试仅监听 ERROR 及以上级别日志
      */
     private static void testErrorOnly(int duration) throws Exception {
-        System.out.println("【测试2】仅监听 ERROR 及以上级别日志 (运行 " + duration + " 秒)...");
+        log.info("【测试2】仅监听 ERROR 及以上级别日志 (运行 {} 秒)...", duration);
         SyslogPolledDirectory watcher = SyslogPolledDirectory.builder()
                 .minLevel(LogLevel.ERROR)
                 .pollIntervalSeconds(2)
@@ -129,7 +161,7 @@ public class PolledDirectoryExample {
             @Override
             public void onModify(WatcherEvent event, EventObserver observer) {
                 LogEntry entry = (LogEntry) observer.getSource();
-                System.out.printf("[ERROR] [%s] [%s] %s%n",
+                log.info("[ERROR] [{}] [{}] {}",
                         entry.timestamp(), entry.source(), entry.message());
             }
         });
@@ -139,14 +171,14 @@ public class PolledDirectoryExample {
 
         Thread.sleep(duration * 1000L);
         watcher.close();
-        System.out.println("【测试2】完成\n");
+        log.info("【测试2】完成\n");
     }
 
     /**
      * 测试带过滤条件的系统日志监听
      */
     private static void testFiltered(int duration) throws Exception {
-        System.out.println("【测试3】按来源和消息模式过滤 (运行 " + duration + " 秒)...");
+        log.info("【测试3】按来源和消息模式过滤 (运行 {} 秒)...", duration);
         SyslogPolledDirectory watcher = SyslogPolledDirectory.builder()
                 .source("System")
                 .pattern("*disk*")
@@ -158,7 +190,7 @@ public class PolledDirectoryExample {
             @Override
             public void onModify(WatcherEvent event, EventObserver observer) {
                 LogEntry entry = (LogEntry) observer.getSource();
-                System.out.printf("[FILTERED] [%s] [%s] %s%n",
+                log.info("[FILTERED] [{}] [{}] {}",
                         entry.timestamp(), entry.source(), entry.message());
             }
         });
@@ -168,6 +200,6 @@ public class PolledDirectoryExample {
 
         Thread.sleep(duration * 1000L);
         watcher.close();
-        System.out.println("【测试3】完成\n");
+        log.info("【测试3】完成\n");
     }
 }

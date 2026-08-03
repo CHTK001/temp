@@ -95,8 +95,7 @@ public class SpiderExample {
 
         SpiderExample example = new SpiderExample();
         boolean passed = example.runTest(type);
-        //noinspection UseOfSystemOutCode
-        System.out.println("[SpiderExample] self-test type=" + type + ", passed=" + passed);
+        log.info("[SpiderExample] self-test type={}, passed={}", type, passed);
         System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
     }
 
@@ -127,8 +126,7 @@ public class SpiderExample {
                 return testBasic() && testThreads() && testPojo() && testDepth();
             }
             default -> {
-                //noinspection UseOfSystemErrCode
-                System.err.println("[SpiderExample] 未知能力点: " + type);
+                log.error("[SpiderExample] 未知能力点: {}", type);
                 return false;
             }
         }
@@ -337,8 +335,7 @@ public class SpiderExample {
      * 打印帮助信息。
      */
     private static void printHelp() {
-        //noinspection UseOfSystemOutCode
-        System.out.println("""
+        log.info("""
                 SpiderExample — 爬虫模块综合自检示例
 
                 用法:

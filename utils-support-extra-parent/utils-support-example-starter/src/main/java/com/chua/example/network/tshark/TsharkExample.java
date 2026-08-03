@@ -169,7 +169,7 @@ public class TsharkExample {
                     && testRealCycle()
                     && testRestorer();
             default -> {
-                System.err.println("[FAIL] 未知 type: " + type);
+                log.error("[FAIL] 未知 type: {}", type);
                 yield false;
             }
         };
@@ -1252,7 +1252,7 @@ public class TsharkExample {
      * @param passed 是否通过
      */
     private static void printResult(String name, boolean passed) {
-        System.out.println((passed ? "[PASS]" : "[FAIL]") + " " + name);
+        log.info("{}{}", (passed ? "[PASS]" : "[FAIL]"), " " + name);
     }
 
     /**
@@ -1274,7 +1274,7 @@ public class TsharkExample {
                     }
                 }
                 case "--help", "-h" -> result = result.withHelp(true);
-                default -> System.err.println("[WARN] 未知参数: " + args[index]);
+                default -> log.warn("[WARN] 未知参数: {}", args[index]);
             }
             index++;
         }
@@ -1285,14 +1285,14 @@ public class TsharkExample {
      * 打印帮助信息。
      */
     private static void printHelp() {
-        System.out.println("TShark 综合示例 — 基于 PacketParserService + TsharkPolledDirectory");
-        System.out.println();
-        System.out.println("用法: java TsharkExample [选项]");
-        System.out.println();
-        System.out.println("选项:");
-        System.out.println("  --type,    -t <key>    能力点（parse|protocols|invalid|polled|listener|real|restorer|all）");
-        System.out.println("  --duration, -d <sec>    real 抓包时长（秒），默认 3600（1 小时）");
-        System.out.println("  --help,    -h          打印帮助");
+        log.info("TShark 综合示例 — 基于 PacketParserService + TsharkPolledDirectory");
+        log.info("");
+        log.info("用法: java TsharkExample [选项]");
+        log.info("");
+        log.info("选项:");
+        log.info("  --type,    -t <key>    能力点（parse|protocols|invalid|polled|listener|real|restorer|all）");
+        log.info("  --duration, -d <sec>    real 抓包时长（秒），默认 3600（1 小时）");
+        log.info("  --help,    -h          打印帮助");
     }
 
     /**

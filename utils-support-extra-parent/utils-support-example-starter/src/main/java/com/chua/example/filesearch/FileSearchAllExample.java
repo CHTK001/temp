@@ -3,6 +3,7 @@ package com.chua.example.filesearch;
 import com.chua.filesystem.support.filesearch.model.FileInfo;
 import com.chua.filesystem.support.filesearch.model.FileSearchCriteria;
 import com.chua.filesearch.support.service.FileSearchService;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.util.List;
@@ -14,27 +15,57 @@ import java.util.List;
  * @author CH
  * @since 2026-07-27
  */
+@Slf4j
 public class FileSearchAllExample {
 
+    /**
+     * 程序退出码：成功
+     */
+    private static final int EXIT_CODE_SUCCESS = 0;
+
+    /**
+     * 程序退出码：失败
+     */
+    private static final int EXIT_CODE_FAILURE = 1;
+
+    /**
+     * 默认根目录
+     */
+    private static final String DEFAULT_ROOT = "C:\\";
+
+    /**
+     * 打印宽度
+     */
+    private static final int PAD_WIDTH = 10;
+
     public static void main(String[] args) {
-        String root = "C:\\";
-        String customRoot = System.getProperty("filesearch.root", "");
-        if (!customRoot.isEmpty()) {
-            root = customRoot;
-        }
+        FileSearchAllExample example = new FileSearchAllExample();
+        boolean passed = example.runTest(args);
+        log.info("[FileSearchAllExample] 自检结果: passed={}", passed);
+        System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+    }
+
+    /**
+     * 自检入口：在指定根目录下搜索文件并打印结果。
+     *
+     * @param args 命令行参数（本示例未使用）
+     * @return true 表示文件搜索服务可用
+     */
+    public boolean runTest(String[] args) {
+        String root = System.getProperty("filesearch.root", DEFAULT_ROOT);
         int maxResults = Integer.parseInt(System.getProperty("filesearch.maxResults", "-1"));
         printStep("root", root);
 
         File rootFile = new File(root);
         if (!rootFile.exists() || !rootFile.isDirectory()) {
-            System.err.println("[FileSearchAllExample] root not exists or not a directory: " + root);
-            System.exit(1);
+            log.error("[FileSearchAllExample] root not exists or not a directory: {}", root);
+            return false;
         }
 
         FileSearchService service = FileSearchService.getInstance();
         if (!service.isAvailable()) {
-            System.err.println("[FileSearchAllExample] service not available");
-            System.exit(2);
+            log.error("[FileSearchAllExample] service not available");
+            return false;
         }
 
         FileSearchCriteria.Builder builder = FileSearchCriteria.builder()
@@ -51,12 +82,13 @@ public class FileSearchAllExample {
         printStep("result", "found=" + results.size());
 
         for (FileInfo fileInfo : results) {
-            System.out.printf("  %s  %s%n", padRight(fileInfo.sizeFormatted(), 10), fileInfo.path());
+            log.info("  {}  {}", padRight(fileInfo.sizeFormatted(), PAD_WIDTH), fileInfo.path());
         }
 
-        System.out.println("========================================");
-        System.out.println("  ALL DONE");
-        System.out.println("========================================");
+        log.info("========================================");
+        log.info("  ALL DONE");
+        log.info("========================================");
+        return true;
     }
 
     private static String padRight(String str, int width) {
@@ -70,6 +102,6 @@ public class FileSearchAllExample {
     }
 
     private static void printStep(String label, String value) {
-        System.out.println("[FileSearchAllExample] " + label + "=" + value);
+        log.info("[FileSearchAllExample] {}={}", label, value);
     }
 }

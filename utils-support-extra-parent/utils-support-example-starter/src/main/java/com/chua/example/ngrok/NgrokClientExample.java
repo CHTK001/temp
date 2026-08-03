@@ -81,6 +81,16 @@ public class NgrokClientExample {
      */
     private static final String DEFAULT_METADATA = "ngrok-client-example";
 
+    /**
+     * 程序退出码：成功
+     */
+    private static final int EXIT_CODE_SUCCESS = 0;
+
+    /**
+     * 程序退出码：失败
+     */
+    private static final int EXIT_CODE_FAILURE = 1;
+
     public static void main(String[] args) {
         String type = args.length > 0 ? args[0].toLowerCase() : "forward";
         String target = System.getProperty(PROP_TARGET, DEFAULT_TARGET);
@@ -110,7 +120,7 @@ public class NgrokClientExample {
             run(type, authtoken, metadata, target);
         } catch (Exception e) {
             log.error("Ngrok 示例执行失败: {}", e.getMessage(), e);
-            System.exit(1);
+            System.exit(EXIT_CODE_FAILURE);
         }
     }
 
@@ -125,7 +135,7 @@ public class NgrokClientExample {
                 case "forward" -> runForward(client, target);
                 default -> {
                     log.error("未知 type: {}（支持: connect / listen / forward / tcp）", type);
-                    System.exit(1);
+                    System.exit(EXIT_CODE_FAILURE);
                 }
             }
         } finally {
@@ -193,7 +203,7 @@ public class NgrokClientExample {
         String remoteAddr = System.getenv(ENV_TCP_ADDR);
         if (remoteAddr == null || remoteAddr.isBlank()) {
             log.error("TCP 模式需要设置环境变量 NGROK_TCP_ADDR（形如 1.tcp.ngrok.io:20000）");
-            System.exit(1);
+            System.exit(EXIT_CODE_FAILURE);
             return;
         }
         client.connect();

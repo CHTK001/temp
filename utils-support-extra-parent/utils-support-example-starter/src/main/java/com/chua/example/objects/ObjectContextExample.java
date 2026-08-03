@@ -5,6 +5,7 @@ import com.chua.common.support.lang.script.marker.listener.FileScriptListener;
 import com.chua.common.support.lang.script.marker.listener.Listener;
 import com.chua.common.support.objects.definition.ScriptBeanDefinition;
 import com.chua.common.support.spi.ServiceProvider;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -41,6 +42,7 @@ import java.nio.file.Path;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public class ObjectContextExample {
 
     /**
@@ -90,7 +92,7 @@ public class ObjectContextExample {
 
         ObjectContextExample example = new ObjectContextExample();
         boolean passed = example.runTest(type);
-        System.out.println("[ObjectContextExample] self-test type=" + type + ", passed=" + passed);
+        log.info("[ObjectContextExample] self-test type={}, passed={}", type, passed);
         System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
     }
 
@@ -120,7 +122,7 @@ public class ObjectContextExample {
                         && testHotReload();
             }
             default -> {
-                System.err.println("[ObjectContextExample] 未知能力点: " + type);
+                log.error("[ObjectContextExample] 未知能力点: {}", type);
                 return false;
             }
         }
@@ -132,14 +134,14 @@ public class ObjectContextExample {
      * @return true 表示 Java 脚本注册和调用成功
      */
     public boolean testJavaScript() {
-        System.out.println("===== [java] Java 脚本示例 =====");
+        log.info("===== [java] Java 脚本示例 =====");
 
         Path scriptDir = Path.of(SCRIPT_DIR);
         Path javaScriptPath = scriptDir.resolve(JAVA_SCRIPT_FILE);
         try {
             Files.createDirectories(scriptDir);
         } catch (IOException e) {
-            System.err.println("[ObjectContextExample] 创建脚本目录失败: " + e.getMessage());
+            log.error("[ObjectContextExample] 创建脚本目录失败: {}", e.getMessage());
             return false;
         }
 
@@ -153,14 +155,14 @@ public class ObjectContextExample {
         try {
             Files.writeString(javaScriptPath, scriptContent);
         } catch (IOException e) {
-            System.err.println("[ObjectContextExample] 写入 Java 脚本失败: " + e.getMessage());
+            log.error("[ObjectContextExample] 写入 Java 脚本失败: {}", e.getMessage());
             return false;
         }
 
         try {
             ScriptMarker javaMarker = ServiceProvider.of(ScriptMarker.class).getExtension("java");
             if (javaMarker == null) {
-                System.err.println("[ObjectContextExample] 未找到 Java 脚本标记器");
+                log.error("[ObjectContextExample] 未找到 Java 脚本标记器");
                 return false;
             }
 
@@ -169,7 +171,7 @@ public class ObjectContextExample {
 
             Object instance = definition.createInstance();
             if (instance == null) {
-                System.err.println("[ObjectContextExample] 创建 Java 脚本实例失败");
+                log.error("[ObjectContextExample] 创建 Java 脚本实例失败");
                 return false;
             }
             Class<?> scriptClass = definition.getBeanClass();
@@ -177,17 +179,17 @@ public class ObjectContextExample {
                 scriptClass = instance.getClass();
             }
 
-            System.out.println("  编译成功: " + scriptClass.getName());
+            log.info("  编译成功: {}", scriptClass.getName());
 
             Method sayHello = scriptClass.getMethod("sayHello", String.class);
             String result = (String) sayHello.invoke(instance, "Java");
-            System.out.println("  调用结果: " + result);
+            log.info("  调用结果: {}", result);
 
             boolean passed = "Hello, Java from Java!".equals(result);
-            System.out.println("  [java] passed=" + passed);
+            log.info("  [java] passed={}", passed);
             return passed;
         } catch (Exception e) {
-            System.err.println("[ObjectContextExample] Java 脚本测试异常: " + e.getMessage());
+            log.error("[ObjectContextExample] Java 脚本测试异常: {}", e.getMessage());
             return false;
         }
     }
@@ -198,14 +200,14 @@ public class ObjectContextExample {
      * @return true 表示 Groovy 脚本注册和调用成功
      */
     public boolean testGroovyScript() {
-        System.out.println("===== [groovy] Groovy 脚本示例 =====");
+        log.info("===== [groovy] Groovy 脚本示例 =====");
 
         Path scriptDir = Path.of(SCRIPT_DIR);
         Path groovyScriptPath = scriptDir.resolve(GROOVY_SCRIPT_FILE);
         try {
             Files.createDirectories(scriptDir);
         } catch (IOException e) {
-            System.err.println("[ObjectContextExample] 创建脚本目录失败: " + e.getMessage());
+            log.error("[ObjectContextExample] 创建脚本目录失败: {}", e.getMessage());
             return false;
         }
 
@@ -219,14 +221,14 @@ public class ObjectContextExample {
         try {
             Files.writeString(groovyScriptPath, scriptContent);
         } catch (IOException e) {
-            System.err.println("[ObjectContextExample] 写入 Groovy 脚本失败: " + e.getMessage());
+            log.error("[ObjectContextExample] 写入 Groovy 脚本失败: {}", e.getMessage());
             return false;
         }
 
         try {
             ScriptMarker groovyMarker = ServiceProvider.of(ScriptMarker.class).getExtension("groovy");
             if (groovyMarker == null) {
-                System.err.println("[ObjectContextExample] 未找到 Groovy 脚本标记器");
+                log.error("[ObjectContextExample] 未找到 Groovy 脚本标记器");
                 return false;
             }
 
@@ -243,30 +245,30 @@ public class ObjectContextExample {
             }
 
             if (scriptClass == null) {
-                System.err.println("[ObjectContextExample] Groovy 脚本编译失败");
+                log.error("[ObjectContextExample] Groovy 脚本编译失败");
                 return false;
             }
 
-            System.out.println("  编译成功: " + scriptClass.getName());
+            log.info("  编译成功: {}", scriptClass.getName());
 
             Object instance = definition.getBean();
             if (instance == null) {
                 instance = definition.createInstance();
             }
             if (instance == null) {
-                System.err.println("[ObjectContextExample] 创建 Groovy 脚本实例失败");
+                log.error("[ObjectContextExample] 创建 Groovy 脚本实例失败");
                 return false;
             }
 
             Method sayHello = scriptClass.getMethod("sayHello", String.class);
             String result = (String) sayHello.invoke(instance, "Groovy");
-            System.out.println("  调用结果: " + result);
+            log.info("  调用结果: {}", result);
 
             boolean passed = "Hello, Groovy from Groovy!".equals(result);
-            System.out.println("  [groovy] passed=" + passed);
+            log.info("  [groovy] passed={}", passed);
             return passed;
         } catch (Exception e) {
-            System.err.println("[ObjectContextExample] Groovy 脚本测试异常: " + e.getMessage());
+            log.error("[ObjectContextExample] Groovy 脚本测试异常: {}", e.getMessage());
             return false;
         }
     }
@@ -277,14 +279,14 @@ public class ObjectContextExample {
      * @return true 表示热重载成功
      */
     public boolean testHotReload() {
-        System.out.println("===== [reload] 热重载示例 =====");
+        log.info("===== [reload] 热重载示例 =====");
 
         Path scriptDir = Path.of(SCRIPT_DIR);
         Path groovyScriptPath = scriptDir.resolve(GROOVY_SCRIPT_FILE);
         try {
             Files.createDirectories(scriptDir);
         } catch (IOException e) {
-            System.err.println("[ObjectContextExample] 创建脚本目录失败: " + e.getMessage());
+            log.error("[ObjectContextExample] 创建脚本目录失败: {}", e.getMessage());
             return false;
         }
 
@@ -305,7 +307,7 @@ public class ObjectContextExample {
         try {
             ScriptMarker groovyMarker = ServiceProvider.of(ScriptMarker.class).getExtension("groovy");
             if (groovyMarker == null) {
-                System.err.println("[ObjectContextExample] 未找到 Groovy 脚本标记器");
+                log.error("[ObjectContextExample] 未找到 Groovy 脚本标记器");
                 return false;
             }
 
@@ -316,7 +318,7 @@ public class ObjectContextExample {
 
             Object instance1 = definition.createInstance();
             if (instance1 == null) {
-                System.err.println("[ObjectContextExample] 首次创建实例失败");
+                log.error("[ObjectContextExample] 首次创建实例失败");
                 return false;
             }
             Class<?> class1 = definition.getBeanClass();
@@ -325,7 +327,7 @@ public class ObjectContextExample {
             }
             Method sayHello1 = class1.getMethod("sayHello", String.class);
             String result1 = (String) sayHello1.invoke(instance1, "World");
-            System.out.println("  首次调用: " + result1);
+            log.info("  首次调用: {}", result1);
 
             Thread.sleep(RELOAD_SLEEP_MS);
 
@@ -333,7 +335,7 @@ public class ObjectContextExample {
 
             Object instance2 = definition.createInstance();
             if (instance2 == null) {
-                System.err.println("[ObjectContextExample] 热重载后创建实例失败");
+                log.error("[ObjectContextExample] 热重载后创建实例失败");
                 return false;
             }
             Class<?> class2 = definition.getBeanClass();
@@ -342,16 +344,16 @@ public class ObjectContextExample {
             }
             Method sayHello2 = class2.getMethod("sayHello", String.class);
             String result2 = (String) sayHello2.invoke(instance2, "World");
-            System.out.println("  重载调用: " + result2);
+            log.info("  重载调用: {}", result2);
 
             boolean passed = "Hello, World from Groovy!".equals(result1)
                     && "Hi, World from Groovy (reloaded)!".equals(result2)
                     && class1 != class2;
 
-            System.out.println("  [reload] passed=" + passed);
+            log.info("  [reload] passed={}", passed);
             return passed;
         } catch (Exception e) {
-            System.err.println("[ObjectContextExample] 热重载测试异常: " + e.getMessage());
+            log.error("[ObjectContextExample] 热重载测试异常: {}", e.getMessage());
             return false;
         }
     }
@@ -360,15 +362,15 @@ public class ObjectContextExample {
      * 打印帮助信息。
      */
     private static void printHelp() {
-        System.out.println("ObjectContext 脚本热重载综合示例");
-        System.out.println();
-        System.out.println("用法: java ObjectContextExample [选项]");
-        System.out.println();
-        System.out.println("选项:");
-        System.out.println("  java         Java 脚本能力点");
-        System.out.println("  groovy       Groovy 脚本能力点");
-        System.out.println("  reload       热重载能力点");
-        System.out.println("  all          测试全部能力点（默认）");
-        System.out.println("  --help       显示此帮助");
+        log.info("ObjectContext 脚本热重载综合示例");
+        log.info("");
+        log.info("用法: java ObjectContextExample [选项]");
+        log.info("");
+        log.info("选项:");
+        log.info("  java         Java 脚本能力点");
+        log.info("  groovy       Groovy 脚本能力点");
+        log.info("  reload       热重载能力点");
+        log.info("  all          测试全部能力点（默认）");
+        log.info("  --help       显示此帮助");
     }
 }

@@ -93,14 +93,14 @@ public class AiProxyDetectorExample {
         String model = resolved.model() != null ? resolved.model() : DEFAULT_MODEL;
 
         if (baseUrl == null || baseUrl.isBlank()) {
-            System.err.println("[ERROR] 必须指定 --url 参数 或使用 --file <HTML/MD 路径>");
+            log.error("[ERROR] 必须指定 --url 参数 或使用 --file <HTML/MD 路径>");
             printHelp();
             System.exit(EXIT_CODE_FAILURE);
             return;
         }
 
         if (apiKey == null || apiKey.isBlank()) {
-            System.err.println("[ERROR] 必须指定 --key 参数 或使用 --file <HTML/MD 路径>");
+            log.error("[ERROR] 必须指定 --key 参数 或使用 --file <HTML/MD 路径>");
             printHelp();
             System.exit(EXIT_CODE_FAILURE);
             return;
@@ -110,12 +110,12 @@ public class AiProxyDetectorExample {
 
         boolean allPassed = runTest(baseUrl, apiKey, model);
 
-        System.out.println("-----");
+        log.info("-----");
         if (allPassed) {
-            System.out.println("[PASS] 探测完成");
+            log.info("[PASS] 探测完成");
             System.exit(EXIT_CODE_SUCCESS);
         } else {
-            System.out.println("[FAIL] 探测失败");
+            log.info("[FAIL] 探测失败");
             System.exit(EXIT_CODE_FAILURE);
         }
     }
@@ -149,29 +149,32 @@ public class AiProxyDetectorExample {
      * @param report 探测报告
      */
     private static void printReport(ProbeReport report) {
-        System.out.println("=== AI 中转站真伪探测报告 ===");
-        System.out.println();
-        System.out.println("总耗时: " + report.durationMillis() + " ms");
-        System.out.println("综合置信度: " + String.format("%.2f%%", report.overallConfidence() * 100));
-        System.out.println("最终判词: " + report.verdict());
-        System.out.println("疑似真实模型: " + (report.suspectedModel() != null ? report.suspectedModel() : "未知"));
-        System.out.println("疑似代理框架: " + (report.proxyFramework() != null ? report.proxyFramework() : "无"));
-        System.out.println();
+        log.info("=== AI 中转站真伪探测报告 ===");
+        log.info("");
+        log.info("总耗时: {} ms", report.durationMillis());
+        log.info("综合置信度: {}", String.format("%.2f%%", report.overallConfidence() * 100));
+        log.info("最终判词: {}", report.verdict());
+        log.info("疑似真实模型: {}", report.suspectedModel() != null ? report.suspectedModel() : "未知");
+        log.info("疑似代理框架: {}", report.proxyFramework() != null ? report.proxyFramework() : "无");
+        log.info("");
 
-        System.out.println("--- 维度详情 ---");
+        log.info("--- 维度详情 ---");
         for (ProbeResult result : report.results()) {
             String status = result.passed() ? "[PASS]" : "[FAIL]";
             String dimName = getDimensionDisplayName(result.dimension());
-            System.out.printf("%s %-30s 置信度: %.2f%%  %s%n",
-                    status, dimName, result.confidence() * 100, result.detail());
+            log.info("{} {}{}  置信度: {}  {}", status,
+                    String.format("%-30s", dimName),
+                    "",
+                    String.format("%.2f%%", result.confidence() * 100),
+                    result.detail());
         }
 
         if (report.overallConfidence() >= 0.7) {
-            System.out.println("\n✅ 判定结果: 真实模型");
+            log.info("\n✅ 判定结果: 真实模型");
         } else if (report.overallConfidence() < 0.3) {
-            System.out.println("\n⚠️  判定结果: 疑似中转站");
+            log.info("\n⚠️  判定结果: 疑似中转站");
         } else {
-            System.out.println("\n❓ 判定结果: 无法确定");
+            log.info("\n❓ 判定结果: 无法确定");
         }
     }
 
@@ -210,7 +213,7 @@ public class AiProxyDetectorExample {
     private static Args parseFile(String filePath, Args fallback) {
         java.nio.file.Path path = java.nio.file.Paths.get(filePath);
         if (!java.nio.file.Files.exists(path)) {
-            System.err.println("[ERROR] 文件不存在: " + filePath);
+            log.error("[ERROR] 文件不存在: {}", filePath);
             return fallback;
         }
 
@@ -231,7 +234,7 @@ public class AiProxyDetectorExample {
                     .withUrl(url != null ? url : fallback.url())
                     .withModel(model != null ? model : fallback.model());
         } catch (Exception e) {
-            System.err.println("[ERROR] 读取文件失败: " + e.getMessage());
+            log.error("[ERROR] 读取文件失败: {}", e.getMessage());
             return fallback;
         }
     }
@@ -279,7 +282,7 @@ public class AiProxyDetectorExample {
                 }
                 case "--html" -> result = result.withHtml(true);
                 case "--help", "-h" -> result = result.withHelp(true);
-                default -> System.err.println("[WARN] 未知参数: " + args[index]);
+                default -> log.warn("[WARN] 未知参数: {}", args[index]);
             }
             index++;
         }
@@ -290,21 +293,21 @@ public class AiProxyDetectorExample {
      * 打印帮助信息。
      */
     private static void printHelp() {
-        System.out.println("AI 中转站真伪探测器示例");
-        System.out.println();
-        System.out.println("用法: java AiProxyDetectorExample [选项]");
-        System.out.println();
-        System.out.println("选项:");
-        System.out.println("  --url,    -u <url>     API 基础地址（必填，如 https://api.example.com/v1）");
-        System.out.println("  --key,    -k <key>     API Key（必填）");
-        System.out.println("  --model,  -m <model>   指定探测模型（默认: gpt-4）");
-        System.out.println("  --file,   -f <path>    从文件读取配置（支持 HTML/Markdown）");
-        System.out.println("  --html                 生成 HTML 报告");
-        System.out.println("  --help,  -h             显示此帮助");
-        System.out.println();
-        System.out.println("示例:");
-        System.out.println("  java AiProxyDetectorExample --url https://api.openai.com/v1 --key sk-xxx");
-        System.out.println("  java AiProxyDetectorExample --url https://api.siliconflow.cn/v1 --key sk-xxx --model gpt-4o");
+        log.info("AI 中转站真伪探测器示例");
+        log.info("");
+        log.info("用法: java AiProxyDetectorExample [选项]");
+        log.info("");
+        log.info("选项:");
+        log.info("  --url,    -u <url>     API 基础地址（必填，如 https://api.example.com/v1）");
+        log.info("  --key,    -k <key>     API Key（必填）");
+        log.info("  --model,  -m <model>   指定探测模型（默认: gpt-4）");
+        log.info("  --file,   -f <path>    从文件读取配置（支持 HTML/Markdown）");
+        log.info("  --html                 生成 HTML 报告");
+        log.info("  --help,  -h             显示此帮助");
+        log.info("");
+        log.info("示例:");
+        log.info("  java AiProxyDetectorExample --url https://api.openai.com/v1 --key sk-xxx");
+        log.info("  java AiProxyDetectorExample --url https://api.siliconflow.cn/v1 --key sk-xxx --model gpt-4o");
     }
 
     // ==================== 参数容器 ====================

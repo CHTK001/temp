@@ -73,20 +73,39 @@ public class OffsetFlowExample {
 
         String type = parsed.type() != null ? parsed.type() : "all";
 
-        boolean passed = switch (type.toLowerCase()) {
-            case "advance" -> testAdvance();
-            case "reset" -> testReset();
-            case "persist" -> testPersist();
-            case "spi" -> testSpiLoad();
-            case "truncate" -> testTruncate();
-            case "all" -> testAdvance() && testReset() && testPersist() && testSpiLoad() && testTruncate();
-            default -> {
-                System.err.println("[FAIL] 未知 type: " + type);
-                yield false;
-            }
-        };
-
+        OffsetFlowExample example = new OffsetFlowExample();
+        boolean passed = example.runTest(type);
+        log.info("[OffsetFlowExample] self-test type={}, passed={}", type, passed);
         System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+    }
+
+    /**
+     * 自检入口：根据能力点类型分发到对应的测试方法。
+     *
+     * @param type 能力点类型（advance / reset / persist / spi / truncate / all）
+     * @return true 表示所选能力点自检通过
+     */
+    public boolean runTest(String type) {
+        if (type == null || type.isEmpty()) {
+            type = "all";
+        }
+        switch (type.toLowerCase()) {
+            case "advance":
+                return testAdvance();
+            case "reset":
+                return testReset();
+            case "persist":
+                return testPersist();
+            case "spi":
+                return testSpiLoad();
+            case "truncate":
+                return testTruncate();
+            case "all":
+                return testAdvance() && testReset() && testPersist() && testSpiLoad() && testTruncate();
+            default:
+                log.error("[OffsetFlowExample] 未知 type: {}", type);
+                return false;
+        }
     }
 
     /**
@@ -178,7 +197,7 @@ public class OffsetFlowExample {
     }
 
     private static void printResult(String name, boolean passed) {
-        System.out.println((passed ? "[PASS]" : "[FAIL]") + " " + name);
+        log.info("{}{}", (passed ? "[PASS]" : "[FAIL]"), name);
     }
 
     /**
@@ -195,7 +214,7 @@ public class OffsetFlowExample {
                     }
                 }
                 case "--help", "-h" -> result = result.withHelp(true);
-                default -> System.err.println("[WARN] 未知参数: " + args[index]);
+                default -> log.warn("[WARN] 未知参数: {}", args[index]);
             }
             index++;
         }
@@ -203,13 +222,13 @@ public class OffsetFlowExample {
     }
 
     private static void printHelp() {
-        System.out.println("OffsetFlow 综合示例 — 基于 OffsetFlow SPI");
-        System.out.println();
-        System.out.println("用法: java OffsetFlowExample [选项]");
-        System.out.println();
-        System.out.println("选项:");
-        System.out.println("  --type, -t <key>    能力点（advance|reset|persist|spi|truncate|all）");
-        System.out.println("  --help,  -h          打印帮助");
+        log.info("OffsetFlow 综合示例 — 基于 OffsetFlow SPI");
+        log.info("");
+        log.info("用法: java OffsetFlowExample [选项]");
+        log.info("");
+        log.info("选项:");
+        log.info("  --type, -t <key>    能力点（advance|reset|persist|spi|truncate|all）");
+        log.info("  --help,  -h          打印帮助");
     }
 
     /**

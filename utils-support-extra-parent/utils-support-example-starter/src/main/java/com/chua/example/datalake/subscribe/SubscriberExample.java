@@ -60,7 +60,7 @@ public class SubscriberExample {
             case "reset" -> testReset();
             case "all" -> testPush() && testReset();
             default -> {
-                System.err.println("[FAIL] 未知 type: " + type);
+                log.error("[FAIL] 未知 type: {}", type);
                 yield false;
             }
         };
@@ -126,7 +126,7 @@ public class SubscriberExample {
     }
 
     private static void printResult(String name, boolean passed) {
-        System.out.println((passed ? "[PASS]" : "[FAIL]") + " " + name);
+        log.info("{}{}", (passed ? "[PASS]" : "[FAIL]"), name);
     }
 
     private static Args parseArgs(String[] args) {
@@ -140,7 +140,7 @@ public class SubscriberExample {
                     }
                 }
                 case "--help", "-h" -> result = result.withHelp(true);
-                default -> System.err.println("[WARN] 未知参数: " + args[index]);
+                default -> log.warn("[WARN] 未知参数: {}", args[index]);
             }
             index++;
         }
@@ -148,13 +148,13 @@ public class SubscriberExample {
     }
 
     private static void printHelp() {
-        System.out.println("Subscriber 综合示例");
-        System.out.println();
-        System.out.println("用法: java SubscriberExample [选项]");
-        System.out.println();
-        System.out.println("选项:");
-        System.out.println("  --type, -t <key>    能力点（push|reset|all）");
-        System.out.println("  --help,  -h          打印帮助");
+        log.info("Subscriber 综合示例");
+        log.info("");
+        log.info("用法: java SubscriberExample [选项]");
+        log.info("");
+        log.info("选项:");
+        log.info("  --type, -t <key>    能力点（push|reset|all）");
+        log.info("  --help,  -h          打印帮助");
     }
 
     /**

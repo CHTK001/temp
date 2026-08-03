@@ -4,6 +4,7 @@ import com.chua.common.support.concurrent.circuit.BreakerJudge;
 import com.chua.common.support.concurrent.circuit.CircuitBreaker;
 import com.chua.common.support.concurrent.circuit.DefaultBreakerJudge;
 import com.chua.common.support.lang.ast.BTreeNode;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -48,6 +49,7 @@ import java.util.Map;
  * @author CH
  * @since 4.0.0.43
  */
+@Slf4j
 public class CircuitBreakerExample {
 
     /**
@@ -81,9 +83,9 @@ public class CircuitBreakerExample {
     private static final String EXPR_NOT = "NOT (score <= 50)";
 
 /**
-     * 函数调用：LIKE 模糊匹配
-     */
-    private static final String EXPR_FUN = "name LIKE '%alice%'";
+ * 函数调用：LIKE 模糊匹配
+ */
+private static final String EXPR_FUN = "name LIKE '%alice%'";
 
     /**
      * LIKE 通配符：匹配姓名以 A 开头
@@ -131,6 +133,16 @@ public class CircuitBreakerExample {
     private static final String EXPR_BETWEEN_EDGE = "age BETWEEN 18 AND 60";
 
     /**
+     * 程序退出码：成功
+     */
+    private static final int EXIT_CODE_SUCCESS = 0;
+
+    /**
+     * 程序退出码：失败
+     */
+    private static final int EXIT_CODE_FAILURE = 1;
+
+    /**
      * 异常表达式：让 judge 抛出（通过 custom judge 注入）
      */
     private static final String EXPR_FOR_EXCEPTION = "score > 50";
@@ -144,12 +156,48 @@ public class CircuitBreakerExample {
         }
 
         if (parsed.test()) {
-            runTest();
+            CircuitBreakerExample example = new CircuitBreakerExample();
+            boolean passed = example.runTest();
+            log.info("[CircuitBreakerExample] self-test passed={}", passed);
+            System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
             return;
         }
 
         // 单场景演示
         runCase(parsed.caseName());
+    }
+
+    /**
+     * 自检入口：执行全部场景并汇总测试结果。
+     *
+     * @return true 表示所有场景自检通过
+     */
+    public boolean runTest() {
+        log.info("===== CircuitBreakerExample --test =====");
+
+        boolean allPassed = true;
+        allPassed &= expectTrue("业务规则(满足条件)", caseBusinessRule());
+        allPassed &= expectTrue("动态路由(命中 v2)", caseRouting());
+        allPassed &= expectTrue("特性开关(白名单用户)", caseFeatureFlag());
+        allPassed &= expectFalse("AND 短路(左 false)", caseAndShortCircuit());
+        allPassed &= expectTrue("OR 短路(左 true)", caseOrShortCircuit());
+        allPassed &= expectTrue("NOT 取反(未封禁)", caseNot());
+        allPassed &= expectTrue("函数调用(LIKE)", caseFunction());
+        allPassed &= expectTrue("LIKE 通配符", caseLike());
+        allPassed &= expectTrue("BETWEEN 范围", caseBetween());
+        allPassed &= expectTrue("IS NULL 检查", caseIsNull());
+        allPassed &= expectTrue("IS NOT NULL 检查", caseIsNotNull());
+        allPassed &= expectTrue("SQL 表达式", caseSqlExpression());
+        allPassed &= expectTrue("Lucene 表达式", caseLuceneExpression());
+        allPassed &= expectTrue("Cypher 表达式", caseCypherExpression());
+        allPassed &= expectTrue("嵌套表达式", caseNestedExpression());
+        allPassed &= expectTrue("BETWEEN 边界值", caseBetweenEdge());
+        allPassed &= expectTrue("Boolean 比较", caseBooleanComparison());
+        allPassed &= expectFalse("异常保护(judge 抛错时 evaluate 返回 false)", caseExceptionSafety());
+        allPassed &= expectTrue("便捷方法 evaluate(expr, ctx)", caseConvenientMethod());
+        allPassed &= expectTrue("自定义判断器(委托默认)", caseCustomJudge());
+
+        return allPassed;
     }
 
     // ==================== 单场景演示 ====================
@@ -198,44 +246,8 @@ public class CircuitBreakerExample {
         } else if ("custom".equalsIgnoreCase(caseName)) {
             printResult("自定义判断器", caseCustomJudge());
         } else {
-            System.err.println("[ERROR] 未知场景: " + caseName);
+            log.error("[ERROR] 未知场景: {}", caseName);
             printHelp();
-        }
-    }
-
-    // ==================== 自检模式 ====================
-
-    private static void runTest() {
-        System.out.println("===== CircuitBreakerExample --test =====");
-
-        boolean allPassed = true;
-        allPassed &= expectTrue("业务规则(满足条件)", caseBusinessRule());
-        allPassed &= expectTrue("动态路由(命中 v2)", caseRouting());
-        allPassed &= expectTrue("特性开关(白名单用户)", caseFeatureFlag());
-        allPassed &= expectFalse("AND 短路(左 false)", caseAndShortCircuit());
-        allPassed &= expectTrue("OR 短路(左 true)", caseOrShortCircuit());
-        allPassed &= expectTrue("NOT 取反(未封禁)", caseNot());
-        allPassed &= expectTrue("函数调用(LIKE)", caseFunction());
-        allPassed &= expectTrue("LIKE 通配符", caseLike());
-        allPassed &= expectTrue("BETWEEN 范围", caseBetween());
-        allPassed &= expectTrue("IS NULL 检查", caseIsNull());
-        allPassed &= expectTrue("IS NOT NULL 检查", caseIsNotNull());
-        allPassed &= expectTrue("SQL 表达式", caseSqlExpression());
-        allPassed &= expectTrue("Lucene 表达式", caseLuceneExpression());
-        allPassed &= expectTrue("Cypher 表达式", caseCypherExpression());
-        allPassed &= expectTrue("嵌套表达式", caseNestedExpression());
-        allPassed &= expectTrue("BETWEEN 边界值", caseBetweenEdge());
-        allPassed &= expectTrue("Boolean 比较", caseBooleanComparison());
-        allPassed &= expectFalse("异常保护(judge 抛错时 evaluate 返回 false)", caseExceptionSafety());
-        allPassed &= expectTrue("便捷方法 evaluate(expr, ctx)", caseConvenientMethod());
-        allPassed &= expectTrue("自定义判断器(委托默认)", caseCustomJudge());
-
-        System.out.println("-----");
-        if (allPassed) {
-            System.out.println("[PASS] 全部自检通过");
-        } else {
-            System.out.println("[FAIL] 存在失败的测试项");
-            System.exit(1);
         }
     }
 
@@ -291,9 +303,8 @@ public class CircuitBreakerExample {
             if (node.getType() == BTreeNode.Type.COMPARE) {
                 String column = node.getLeft().getOperator();
                 String op = node.getOperator();
-                System.out.println("[audit] " + column + " " + op + " "
-                        + node.getRight().getValue() + " (actual="
-                        + ctx.get(column) + ") -> " + result);
+                log.info("[audit] {} {} {} (actual={}) -> {}",
+                        column, op, node.getRight().getValue(), ctx.get(column), result);
             }
             return result;
         };
@@ -585,8 +596,8 @@ public class CircuitBreakerExample {
             if (node.getType() == BTreeNode.Type.COMPARE) {
                 String column = node.getLeft().getOperator();
                 String op = node.getOperator();
-                System.out.println("[audit] judge " + column + " " + op
-                        + " " + node.getRight().getValue() + " -> " + result);
+                log.info("[audit] judge {} {} {} -> {}", column, op,
+                        node.getRight().getValue(), result);
             }
             return result;
         };
@@ -602,18 +613,18 @@ public class CircuitBreakerExample {
     // ==================== 辅助方法 ====================
 
     private static void printResult(String name, boolean passed) {
-        System.out.println((passed ? "[PASS]" : "[FAIL]") + " " + name + " -> " + (passed ? "通过" : "断路"));
+        log.info("{}{} {} -> {}", (passed ? "[PASS]" : "[FAIL]"), name, (passed ? "通过" : "断路"));
     }
 
     private static boolean expectTrue(String name, boolean actual) {
         boolean ok = actual;
-        System.out.println((ok ? "[PASS]" : "[FAIL]") + " " + name);
+        log.info("{}{}", (ok ? "[PASS]" : "[FAIL]"), name);
         return ok;
     }
 
     private static boolean expectFalse(String name, boolean actual) {
         boolean ok = !actual;
-        System.out.println((ok ? "[PASS]" : "[FAIL]") + " " + name);
+        log.info("{}{}", (ok ? "[PASS]" : "[FAIL]"), name);
         return ok;
     }
 
@@ -636,7 +647,7 @@ public class CircuitBreakerExample {
                 }
                 case "--test" -> result = result.withTest(true);
                 case "--help", "-h" -> result = result.withHelp(true);
-                default -> System.err.println("[WARN] 未知参数: " + args[index]);
+                default -> log.warn("[WARN] 未知参数: {}", args[index]);
             }
             index++;
         }
@@ -644,15 +655,15 @@ public class CircuitBreakerExample {
     }
 
     private static void printHelp() {
-        System.out.println("CircuitBreaker 综合示例 — 基于 CircuitBreaker + ExpressionParser SPI");
-        System.out.println();
-        System.out.println("用法: java CircuitBreakerExample [选项]");
-        System.out.println();
-        System.out.println("选项:");
-        System.out.println("  --type,    -t <key>    表达式类型（expr/sql/lucene/cypher）");
-        System.out.println("  --case,    -c <name>   场景名（rule/routing/feature/and/or/not/fun/like/between/isnull/isnotnull/nested/between-edge/boolean/exception/convenient/sql/lucene/cypher/custom）");
-        System.out.println("  --test                 执行全部场景自检并退出");
-        System.out.println("  --help,  -h            显示此帮助");
+        log.info("CircuitBreaker 综合示例 — 基于 CircuitBreaker + ExpressionParser SPI");
+        log.info("");
+        log.info("用法: java CircuitBreakerExample [选项]");
+        log.info("");
+        log.info("选项:");
+        log.info("  --type,    -t <key>    表达式类型（expr/sql/lucene/cypher）");
+        log.info("  --case,    -c <name>   场景名（rule/routing/feature/and/or/not/fun/like/between/isnull/isnotnull/nested/between-edge/boolean/exception/convenient/sql/lucene/cypher/custom）");
+        log.info("  --test                 执行全部场景自检并退出");
+        log.info("  --help,  -h            显示此帮助");
     }
 
     // ==================== 参数容器 ====================

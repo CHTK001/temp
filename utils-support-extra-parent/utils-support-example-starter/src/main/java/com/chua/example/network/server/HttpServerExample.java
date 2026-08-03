@@ -2,6 +2,7 @@ package com.chua.example.network.server;
 
 import com.chua.common.support.network.server.Server;
 import com.chua.common.support.network.server.ServerBuilder;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * HttpServer 示例 — 支持启动/停止及 HTTP 压测模式。
@@ -15,6 +16,7 @@ import com.chua.common.support.network.server.ServerBuilder;
  * @author CH
  * @since 4.0.0.43
  */
+@Slf4j
 public class HttpServerExample {
 
     /**
@@ -42,10 +44,10 @@ public class HttpServerExample {
             final Server finalServer = server;
             server.start();
             boolean running = server.isRunning();
-            System.out.println("[HttpServerExample] started type=" + type + ", port=" + port + ", running=" + running);
+            log.info("[HttpServerExample] started type={}, port={}, running={}", type, port, running);
 
             if (benchmark) {
-                System.out.println("[HttpServerExample] benchmark mode — server running, press Ctrl+C to stop");
+                log.info("[HttpServerExample] benchmark mode — server running, press Ctrl+C to stop");
                 Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                     try {
                         if (finalServer != null) {
@@ -53,14 +55,14 @@ public class HttpServerExample {
                         }
                     } catch (Exception ignored) {
                     }
-                    System.out.println("[HttpServerExample] benchmark stopped");
+                    log.info("[HttpServerExample] benchmark stopped");
                 }));
                 Thread.currentThread().join();
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } catch (Exception e) {
-            System.err.println("[HttpServerExample] failed: " + e.getMessage());
+            log.error("[HttpServerExample] failed: {}", e.getMessage());
             if (server != null) {
                 try { server.stop(); } catch (Exception ignored) { }
             }
@@ -73,6 +75,6 @@ public class HttpServerExample {
             } catch (Exception ignored) {
             }
         }
-        System.out.println("[HttpServerExample] stopped");
+        log.info("[HttpServerExample] stopped");
     }
 }

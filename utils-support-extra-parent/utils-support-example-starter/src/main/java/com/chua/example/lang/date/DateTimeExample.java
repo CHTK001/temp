@@ -4,6 +4,7 @@ import com.chua.common.support.lang.date.DateTime;
 import com.chua.common.support.lang.date.DateTimeRange;
 import com.chua.common.support.lang.date.enums.ZoneIdEnum;
 import com.chua.common.support.lang.date.unit.DateUnit;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -46,6 +47,7 @@ import java.util.Date;
  * @author CH
  * @since 4.0.0.43
  */
+@Slf4j
 public class DateTimeExample {
 
     /**
@@ -100,7 +102,7 @@ public class DateTimeExample {
 
         DateTimeExample example = new DateTimeExample();
         boolean passed = example.runTest(type);
-        System.out.println("[DateTimeExample] self-test type=" + type + ", passed=" + passed);
+        log.info("[DateTimeExample] self-test type={}, passed={}", type, passed);
         System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
     }
 
@@ -154,7 +156,7 @@ public class DateTimeExample {
                         && zoneExample();
             }
             default -> {
-                System.err.println("[DateTimeExample] 未知能力点: " + type);
+                log.error("[DateTimeExample] 未知能力点: {}", type);
                 return false;
             }
         }
@@ -166,21 +168,21 @@ public class DateTimeExample {
      * @return true 表示自检通过
      */
     public boolean nowExample() {
-        System.out.println("===== [now] 当前时间示例 =====");
+        log.info("===== [now] 当前时间示例 =====");
         try {
             LocalDateTime now = DateTime.now();
             long nowMillis = DateTime.nowMillis();
             LocalDateTime shanghaiNow = DateTime.now(SHANGHAI_ZONE);
 
-            System.out.println("  系统默认时区当前时间: " + DateTime.format(now));
-            System.out.println("  当前毫秒时间戳: " + nowMillis);
-            System.out.println("  上海时区当前时间: " + DateTime.format(shanghaiNow));
+            log.info("  系统默认时区当前时间: {}", DateTime.format(now));
+            log.info("  当前毫秒时间戳: {}", nowMillis);
+            log.info("  上海时区当前时间: {}", DateTime.format(shanghaiNow));
 
             boolean passed = now != null && nowMillis > 0 && shanghaiNow != null;
-            System.out.println("  [now] passed=" + passed);
+            log.info("  [now] passed={}", passed);
             return passed;
         } catch (Exception e) {
-            System.err.println("[DateTimeExample] now failed: " + e.getMessage());
+            log.error("[DateTimeExample] now failed: {}", e.getMessage());
             return false;
         }
     }
@@ -191,7 +193,7 @@ public class DateTimeExample {
      * @return true 表示自检通过
      */
     public boolean parseExample() {
-        System.out.println("===== [parse] 解析示例 =====");
+        log.info("===== [parse] 解析示例 =====");
         try {
             LocalDateTime parsedIso = DateTime.parse(ISO_TIME_STRING);
             LocalDateTime parsedCustom = DateTime.parse(CUSTOM_TIME_STRING, PATTERN);
@@ -199,19 +201,19 @@ public class DateTimeExample {
             Date date = new Date(TEST_EPOCH_MILLIS);
             LocalDateTime parsedDate = DateTime.parse(date);
 
-            System.out.println("  ISO 解析: " + parsedIso);
-            System.out.println("  自定义格式解析: " + parsedCustom);
-            System.out.println("  毫秒时间戳解析: " + parsedMillis);
-            System.out.println("  Date 解析: " + parsedDate);
+            log.info("  ISO 解析: {}", parsedIso);
+            log.info("  自定义格式解析: {}", parsedCustom);
+            log.info("  毫秒时间戳解析: {}", parsedMillis);
+            log.info("  Date 解析: {}", parsedDate);
 
             boolean passed = parsedIso != null
                     && parsedCustom != null
                     && parsedMillis != null
                     && parsedDate != null;
-            System.out.println("  [parse] passed=" + passed);
+            log.info("  [parse] passed={}", passed);
             return passed;
         } catch (Exception e) {
-            System.err.println("[DateTimeExample] parse failed: " + e.getMessage());
+            log.error("[DateTimeExample] parse failed: {}", e.getMessage());
             return false;
         }
     }
@@ -222,21 +224,21 @@ public class DateTimeExample {
      * @return true 表示自检通过
      */
     public boolean formatExample() {
-        System.out.println("===== [format] 格式化示例 =====");
+        log.info("===== [format] 格式化示例 =====");
         try {
             LocalDateTime dateTime = DateTime.parse(ISO_TIME_STRING);
             String defaultFormat = DateTime.format(dateTime);
             String customFormat = DateTime.format(dateTime, "yyyy/MM/dd HH:mm");
 
-            System.out.println("  默认格式化: " + defaultFormat);
-            System.out.println("  自定义格式化: " + customFormat);
+            log.info("  默认格式化: {}", defaultFormat);
+            log.info("  自定义格式化: {}", customFormat);
 
             boolean passed = defaultFormat.contains("2026-07-27")
                     && customFormat.contains("2026/07/27");
-            System.out.println("  [format] passed=" + passed);
+            log.info("  [format] passed={}", passed);
             return passed;
         } catch (Exception e) {
-            System.err.println("[DateTimeExample] format failed: " + e.getMessage());
+            log.error("[DateTimeExample] format failed: {}", e.getMessage());
             return false;
         }
     }
@@ -247,20 +249,20 @@ public class DateTimeExample {
      * @return true 表示自检通过
      */
     public boolean convertExample() {
-        System.out.println("===== [convert] 类型转换示例 =====");
+        log.info("===== [convert] 类型转换示例 =====");
         try {
             LocalDateTime dateTime = DateTime.parse(ISO_TIME_STRING);
             long millis = DateTime.toMillis(dateTime);
             Date date = DateTime.toDate(dateTime);
 
-            System.out.println("  LocalDateTime -> millis: " + millis);
-            System.out.println("  LocalDateTime -> Date: " + date);
+            log.info("  LocalDateTime -> millis: {}", millis);
+            log.info("  LocalDateTime -> Date: {}", date);
 
             boolean passed = millis > 0 && date != null;
-            System.out.println("  [convert] passed=" + passed);
+            log.info("  [convert] passed={}", passed);
             return passed;
         } catch (Exception e) {
-            System.err.println("[DateTimeExample] convert failed: " + e.getMessage());
+            log.error("[DateTimeExample] convert failed: {}", e.getMessage());
             return false;
         }
     }
@@ -271,7 +273,7 @@ public class DateTimeExample {
      * @return true 表示自检通过
      */
     public boolean plusExample() {
-        System.out.println("===== [plus] 时间计算示例 =====");
+        log.info("===== [plus] 时间计算示例 =====");
         try {
             LocalDateTime now = DateTime.now();
             LocalDateTime nextYear = DateTime.plusYears(1);
@@ -280,22 +282,22 @@ public class DateTimeExample {
             LocalDateTime nextHour = DateTime.plusHours(1);
             LocalDateTime plusCustom = DateTime.plus(now, 30, DateUnit.MINUTE);
 
-            System.out.println("  当前时间: " + DateTime.format(now));
-            System.out.println("  +1 年: " + DateTime.format(nextYear));
-            System.out.println("  +1 月: " + DateTime.format(nextMonth));
-            System.out.println("  +1 日: " + DateTime.format(nextDay));
-            System.out.println("  +1 时: " + DateTime.format(nextHour));
-            System.out.println("  +30 分: " + DateTime.format(plusCustom));
+            log.info("  当前时间: {}", DateTime.format(now));
+            log.info("  +1 年: {}", DateTime.format(nextYear));
+            log.info("  +1 月: {}", DateTime.format(nextMonth));
+            log.info("  +1 日: {}", DateTime.format(nextDay));
+            log.info("  +1 时: {}", DateTime.format(nextHour));
+            log.info("  +30 分: {}", DateTime.format(plusCustom));
 
             boolean passed = nextYear.isAfter(now)
                     && nextMonth.isAfter(now)
                     && nextDay.isAfter(now)
                     && nextHour.isAfter(now)
                     && plusCustom.isAfter(now);
-            System.out.println("  [plus] passed=" + passed);
+            log.info("  [plus] passed={}", passed);
             return passed;
         } catch (Exception e) {
-            System.err.println("[DateTimeExample] plus failed: " + e.getMessage());
+            log.error("[DateTimeExample] plus failed: {}", e.getMessage());
             return false;
         }
     }
@@ -306,7 +308,7 @@ public class DateTimeExample {
      * @return true 表示自检通过
      */
     public boolean betweenExample() {
-        System.out.println("===== [between] 时间差示例 =====");
+        log.info("===== [between] 时间差示例 =====");
         try {
             LocalDateTime start = DateTime.parse(ISO_TIME_STRING);
             LocalDateTime end = start.plusDays(2).plusHours(3).plusMinutes(30);
@@ -317,19 +319,19 @@ public class DateTimeExample {
             long seconds = DateTime.betweenSeconds(start, end);
             long millis = DateTime.betweenMillis(start, end);
 
-            System.out.println("  start: " + start);
-            System.out.println("  end: " + end);
-            System.out.println("  相差天数: " + days);
-            System.out.println("  相差小时: " + hours);
-            System.out.println("  相差分钟: " + minutes);
-            System.out.println("  相差秒数: " + seconds);
-            System.out.println("  相差毫秒: " + millis);
+            log.info("  start: {}", start);
+            log.info("  end: {}", end);
+            log.info("  相差天数: {}", days);
+            log.info("  相差小时: {}", hours);
+            log.info("  相差分钟: {}", minutes);
+            log.info("  相差秒数: {}", seconds);
+            log.info("  相差毫秒: {}", millis);
 
             boolean passed = days == 2 && hours == 51 && minutes == 3090;
-            System.out.println("  [between] passed=" + passed);
+            log.info("  [between] passed={}", passed);
             return passed;
         } catch (Exception e) {
-            System.err.println("[DateTimeExample] between failed: " + e.getMessage());
+            log.error("[DateTimeExample] between failed: {}", e.getMessage());
             return false;
         }
     }
@@ -340,7 +342,7 @@ public class DateTimeExample {
      * @return true 表示自检通过
      */
     public boolean compareExample() {
-        System.out.println("===== [compare] 时间比较示例 =====");
+        log.info("===== [compare] 时间比较示例 =====");
         try {
             LocalDateTime start = DateTime.parse(ISO_TIME_STRING);
             LocalDateTime mid = start.plusHours(5);
@@ -352,19 +354,19 @@ public class DateTimeExample {
             boolean today = DateTime.isToday(now);
             boolean notToday = DateTime.isToday(start);
 
-            System.out.println("  start: " + start);
-            System.out.println("  mid  (+5h): " + mid);
-            System.out.println("  end  (+1d): " + end);
-            System.out.println("  mid 在 [start, end] 内: " + midIn);
-            System.out.println("  end 在 [start, end] 内: " + endIn);
-            System.out.println("  当前时间是今天: " + today);
-            System.out.println("  start 是今天: " + notToday);
+            log.info("  start: {}", start);
+            log.info("  mid  (+5h): {}", mid);
+            log.info("  end  (+1d): {}", end);
+            log.info("  mid 在 [start, end] 内: {}", midIn);
+            log.info("  end 在 [start, end] 内: {}", endIn);
+            log.info("  当前时间是今天: {}", today);
+            log.info("  start 是今天: {}", notToday);
 
             boolean passed = midIn && endIn && today && !notToday;
-            System.out.println("  [compare] passed=" + passed);
+            log.info("  [compare] passed={}", passed);
             return passed;
         } catch (Exception e) {
-            System.err.println("[DateTimeExample] compare failed: " + e.getMessage());
+            log.error("[DateTimeExample] compare failed: {}", e.getMessage());
             return false;
         }
     }
@@ -375,20 +377,20 @@ public class DateTimeExample {
      * @return true 表示自检通过
      */
     public boolean rangeExample() {
-        System.out.println("===== [range] 时间区间示例 =====");
+        log.info("===== [range] 时间区间示例 =====");
         try {
             LocalDateTime start = DateTime.parse(ISO_TIME_STRING);
             DateTimeRange range1 = DateTime.range(start, start.plusDays(7));
             DateTimeRange range2 = DateTime.range(start, 7);
 
-            System.out.println("  range1: " + range1);
-            System.out.println("  range2: " + range2);
+            log.info("  range1: {}", range1);
+            log.info("  range2: {}", range2);
 
             boolean passed = range1 != null && range2 != null;
-            System.out.println("  [range] passed=" + passed);
+            log.info("  [range] passed={}", passed);
             return passed;
         } catch (Exception e) {
-            System.err.println("[DateTimeExample] range failed: " + e.getMessage());
+            log.error("[DateTimeExample] range failed: {}", e.getMessage());
             return false;
         }
     }
@@ -399,7 +401,7 @@ public class DateTimeExample {
      * @return true 表示自检通过
      */
     public boolean zoneExample() {
-        System.out.println("===== [zone] 时区处理示例 =====");
+        log.info("===== [zone] 时区处理示例 =====");
         try {
             LocalDateTime dateTime = DateTime.parse(ISO_TIME_STRING);
             ZonedDateTime shanghaiZoned = DateTime.withZone(dateTime, SHANGHAI_ZONE);
@@ -407,20 +409,20 @@ public class DateTimeExample {
             String shanghaiFormatted = DateTime.format(dateTime, SHANGHAI_ZONE, PATTERN);
             ZonedDateTime fromEnum = DateTime.ofZone(dateTime, ZoneIdEnum.CTT);
 
-            System.out.println("  上海时区 ZonedDateTime: " + shanghaiZoned);
-            System.out.println("  上海时区毫秒时间戳: " + shanghaiMillis);
-            System.out.println("  上海时区格式化: " + shanghaiFormatted);
-            System.out.println("  CTT 枚举转 ZonedDateTime: " + fromEnum);
+            log.info("  上海时区 ZonedDateTime: {}", shanghaiZoned);
+            log.info("  上海时区毫秒时间戳: {}", shanghaiMillis);
+            log.info("  上海时区格式化: {}", shanghaiFormatted);
+            log.info("  CTT 枚举转 ZonedDateTime: {}", fromEnum);
 
             boolean passed = shanghaiZoned != null
                     && shanghaiMillis > 0
                     && shanghaiFormatted.contains("2026-07-27")
                     && fromEnum != null
                     && fromEnum.getZone().equals(SHANGHAI_ZONE);
-            System.out.println("  [zone] passed=" + passed);
+            log.info("  [zone] passed={}", passed);
             return passed;
         } catch (Exception e) {
-            System.err.println("[DateTimeExample] zone failed: " + e.getMessage());
+            log.error("[DateTimeExample] zone failed: {}", e.getMessage());
             return false;
         }
     }
@@ -429,21 +431,21 @@ public class DateTimeExample {
      * 打印帮助信息。
      */
     private static void printHelp() {
-        System.out.println("DateTimeExample — 日期时间工具示例");
-        System.out.println();
-        System.out.println("用法: java DateTimeExample [选项]");
-        System.out.println();
-        System.out.println("选项:");
-        System.out.println("  now       当前时间能力点");
-        System.out.println("  parse     解析能力点");
-        System.out.println("  format    格式化能力点");
-        System.out.println("  convert   类型转换能力点");
-        System.out.println("  plus      时间计算能力点");
-        System.out.println("  between   时间差能力点");
-        System.out.println("  compare   时间比较能力点");
-        System.out.println("  range     时间区间能力点");
-        System.out.println("  zone      时区处理能力点");
-        System.out.println("  all       测试全部能力点（默认）");
-        System.out.println("  --help    显示此帮助");
+        log.info("DateTimeExample — 日期时间工具示例");
+        log.info("");
+        log.info("用法: java DateTimeExample [选项]");
+        log.info("");
+        log.info("选项:");
+        log.info("  now       当前时间能力点");
+        log.info("  parse     解析能力点");
+        log.info("  format    格式化能力点");
+        log.info("  convert   类型转换能力点");
+        log.info("  plus      时间计算能力点");
+        log.info("  between   时间差能力点");
+        log.info("  compare   时间比较能力点");
+        log.info("  range     时间区间能力点");
+        log.info("  zone      时区处理能力点");
+        log.info("  all       测试全部能力点（默认）");
+        log.info("  --help    显示此帮助");
     }
 }

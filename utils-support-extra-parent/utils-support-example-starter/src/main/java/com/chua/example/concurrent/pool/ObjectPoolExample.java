@@ -5,6 +5,7 @@ import com.chua.common.support.concurrent.pool.ObjectFactory;
 import com.chua.common.support.concurrent.pool.ObjectPool;
 import com.chua.common.support.concurrent.pool.ObjectPoolConfig;
 import com.chua.common.support.concurrent.pool.PoolTimeoutException;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +47,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author CH
  * @since 4.0.0.43
  */
+@Slf4j
 public class ObjectPoolExample {
 
     /**
@@ -110,7 +112,7 @@ public class ObjectPoolExample {
 
         ObjectPoolExample example = new ObjectPoolExample();
         boolean passed = example.runTest(type);
-        System.out.println("[ObjectPoolExample] self-test type=" + type + ", passed=" + passed);
+        log.info("[ObjectPoolExample] self-test type={}, passed={}", type, passed);
         System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
     }
 
@@ -148,7 +150,7 @@ public class ObjectPoolExample {
                         && testPoolExhaustion();
             }
             default -> {
-                System.err.println("[ObjectPoolExample] 未知能力点: " + type);
+                log.error("[ObjectPoolExample] 未知能力点: {}", type);
                 return false;
             }
         }
@@ -160,7 +162,7 @@ public class ObjectPoolExample {
      * @return true 表示借还成功、对象可复用
      */
     public boolean testBasicBorrowReturn() {
-        System.out.println("===== [basic] 基础借还示例 =====");
+        log.info("===== [basic] 基础借还示例 =====");
         ObjectPool<StringBuilder> pool = null;
         try {
             pool = createPool(DEFAULT_MAX_TOTAL, DEFAULT_BORROW_TIMEOUT_MS);
@@ -168,23 +170,24 @@ public class ObjectPoolExample {
             // 1. 借出第一个对象
             StringBuilder first = pool.borrow();
             first.append("hello");
-            System.out.println("  借出第一个对象: " + first + ", active=" + pool.getNumActive() + ", idle=" + pool.getNumIdle());
+            log.info("  借出第一个对象: {}, active={}, idle={}",
+                    first, pool.getNumActive(), pool.getNumIdle());
 
             // 2. 归还
             pool.returnObject(first);
-            System.out.println("  归还后: active=" + pool.getNumActive() + ", idle=" + pool.getNumIdle());
+            log.info("  归还后: active={}, idle={}", pool.getNumActive(), pool.getNumIdle());
 
             // 3. 再次借出，应为同一个对象（池复用）
             StringBuilder second = pool.borrow();
             boolean reused = (second == first);
-            System.out.println("  再次借出: " + second + ", 复用=" + reused);
+            log.info("  再次借出: {}, 复用={}", second, reused);
             pool.returnObject(second);
 
             boolean passed = reused && pool.getNumActive() == 0;
-            System.out.println("  [basic] passed=" + passed);
+            log.info("  [basic] passed={}", passed);
             return passed;
         } catch (Exception e) {
-            System.err.println("[ObjectPoolExample] basic failed: " + e.getMessage());
+            log.error("[ObjectPoolExample] basic failed: {}", e.getMessage());
             return false;
         } finally {
             closeQuietly(pool);
@@ -197,7 +200,7 @@ public class ObjectPoolExample {
      * @return true 表示守卫能正确自动归还
      */
     public boolean testPoolGuard() {
-        System.out.println("===== [guard] 池守卫示例 =====");
+        log.info("===== [guard] 池守卫示例 =====");
         ObjectPool<StringBuilder> pool = null;
         try {
             pool = createPool(DEFAULT_MAX_TOTAL, DEFAULT_BORROW_TIMEOUT_MS);
@@ -208,17 +211,17 @@ public class ObjectPoolExample {
                 StringBuilder sb = guard.get();
                 sb.append("guard-test");
                 activeAfterBorrow = pool.getNumActive();
-                System.out.println("  守卫内: " + sb + ", active=" + activeAfterBorrow);
+                log.info("  守卫内: {}, active={}", sb, activeAfterBorrow);
             }
 
             int activeAfterClose = pool.getNumActive();
-            System.out.println("  守卫关闭后 active=" + activeAfterClose);
+            log.info("  守卫关闭后 active={}", activeAfterClose);
 
             boolean passed = activeAfterBorrow == 1 && activeAfterClose == 0;
-            System.out.println("  [guard] passed=" + passed);
+            log.info("  [guard] passed={}", passed);
             return passed;
         } catch (Exception e) {
-            System.err.println("[ObjectPoolExample] guard failed: " + e.getMessage());
+            log.error("[ObjectPoolExample] guard failed: {}", e.getMessage());
             return false;
         } finally {
             closeQuietly(pool);
@@ -231,7 +234,7 @@ public class ObjectPoolExample {
      * @return true 表示并发借还无异常且所有任务完成
      */
     public boolean testConcurrentBorrow() {
-        System.out.println("===== [concurrent] 并发借还示例 =====");
+        log.info("===== [concurrent] 并发借还示例 =====");
         ExecutorService executor = null;
         ObjectPool<StringBuilder> pool = null;
         try {
@@ -256,7 +259,7 @@ public class ObjectPoolExample {
                         successCount.incrementAndGet();
                     } catch (Exception e) {
                         failureCount.incrementAndGet();
-                        System.err.println("  任务 " + taskId + " 异常: " + e.getMessage());
+                        log.error("  任务 {} 异常: {}", taskId, e.getMessage());
                     } finally {
                         latch.countDown();
                     }
@@ -264,20 +267,20 @@ public class ObjectPoolExample {
             }
 
             boolean finished = latch.await(CONCURRENT_AWAIT_SECONDS, TimeUnit.SECONDS);
-            System.out.println("  并发任务数: " + CONCURRENT_THREAD_COUNT
-                    + ", 每任务借还次数: " + BORROW_TIMES_PER_THREAD);
-            System.out.println("  成功: " + successCount.get() + ", 失败: " + failureCount.get());
-            System.out.println("  完成标志: " + finished + ", 池状态 active=" + pool.getNumActive()
-                    + ", idle=" + pool.getNumIdle());
+            log.info("  并发任务数: {}, 每任务借还次数: {}",
+                    CONCURRENT_THREAD_COUNT, BORROW_TIMES_PER_THREAD);
+            log.info("  成功: {}, 失败: {}", successCount.get(), failureCount.get());
+            log.info("  完成标志: {}, 池状态 active={}, idle={}",
+                    finished, pool.getNumActive(), pool.getNumIdle());
 
             boolean passed = finished
                     && successCount.get() == CONCURRENT_THREAD_COUNT
                     && failureCount.get() == 0
                     && pool.getNumActive() == 0;
-            System.out.println("  [concurrent] passed=" + passed);
+            log.info("  [concurrent] passed={}", passed);
             return passed;
         } catch (Exception e) {
-            System.err.println("[ObjectPoolExample] concurrent failed: " + e.getMessage());
+            log.error("[ObjectPoolExample] concurrent failed: {}", e.getMessage());
             return false;
         } finally {
             if (executor != null) {
@@ -293,7 +296,7 @@ public class ObjectPoolExample {
      * @return true 表示失效对象已被销毁且不再借出
      */
     public boolean testInvalidateObject() {
-        System.out.println("===== [invalidate] 对象失效示例 =====");
+        log.info("===== [invalidate] 对象失效示例 =====");
         ObjectPool<StringBuilder> pool = null;
         try {
             pool = createPool(DEFAULT_MAX_TOTAL, DEFAULT_BORROW_TIMEOUT_MS);
@@ -301,23 +304,23 @@ public class ObjectPoolExample {
             // 1. 借出并标记对象
             StringBuilder obj = pool.borrow();
             obj.append("will-be-invalid");
-            System.out.println("  借出对象: " + obj + ", active=" + pool.getNumActive());
+            log.info("  借出对象: {}, active={}", obj, pool.getNumActive());
 
             // 2. 失效对象（不归还池中）
             pool.invalidateObject(obj);
-            System.out.println("  失效后: active=" + pool.getNumActive() + ", idle=" + pool.getNumIdle());
+            log.info("  失效后: active={}, idle={}", pool.getNumActive(), pool.getNumIdle());
 
             // 3. 再借出应为不同对象
             StringBuilder newObj = pool.borrow();
             boolean different = (newObj != obj);
-            System.out.println("  再借出对象: " + newObj + ", 不同对象=" + different);
+            log.info("  再借出对象: {}, 不同对象={}", newObj, different);
             pool.returnObject(newObj);
 
             boolean passed = different && pool.getNumActive() == 0;
-            System.out.println("  [invalidate] passed=" + passed);
+            log.info("  [invalidate] passed={}", passed);
             return passed;
         } catch (Exception e) {
-            System.err.println("[ObjectPoolExample] invalidate failed: " + e.getMessage());
+            log.error("[ObjectPoolExample] invalidate failed: {}", e.getMessage());
             return false;
         } finally {
             closeQuietly(pool);
@@ -330,7 +333,7 @@ public class ObjectPoolExample {
      * @return true 表示池耗尽时正确抛出超时异常
      */
     public boolean testPoolExhaustion() {
-        System.out.println("===== [exhaustion] 池耗尽示例 =====");
+        log.info("===== [exhaustion] 池耗尽示例 =====");
         ObjectPool<StringBuilder> pool = null;
         try {
             pool = createPool(EXHAUSTION_MAX_TOTAL, EXHAUSTION_BORROW_TIMEOUT_MS);
@@ -340,7 +343,7 @@ public class ObjectPoolExample {
             for (int i = 0; i < EXHAUSTION_MAX_TOTAL; i++) {
                 borrowed.add(pool.borrow());
             }
-            System.out.println("  借出全部: " + EXHAUSTION_MAX_TOTAL + " 个, active=" + pool.getNumActive());
+            log.info("  借出全部: {} 个, active={}", EXHAUSTION_MAX_TOTAL, pool.getNumActive());
 
             // 2. 再借应超时
             boolean timeoutCaught = false;
@@ -348,13 +351,13 @@ public class ObjectPoolExample {
                 pool.borrow();
             } catch (PoolTimeoutException e) {
                 timeoutCaught = true;
-                System.out.println("  超时异常已捕获: " + e.getMessage());
+                log.info("  超时异常已捕获: {}", e.getMessage());
             }
 
             // 3. 归还后应能再次借出
             pool.returnObject(borrowed.get(0));
             StringBuilder again = pool.borrow();
-            System.out.println("  归还后再借出: " + (again != null));
+            log.info("  归还后再借出: {}", (again != null));
             if (again != null) {
                 borrowed.set(0, again);
             }
@@ -367,10 +370,10 @@ public class ObjectPoolExample {
             }
 
             boolean passed = timeoutCaught && pool.getNumActive() == 0;
-            System.out.println("  [exhaustion] passed=" + passed);
+            log.info("  [exhaustion] passed={}", passed);
             return passed;
         } catch (Exception e) {
-            System.err.println("[ObjectPoolExample] exhaustion failed: " + e.getMessage());
+            log.error("[ObjectPoolExample] exhaustion failed: {}", e.getMessage());
             return false;
         } finally {
             closeQuietly(pool);
@@ -433,17 +436,17 @@ public class ObjectPoolExample {
      * 打印帮助信息。
      */
     private static void printHelp() {
-        System.out.println("ObjectPoolExample — 对象池工具示例");
-        System.out.println();
-        System.out.println("用法: java ObjectPoolExample [选项]");
-        System.out.println();
-        System.out.println("选项:");
-        System.out.println("  basic        基础借还能力点");
-        System.out.println("  guard        池守卫能力点");
-        System.out.println("  concurrent   并发借还能力点");
-        System.out.println("  invalidate   对象失效能力点");
-        System.out.println("  exhaustion   池耗尽能力点");
-        System.out.println("  all          测试全部能力点（默认）");
-        System.out.println("  --help       显示此帮助");
+        log.info("ObjectPoolExample — 对象池工具示例");
+        log.info("");
+        log.info("用法: java ObjectPoolExample [选项]");
+        log.info("");
+        log.info("选项:");
+        log.info("  basic        基础借还能力点");
+        log.info("  guard        池守卫能力点");
+        log.info("  concurrent   并发借还能力点");
+        log.info("  invalidate   对象失效能力点");
+        log.info("  exhaustion   池耗尽能力点");
+        log.info("  all          测试全部能力点（默认）");
+        log.info("  --help       显示此帮助");
     }
 }

@@ -3,6 +3,7 @@ package com.chua.example.lang.json;
 import com.chua.common.support.lang.json.JsonTemplateExtractor;
 import com.chua.common.support.lang.template.TemplateExtractResult;
 import com.chua.common.support.lang.template.TemplateVar;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,28 @@ import java.util.Map;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public class JsonTemplateExample {
+
+    /**
+     * 程序退出码：成功
+     */
+    private static final int EXIT_CODE_SUCCESS = 0;
+
+    /**
+     * 程序退出码：失败
+     */
+    private static final int EXIT_CODE_FAILURE = 1;
+
+    /**
+     * 模板声明待抽取槽位 {name} / {age}；输入顺序故意与模板相反，用于验证顺序无关
+     */
+    private static final String DEFAULT_TEMPLATE = "{\"xx\":\"{name}\",\"yy\":\"{age}\"}";
+
+    /**
+     * 默认测试输入
+     */
+    private static final String DEFAULT_INPUT = "{\"yy\":25,\"xx\":\"Alice\"}";
 
     /**
      * 程序入口：依次演示各能力并做断言校验，任意断言失败即以 AssertionError 暴露问题。
@@ -31,11 +53,11 @@ public class JsonTemplateExample {
      * @param args 命令行参数（本示例未使用）
      */
     public static void main(String[] args) {
-        System.out.println("========== JSON 模板匹配提取示例 ==========\n");
+        log.info("========== JSON 模板匹配提取示例 ==========\n");
 
         // 模板声明待抽取槽位 {name} / {age}；输入顺序故意与模板相反，用于验证顺序无关
-        String template = "{\"xx\":\"{name}\",\"yy\":\"{age}\"}";
-        String input = "{\"yy\":25,\"xx\":\"Alice\"}";
+        String template = DEFAULT_TEMPLATE;
+        String input = DEFAULT_INPUT;
 
         demoInterfaceEntry(template, input);
         demoBuilderWithMissing();
@@ -48,7 +70,7 @@ public class JsonTemplateExample {
         demoArrayStrategy();
         demoTolerantType();
 
-        System.out.println("\n========== 全部示例通过 ==========");
+        log.info("\n========== 全部示例通过 ==========");
     }
 
     /**
@@ -61,7 +83,7 @@ public class JsonTemplateExample {
         if (!condition) {
             throw new AssertionError(String.format("示例断言失败: %s", message));
         }
-        System.out.printf("  [OK] %s%n", message);
+        log.info("  [OK] {}", message);
     }
 
     /**
@@ -71,7 +93,7 @@ public class JsonTemplateExample {
      * @param input    输入 JSON
      */
     private static void demoInterfaceEntry(String template, String input) {
-        System.out.println("\n【1】SPI 接口入口 JsonTemplateExtractor.getInstance()");
+        log.info("\n【1】SPI 接口入口 JsonTemplateExtractor.getInstance()");
         JsonTemplateExtractor extractor = JsonTemplateExtractor.getInstance();
         Map<String, Object> result = extractor.extract(template, input);
 
@@ -85,7 +107,7 @@ public class JsonTemplateExample {
      * 演示流式构建器 + 缺失变量感知：模板声明但输入缺失时给出缺失列表，已抽到的变量仍生效。
      */
     private static void demoBuilderWithMissing() {
-        System.out.println("\n【2】流式构建器 + 缺失变量感知");
+        log.info("\n【2】流式构建器 + 缺失变量感知");
         TemplateExtractResult result = JsonTemplateExtractor.create()
                 .template("{\"a\":\"{name}\",\"b\":\"{missing}\"}")
                 .extract("{\"a\":\"Bob\"}");
@@ -101,7 +123,7 @@ public class JsonTemplateExample {
      * 演示内嵌占位符：模板值在普通文本中间嵌入 {@code {变量名}}，仅截取变量部分。
      */
     private static void demoEmbeddedPlaceholder() {
-        System.out.println("\n【3】内嵌占位符");
+        log.info("\n【3】内嵌占位符");
         String template = "{\"greeting\":\"hello {name}!\"}";
         String input = "{\"greeting\":\"hello 世界!\"}";
 
@@ -114,7 +136,7 @@ public class JsonTemplateExample {
      * 演示宽松格式：输入含 JSON5 注释与单引号键名，仍可正确解析抽取。
      */
     private static void demoLenientFormat() {
-        System.out.println("\n【4】宽松格式（注释 + 单引号）");
+        log.info("\n【4】宽松格式（注释 + 单引号）");
         String template = "{\"greeting\":\"hi {name}\"}";
         String input = "{ /* 这是一段注释 */ 'greeting' : 'hi 张三' }";
 
@@ -130,7 +152,7 @@ public class JsonTemplateExample {
      * @param input    输入 JSON
      */
     private static void demoExtractAsPojo(String template, String input) {
-        System.out.println("\n【5】extractAs 直转 POJO");
+        log.info("\n【5】extractAs 直转 POJO");
         User user = JsonTemplateExtractor.getInstance().extractAs(template, input, User.class);
         require("Alice".equals(user.name()),
                 String.format("POJO.name = %s", user.name()));
@@ -145,7 +167,7 @@ public class JsonTemplateExample {
      * @param input    输入 JSON
      */
     private static void demoMatches(String template, String input) {
-        System.out.println("\n【6】matches 完整性校验");
+        log.info("\n【6】matches 完整性校验");
         JsonTemplateExtractor extractor = JsonTemplateExtractor.getInstance();
         require(extractor.matches(template, input), "完整输入 matches() = true");
         require(!extractor.matches("{\"a\":\"{name}\",\"b\":\"{lost}\"}", "{\"a\":\"X\"}"),
@@ -170,7 +192,7 @@ public class JsonTemplateExample {
      * 适合需要顺序或溯源的消费场景。
      */
     private static void demoExtractVars() {
-        System.out.println("\n【7】extractVars 有序变量列表（含路径）");
+        log.info("\n【7】extractVars 有序变量列表（含路径）");
         String template = "{\"user\":{\"name\":\"{name}\",\"age\":25},\"tag\":\"v_{ver}\"}";
         String input = "{\"user\":{\"name\":\"Carol\",\"age\":25},\"tag\":\"v_2.0\"}";
 
@@ -195,7 +217,7 @@ public class JsonTemplateExample {
      * 示例：模板 {"msg":"用户{name}登录"} 从输入 {"msg":"用户张三登录"} 中抽取 name。
      */
     private static void demoPartialExtraction() {
-        System.out.println("\n【8】部分提取（字面量仅作锚点）");
+        log.info("\n【8】部分提取（字面量仅作锚点）");
         String template = "{\"msg\":\"用户{name}登录\"}";
         String input = "{\"msg\":\"用户张三登录\"}";
 
@@ -210,7 +232,7 @@ public class JsonTemplateExample {
      * 演示数组“单元素模板匹配全部”策略：模板数组仅一个元素，套用到输入数组每个元素。
      */
     private static void demoArrayStrategy() {
-        System.out.println("\n【9】数组：单元素模板匹配全部");
+        log.info("\n【9】数组：单元素模板匹配全部");
         String template = "{\"list\":[{\"name\":\"{name}\",\"score\":\"{score}\"}]}";
         String input = "{\"list\":[{\"name\":\"A\",\"score\":90},{\"name\":\"B\",\"score\":85}]}";
 
@@ -235,7 +257,7 @@ public class JsonTemplateExample {
      * 演示容忍类型差异：内嵌占位符对应的输入为非文本（数字）时，开启 tolerantType 仍可抽取。
      */
     private static void demoTolerantType() {
-        System.out.println("\n【10】容忍类型差异");
+        log.info("\n【10】容忍类型差异");
         String template = "{\"code\":\"x{name}y\"}";
         String input = "{\"code\":9988}";
 

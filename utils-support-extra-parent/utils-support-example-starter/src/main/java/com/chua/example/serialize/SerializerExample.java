@@ -4,6 +4,7 @@ import com.chua.common.support.serialize.JavaSerializer;
 import com.chua.common.support.serialize.JsonSerializer;
 import com.chua.common.support.serialize.Serializer;
 import com.chua.common.support.serialize.SerializerFlow;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
@@ -37,6 +38,7 @@ import java.nio.charset.StandardCharsets;
  * @author CH
  * @since 4.0.0.43
  */
+@Slf4j
 public class SerializerExample {
 
     /**
@@ -76,7 +78,7 @@ public class SerializerExample {
 
         SerializerExample example = new SerializerExample();
         boolean passed = example.runTest(type);
-        System.out.println("[SerializerExample] self-test type=" + type + ", passed=" + passed);
+        log.info("[SerializerExample] self-test type={}, passed={}", type, passed);
         System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
     }
 
@@ -104,7 +106,7 @@ public class SerializerExample {
                 return testJson() && testJava() && testFlow();
             }
             default -> {
-                System.err.println("[SerializerExample] 未知能力点: " + type);
+                log.error("[SerializerExample] 未知能力点: {}", type);
                 return false;
             }
         }
@@ -116,7 +118,7 @@ public class SerializerExample {
      * @return true 表示反序列化对象非空且字段一致
      */
     public boolean testJson() {
-        System.out.println("===== [json] JSON 序列化示例 =====");
+        log.info("===== [json] JSON 序列化示例 =====");
         try {
             User user = new User(TEST_NAME, TEST_AGE);
             Serializer<User> serializer = new JsonSerializer<>(User.class);
@@ -124,19 +126,19 @@ public class SerializerExample {
             // 1. 序列化
             byte[] bytes = serializer.serialize(user);
             String jsonStr = new String(bytes, StandardCharsets.UTF_8);
-            System.out.println("  序列化结果: " + jsonStr);
+            log.info("  序列化结果: {}", jsonStr);
 
             // 2. 反序列化
             User copy = serializer.deserialize(bytes);
-            System.out.println("  反序列化结果: " + copy);
+            log.info("  反序列化结果: {}", copy);
 
             boolean passed = copy != null
                     && TEST_NAME.equals(copy.getName())
                     && TEST_AGE == copy.getAge();
-            System.out.println("  [json] passed=" + passed);
+            log.info("  [json] passed={}", passed);
             return passed;
         } catch (Exception e) {
-            System.err.println("[SerializerExample] json failed: " + e.getMessage());
+            log.error("[SerializerExample] json failed: {}", e.getMessage());
             return false;
         }
     }
@@ -147,26 +149,26 @@ public class SerializerExample {
      * @return true 表示反序列化对象非空且字段一致
      */
     public boolean testJava() {
-        System.out.println("===== [java] Java 原生序列化示例 =====");
+        log.info("===== [java] Java 原生序列化示例 =====");
         try {
             User user = new User(TEST_NAME, TEST_AGE);
             Serializer<User> serializer = new JavaSerializer<>();
 
             // 1. 序列化
             byte[] bytes = serializer.serialize(user);
-            System.out.println("  序列化字节数: " + bytes.length);
+            log.info("  序列化字节数: {}", bytes.length);
 
             // 2. 反序列化
             User copy = serializer.deserialize(bytes);
-            System.out.println("  反序列化结果: " + copy);
+            log.info("  反序列化结果: {}", copy);
 
             boolean passed = copy != null
                     && TEST_NAME.equals(copy.getName())
                     && TEST_AGE == copy.getAge();
-            System.out.println("  [java] passed=" + passed);
+            log.info("  [java] passed={}", passed);
             return passed;
         } catch (Exception e) {
-            System.err.println("[SerializerExample] java failed: " + e.getMessage());
+            log.error("[SerializerExample] java failed: {}", e.getMessage());
             return false;
         }
     }
@@ -177,34 +179,34 @@ public class SerializerExample {
      * @return true 表示两种序列化器反序列化结果均正确
      */
     public boolean testFlow() {
-        System.out.println("===== [flow] SerializerFlow 链式调用示例 =====");
+        log.info("===== [flow] SerializerFlow 链式调用示例 =====");
         try {
             User user = new User(TEST_NAME, TEST_AGE);
             SerializerFlow flow = new SerializerFlow();
 
             // 1. 默认 JSON 序列化
             byte[] jsonBytes = flow.serialize(user);
-            System.out.println("  默认 JSON 序列化字节数: " + jsonBytes.length);
+            log.info("  默认 JSON 序列化字节数: {}", jsonBytes.length);
             User fromJson = flow.deserialize(jsonBytes, User.class);
-            System.out.println("  JSON 反序列化结果: " + fromJson);
+            log.info("  JSON 反序列化结果: {}", fromJson);
             boolean jsonOk = fromJson != null && TEST_NAME.equals(fromJson.getName());
 
             // 2. 切换为 Java 原生序列化
             byte[] javaBytes = flow.use(new JavaSerializer<>()).serialize(user);
-            System.out.println("  Java 原生序列化字节数: " + javaBytes.length);
+            log.info("  Java 原生序列化字节数: {}", javaBytes.length);
             User fromJava = flow.deserialize(javaBytes, User.class);
-            System.out.println("  Java 反序列化结果: " + fromJava);
+            log.info("  Java 反序列化结果: {}", fromJava);
             boolean javaOk = fromJava != null && TEST_NAME.equals(fromJava.getName());
 
             // 3. 当前序列化器类型
             String currentSerializer = flow.getSerializer().getClass().getSimpleName();
-            System.out.println("  当前序列化器: " + currentSerializer);
+            log.info("  当前序列化器: {}", currentSerializer);
 
             boolean passed = jsonOk && javaOk;
-            System.out.println("  [flow] passed=" + passed);
+            log.info("  [flow] passed={}", passed);
             return passed;
         } catch (Exception e) {
-            System.err.println("[SerializerExample] flow failed: " + e.getMessage());
+            log.error("[SerializerExample] flow failed: {}", e.getMessage());
             return false;
         }
     }
@@ -213,16 +215,16 @@ public class SerializerExample {
      * 打印帮助信息。
      */
     private static void printHelp() {
-        System.out.println("SerializerExample — 序列化工具示例");
-        System.out.println();
-        System.out.println("用法: java SerializerExample [选项]");
-        System.out.println();
-        System.out.println("选项:");
-        System.out.println("  json      JSON 序列化能力点");
-        System.out.println("  java      Java 原生序列化能力点");
-        System.out.println("  flow      SerializerFlow 链式调用能力点");
-        System.out.println("  all       测试全部能力点（默认）");
-        System.out.println("  --help    显示此帮助");
+        log.info("SerializerExample — 序列化工具示例");
+        log.info("");
+        log.info("用法: java SerializerExample [选项]");
+        log.info("");
+        log.info("选项:");
+        log.info("  json      JSON 序列化能力点");
+        log.info("  java      Java 原生序列化能力点");
+        log.info("  flow      SerializerFlow 链式调用能力点");
+        log.info("  all       测试全部能力点（默认）");
+        log.info("  --help    显示此帮助");
     }
 
     /**

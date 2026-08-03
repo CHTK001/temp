@@ -3,6 +3,7 @@ package com.chua.example.network.proxy.tcp;
 import com.chua.common.support.network.discovery.Discovery;
 import com.chua.common.support.network.server.filter.proxy.ProxyTargetResolver;
 import com.chua.common.support.network.server.filter.proxy.TcpProxyServerFilter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -27,6 +28,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author CH
  * @since 4.0.0.44
  */
+@Slf4j
 public class TcpProxyExample {
 
     private static final AtomicBoolean running = new AtomicBoolean(true);
@@ -54,7 +56,7 @@ public class TcpProxyExample {
         switch (proxyType) {
             case "tcp-proxy" -> startTcpProxy(listenPort, backendPort, benchmark);
             default -> {
-                System.err.println("[TcpProxyExample] unknown proxy type: " + proxyType);
+                log.error("[TcpProxyExample] unknown proxy type: {}", proxyType);
                 System.exit(1);
             }
         }
@@ -69,14 +71,14 @@ public class TcpProxyExample {
         ProxyTargetResolver resolver = addr -> backend;
         TcpProxyServerFilter proxy = new TcpProxyServerFilter(5000, 30000, resolver);
         proxy.startProxy(listenPort, 128);
-        System.out.println("[TcpProxyExample] TCP proxy listening on " + listenPort + " -> backend " + backendPort);
+        log.info("[TcpProxyExample] TCP proxy listening on {} -> backend {}", listenPort, backendPort);
 
         if (benchmark) {
-            System.out.println("[TcpProxyExample] benchmark mode — running, press Ctrl+C to stop");
+            log.info("[TcpProxyExample] benchmark mode — running, press Ctrl+C to stop");
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 running.set(false);
                 proxy.stopProxy();
-                System.out.println("[TcpProxyExample] benchmark stopped");
+                log.info("[TcpProxyExample] benchmark stopped");
             }));
             try {
                 while (running.get()) {
@@ -93,25 +95,25 @@ public class TcpProxyExample {
             }
             proxy.stopProxy();
         }
-        System.out.println("[TcpProxyExample] stopped");
+        log.info("[TcpProxyExample] stopped");
     }
 
     private static void startBackendEchoServer(int port) {
         Thread t = new Thread(() -> {
             try (ServerSocket ss = new ServerSocket(port, 128)) {
-                System.out.println("[TcpProxyExample] backend echo server started on port=" + port);
+                log.info("[TcpProxyExample] backend echo server started on port={}", port);
                 while (running.get()) {
                     try {
                         Socket client = ss.accept();
                         new Thread(() -> handleEcho(client), "echo-" + client.getPort()).start();
                     } catch (Exception e) {
                         if (running.get()) {
-                            System.err.println("[TcpProxyExample] backend accept error: " + e.getMessage());
+                            log.error("[TcpProxyExample] backend accept error: {}", e.getMessage());
                         }
                     }
                 }
             } catch (Exception e) {
-                System.err.println("[TcpProxyExample] backend server failed: " + e.getMessage());
+                log.error("[TcpProxyExample] backend server failed: {}", e.getMessage());
             }
         }, "tcp-backend-echo");
         t.setDaemon(true);

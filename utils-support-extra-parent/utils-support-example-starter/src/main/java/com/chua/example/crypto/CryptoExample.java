@@ -2,6 +2,7 @@ package com.chua.example.crypto;
 
 import com.chua.common.support.lang.algorithm.cipher.Sm2Cipher;
 import com.chua.common.support.lang.algorithm.cipher.Sm4Cipher;
+import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
@@ -39,6 +40,7 @@ import java.util.Base64;
  * @author CH
  * @since 4.0.0.43
  */
+@Slf4j
 public class CryptoExample {
 
     /**
@@ -103,7 +105,7 @@ public class CryptoExample {
 
         CryptoExample example = new CryptoExample();
         boolean passed = example.runTest(type);
-        System.out.println("[CryptoExample] self-test type=" + type + ", passed=" + passed);
+        log.info("[CryptoExample] self-test type={}, passed={}", type, passed);
         System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
     }
 
@@ -128,7 +130,7 @@ public class CryptoExample {
                 return testSm2() && testSm4();
             }
             default -> {
-                System.err.println("[CryptoExample] 未知算法类型: " + type + ", 支持: sm2 / sm4 / all");
+                log.error("[CryptoExample] 未知算法类型: {}, 支持: sm2 / sm4 / all", type);
                 return false;
             }
         }
@@ -140,7 +142,7 @@ public class CryptoExample {
      * @return true 表示加解密原文一致且验签通过
      */
     public boolean testSm2() {
-        System.out.println("===== SM2 自检开始 =====");
+        log.info("===== SM2 自检开始 =====");
         try {
             Sm2Cipher sm2 = Sm2Cipher.create(PROVIDER_BC);
 
@@ -148,35 +150,35 @@ public class CryptoExample {
             KeyPair keyPair = sm2.generateKeyPair();
             byte[] publicKey = keyPair.getPublic().getEncoded();
             byte[] privateKey = keyPair.getPrivate().getEncoded();
-            System.out.println("  [sm2] 生成密钥对成功, publicKeyLen=" + publicKey.length
-                    + ", privateKeyLen=" + privateKey.length);
+            log.info("  [sm2] 生成密钥对成功, publicKeyLen={}, privateKeyLen={}",
+                    publicKey.length, privateKey.length);
 
             // 2. 加密
             byte[] plaintext = SM2_PLAINTEXT.getBytes(StandardCharsets.UTF_8);
             byte[] ciphertext = sm2.encrypt(publicKey, plaintext);
-            System.out.println("  [sm2] 加密成功, ciphertextLen=" + ciphertext.length
-                    + ", base64=" + Base64.getEncoder().encodeToString(ciphertext));
+            log.info("  [sm2] 加密成功, ciphertextLen={}, base64={}",
+                    ciphertext.length, Base64.getEncoder().encodeToString(ciphertext));
 
             // 3. 解密
             byte[] decrypted = sm2.decrypt(privateKey, ciphertext);
             String decryptedStr = new String(decrypted, StandardCharsets.UTF_8);
             boolean decryptOk = SM2_PLAINTEXT.equals(decryptedStr);
-            System.out.println("  [sm2] 解密成功, decrypted=" + decryptedStr + ", match=" + decryptOk);
+            log.info("  [sm2] 解密成功, decrypted={}, match={}", decryptedStr, decryptOk);
 
             // 4. 签名
             byte[] signature = sm2.sign(privateKey, plaintext);
-            System.out.println("  [sm2] 签名成功, signatureLen=" + signature.length
-                    + ", base64=" + Base64.getEncoder().encodeToString(signature));
+            log.info("  [sm2] 签名成功, signatureLen={}, base64={}",
+                    signature.length, Base64.getEncoder().encodeToString(signature));
 
             // 5. 验签
             boolean verified = sm2.verify(publicKey, plaintext, signature);
-            System.out.println("  [sm2] 验签结果: " + verified);
+            log.info("  [sm2] 验签结果: {}", verified);
 
             boolean passed = decryptOk && verified;
-            System.out.println("===== SM2 自检结束: " + (passed ? "PASS" : "FAIL") + " =====");
+            log.info("===== SM2 自检结束: {} =====", (passed ? "PASS" : "FAIL"));
             return passed;
         } catch (Exception e) {
-            System.err.println("[CryptoExample] SM2 self-test failed: " + e.getMessage());
+            log.error("[CryptoExample] SM2 self-test failed: {}", e.getMessage());
             return false;
         }
     }
@@ -187,34 +189,34 @@ public class CryptoExample {
      * @return true 表示加解密原文一致
      */
     public boolean testSm4() {
-        System.out.println("===== SM4 自检开始 =====");
+        log.info("===== SM4 自检开始 =====");
         try {
             Sm4Cipher sm4 = Sm4Cipher.create(PROVIDER_BC);
 
             // 1. 字节模式加解密
             byte[] plaintext = SM4_PLAINTEXT.getBytes(StandardCharsets.UTF_8);
             byte[] ciphertext = sm4.encrypt(SM4_KEY, plaintext);
-            System.out.println("  [sm4] 字节模式加密成功, ciphertextLen=" + ciphertext.length
-                    + ", base64=" + Base64.getEncoder().encodeToString(ciphertext));
+            log.info("  [sm4] 字节模式加密成功, ciphertextLen={}, base64={}",
+                    ciphertext.length, Base64.getEncoder().encodeToString(ciphertext));
 
             byte[] decrypted = sm4.decrypt(SM4_KEY, ciphertext);
             String decryptedStr = new String(decrypted, StandardCharsets.UTF_8);
             boolean byteModeOk = SM4_PLAINTEXT.equals(decryptedStr);
-            System.out.println("  [sm4] 字节模式解密成功, decrypted=" + decryptedStr + ", match=" + byteModeOk);
+            log.info("  [sm4] 字节模式解密成功, decrypted={}, match={}", decryptedStr, byteModeOk);
 
             // 2. 字符串模式加解密（Base64 编码）
             String encryptedStr = sm4.encryptToString(SM4_KEY, SM4_PLAINTEXT);
-            System.out.println("  [sm4] 字符串模式加密成功, base64=" + encryptedStr);
+            log.info("  [sm4] 字符串模式加密成功, base64={}", encryptedStr);
 
             String decryptedString = sm4.decryptToString(SM4_KEY, encryptedStr);
             boolean strModeOk = SM4_PLAINTEXT.equals(decryptedString);
-            System.out.println("  [sm4] 字符串模式解密成功, decrypted=" + decryptedString + ", match=" + strModeOk);
+            log.info("  [sm4] 字符串模式解密成功, decrypted={}, match={}", decryptedString, strModeOk);
 
             boolean passed = byteModeOk && strModeOk;
-            System.out.println("===== SM4 自检结束: " + (passed ? "PASS" : "FAIL") + " =====");
+            log.info("===== SM4 自检结束: {} =====", (passed ? "PASS" : "FAIL"));
             return passed;
         } catch (Exception e) {
-            System.err.println("[CryptoExample] SM4 self-test failed: " + e.getMessage());
+            log.error("[CryptoExample] SM4 self-test failed: {}", e.getMessage());
             return false;
         }
     }
@@ -223,14 +225,14 @@ public class CryptoExample {
      * 打印帮助信息。
      */
     private static void printHelp() {
-        System.out.println("CryptoExample — 国密 SM2/SM4 加解密示例");
-        System.out.println();
-        System.out.println("用法: java CryptoExample [选项]");
-        System.out.println();
-        System.out.println("选项:");
-        System.out.println("  sm2       仅测试 SM2 算法（密钥生成/加解密/签名验签）");
-        System.out.println("  sm4       仅测试 SM4 算法（字节模式/字符串模式加解密）");
-        System.out.println("  all       测试全部算法（默认）");
-        System.out.println("  --help    显示此帮助");
+        log.info("CryptoExample — 国密 SM2/SM4 加解密示例");
+        log.info("");
+        log.info("用法: java CryptoExample [选项]");
+        log.info("");
+        log.info("选项:");
+        log.info("  sm2       仅测试 SM2 算法（密钥生成/加解密/签名验签）");
+        log.info("  sm4       仅测试 SM4 算法（字节模式/字符串模式加解密）");
+        log.info("  all       测试全部算法（默认）");
+        log.info("  --help    显示此帮助");
     }
 }

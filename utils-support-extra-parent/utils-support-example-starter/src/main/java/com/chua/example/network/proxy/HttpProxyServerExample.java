@@ -11,6 +11,7 @@ import com.chua.common.support.network.server.filter.proxy.HttpReverseProxyFilte
 import com.chua.common.support.network.server.filter.proxy.ReverseProxyServerFilter;
 import com.chua.common.support.network.server.request.ServerRequest;
 import com.chua.common.support.network.server.response.ServerResponse;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * HTTP 代理服务器示例 — 覆盖所有代理实现。
@@ -31,6 +32,7 @@ import com.chua.common.support.network.server.response.ServerResponse;
  * @author CH
  * @since 4.0.0.44
  */
+@Slf4j
 public class HttpProxyServerExample {
 
     public static void main(String[] args) {
@@ -59,26 +61,26 @@ public class HttpProxyServerExample {
                 case "reverse-proxy" -> proxyServer = buildReverseProxyServer(port, backendPort);
                 case "netty-proxy" -> proxyServer = buildNettyProxyServer(port, backendPort);
                 default -> {
-                    System.err.println("[HttpProxyServerExample] unknown proxy type: " + proxyType);
+                    log.error("[HttpProxyServerExample] unknown proxy type: {}", proxyType);
                     System.exit(1);
                     return;
                 }
             }
             proxyServer.start();
-            System.out.println("[HttpProxyServerExample] proxy type=" + proxyType + ", port=" + port + ", backend=" + backendPort);
+            log.info("[HttpProxyServerExample] proxy type={}, port={}, backend={}", proxyType, port, backendPort);
 
             if (benchmark) {
-                System.out.println("[HttpProxyServerExample] benchmark mode — running, press Ctrl+C to stop");
+                log.info("[HttpProxyServerExample] benchmark mode — running, press Ctrl+C to stop");
                 Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                     try { proxyServer.stop(); } catch (Exception ignored) { }
-                    System.out.println("[HttpProxyServerExample] benchmark stopped");
+                    log.info("[HttpProxyServerExample] benchmark stopped");
                 }));
                 Thread.currentThread().join();
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } catch (Exception e) {
-            System.err.println("[HttpProxyServerExample] failed: " + e.getMessage());
+            log.error("[HttpProxyServerExample] failed: {}", e.getMessage());
             if (proxyServer != null) {
                 try { proxyServer.stop(); } catch (Exception ignored) { }
             }
@@ -91,7 +93,7 @@ public class HttpProxyServerExample {
             } catch (Exception ignored) {
             }
         }
-        System.out.println("[HttpProxyServerExample] stopped");
+        log.info("[HttpProxyServerExample] stopped");
     }
 
     private static Server buildReverseProxyServer(int port, int backendPort) {
@@ -139,9 +141,9 @@ public class HttpProxyServerExample {
                     })
                     .build();
             backendServer.start();
-            System.out.println("[HttpProxyServerExample] backend started on port=" + port);
+            log.info("[HttpProxyServerExample] backend started on port={}", port);
         } catch (Exception e) {
-            System.err.println("[HttpProxyServerExample] backend failed: " + e.getMessage());
+            log.error("[HttpProxyServerExample] backend failed: {}", e.getMessage());
             System.exit(1);
         }
     }
