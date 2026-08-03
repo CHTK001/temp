@@ -489,6 +489,12 @@
         </configuration>
     </execution>
     <execution>
+        <id>polled-directory-test</id>
+        <configuration>
+            <mainClass>com.chua.example.directory.SyslogPolledDirectoryExampleTest</mainClass>
+        </configuration>
+    </execution>
+    <execution>
         <id>engine-example</id>
         <configuration>
             <mainClass>com.chua.example.engine.EngineExample</mainClass>
@@ -544,6 +550,7 @@
                         
                         <include>**/PolledDirectoryExample.java</include>
                         <include>**/PolledDirectoryLiveExample.java</include>
+                        <include>**/SyslogPolledDirectoryExampleTest.java</include>
                         <include>**/EngineExample.java</include>
                         <include>**/VideoCodecExample.java</include>
                         <include>**/ScreenCaptureExample.java</include>
