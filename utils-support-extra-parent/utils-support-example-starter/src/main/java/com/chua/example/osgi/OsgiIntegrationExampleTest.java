@@ -145,8 +145,14 @@ public class OsgiIntegrationExampleTest {
 
         BeanDefinition def = register.getBeanDefinition("osgi:com.chua.example.osgi.HelloService");
         assertNotNull(def, "应返回 launcher 提供的 BeanDefinition");
-        assertEquals(HelloService.class, def.getType(), "BeanDefinition 的类型应一致");
-        assertEquals("hello-osgi", def.getBean(), "BeanDefinition 实例应一致");
+        assertEquals(HelloService.class.getName(), def.getType(),
+                "BeanDefinition 的类型 FQN 应一致");
+        Object bean = def.getBean();
+        assertNotNull(bean, "BeanDefinition 实例不应为 null");
+        assertTrue(bean instanceof HelloService,
+                "BeanDefinition 实例应是 HelloService");
+        assertEquals("hello-osgi", ((HelloService) bean).greet(),
+                "BeanDefinition 实例的 greet() 应为 hello-osgi");
 
         Collection<BeanDefinition> defs = register.getBeanDefinitionOfType(
                 "com.chua.example.osgi.HelloService");
@@ -319,61 +325,7 @@ public class OsgiIntegrationExampleTest {
         }
     }
 
-    /**
-     * 测试服务接口。
-     */
-    public interface HelloService {
-        String greet();
-    }
-
-    /**
-     * 测试服务实现。
-     */
-    public static final class HelloServiceImpl implements HelloService {
-        private final String greeting;
-
-        public HelloServiceImpl() {
-            this("default");
-        }
-
-        public HelloServiceImpl(String greeting) {
-            this.greeting = greeting;
-        }
-
-        @Override
-        public String greet() {
-            return greeting;
-        }
-    }
-
     // ==================== 断言工具 ====================
-
-    /**
-     * 测试服务接口。
-     */
-    public interface HelloService {
-        String greet();
-    }
-
-    /**
-     * 测试服务实现。
-     */
-    public static final class HelloServiceImpl implements HelloService {
-        private final String greeting;
-
-        public HelloServiceImpl() {
-            this("default");
-        }
-
-        public HelloServiceImpl(String greeting) {
-            this.greeting = greeting;
-        }
-
-        @Override
-        public String greet() {
-            return greeting;
-        }
-    }
 
     private static void assertTrue(boolean cond, String msg) {
         if (!cond) {
