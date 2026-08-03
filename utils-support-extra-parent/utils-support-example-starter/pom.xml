@@ -65,6 +65,11 @@
         </dependency>
         <dependency>
             <groupId>com.chua</groupId>
+            <artifactId>utils-support-osgi-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.chua</groupId>
             <artifactId>utils-support-datasource-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -402,54 +407,8 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.5.0</version>
                 <configuration>
-                    <classpathScope>compile</classpathScope>
-                    <mainClass>com.chua.example.ai.chat.AiProxyDetectorExample</mainClass>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>offset-flow-example</id>
-                        <configuration>
-                            <mainClass>com.chua.example.concurrent.offset.OffsetFlowExample</mainClass>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>data-sink-example</id>
-                        <configuration>
-                            <mainClass>com.chua.example.datalake.sink.DataSinkExample</mainClass>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>pipeline-engine-example</id>
-                        <configuration>
-                            <mainClass>com.chua.example.datalake.pipeline.PipelineEngineExample</mainClass>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>datalake-server-example</id>
-                        <configuration>
-                            <mainClass>com.chua.example.datalake.server.DatalakeServerExample</mainClass>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>subscriber-example</id>
-                        <configuration>
-                            <mainClass>com.chua.example.datalake.subscribe.SubscriberExample</mainClass>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>http-query-engine-example</id>
-                        <configuration>
-                            <mainClass>com.chua.example.datalake.query.HttpDatalakeQueryEngineExample</mainClass>
-                        </configuration>
-                    </execution>
-<execution>
-                <id>data-sync-example</id>
-                <configuration>
-                    <mainClass>com.chua.example.datasync.DataSyncExample</mainClass>
-                    <arguments>
-                        <argument>--type</argument>
-                        <argument>direct</argument>
-                    </arguments>
+                    <classpathScope>runtime</classpathScope>
+                    <mainClass>com.chua.example.runner.ExampleRunner</mainClass>
                     <jvmArgs>
                         <jvmArg>--add-opens=java.base/java.lang=ALL-UNNAMED</jvmArg>
                         <jvmArg>--add-opens=java.base/java.nio=ALL-UNNAMED</jvmArg>
@@ -461,80 +420,6 @@
                         <jvmArg>--add-exports=java.base/java.lang.invoke=ALL-UNNAMED</jvmArg>
                     </jvmArgs>
                 </configuration>
-            </execution>
-        <execution>
-        <id>ai-proxy-detector-example</id>
-        <configuration>
-            <mainClass>com.chua.example.ai.chat.AiProxyDetectorExample</mainClass>
-        </configuration>
-    </execution>
-    <execution>
-        <id>polled-directory-example</id>
-        <configuration>
-            <mainClass>com.chua.example.directory.PolledDirectoryExample</mainClass>
-            <arguments>
-                <argument>--duration</argument>
-                <argument>30</argument>
-            </arguments>
-        </configuration>
-    </execution>
-    <execution>
-        <id>polled-directory-live-example</id>
-        <configuration>
-            <mainClass>com.chua.example.directory.PolledDirectoryLiveExample</mainClass>
-            <arguments>
-                <argument>--duration</argument>
-                <argument>20</argument>
-            </arguments>
-        </configuration>
-    </execution>
-    <execution>
-        <id>polled-directory-test</id>
-        <configuration>
-            <mainClass>com.chua.example.directory.SyslogPolledDirectoryExampleTest</mainClass>
-        </configuration>
-    </execution>
-    <execution>
-        <id>windows-event-log-test</id>
-        <configuration>
-            <mainClass>com.chua.example.directory.WindowsEventLogProviderExampleTest</mainClass>
-        </configuration>
-    </execution>
-    <execution>
-        <id>engine-example</id>
-        <configuration>
-            <mainClass>com.chua.example.engine.EngineExample</mainClass>
-        </configuration>
-    </execution>
-    <execution>
-        <id>video-codec-example</id>
-            <configuration>
-                <mainClass>com.chua.example.media.VideoCodecExample</mainClass>
-            </configuration>
-        </execution>
-        <execution>
-            <id>screen-capture-example</id>
-            <configuration>
-                <mainClass>com.chua.example.media.ScreenCaptureExample</mainClass>
-            </configuration>
-        </execution>
-        <execution>
-            <id>tui-dashboard-example</id>
-            <configuration>
-                <mainClass>com.chua.example.tui.TuiDashboardExample</mainClass>
-                <arguments>
-                    <argument>run</argument>
-                </arguments>
-            </configuration>
-        </execution>
-        <execution>
-            <id>vector-storage-example</id>
-            <configuration>
-                <mainClass>com.chua.example.vector.VectorStorageExample</mainClass>
-                <classpathScope>runtime</classpathScope>
-            </configuration>
-        </execution>
-    </executions>
             </plugin>
 <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -542,27 +427,31 @@
                 <configuration>
                     <release>25</release>
                     <includes>
+                        <!-- SPI 框架入口 -->
+                        <include>**/Example.java</include>
+                        <include>**/ExampleRunner.java</include>
+                        <include>**/OffsetFlowExampleSpi.java</include>
+                        <!-- 14 个核心 Example（main + SPI fallback） -->
                         <include>**/OffsetFlowExample.java</include>
-                        <include>**/DataSinkExample.java</include>
-                        <include>**/PipelineEngineExample.java</include>
-                        <include>**/DatalakeServerExample.java</include>
-                        <include>**/SubscriberExample.java</include>
-                        <include>**/HttpDatalakeQueryEngineExample.java</include>
-                        <include>**/DatalakeIntegratedExample.java</include>
+                        <include>**/EngineExample.java</include>
                         <include>**/DataSyncExample.java</include>
+                        <include>**/DatalakeServerExample.java</include>
+                        <include>**/PipelineEngineExample.java</include>
+                        <include>**/HttpDatalakeQueryEngineExample.java</include>
+                        <include>**/DataSinkExample.java</include>
+                        <include>**/SubscriberExample.java</include>
+                        <include>**/DatalakeIntegratedExample.java</include>
                         <include>**/AiProxyDetectorExample.java</include>
                         <include>**/DocumentExample.java</include>
-                        <include>**/VectorStorageExample.java</include>
-                        
-                        <include>**/PolledDirectoryExample.java</include>
-                        <include>**/PolledDirectoryLiveExample.java</include>
-                        <include>**/SyslogPolledDirectoryExampleTest.java</include>
-                        <include>**/WindowsEventLogProviderExampleTest.java</include>
-                        <include>**/EngineExample.java</include>
+                        <include>**/TuiDashboardExample.java</include>
                         <include>**/VideoCodecExample.java</include>
                         <include>**/ScreenCaptureExample.java</include>
-                        <include>**/TuiDashboardExample.java</include>
-                        <include>**/usage/*.java</include>
+                        <!-- vector-storage 已迁移至 SPI 实现 -->
+                        <include>**/VectorStorageExampleSpi.java</include>
+                        <!-- 辅助类 -->
+                        <include>**/SimpleEngineDataSource.java</include>
+                        <include>**/ExampleModelPricingProvider.java</include>
+                        <include>**/TuiLauncher.java</include>
                     </includes>
                 </configuration>
             </plugin>
