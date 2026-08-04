@@ -1,11 +1,12 @@
 package com.chua.example.media;
 
-import com.chua.ffmpeg.support.codec.EncodesFrame;
 import com.chua.common.support.media.codec.JpegVideoEncoder;
 import com.chua.common.support.media.codec.ScreenCature;
 import com.chua.common.support.media.codec.VideoDecoder;
 import com.chua.common.support.media.codec.VideoEncoder;
 import com.chua.common.support.spi.ServiceProvider;
+import com.chua.common.support.utils.CommandLine;
+import com.chua.ffmpeg.support.codec.EncodesFrame;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.imageio.ImageIO;
@@ -259,83 +260,29 @@ public class VideoCodecExample {
         return true;
     }
 
-    /**
-     * 打印帮助信息。
-     */
-    private static void printHelp() {
-        log.info("视频编解码器综合示例 — 基于 VideoEncoder / VideoDecoder / ScreenCature SPI");
-        log.info("");
-        log.info("用法: java VideoCodecExample [选项]");
-        log.info("");
-        log.info("选项:");
-        log.info(" --encoder, -e <key> 编码器类型（默认: {}）", DEFAULT_ENCODER_TYPE);
-        log.info(" --width, -w <width> 视频宽度（默认: {}）", DEFAULT_WIDTH);
-        log.info(" --height, -h <height> 视频高度（默认: {}）", DEFAULT_HEIGHT);
-        log.info(" --fps, -f <fps> 帧率（默认: {}）", DEFAULT_FPS);
-        log.info(" --test 运行自检并退出");
-        log.info(" --help, -? 显示此帮助");
-        log.info("");
-        log.info("支持的编码器类型:");
-        log.info("  javacv-ffmpeg  JavaCV FFmpeg H.264 编码器");
-        log.info("  rust-h264      Rust native H.264 编码器");
-        log.info("  jpeg           Java ImageIO JPEG/MJPEG 编码器");
-    }
-
-    /**
-     * 解析命令行参数。
-     *
-     * @param args 命令行参数
-     * @return 参数对象
-     */
-    private static Args parseArgs(String[] args) {
-        Args result = new Args();
-        int index = 0;
-        while (index < args.length) {
-            switch (args[index]) {
-                case "--encoder", "-e" -> {
-                    if (index + 1 < args.length) {
-                        result = result.withEncoderType(args[++index]);
-                    }
-                }
-                case "--width", "-w" -> {
-                    if (index + 1 < args.length) {
-                        result = result.withWidth(Integer.parseInt(args[++index]));
-                    }
-                }
-                case "--height", "-h" -> {
-                    if (index + 1 < args.length) {
-                        result = result.withHeight(Integer.parseInt(args[++index]));
-                    }
-                }
-                case "--fps", "-f" -> {
-                    if (index + 1 < args.length) {
-                        result = result.withFps(Integer.parseInt(args[++index]));
-                    }
-                }
-                case "--test" -> result = result.withTest(true);
-                case "--help", "-?", "?" -> result = result.withHelp(true);
-                default -> log.warn("[WARN] 未知参数: {}", args[index]);
-            }
-            index++;
-        }
-        return result;
-    }
-
     public static void main(String[] args) {
-        Args parsed = parseArgs(args);
-        if (parsed.help()) {
-            printHelp();
+        CommandLine cli = CommandLine.parse(args)
+                .program("VideoCodecExample")
+                .register("encoder", "e", "编码器类型（javacv-ffmpeg|rust-h264|jpeg）", DEFAULT_ENCODER_TYPE)
+                .register("width", "w", "视频宽度", String.valueOf(DEFAULT_WIDTH))
+                .register("height", "h", "视频高度", String.valueOf(DEFAULT_HEIGHT))
+                .register("fps", "f", "帧率", String.valueOf(DEFAULT_FPS))
+                .register("test", "运行自检并退出")
+                .register("help", "?", "显示此帮助");
+
+        if (cli.isHelp()) {
+            cli.help();
             return;
         }
 
-        String encoderType = parsed.encoderType() != null ? parsed.encoderType() : DEFAULT_ENCODER_TYPE;
-        int width = parsed.width() > 0 ? parsed.width() : DEFAULT_WIDTH;
-        int height = parsed.height() > 0 ? parsed.height() : DEFAULT_HEIGHT;
-        int fps = parsed.fps() > 0 ? parsed.fps() : DEFAULT_FPS;
+        String encoderType = cli.get("encoder", DEFAULT_ENCODER_TYPE);
+        int width = cli.getInt("width", DEFAULT_WIDTH);
+        int height = cli.getInt("height", DEFAULT_HEIGHT);
+        int fps = cli.getInt("fps", DEFAULT_FPS);
 
         log.info("配置: encoder={}, {}x{}@{}fps", encoderType, width, height, fps);
 
-        if (parsed.test()) {
+        if (cli.has("test")) {
             boolean passed = runTest(encoderType, width, height, fps);
             if (!passed) {
                 System.exit(1);
@@ -366,93 +313,5 @@ public class VideoCodecExample {
 
         encoder.close();
         log.info("编码器已释放");
-    }
-
-    /**
-     * 命令行参数容器。
-     *
-     * @param encoderType 编码器类型标识
-     * @param width 视频宽度
-     * @param height 视频高度
-     * @param fps 帧率
-     * @param test 是否自检模式
-     * @param help 是否打印帮助
-     * @author CH
-     * @since 4.0.0.42
-     */
-    private record Args(
-            String encoderType,
-            int width,
-            int height,
-            int fps,
-            boolean test,
-            boolean help
-    ) {
-        /**
-         * 带默认值的空参构造。
-         */
-        Args() {
-            this(DEFAULT_ENCODER_TYPE, DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_FPS, false, false);
-        }
-
-        /**
-         * 替换 encoderType 字段，返回新实例。
-         *
-         * @param encoderType 编码器类型
-         * @return 新 Args 实例
-         */
-        public Args withEncoderType(String encoderType) {
-            return new Args(encoderType, width, height, fps, test, help);
-        }
-
-        /**
-         * 替换 width 字段，返回新实例。
-         *
-         * @param width 视频宽度
-         * @return 新 Args 实例
-         */
-        public Args withWidth(int width) {
-            return new Args(encoderType, width, height, fps, test, help);
-        }
-
-        /**
-         * 替换 height 字段，返回新实例。
-         *
-         * @param height 视频高度
-         * @return 新 Args 实例
-         */
-        public Args withHeight(int height) {
-            return new Args(encoderType, width, height, fps, test, help);
-        }
-
-        /**
-         * 替换 fps 字段，返回新实例。
-         *
-         * @param fps 帧率
-         * @return 新 Args 实例
-         */
-        public Args withFps(int fps) {
-            return new Args(encoderType, width, height, fps, test, help);
-        }
-
-        /**
-         * 替换 test 字段，返回新实例。
-         *
-         * @param test 是否自检
-         * @return 新 Args 实例
-         */
-        public Args withTest(boolean test) {
-            return new Args(encoderType, width, height, fps, test, help);
-        }
-
-        /**
-         * 替换 help 字段，返回新实例。
-         *
-         * @param help 是否帮助
-         * @return 新 Args 实例
-         */
-        public Args withHelp(boolean help) {
-            return new Args(encoderType, width, height, fps, test, help);
-        }
     }
 }

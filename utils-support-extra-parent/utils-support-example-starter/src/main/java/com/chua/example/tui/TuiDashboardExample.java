@@ -1,6 +1,7 @@
 package com.chua.example.tui;
 
 import com.chua.common.support.network.ipc.annotations.IpcMethod;
+import com.chua.common.support.utils.CommandLine;
 import com.chua.tui.support.MordantHelper;
 import com.chua.tui.support.TuiDashboard;
 import com.chua.tui.support.TuiDashboardBuilder;
@@ -33,6 +34,9 @@ import lombok.extern.slf4j.Slf4j;
  * java TuiDashboardExample --type handler
  * java TuiDashboardExample --type dashboard
  * java TuiDashboardExample --type colspan
+ *
+ * # 启动固定 2x2 仪表盘
+ * java TuiDashboardExample --run
  *
  * # 启动自由网格仪表盘（top + bottom 左右分栏）
  * java TuiDashboardExample --run-free
@@ -72,6 +76,11 @@ public class TuiDashboardExample {
     private static final int EXIT_CODE_FAILURE = 1;
 
     /**
+     * 默认能力点类型
+     */
+    private static final String DEFAULT_TYPE = "all";
+
+    /**
      * 默认布局规格
      */
     private static final TuiLayout DEFAULT_LAYOUT = TuiLayout.GRID_2x2;
@@ -89,22 +98,30 @@ public class TuiDashboardExample {
      * @param args 命令行参数数组
      */
     public static void main(String[] args) {
-        String type = parseType(args);
-        if ("--help".equals(type) || "-h".equals(type)) {
-            printHelp();
+        CommandLine cli = CommandLine.parse(args)
+                .program("TuiDashboardExample")
+                .register("type", "t", "能力点类型（layout|widget|builder|capacity|render|mordant|handler|dashboard|colspan|all）", DEFAULT_TYPE)
+                .register("run", "常驻启动真实仪表盘（固定 2x2）")
+                .register("run-free", "常驻启动自由网格仪表盘（top+bottom 分栏）")
+                .register("help", "h", "显示帮助");
+
+        if (cli.isHelp()) {
+            cli.help();
             return;
         }
 
-        if ("--run-free".equals(type)) {
+        if (cli.has("run-free")) {
             new TuiDashboardExample().runDashboardFreeGrid();
             return;
         }
 
         TuiDashboardExample example = new TuiDashboardExample();
-        if ("run".equals(type)) {
+        if (cli.has("run")) {
             example.runDashboard();
             return;
         }
+
+        String type = cli.get("type", DEFAULT_TYPE);
         boolean passed = example.runTest(type);
         log.info("[TuiDashboardExample] self-test type={}, passed={}", type, passed);
         System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
@@ -118,37 +135,28 @@ public class TuiDashboardExample {
      */
     public boolean runTest(String type) {
         if (type == null || type.isEmpty()) {
-            type = "all";
+            type = DEFAULT_TYPE;
         }
         switch (type.toLowerCase()) {
-            case "layout" -> {
+            case "layout":
                 return testLayout();
-            }
-            case "widget" -> {
+            case "widget":
                 return testWidget();
-            }
-            case "builder" -> {
+            case "builder":
                 return testBuilder();
-            }
-            case "capacity" -> {
+            case "capacity":
                 return testCapacity();
-            }
-            case "render" -> {
+            case "render":
                 return testWidgetRender();
-            }
-            case "mordant" -> {
+            case "mordant":
                 return testMordantHelper();
-            }
-            case "handler" -> {
+            case "handler":
                 return testHandlerBinding();
-            }
-            case "dashboard" -> {
+            case "dashboard":
                 return testDashboard();
-            }
-            case "colspan" -> {
+            case "colspan":
                 return testColspan();
-            }
-            case "all" -> {
+            case "all":
                 return testLayout()
                         && testWidget()
                         && testBuilder()
@@ -158,11 +166,9 @@ public class TuiDashboardExample {
                         && testHandlerBinding()
                         && testDashboard()
                         && testColspan();
-            }
-            default -> {
+            default:
                 log.error("[TuiDashboardExample] 未知能力点: {}", type);
                 return false;
-            }
         }
     }
 
@@ -231,11 +237,11 @@ public class TuiDashboardExample {
                     .addWidget(new MemoryWidget());
 
             TuiDashboardBuilder builderWithHandler = builder.registerHandler(new Object() {
-                        @SuppressWarnings("unused")
-                        public String getData() {
-                            return "42.0";
-                        }
-                    });
+                @SuppressWarnings("unused")
+                public String getData() {
+                    return "42.0";
+                }
+            });
 
             var dashboard = builderWithHandler.build();
 
@@ -443,24 +449,11 @@ public class TuiDashboardExample {
     }
 
     /**
-     * 解析类型参数：取 args 第一个元素作为 type，默认 "all"。
-     *
-     * @param args 命令行参数数组
-     * @return 能力点类型字符串
-     */
-    private static String parseType(String[] args) {
-        if (args != null && args.length > 0 && args[0] != null && !args[0].isEmpty()) {
-            return args[0];
-        }
-        return "all";
-    }
-
-    /**
      * 检查单个布局规格。
      *
-     * @param layout          布局枚举
-     * @param expectedRows    预期行数
-     * @param expectedCols    预期列数
+     * @param layout           布局枚举
+     * @param expectedRows     预期行数
+     * @param expectedCols     预期列数
      * @param expectedCapacity 预期容量
      * @return true 表示所有属性符合预期
      */
@@ -475,33 +468,6 @@ public class TuiDashboardExample {
                 layout.getCapacity(), expectedCapacity,
                 (passed ? "PASS" : "FAIL"));
         return passed;
-    }
-
-    /**
-     * 打印帮助信息。
-     */
-    private static void printHelp() {
-        log.info("TUI 仪表盘综合示例 — TuiDashboard 能力自检");
-        log.info("");
-        log.info("用法: java TuiDashboardExample [选项]");
-        log.info("");
-        log.info("选项:");
-        log.info(" --type, -t <key> 能力点类型（默认: all）");
-        log.info(" --run            常驻启动真实仪表盘（固定 2x2）");
-        log.info(" --run-free       常驻启动自由网格仪表盘（top+bottom 分栏）");
-        log.info(" --help, -h       显示此帮助");
-        log.info("");
-        log.info("可选能力点:");
-        log.info(" layout   布局枚举测试");
-        log.info(" widget   组件基础测试");
-        log.info(" builder  构建器链式 API 测试");
-        log.info(" capacity 容量校验测试");
-        log.info(" render   组件渲染测试");
-        log.info(" mordant   MordantHelper 工具测试");
-        log.info(" handler   处理器绑定测试");
-        log.info(" dashboard 仪表盘启停测试");
-        log.info(" colspan   FREE_GRID + colspan 区域布局测试");
-        log.info(" all      测试全部能力点（默认）");
     }
 
     // ==================== 常驻仪表盘模式 ====================
@@ -607,53 +573,53 @@ public class TuiDashboardExample {
                     String[] parts = line.split("\\s+", 3);
                     String cmd = parts[0].toLowerCase();
                     switch (cmd) {
-                        case "q" -> {
+                        case "q":
                             dashboard.stop();
-                        }
-                        case "r" -> {
+                            break;
+                        case "r":
                             log.info("[cmd] 手动刷新");
                             // 触发一次渲染：依赖定时器自动渲染，这里仅打印提示
-                        }
-                        case "h" -> {
+                            break;
+                        case "h":
                             if (parts.length >= 2) {
                                 dashboard.hideWidget(parts[1]);
                                 log.info("[cmd] 隐藏: {}", parts[1]);
                             }
-                        }
-                        case "s" -> {
+                            break;
+                        case "s":
                             if (parts.length >= 2) {
                                 dashboard.showWidget(parts[1]);
                                 log.info("[cmd] 显示: {}", parts[1]);
                             }
-                        }
-                        case "t" -> {
+                            break;
+                        case "t":
                             if (parts.length >= 2) {
                                 dashboard.toggleWidget(parts[1]);
                                 log.info("[cmd] 切换: {}", parts[1]);
                             }
-                        }
-                        case "d" -> {
+                            break;
+                        case "d":
                             if (parts.length >= 2) {
                                 dashboard.removeWidget(parts[1]);
                                 log.info("[cmd] 删除: {}", parts[1]);
                             }
-                        }
-                        case "a" -> {
+                            break;
+                        case "a":
                             String id = parts.length >= 2 ? parts[1] : "widget-" + System.currentTimeMillis();
                             String title = parts.length >= 3 ? parts[2] : id;
                             CpuWidget newWidget = new CpuWidget(id, title);
                             dashboard.addWidget(newWidget);
                             log.info("[cmd] 添加: {} / {}", id, title);
-                        }
-                        case "l" -> {
+                            break;
+                        case "l":
                             log.info("[cmd] 当前组件列表:");
                             for (TuiWidget w : dashboard.getAllWidgets()) {
                                 log.info("  {} | {} | visible={}", w.getId(), w.getTitle(), w.isVisible());
                             }
-                        }
-                        default -> {
+                            break;
+                        default:
                             log.info("[cmd] 未知命令: {}，支持 q/r/h/s/t/d/a/l", cmd);
-                        }
+                            break;
                     }
                 }
             } catch (Exception e) {

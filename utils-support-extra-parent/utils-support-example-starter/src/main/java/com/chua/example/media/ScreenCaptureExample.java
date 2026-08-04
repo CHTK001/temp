@@ -2,14 +2,14 @@ package com.chua.example.media;
 
 import com.chua.common.support.media.codec.ScreenCature;
 import com.chua.common.support.spi.ServiceProvider;
+import com.chua.common.support.utils.CommandLine;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.nio.ByteBuffer;
 import java.io.File;
-
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 /**
  * 屏幕采集综合示例 — 基于 ScreenCature SPI，支持全部实现切换与自检。
@@ -74,11 +74,6 @@ public class ScreenCaptureExample {
     private static final int TEST_FRAME_COUNT = 5;
 
     /**
-     * 输出目录参数名
-     */
-    private static final String ARG_OUTPUT = "--output";
-
-    /**
      * 通过 SPI 创建 ScreenCature 实例。
      *
      * @param captureType 采集器 SPI 类型标识
@@ -102,9 +97,9 @@ public class ScreenCaptureExample {
     /**
      * 保存 BufferedImage 到文件。
      *
-     * @param image 图像
+     * @param image     图像
      * @param outputDir 输出目录
-     * @param index 帧序号
+     * @param index     帧序号
      * @return 保存的文件，失败返回 null
      */
     private static File saveFrame(BufferedImage image, File outputDir, int index) {
@@ -125,9 +120,9 @@ public class ScreenCaptureExample {
      * 运行自检模式。
      *
      * @param captureType 采集器类型
-     * @param width 采集宽度
-     * @param height 采集高度
-     * @param fps 帧率
+     * @param width       采集宽度
+     * @param height      采集高度
+     * @param fps         帧率
      * @return true 表示自检通过
      */
     private static boolean runTest(String captureType, int width, int height, int fps) {
@@ -173,11 +168,11 @@ public class ScreenCaptureExample {
      * 运行演示模式。
      *
      * @param captureType 采集器类型
-     * @param width 采集宽度
-     * @param height 采集高度
-     * @param fps 帧率
-     * @param frameCount 采集帧数
-     * @param outputDir 输出目录（null 表示不保存）
+     * @param width       采集宽度
+     * @param height      采集高度
+     * @param fps         帧率
+     * @param frameCount  采集帧数
+     * @param outputDir   输出目录（null 表示不保存）
      */
     private static void runDemo(String captureType, int width, int height, int fps, int frameCount, File outputDir) {
         ScreenCature capture = createScreenCapture(captureType);
@@ -222,92 +217,33 @@ public class ScreenCaptureExample {
         log.info("采集器已关闭，成功采集 {} / {} 帧", successCount, frameCount);
     }
 
-    /**
-     * 打印帮助信息。
-     */
-    private static void printHelp() {
-        log.info("屏幕采集综合示例 — 基于 ScreenCature SPI");
-        log.info("");
-        log.info("用法: java ScreenCaptureExample [选项]");
-        log.info("");
-        log.info("选项:");
-        log.info(" --type, -t <key> 采集器类型（默认: {}）", DEFAULT_CAPTURE_TYPE);
-        log.info(" --width, -w <width> 采集宽度（默认: {}）", DEFAULT_WIDTH);
-        log.info(" --height, -h <height> 采集高度（默认: {}）", DEFAULT_HEIGHT);
-        log.info(" --fps, -f <fps> 帧率（默认: {}）", DEFAULT_FPS);
-        log.info(" --frames, -n <count> 采集帧数（默认: {}）", DEFAULT_FRAME_COUNT);
-        log.info(" --output, -o <dir> 保存帧到目录（PNG 格式）");
-        log.info(" --test 运行自检并退出");
-        log.info(" --help, -? 显示此帮助");
-    }
-
-    /**
-     * 解析命令行参数。
-     *
-     * @param args 命令行参数
-     * @return 参数对象
-     */
-    private static Args parseArgs(String[] args) {
-        Args result = new Args();
-        int index = 0;
-        while (index < args.length) {
-            switch (args[index]) {
-                case "--type", "-t" -> {
-                    if (index + 1 < args.length) {
-                        result = result.withType(args[++index]);
-                    }
-                }
-                case "--width", "-w" -> {
-                    if (index + 1 < args.length) {
-                        result = result.withWidth(Integer.parseInt(args[++index]));
-                    }
-                }
-                case "--height", "-h" -> {
-                    if (index + 1 < args.length) {
-                        result = result.withHeight(Integer.parseInt(args[++index]));
-                    }
-                }
-                case "--fps", "-f" -> {
-                    if (index + 1 < args.length) {
-                        result = result.withFps(Integer.parseInt(args[++index]));
-                    }
-                }
-                case "--frames", "-n" -> {
-                    if (index + 1 < args.length) {
-                        result = result.withFrameCount(Integer.parseInt(args[++index]));
-                    }
-                }
-                case "--output", "-o" -> {
-                    if (index + 1 < args.length) {
-                        result = result.withOutputDir(args[++index]);
-                    }
-                }
-                case "--test" -> result = result.withTest(true);
-                case "--help", "-?", "?" -> result = result.withHelp(true);
-                default -> log.warn("[WARN] 未知参数: {}", args[index]);
-            }
-            index++;
-        }
-        return result;
-    }
-
     public static void main(String[] args) {
-        Args parsed = parseArgs(args);
-        if (parsed.help()) {
-            printHelp();
+        CommandLine cli = CommandLine.parse(args)
+                .program("ScreenCaptureExample")
+                .register("type", "t", "采集器类型", DEFAULT_CAPTURE_TYPE)
+                .register("width", "w", "采集宽度", String.valueOf(DEFAULT_WIDTH))
+                .register("height", "h", "采集高度", String.valueOf(DEFAULT_HEIGHT))
+                .register("fps", "f", "帧率", String.valueOf(DEFAULT_FPS))
+                .register("frames", "n", "采集帧数", String.valueOf(DEFAULT_FRAME_COUNT))
+                .register("output", "o", "保存帧到目录（PNG 格式）")
+                .register("test", "运行自检并退出")
+                .register("help", "h", "显示此帮助");
+
+        if (cli.isHelp()) {
+            cli.help();
             return;
         }
 
-        String captureType = parsed.type() != null ? parsed.type() : DEFAULT_CAPTURE_TYPE;
-        int width = parsed.width() > 0 ? parsed.width() : DEFAULT_WIDTH;
-        int height = parsed.height() > 0 ? parsed.height() : DEFAULT_HEIGHT;
-        int fps = parsed.fps() > 0 ? parsed.fps() : DEFAULT_FPS;
-        int frameCount = parsed.frameCount() > 0 ? parsed.frameCount() : DEFAULT_FRAME_COUNT;
-        File outputDir = parsed.outputDir() != null ? new File(parsed.outputDir()) : null;
+        String captureType = cli.get("type", DEFAULT_CAPTURE_TYPE);
+        int width = cli.getInt("width", DEFAULT_WIDTH);
+        int height = cli.getInt("height", DEFAULT_HEIGHT);
+        int fps = cli.getInt("fps", DEFAULT_FPS);
+        int frameCount = cli.getInt("frames", DEFAULT_FRAME_COUNT);
+        File outputDir = cli.has("output") ? new File(cli.get("output")) : null;
 
         log.info("配置: type={}, {}x{}@{}fps, frames={}", captureType, width, height, fps, frameCount);
 
-        if (parsed.test()) {
+        if (cli.has("test")) {
             boolean passed = runTest(captureType, width, height, fps);
             if (!passed) {
                 System.exit(1);
@@ -316,117 +252,5 @@ public class ScreenCaptureExample {
         }
 
         runDemo(captureType, width, height, fps, frameCount, outputDir);
-    }
-
-    /**
-     * 命令行参数容器。
-     *
-     * @param type 采集器类型标识
-     * @param width 采集宽度
-     * @param height 采集高度
-     * @param fps 帧率
-     * @param frameCount 采集帧数
-     * @param outputDir 输出目录路径
-     * @param test 是否自检模式
-     * @param help 是否打印帮助
-     * @author CH
-     * @since 4.0.0.42
-     */
-    private record Args(
-            String type,
-            int width,
-            int height,
-            int fps,
-            int frameCount,
-            String outputDir,
-            boolean test,
-            boolean help
-    ) {
-        /**
-         * 带默认值的空参构造。
-         */
-        Args() {
-            this(DEFAULT_CAPTURE_TYPE, DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_FPS, DEFAULT_FRAME_COUNT, null, false, false);
-        }
-
-        /**
-         * 替换 type 字段，返回新实例。
-         *
-         * @param type 采集器类型
-         * @return 新 Args 实例
-         */
-        public Args withType(String type) {
-            return new Args(type, width, height, fps, frameCount, outputDir, test, help);
-        }
-
-        /**
-         * 替换 width 字段，返回新实例。
-         *
-         * @param width 采集宽度
-         * @return 新 Args 实例
-         */
-        public Args withWidth(int width) {
-            return new Args(type, width, height, fps, frameCount, outputDir, test, help);
-        }
-
-        /**
-         * 替换 height 字段，返回新实例。
-         *
-         * @param height 采集高度
-         * @return 新 Args 实例
-         */
-        public Args withHeight(int height) {
-            return new Args(type, width, height, fps, frameCount, outputDir, test, help);
-        }
-
-        /**
-         * 替换 fps 字段，返回新实例。
-         *
-         * @param fps 帧率
-         * @return 新 Args 实例
-         */
-        public Args withFps(int fps) {
-            return new Args(type, width, height, fps, frameCount, outputDir, test, help);
-        }
-
-        /**
-         * 替换 frameCount 字段，返回新实例。
-         *
-         * @param frameCount 采集帧数
-         * @return 新 Args 实例
-         */
-        public Args withFrameCount(int frameCount) {
-            return new Args(type, width, height, fps, frameCount, outputDir, test, help);
-        }
-
-        /**
-         * 替换 outputDir 字段，返回新实例。
-         *
-         * @param outputDir 输出目录路径
-         * @return 新 Args 实例
-         */
-        public Args withOutputDir(String outputDir) {
-            return new Args(type, width, height, fps, frameCount, outputDir, test, help);
-        }
-
-        /**
-         * 替换 test 字段，返回新实例。
-         *
-         * @param test 是否自检
-         * @return 新 Args 实例
-         */
-        public Args withTest(boolean test) {
-            return new Args(type, width, height, fps, frameCount, outputDir, test, help);
-        }
-
-        /**
-         * 替换 help 字段，返回新实例。
-         *
-         * @param help 是否帮助
-         * @return 新 Args 实例
-         */
-        public Args withHelp(boolean help) {
-            return new Args(type, width, height, fps, frameCount, outputDir, test, help);
-        }
     }
 }

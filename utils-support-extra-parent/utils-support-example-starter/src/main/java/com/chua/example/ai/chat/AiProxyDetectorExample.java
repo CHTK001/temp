@@ -1,53 +1,18 @@
 package com.chua.example.ai.chat;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.chua.common.support.ai.chat.ChatClientSetting;
 import com.chua.common.support.ai.probe.ProbeDimension;
 import com.chua.common.support.ai.probe.ProbeReport;
 import com.chua.common.support.ai.probe.ProbeResult;
+import com.chua.common.support.utils.CommandLine;
 import com.chua.openai.support.OpenAiProbeStation;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * AI 中转站真伪探测器示例。
- *
- * <p>基于 OpenAiProbeStation 实现，支持对 OpenAI 兼容接口进行 12 维度真伪探测：</p>
- *
- * <ol>
- *   <li>模型列表扫描</li>
- *   <li>模型名矩阵嗅探</li>
- *   <li>错误消息分析</li>
- *   <li>身份追问</li>
- *   <li>越狱探测</li>
- *   <li>知识截止日期</li>
- *   <li>安全对齐指纹</li>
- *   <li>数学推理陷阱</li>
- *   <li>Prompt Token 注入检测</li>
- *   <li>Function Calling 探测</li>
- *   <li>HTTP 响应头识别</li>
- * </ol>
- *
- * <h2>用法</h2>
- * <pre>
- *   # 交互模式（依次输入 baseUrl 和 apiKey）
- *   java AiProxyDetectorExample
- *
- *   # 命令行模式
- *   java AiProxyDetectorExample --url https://api.example.com --key sk-xxx
- *
- *   # 指定模型进行探测
- *   java AiProxyDetectorExample --url https://api.example.com --key sk-xxx --model gpt-4o
- *
- *   # 生成 HTML 报告
- *   java AiProxyDetectorExample --url https://api.example.com --key sk-xxx --html
- *
- *   # 打印帮助
- *   java AiProxyDetectorExample --help
- * </pre>
  *
  * @author CH
  * @since 4.0.0.42
@@ -70,38 +35,43 @@ public class AiProxyDetectorExample {
      */
     private static final String DEFAULT_MODEL = "gpt-4";
 
-    /**
-     * 主入口：解析参数并执行探测。
-     *
-     * @param args 命令行参数
-     */
     public static void main(String[] args) {
-        Args parsed = parseArgs(args);
+        CommandLine cli = CommandLine.parse(args)
+                .program("AiProxyDetectorExample")
+                .register("url", "u", "API 基础地址（必填，如 https://api.example.com/v1）")
+                .register("key", "k", "API Key（必填）")
+                .register("model", "m", "指定探测模型（默认: " + DEFAULT_MODEL + "）", DEFAULT_MODEL)
+                .register("file", "f", "从文件读取配置（支持 HTML/Markdown）")
+                .register("html", "生成 HTML 报告")
+                .register("help", "h", "显示帮助");
 
-        if (parsed.help()) {
-            printHelp();
+        if (cli.isHelp()) {
+            cli.help();
             return;
         }
 
-        Args resolved = parsed;
-        if (parsed.file() != null) {
-            resolved = parseFile(parsed.file(), parsed);
-        }
+        String baseUrl = cli.get("url");
+        String apiKey = cli.get("key");
+        String model = cli.get("model", DEFAULT_MODEL);
 
-        String baseUrl = resolved.url();
-        String apiKey = resolved.apiKey();
-        String model = resolved.model() != null ? resolved.model() : DEFAULT_MODEL;
+        String file = cli.get("file");
+        if (file != null) {
+            ParsedConfig parsed = parseFile(file, baseUrl, apiKey, model);
+            baseUrl = parsed.url;
+            apiKey = parsed.key;
+            model = parsed.model != null ? parsed.model : model;
+        }
 
         if (baseUrl == null || baseUrl.isBlank()) {
             log.error("[ERROR] 必须指定 --url 参数 或使用 --file <HTML/MD 路径>");
-            printHelp();
+            cli.help();
             System.exit(EXIT_CODE_FAILURE);
             return;
         }
 
         if (apiKey == null || apiKey.isBlank()) {
             log.error("[ERROR] 必须指定 --key 参数 或使用 --file <HTML/MD 路径>");
-            printHelp();
+            cli.help();
             System.exit(EXIT_CODE_FAILURE);
             return;
         }
@@ -120,14 +90,6 @@ public class AiProxyDetectorExample {
         }
     }
 
-    /**
-     * 执行探测测试。
-     *
-     * @param baseUrl API 基础地址
-     * @param apiKey  API 密钥
-     * @param model   指定探测模型
-     * @return 是否全部通过
-     */
     private static boolean runTest(String baseUrl, String apiKey, String model) {
         ChatClientSetting setting = ChatClientSetting.builder()
                 .provider("openai")
@@ -143,11 +105,6 @@ public class AiProxyDetectorExample {
         return true;
     }
 
-    /**
-     * 打印探测报告。
-     *
-     * @param report 探测报告
-     */
     private static void printReport(ProbeReport report) {
         log.info("=== AI 中转站真伪探测报告 ===");
         log.info("");
@@ -178,12 +135,6 @@ public class AiProxyDetectorExample {
         }
     }
 
-    /**
-     * 获取维度的显示名称。
-     *
-     * @param dimension 探测维度
-     * @return 显示名称
-     */
     private static String getDimensionDisplayName(ProbeDimension dimension) {
         return switch (dimension) {
             case MODELS_SCAN -> "模型列表扫描";
@@ -201,162 +152,45 @@ public class AiProxyDetectorExample {
         };
     }
 
-    // ==================== 文件读取 ====================
-
     /**
-     * 从文件读取 API 配置。
+     * 文件解析结果。
      *
-     * @param filePath 文件路径
-     * @param fallback 回退参数
-     * @return 填充后的参数
+     * @param url   URL
+     * @param key   KEY
+     * @param model 模型
      */
-    private static Args parseFile(String filePath, Args fallback) {
+    private record ParsedConfig(String url, String key, String model) {}
+
+    private static ParsedConfig parseFile(String filePath, String url, String key, String model) {
         java.nio.file.Path path = java.nio.file.Paths.get(filePath);
         if (!java.nio.file.Files.exists(path)) {
             log.error("[ERROR] 文件不存在: {}", filePath);
-            return fallback;
+            return new ParsedConfig(url, key, model);
         }
-
         try {
             String content = java.nio.file.Files.readString(path);
-            String key = firstMatch(content, "(sk-[A-Za-z0-9]{20,})");
-            String url = firstMatch(content, "(https?://[^\\s\"<>]+)");
-            String model = firstMatch(content, "class=\"model-item\">([^<]+)</span>");
-            if (model == null) {
-                model = firstMatch(content, "`(agnes-[A-Za-z0-9._-]+)`");
+            String parsedKey = firstMatch(content, "(sk-[A-Za-z0-9]{20,})");
+            String parsedUrl = firstMatch(content, "(https?://[^\\s\"<>]+)");
+            String parsedModel = firstMatch(content, "class=\"model-item\">([^<]+)</span>");
+            if (parsedModel == null) {
+                parsedModel = firstMatch(content, "`(agnes-[A-Za-z0-9._-]+)`");
             }
-            if (model == null) {
-                model = firstMatch(content, "(agnes-[A-Za-z0-9._-]+)");
+            if (parsedModel == null) {
+                parsedModel = firstMatch(content, "(agnes-[A-Za-z0-9._-]+)");
             }
-
-            return fallback
-                    .withApiKey(key != null ? key : fallback.apiKey())
-                    .withUrl(url != null ? url : fallback.url())
-                    .withModel(model != null ? model : fallback.model());
+            return new ParsedConfig(
+                    parsedUrl != null ? parsedUrl : url,
+                    parsedKey != null ? parsedKey : key,
+                    parsedModel != null ? parsedModel : model
+            );
         } catch (Exception e) {
             log.error("[ERROR] 读取文件失败: {}", e.getMessage());
-            return fallback;
+            return new ParsedConfig(url, key, model);
         }
     }
 
-    /**
-     * 提取第一个匹配项。
-     */
     private static String firstMatch(String text, String regex) {
         Matcher matcher = Pattern.compile(regex).matcher(text);
         return matcher.find() ? matcher.group(1) : null;
-    }
-
-    // ==================== 参数解析 ====================
-
-    /**
-     * 解析命令行参数。
-     *
-     * @param args 命令行参数数组
-     * @return 参数对象
-     */
-    private static Args parseArgs(String[] args) {
-        Args result = new Args();
-        int index = 0;
-        while (index < args.length) {
-            switch (args[index]) {
-                case "--url", "-u" -> {
-                    if (index + 1 < args.length) {
-                        result = result.withUrl(args[++index]);
-                    }
-                }
-                case "--key", "-k" -> {
-                    if (index + 1 < args.length) {
-                        result = result.withApiKey(args[++index]);
-                    }
-                }
-                case "--model", "-m" -> {
-                    if (index + 1 < args.length) {
-                        result = result.withModel(args[++index]);
-                    }
-                }
-                case "--file", "-f" -> {
-                    if (index + 1 < args.length) {
-                        result = result.withFile(args[++index]);
-                    }
-                }
-                case "--html" -> result = result.withHtml(true);
-                case "--help", "-h" -> result = result.withHelp(true);
-                default -> log.warn("[WARN] 未知参数: {}", args[index]);
-            }
-            index++;
-        }
-        return result;
-    }
-
-    /**
-     * 打印帮助信息。
-     */
-    private static void printHelp() {
-        log.info("AI 中转站真伪探测器示例");
-        log.info("");
-        log.info("用法: java AiProxyDetectorExample [选项]");
-        log.info("");
-        log.info("选项:");
-        log.info("  --url,    -u <url>     API 基础地址（必填，如 https://api.example.com/v1）");
-        log.info("  --key,    -k <key>     API Key（必填）");
-        log.info("  --model,  -m <model>   指定探测模型（默认: gpt-4）");
-        log.info("  --file,   -f <path>    从文件读取配置（支持 HTML/Markdown）");
-        log.info("  --html                 生成 HTML 报告");
-        log.info("  --help,  -h             显示此帮助");
-        log.info("");
-        log.info("示例:");
-        log.info("  java AiProxyDetectorExample --url https://api.openai.com/v1 --key sk-xxx");
-        log.info("  java AiProxyDetectorExample --url https://api.siliconflow.cn/v1 --key sk-xxx --model gpt-4o");
-    }
-
-    // ==================== 参数容器 ====================
-
-    /**
-     * 命令行参数容器。
-     *
-     * @param url    API 基础地址
-     * @param apiKey API 密钥
-     * @param model  探测模型
-     * @param html   是否生成 HTML 报告
-     * @param help   是否显示帮助
-     * @author CH
-     * @since 4.0.0.42
-     */
-    private record Args(
-        String url,
-        String apiKey,
-        String model,
-        boolean html,
-        boolean help,
-        String file
-    ) {
-        Args() {
-            this(null, null, null, false, false, null);
-        }
-
-        public Args withUrl(String url) {
-            return new Args(url, apiKey, model, html, help, file);
-        }
-
-        public Args withApiKey(String apiKey) {
-            return new Args(url, apiKey, model, html, help, file);
-        }
-
-        public Args withModel(String model) {
-            return new Args(url, apiKey, model, html, help, file);
-        }
-
-        public Args withHtml(boolean html) {
-            return new Args(url, apiKey, model, html, help, file);
-        }
-
-        public Args withHelp(boolean help) {
-            return new Args(url, apiKey, model, html, help, file);
-        }
-
-        public Args withFile(String file) {
-            return new Args(url, apiKey, model, html, help, file);
-        }
     }
 }

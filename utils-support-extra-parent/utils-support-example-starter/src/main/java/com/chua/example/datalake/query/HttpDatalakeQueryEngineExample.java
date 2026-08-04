@@ -1,5 +1,6 @@
 package com.chua.example.datalake.query;
 
+import com.chua.common.support.utils.CommandLine;
 import com.chua.datalake.support.engine.HttpDatalakeQueryEngine;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,6 +20,11 @@ import lombok.extern.slf4j.Slf4j;
 public class HttpDatalakeQueryEngineExample {
 
     /**
+     * 默认能力点
+     */
+    private static final String DEFAULT_TYPE = "all";
+
+    /**
      * 退出码：成功
      */
     private static final int EXIT_CODE_SUCCESS = 0;
@@ -29,12 +35,15 @@ public class HttpDatalakeQueryEngineExample {
     private static final int EXIT_CODE_FAILURE = 1;
 
     public static void main(String[] args) {
-        Args parsed = parseArgs(args);
-        if (parsed.help()) {
-            printHelp();
+        CommandLine cli = CommandLine.parse(args)
+                .program("HttpDatalakeQueryEngineExample")
+                .register("type", "t", "能力点（construct|all）", DEFAULT_TYPE)
+                .register("help", "h", "显示帮助");
+        if (cli.isHelp()) {
+            cli.help();
             return;
         }
-        String type = parsed.type() != null ? parsed.type() : "all";
+        String type = cli.get("type", DEFAULT_TYPE);
         boolean passed = switch (type.toLowerCase()) {
             case "construct" -> testConstruct();
             case "all" -> testConstruct();
@@ -48,6 +57,8 @@ public class HttpDatalakeQueryEngineExample {
 
     /**
      * 构造测试：HttpDatalakeQueryEngine 接收 baseUrl，能拿到 engine 引用。
+     *
+     * @return 自检通过返回 true，失败返回 false
      */
     public static boolean testConstruct() {
         log.info("===== construct =====");
@@ -63,52 +74,13 @@ public class HttpDatalakeQueryEngineExample {
         }
     }
 
+    /**
+     * 打印单条自检结果。
+     *
+     * @param name   自检项名称
+     * @param passed 是否通过
+     */
     private static void printResult(String name, boolean passed) {
         log.info("{}{}", (passed ? "[PASS]" : "[FAIL]"), name);
-    }
-
-    private static Args parseArgs(String[] args) {
-        Args result = new Args();
-        int index = 0;
-        while (index < args.length) {
-            switch (args[index]) {
-                case "--type", "-t" -> {
-                    if (index + 1 < args.length) {
-                        result = result.withType(args[++index]);
-                    }
-                }
-                case "--help", "-h" -> result = result.withHelp(true);
-                default -> log.warn("[WARN] 未知参数: {}", args[index]);
-            }
-            index++;
-        }
-        return result;
-    }
-
-    private static void printHelp() {
-        log.info("HttpDatalakeQueryEngine 综合示例");
-        log.info("");
-        log.info("用法: java HttpDatalakeQueryEngineExample [选项]");
-        log.info("");
-        log.info("选项:");
-        log.info("  --type, -t <key>    能力点（construct|all）");
-        log.info("  --help,  -h          打印帮助");
-    }
-
-    /**
-     * 命令行参数容器。
-     */
-    private record Args(String type, boolean help) {
-        Args() {
-            this(null, false);
-        }
-
-        public Args withType(String type) {
-            return new Args(type, help);
-        }
-
-        public Args withHelp(boolean help) {
-            return new Args(type, help);
-        }
     }
 }

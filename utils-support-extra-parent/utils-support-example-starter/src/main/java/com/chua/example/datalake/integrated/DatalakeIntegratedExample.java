@@ -4,6 +4,7 @@ import com.chua.common.support.concurrent.dispatcher.DispatcherConfig;
 import com.chua.common.support.concurrent.dispatcher.DispatcherProvider;
 import com.chua.common.support.concurrent.offset.OffsetFlow;
 import com.chua.common.support.spi.ServiceProvider;
+import com.chua.common.support.utils.CommandLine;
 import com.chua.datasync.agent.support.AbstractDataSyncAgent;
 import com.chua.datasync.agent.support.DataSyncAgentSink;
 import com.chua.datasync.agent.support.DataSyncAgentSource;
@@ -86,12 +87,17 @@ public class DatalakeIntegratedExample {
     private static final int DEFAULT_DURATION_SECONDS = 5;
 
     public static void main(String[] args) {
-        Args parsed = parseArgs(args);
-        if (parsed.help()) {
-            printHelp();
+        CommandLine cli = CommandLine.parse(args)
+                .program("DatalakeIntegratedExample")
+                .register("duration", "d", "运行时长（秒）", DEFAULT_DURATION_SECONDS)
+                .register("help", "h", "显示帮助");
+
+        if (cli.isHelp()) {
+            cli.help();
             return;
         }
-        int duration = parsed.duration() > 0 ? parsed.duration() : DEFAULT_DURATION_SECONDS;
+
+        int duration = cli.getInt("duration", DEFAULT_DURATION_SECONDS);
 
         DatalakeIntegratedExample example = new DatalakeIntegratedExample();
         boolean passed = example.runTest(duration);
@@ -192,51 +198,6 @@ public class DatalakeIntegratedExample {
 
     private static void printResult(String name, boolean passed) {
         log.info("{}{}", (passed ? "[PASS]" : "[FAIL]"), name);
-    }
-
-    private static Args parseArgs(String[] args) {
-        Args result = new Args();
-        int index = 0;
-        while (index < args.length) {
-            switch (args[index]) {
-                case "--duration", "-d" -> {
-                    if (index + 1 < args.length) {
-                        result = result.withDuration(Integer.parseInt(args[++index]));
-                    }
-                }
-                case "--help", "-h" -> result = result.withHelp(true);
-                default -> log.warn("[WARN] 未知参数: {}", args[index]);
-            }
-            index++;
-        }
-        return result;
-    }
-
-    private static void printHelp() {
-        log.info("Datalake 集成示例");
-        log.info("");
-        log.info("用法: java DatalakeIntegratedExample [选项]");
-        log.info("");
-        log.info("选项:");
-        log.info("  --duration, -d <sec>    运行时长（默认 5）");
-        log.info("  --help,  -h             打印帮助");
-    }
-
-    /**
-     * 命令行参数容器。
-     */
-    private record Args(int duration, boolean help) {
-        Args() {
-            this(0, false);
-        }
-
-        public Args withDuration(int duration) {
-            return new Args(duration, help);
-        }
-
-        public Args withHelp(boolean help) {
-            return new Args(duration, help);
-        }
     }
 
     /**

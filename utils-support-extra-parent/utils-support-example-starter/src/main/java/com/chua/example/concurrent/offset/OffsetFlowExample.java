@@ -1,12 +1,11 @@
 package com.chua.example.concurrent.offset;
 
-import com.chua.common.support.concurrent.offset.Offset;
 import com.chua.common.support.concurrent.offset.OffsetFlow;
 import com.chua.common.support.concurrent.offset.OffsetStore;
 import com.chua.common.support.spi.ServiceProvider;
+import com.chua.common.support.utils.CommandLine;
 import lombok.extern.slf4j.Slf4j;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
@@ -54,6 +53,11 @@ public class OffsetFlowExample {
     private static final int EXIT_CODE_FAILURE = 1;
 
     /**
+     * 默认能力点
+     */
+    private static final String DEFAULT_TYPE = "all";
+
+    /**
      * 自检用临时目录
      */
     private static final String TEST_DIR = System.getProperty("java.io.tmpdir") + "/offset-example-" + System.currentTimeMillis();
@@ -64,14 +68,17 @@ public class OffsetFlowExample {
     private static final String SUB_ID = "test-subscriber-1";
 
     public static void main(String[] args) {
-        Args parsed = parseArgs(args);
+        CommandLine cli = CommandLine.parse(args)
+                .program("OffsetFlowExample")
+                .register("type", "t", "能力点（advance|reset|persist|spi|truncate|all）", DEFAULT_TYPE)
+                .register("help", "h", "显示帮助");
 
-        if (parsed.help()) {
-            printHelp();
+        if (cli.isHelp()) {
+            cli.help();
             return;
         }
 
-        String type = parsed.type() != null ? parsed.type() : "all";
+        String type = cli.get("type", DEFAULT_TYPE);
 
         OffsetFlowExample example = new OffsetFlowExample();
         boolean passed = example.runTest(type);
@@ -87,7 +94,7 @@ public class OffsetFlowExample {
      */
     public boolean runTest(String type) {
         if (type == null || type.isEmpty()) {
-            type = "all";
+            type = DEFAULT_TYPE;
         }
         switch (type.toLowerCase()) {
             case "advance":
@@ -198,65 +205,5 @@ public class OffsetFlowExample {
 
     private static void printResult(String name, boolean passed) {
         log.info("{}{}", (passed ? "[PASS]" : "[FAIL]"), name);
-    }
-
-    /**
-     * 解析命令行参数。
-     */
-    private static Args parseArgs(String[] args) {
-        Args result = new Args();
-        int index = 0;
-        while (index < args.length) {
-            switch (args[index]) {
-                case "--type", "-t" -> {
-                    if (index + 1 < args.length) {
-                        result = result.withType(args[++index]);
-                    }
-                }
-                case "--help", "-h" -> result = result.withHelp(true);
-                default -> log.warn("[WARN] 未知参数: {}", args[index]);
-            }
-            index++;
-        }
-        return result;
-    }
-
-    private static void printHelp() {
-        log.info("OffsetFlow 综合示例 — 基于 OffsetFlow SPI");
-        log.info("");
-        log.info("用法: java OffsetFlowExample [选项]");
-        log.info("");
-        log.info("选项:");
-        log.info("  --type, -t <key>    能力点（advance|reset|persist|spi|truncate|all）");
-        log.info("  --help,  -h          打印帮助");
-    }
-
-    /**
-     * 命令行参数容器。
-     *
-     * @param type 能力点
-     * @param help 是否打印帮助
-     * @author CH
-     * @since 4.0.0.43
-     */
-    private record Args(String type, boolean help) {
-        Args() {
-            this(null, false);
-        }
-
-        public Args withType(String type) {
-            return new Args(type, help);
-        }
-
-        public Args withHelp(boolean help) {
-            return new Args(type, help);
-        }
-    }
-
-    @SuppressWarnings("unused")
-    private static void touch(Path dir) throws Exception {
-        if (!Files.exists(dir)) {
-            Files.createDirectories(dir);
-        }
     }
 }

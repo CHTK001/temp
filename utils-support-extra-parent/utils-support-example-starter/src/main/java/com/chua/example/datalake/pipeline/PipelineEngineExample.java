@@ -1,5 +1,6 @@
 package com.chua.example.datalake.pipeline;
 
+import com.chua.common.support.utils.CommandLine;
 import com.chua.datalake.support.engine.DefaultPipelineEngine;
 import com.chua.datalake.support.model.DataEnvelope;
 import com.chua.datalake.support.pipeline.DefaultPipelineManager;
@@ -36,6 +37,11 @@ import java.util.Map;
 public class PipelineEngineExample {
 
     /**
+     * 默认能力点类型
+     */
+    private static final String DEFAULT_TYPE = "all";
+
+    /**
      * 退出码：成功
      */
     private static final int EXIT_CODE_SUCCESS = 0;
@@ -46,12 +52,17 @@ public class PipelineEngineExample {
     private static final int EXIT_CODE_FAILURE = 1;
 
     public static void main(String[] args) {
-        Args parsed = parseArgs(args);
-        if (parsed.help()) {
-            printHelp();
+        CommandLine cli = CommandLine.parse(args)
+                .program("PipelineEngineExample")
+                .register("type", "t", "能力点（basic|dsl|all）", DEFAULT_TYPE)
+                .register("help", "h", "显示帮助");
+
+        if (cli.isHelp()) {
+            cli.help();
             return;
         }
-        String type = parsed.type() != null ? parsed.type() : "all";
+
+        String type = cli.get("type", DEFAULT_TYPE);
         boolean passed = switch (type.toLowerCase()) {
             case "basic" -> testBasicExecute();
             case "dsl" -> testDslExecute();
@@ -152,50 +163,5 @@ public class PipelineEngineExample {
 
     private static void printResult(String name, boolean passed) {
         log.info("{}{}", (passed ? "[PASS]" : "[FAIL]"), name);
-    }
-
-    private static Args parseArgs(String[] args) {
-        Args result = new Args();
-        int index = 0;
-        while (index < args.length) {
-            switch (args[index]) {
-                case "--type", "-t" -> {
-                    if (index + 1 < args.length) {
-                        result = result.withType(args[++index]);
-                    }
-                }
-                case "--help", "-h" -> result = result.withHelp(true);
-                default -> log.warn("[WARN] 未知参数: {}", args[index]);
-            }
-            index++;
-        }
-        return result;
-    }
-
-    private static void printHelp() {
-        log.info("PipelineEngine 综合示例");
-        log.info("");
-        log.info("用法: java PipelineEngineExample [选项]");
-        log.info("");
-        log.info("选项:");
-        log.info("  --type, -t <key>    能力点（basic|dsl|all）");
-        log.info("  --help,  -h          打印帮助");
-    }
-
-    /**
-     * 命令行参数容器。
-     */
-    private record Args(String type, boolean help) {
-        Args() {
-            this(null, false);
-        }
-
-        public Args withType(String type) {
-            return new Args(type, help);
-        }
-
-        public Args withHelp(boolean help) {
-            return new Args(type, help);
-        }
     }
 }

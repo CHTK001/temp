@@ -1,5 +1,6 @@
 package com.chua.example.datasync;
 
+import com.chua.common.support.utils.CommandLine;
 import com.chua.datasync.agent.support.DataSyncAgentSink;
 import com.chua.datasync.agent.support.DataSyncAgentSource;
 import com.chua.datasync.agent.support.executor.ReactorDataSyncExecutor;
@@ -55,13 +56,21 @@ public class DataSyncExample {
      */
     private static final long WAIT_MILLIS = 4000L;
 
+    /**
+     * 默认能力点类型
+     */
+    private static final String DEFAULT_TYPE = "basic";
+
     public static void main(String[] args) {
-        Args parsed = parseArgs(args);
-        if (parsed.help()) {
-            printHelp();
+        CommandLine cli = CommandLine.parse(args)
+                .program("DataSyncExample")
+                .register("type", "t", "能力点（basic|repeat|direct|all）", DEFAULT_TYPE)
+                .register("help", "h", "显示帮助");
+        if (cli.isHelp()) {
+            cli.help();
             return;
         }
-        String type = parsed.type() != null ? parsed.type() : "basic";
+        String type = cli.get("type", DEFAULT_TYPE);
         DataSyncExample example = new DataSyncExample();
         boolean passed = example.runTest(type);
         printResult("总结果", passed);
@@ -78,7 +87,7 @@ public class DataSyncExample {
      */
     public boolean runTest(String type) {
         if (type == null || type.isEmpty()) {
-            type = "basic";
+            type = DEFAULT_TYPE;
         }
         switch (type.toLowerCase()) {
             case "basic":
@@ -227,56 +236,6 @@ public class DataSyncExample {
 
     private static void printResult(String name, boolean passed) {
         log.info("{}{}", (passed ? "[PASS]" : "[FAIL]"), name);
-    }
-
-    private static Args parseArgs(String[] args) {
-        Args result = new Args();
-        int index = 0;
-        while (index < args.length) {
-            switch (args[index]) {
-                case "--type", "-t" -> {
-                    if (index + 1 < args.length) {
-                        result = result.withType(args[++index]);
-                    }
-                }
-                case "--help", "-h" -> result = result.withHelp(true);
-                default -> log.warn("[WARN] 未知参数: {}", args[index]);
-            }
-            index++;
-        }
-        return result;
-    }
-
-    private static void printHelp() {
-        log.info("DataSync 综合示例");
-        log.info("");
-        log.info("用法: java DataSyncExample [选项]");
-        log.info("");
-        log.info("选项:");
-        log.info("  --type, -t <key>    能力点（basic|repeat|direct|all）");
-        log.info("  --help,  -h          打印帮助");
-    }
-
-    /**
-     * 命令行参数容器。
-     *
-     * @param type 能力点类型
-     * @param help 是否打印帮助
-     * @author CH
-     * @since 4.0.0.42
-     */
-    private record Args(String type, boolean help) {
-        Args() {
-            this(null, false);
-        }
-
-        public Args withType(String type) {
-            return new Args(type, help);
-        }
-
-        public Args withHelp(boolean help) {
-            return new Args(type, help);
-        }
     }
 
     /**
