@@ -307,6 +307,12 @@
             <artifactId>utils-support-spider-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- 流程编排模块，供 FlowExample 使用 -->
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-flow-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <!-- jsoup HTML 解析，供爬虫示例使用（spider-starter 中为 optional） -->
         <dependency>
             <groupId>org.jsoup</groupId>
@@ -470,6 +476,9 @@
                         <include>**/ScreenCaptureExample.java</include>
                         <!-- vector-storage 已迁移至 SPI 实现 -->
                         <include>**/VectorStorageExampleSpi.java</include>
+                        <!-- 流程编排示例 -->
+                        <include>**/FlowExample.java</include>
+                        <include>**/FlowEchoNode.java</include>
                         <!-- 辅助类 -->
                         <include>**/SimpleEngineDataSource.java</include>
                         <include>**/ExampleModelPricingProvider.java</include>
