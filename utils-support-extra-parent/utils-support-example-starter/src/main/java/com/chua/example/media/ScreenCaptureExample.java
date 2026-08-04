@@ -1,6 +1,7 @@
 package com.chua.example.media;
 
 import com.chua.common.support.media.codec.ScreenCature;
+import org.bytedeco.javacv.Frame;
 import com.chua.common.support.spi.ServiceProvider;
 import com.chua.common.support.utils.CommandLine;
 import lombok.extern.slf4j.Slf4j;
@@ -117,6 +118,20 @@ public class ScreenCaptureExample {
     }
 
     /**
+     * 把 JavaCV Frame 转为 BufferedImage（BGRA → TYPE_3BYTE_BGR）。
+     */
+    private static BufferedImage frameToBufferedImage(Frame frame, int width, int height) {
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
+        if (frame.image != null && frame.image.length > 0 && frame.image[0] != null) {
+            java.nio.ByteBuffer buf = (java.nio.ByteBuffer) frame.image[0];
+            byte[] pixels = new byte[buf.capacity()];
+            buf.get(pixels);
+            image.getRaster().setDataElements(0, 0, width, height, pixels);
+        }
+        return image;
+    }
+
+    /**
      * 运行自检模式。
      *
      * @param captureType 采集器类型
@@ -143,13 +158,13 @@ public class ScreenCaptureExample {
 
         int successCount = 0;
         for (int i = 0; i < TEST_FRAME_COUNT; i++) {
-            ByteBuffer buf = capture.grabFrame();
-            if (buf == null) {
+            Frame frame = capture.grabFrame();
+            if (frame == null) {
                 log.warn("帧 {} 采集失败（null）", i + 1);
                 continue;
             }
             successCount++;
-            log.info("帧 {}: {}x{} size={}", i + 1, capture.getWidth(), capture.getHeight(), buf.remaining());
+            log.info("帧 {}: {}x{} size={}", i + 1, capture.getWidth(), capture.getHeight(), frame.image != null && frame.image.length > 0 ? ((java.nio.ByteBuffer) frame.image[0]).capacity() : 0);
         }
 
         capture.close();
@@ -192,24 +207,22 @@ public class ScreenCaptureExample {
 
         int successCount = 0;
         for (int i = 0; i < frameCount; i++) {
-            ByteBuffer buf = capture.grabFrame();
-            if (buf == null) {
+            Frame frame = capture.grabFrame();
+            if (frame == null) {
                 log.warn("帧 {} 采集失败（null）", i + 1);
                 continue;
             }
             successCount++;
             if (outputDir != null) {
-                // ByteBuffer → BufferedImage 保存
-                BufferedImage image = new BufferedImage(capture.getWidth(), capture.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
-                byte[] pixels = new byte[buf.remaining()];
-                buf.get(pixels);
-                image.getRaster().setDataElements(0, 0, capture.getWidth(), capture.getHeight(), pixels);
+                // Frame → BufferedImage 保存
+                BufferedImage image = frameToBufferedImage(frame, capture.getWidth(), capture.getHeight());
                 File saved = saveFrame(image, outputDir, i + 1);
                 if (saved != null) {
                     log.info("帧 {} 已保存: {}", i + 1, saved.getAbsolutePath());
                 }
             } else {
-                log.info("帧 {}: {}x{} size={}", i + 1, capture.getWidth(), capture.getHeight(), buf.remaining());
+                int size = frame.image != null && frame.image.length > 0 ? frame.image[0].capacity() : 0;
+                log.info("帧 {}: {}x{} size={}", i + 1, capture.getWidth(), capture.getHeight(), size);
             }
         }
 

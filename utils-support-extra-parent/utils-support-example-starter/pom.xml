@@ -449,6 +449,8 @@
                         <include>**/DatalakeServerExampleSpi.java</include>
                         <include>**/PipelineEngineExampleSpi.java</include>
                         <include>**/AiProxyDetectorExampleSpi.java</include>
+                        <include>**/RagChatExample.java</include>
+                        <include>**/RagChatExampleSpi.java</include>
                         <include>**/VideoCodecExampleSpi.java</include>
                         <include>**/ScreenCaptureExampleSpi.java</include>
                         <!-- 14 个核心 Example（main + SPI fallback） -->

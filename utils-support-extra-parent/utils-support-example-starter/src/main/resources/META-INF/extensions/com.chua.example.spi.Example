@@ -9,5 +9,6 @@ com.chua.example.datalake.subscribe.SubscriberExampleSpi
 com.chua.example.datalake.server.DatalakeServerExampleSpi
 com.chua.example.datalake.pipeline.PipelineEngineExampleSpi
 com.chua.example.ai.chat.AiProxyDetectorExampleSpi
+com.chua.example.ai.rag.RagChatExampleSpi
 com.chua.example.media.VideoCodecExampleSpi
 com.chua.example.media.ScreenCaptureExampleSpi

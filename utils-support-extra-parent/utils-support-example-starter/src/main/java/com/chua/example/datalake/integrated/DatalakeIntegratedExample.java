@@ -89,7 +89,7 @@ public class DatalakeIntegratedExample {
     public static void main(String[] args) {
         CommandLine cli = CommandLine.parse(args)
                 .program("DatalakeIntegratedExample")
-                .register("duration", "d", "运行时长（秒）", DEFAULT_DURATION_SECONDS)
+                .register("duration", "d", "运行时长（秒）", String.valueOf(DEFAULT_DURATION_SECONDS))
                 .register("help", "h", "显示帮助");
 
         if (cli.isHelp()) {
