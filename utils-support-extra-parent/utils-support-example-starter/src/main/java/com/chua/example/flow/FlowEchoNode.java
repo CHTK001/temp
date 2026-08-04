@@ -1,21 +1,20 @@
 package com.chua.example.flow;
 
-import com.chua.common.support.spi.annotations.Spi;
-import com.chua.common.support.task.flow.FlowInstance;
+import com.chua.common.support.task.flow.FlowContext;
 import com.chua.common.support.task.flow.FlowNode;
-import com.chua.common.support.task.flow.FlowNodeExecutor;
 import com.chua.common.support.task.flow.FlowProps;
+import com.chua.common.support.task.flow.FlowNodeRegistry;
 
 /**
  * 自定义流程节点 — echo 回显。
  *
- * <p>演示如何通过 SPI 注册自定义节点类型：</p>
+ * <p>演示如何实现自定义节点接口：</p>
  * <ul>
- *   <li>{@link Spi} 声明 SPI 名称</li>
- *   <li>{@link FlowNode} 声明节点类型与描述，供节点清单展示</li>
- *   <li>实现 {@link FlowNodeExecutor} 承载节点执行逻辑</li>
- *   <li>在 {@code META-INF/extensions/com.chua.common.support.task.flow.FlowNodeExecutor}
- *       索引文件中登记实现类</li>
+ *   <li>实现 {@link FlowNode} 接口，{@link #type()} 声明节点类型</li>
+ *   <li>通过 {@link FlowNodeRegistry#register(String, FlowNode, String)} 注册类型，
+ *       供 JSON 图定义导入时按类型创建节点副本</li>
+ *   <li>通过 {@link com.chua.common.support.task.flow.Flow#addNode(String, FlowNode)}
+ *       直接以实例形式加入流程，无需 SPI 注册</li>
  * </ul>
  *
  * <p>节点属性：{@code message} — 回显内容，缺省时回显当前数据。</p>
@@ -23,9 +22,7 @@ import com.chua.common.support.task.flow.FlowProps;
  * @author CH
  * @since 4.0.0.42
  */
-@Spi("echo")
-@FlowNode(value = "echo", describe = "回显节点")
-public class FlowEchoNode implements FlowNodeExecutor {
+public class FlowEchoNode implements FlowNode {
 
     /**
      * 默认回显内容
@@ -33,15 +30,25 @@ public class FlowEchoNode implements FlowNodeExecutor {
     private static final String DEFAULT_MESSAGE = "echo";
 
     /**
-     * 执行回显节点。
+     * 获取节点类型标识。
      *
-     * <p>读取节点 message 属性并写入实例当前数据。</p>
-     *
-     * @param instance 当前流程实例
+     * @return 节点类型 "echo"
      */
     @Override
-    public void execute(FlowInstance instance) {
-        FlowProps props = instance.currentNodeProps();
-        instance.setCurrentData(props.getString("message", DEFAULT_MESSAGE));
+    public String type() {
+        return "echo";
+    }
+
+    /**
+     * 执行回显节点。
+     *
+     * <p>读取节点 message 属性并写入流程上下文当前数据。</p>
+     *
+     * @param context 当前流程上下文
+     */
+    @Override
+    public void execute(FlowContext context) {
+        FlowProps props = context.currentNodeProps();
+        context.setData(props.getString("message", DEFAULT_MESSAGE));
     }
 }

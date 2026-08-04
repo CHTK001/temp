@@ -444,45 +444,13 @@
                         <!-- SPI 框架入口 -->
                         <include>**/Example.java</include>
                         <include>**/ExampleRunner.java</include>
-                        <!-- 13 个真正 SPI 实现 -->
-                        <include>**/OffsetFlowExampleSpi.java</include>
-                        <include>**/DataSyncExampleSpi.java</include>
-                        <include>**/DocumentExampleSpi.java</include>
-                        <include>**/TuiDashboardExampleSpi.java</include>
-                        <include>**/DatalakeIntegratedExampleSpi.java</include>
-                        <include>**/DataSinkExampleSpi.java</include>
-                        <include>**/SubscriberExampleSpi.java</include>
-                        <include>**/DatalakeServerExampleSpi.java</include>
-                        <include>**/PipelineEngineExampleSpi.java</include>
-                        <include>**/AiProxyDetectorExampleSpi.java</include>
-                        <include>**/RagChatExample.java</include>
-                        <include>**/RagChatExampleSpi.java</include>
-                        <include>**/VideoCodecExampleSpi.java</include>
-                        <include>**/ScreenCaptureExampleSpi.java</include>
-                        <!-- 14 个核心 Example（main + SPI fallback） -->
-                        <include>**/OffsetFlowExample.java</include>
-                        <include>**/EngineExample.java</include>
-                        <include>**/DataSyncExample.java</include>
-                        <include>**/DatalakeServerExample.java</include>
-                        <include>**/PipelineEngineExample.java</include>
-                        <include>**/HttpDatalakeQueryEngineExample.java</include>
-                        <include>**/DataSinkExample.java</include>
-                        <include>**/SubscriberExample.java</include>
-                        <include>**/DatalakeIntegratedExample.java</include>
-                        <include>**/AiProxyDetectorExample.java</include>
-                        <include>**/DocumentExample.java</include>
-                        <include>**/TuiDashboardExample.java</include>
-                        <include>**/VideoCodecExample.java</include>
-                        <include>**/ScreenCaptureExample.java</include>
-                        <!-- vector-storage 已迁移至 SPI 实现 -->
-                        <include>**/VectorStorageExampleSpi.java</include>
                         <!-- 流程编排示例 -->
                         <include>**/FlowExample.java</include>
                         <include>**/FlowEchoNode.java</include>
+                        <include>**/FlowCompleteExample.java</include>
                         <!-- 辅助类 -->
                         <include>**/SimpleEngineDataSource.java</include>
                         <include>**/ExampleModelPricingProvider.java</include>
-                        <include>**/TuiLauncher.java</include>
                     </includes>
                 </configuration>
             </plugin>
