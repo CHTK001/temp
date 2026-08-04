@@ -83,7 +83,7 @@ public class FlowExample {
     /**
      * 自检入口：根据类型分发到对应测试方法。
      *
-     *     @param type 自检项（dsl / json / multitarget / trace / loop / ctx / wait / spi / spider / all）
+     *     @param type 自检项（dsl / json / multitarget / trace / loop / ctx / wait / spi / spider / subflow / nested / deeploop / all）
      * @return 是否通过
      */
     public boolean runTest(String type) {
@@ -106,11 +106,18 @@ public class FlowExample {
                 return testCustomNode();
             case "spider":
                 return testSpiderNode();
+            case "subflow":
+                return testSubFlow();
+            case "nested":
+                return testNestedBranches();
+            case "deeploop":
+                return testDeepLoop();
             case "all":
                 return testDsl() && testJsonRoundTrip() && testMultiTarget()
                         && testTrace() && testLoopGuard()
                         && testContextReuse()
-                        && testWaitResume() && testCustomNode() && testSpiderNode();
+                        && testWaitResume() && testCustomNode() && testSpiderNode()
+                        && testSubFlow() && testNestedBranches() && testDeepLoop();
             default:
                 System.out.println("[FlowExample] 未知 type: " + type);
                 return false;
@@ -471,6 +478,170 @@ public class FlowExample {
             System.out.println("[WARN] spider 自检需要联网，已跳过: " + e.getMessage());
             return true;
         }
+    }
+
+    /**
+     * 自检项 9：子流程编排。
+     *
+     * <p>定义子流程，父流程通过子流程节点运行子流程并获取结果，
+     * 验证数据在父子流程间正确传递。</p>
+     *
+     * @return 是否通过
+     */
+    public static boolean testSubFlow() {
+        System.out.println("===== subflow =====");
+        // 定义子流程：transform bizId 并写入 sub.result
+        Flow subFlow = FlowEngine.createFlow("sub")
+                .addNode("start", new StartFlowNode())
+                .addNode("transform", new TransformFlowNode(), Map.of("source", "attribute:bizId"))
+                .addNode("end", new EndFlowNode());
+        FlowNode subFlowNode = new FlowNode() {
+            @Override
+            public String type() {
+                return "subFlow";
+            }
+
+            @Override
+            public void execute(FlowContext context) {
+                FlowInstance subInstance = subFlow.createGraph()
+                        .start("start").next("transform").next("end").end()
+                        .createInstance(context.getAttributes());
+                subInstance.run();
+                context.setData(subInstance.getContext().getData());
+                context.setAttribute("sub.result", subInstance.getContext().getData());
+            }
+        };
+        Flow parentFlow = FlowEngine.createFlow("parent")
+                .addNode("start", new StartFlowNode())
+                .addNode("sub", subFlowNode)
+                .addNode("end", new EndFlowNode());
+
+        FlowInstance instance = parentFlow.createGraph()
+                .start("start").next("sub").next("end").end()
+                .createInstance();
+        instance.run(Map.of("bizId", "SUB-001"));
+        boolean completed = instance.isCompleted();
+        boolean dataOk = "SUB-001".equals(instance.getContext().getData());
+        boolean attrOk = "SUB-001".equals(instance.getContext().getAttribute("sub.result"));
+        printResult("子流程执行完成", completed);
+        printResult("子流程返回值透传", dataOk);
+        printResult("子流程属性写入", attrOk);
+        return completed && dataOk && attrOk;
+    }
+
+    /**
+     * 自检项 10：多嵌套分支。
+     *
+     * <p>构建 check1 → check2 两级条件节点，覆盖 true/true、true/false、false 等分支组合，
+     * 验证嵌套分支正确路由。</p>
+     *
+     * @return 是否通过
+     */
+    public static boolean testNestedBranches() {
+        System.out.println("===== nested =====");
+        // check1: key1 非空 -> true 走 check2, false 走 end
+        // check2: key2 非空 -> true 走 transform, false 走 end
+        Flow flow = FlowEngine.createFlow("nested")
+                .addNode("start", new StartFlowNode())
+                .addNode("check1", new ConditionFlowNode(), Map.of("key", "key1"))
+                .addNode("check2", new ConditionFlowNode(), Map.of("key", "key2"))
+                .addNode("transform", new TransformFlowNode(), Map.of("source", "attribute:key1"))
+                .addNode("end", new EndFlowNode());
+
+        // 场景 1: check1=true, check2=true -> 走 transform
+        FlowInstance instance = flow.createGraph()
+                .start("start").next("check1")
+                .when("check1", true, "check2")
+                .when("check1", false, "end")
+                .next("check2")
+                .when("check2", true, "transform")
+                .when("check2", false, "end")
+                .next("transform").next("end")
+                .end()
+                .createInstance();
+        instance.run(Map.of("key1", "v1", "key2", "v2"));
+        boolean case1 = "v1".equals(instance.getContext().getData());
+
+        // 场景 2: check1=true, check2=false -> 走 end，data 为 null
+        FlowInstance instance2 = flow.createGraph().createInstance();
+        instance2.run(Map.of("key1", "v1"));
+        boolean case2 = instance2.isCompleted() && instance2.getContext().getData() == null;
+
+        // 场景 3: check1=false -> 直接走 end
+        FlowInstance instance3 = flow.createGraph().createInstance();
+        instance3.run(Map.of("key2", "v2"));
+        boolean case3 = instance3.isCompleted() && instance3.getContext().getData() == null;
+
+        printResult("嵌套分支 true → true 走 transform", case1);
+        printResult("嵌套分支 true → false 走 end", case2);
+        printResult("嵌套分支 false 直接走 end", case3);
+        return case1 && case2 && case3;
+    }
+
+    /**
+     * 自检项 11：深层循环。
+     *
+     * <p>验证默认循环上限（100）内正常完成，超过上限自动终止。
+     * 50 次循环应正常完成，150 次循环应被死循环防护终止。</p>
+     *
+     * @return 是否通过
+     */
+    public static boolean testDeepLoop() {
+        System.out.println("===== deeploop =====");
+        // 50 次：正常完成
+        FlowNode loop50 = new FlowNode() {
+            @Override
+            public String type() { return "loop50"; }
+
+            @Override
+            public void execute(FlowContext context) {
+                // recordExecution 在 execute 之后调用，所以当前计数比实际少 1
+                if (context.getExecuteCount("loop50") < 49) {
+                    context.setNextNodeId("loop50");
+                }
+            }
+        };
+        Flow flow50 = FlowEngine.createFlow("loop50")
+                .addNode("start", new StartFlowNode())
+                .addNode("loop50", loop50)
+                .addNode("end", new EndFlowNode());
+        FlowInstance instance50 = flow50.createGraph()
+                .start("start").next("loop50").next("end").end()
+                .createInstance();
+        instance50.run();
+        int count50 = instance50.getContext().getExecuteCount("loop50");
+        boolean normalComplete = instance50.isCompleted() && count50 == 50;
+
+        // 150 次：超过默认上限 100，被终止
+        FlowNode loop150 = new FlowNode() {
+            @Override
+            public String type() { return "loop150"; }
+
+            @Override
+            public void execute(FlowContext context) {
+                if (context.getExecuteCount("loop150") < 149) {
+                    context.setNextNodeId("loop150");
+                }
+            }
+        };
+        Flow flow150 = FlowEngine.createFlow("loop150")
+                .addNode("start", new StartFlowNode())
+                .addNode("loop150", loop150)
+                .addNode("end", new EndFlowNode());
+        FlowInstance instance150 = flow150.createGraph()
+                .start("start").next("loop150").next("end").end()
+                .createInstance();
+        boolean loopGuardTriggered = false;
+        try {
+            instance150.run();
+        } catch (Exception e) {
+            String message = e.getMessage();
+            loopGuardTriggered = message != null && message.contains("死循环");
+        }
+
+        printResult("50 次循环正常完成", normalComplete);
+        printResult("150 次循环被防护终止", loopGuardTriggered);
+        return normalComplete && loopGuardTriggered;
     }
 
     /**
