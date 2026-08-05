@@ -9,28 +9,25 @@
         <version>4.0.0.42</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>utils-support-runtime-shell</artifactId>
-    <name>Utils Support Runtime Shell</name>
-    <description>运行时 Shell：Telnet 服务器、命令系统、字符界面输出</description>
+    <artifactId>utils-support-runtime-spy</artifactId>
+    <name>Utils Support Runtime Spy</name>
+    <description>运行时字节码插桩引擎 — ASM 字节码修改、Instrumentation 集成</description>
 
     <dependencies>
         <dependency>
             <groupId>com.chua</groupId>
-            <artifactId>utils-support-common-starter</artifactId>
+            <artifactId>utils-support-runtime-plugin</artifactId>
             <version>${project.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.chua</groupId>
-            <artifactId>utils-support-runtime-core</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>9.7.1</version>
         </dependency>
         <dependency>
-            <groupId>com.chua</groupId>
-            <artifactId>utils-support-runtime-apm</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-commons</artifactId>
+            <version>9.7.1</version>
         </dependency>
     </dependencies>
 </project>

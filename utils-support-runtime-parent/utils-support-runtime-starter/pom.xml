@@ -9,28 +9,30 @@
         <version>4.0.0.42</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>utils-support-runtime-shell</artifactId>
-    <name>Utils Support Runtime Shell</name>
-    <description>运行时 Shell：Telnet 服务器、命令系统、字符界面输出</description>
+    <artifactId>utils-support-runtime-starter</artifactId>
+    <name>Utils Support Runtime Starter</name>
+    <description>运行时管理主入口：软件管理（下载/启动/停止）+ 服务注册 + agent 注入 + 示例</description>
 
     <dependencies>
         <dependency>
             <groupId>com.chua</groupId>
-            <artifactId>utils-support-common-starter</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.chua</groupId>
             <artifactId>utils-support-runtime-core</artifactId>
             <version>${project.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-runtime-apm</artifactId>
             <version>${project.version}</version>
-            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-runtime-agent</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-runtime-shell</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>
