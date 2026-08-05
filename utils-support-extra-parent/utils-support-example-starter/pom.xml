@@ -440,6 +440,9 @@
                         <include>**/FlowExample.java</include>
                         <include>**/FlowEchoNode.java</include>
                         <include>**/FlowCompleteExample.java</include>
+                        <!-- 爬虫服务启动 -->
+                        <include>**/SpiderServerApp.java</include>
+                        <include>**/SpiderStoreTest.java</include>
                         <!-- 辅助类 -->
                         <include>**/SimpleEngineDataSource.java</include>
                         <include>**/ExampleModelPricingProvider.java</include>
