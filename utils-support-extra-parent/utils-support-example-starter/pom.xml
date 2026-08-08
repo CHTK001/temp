@@ -483,6 +483,8 @@
                         <include>**/ExampleModelPricingProvider.java</include>
                         <!-- RPC 示例（RpcExample / RpcEchoService(Impl) / RpcPayload / RpcServerMain） -->
                         <include>**/network/rpc/*.java</include>
+                        <!-- 云效链式客户端示例 -->
+                        <include>**/network/yunxiao/*.java</include>
                     </includes>
                 </configuration>
             </plugin>

@@ -13,3 +13,4 @@ com.chua.example.ai.rag.RagChatExampleSpi
 com.chua.example.media.VideoCodecExampleSpi
 com.chua.example.media.ScreenCaptureExampleSpi
 com.chua.example.network.rpc.RpcExample
+com.chua.example.network.yunxiao.YunxiaoClientExampleSpi
