@@ -127,11 +127,6 @@
         -->
         <dependency>
             <groupId>com.chua</groupId>
-            <artifactId>utils-support-remote-starter</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.chua</groupId>
             <artifactId>utils-support-winrm-starter</artifactId>
             <version>${project.version}</version>
             <exclusions>
@@ -398,6 +393,47 @@
             <artifactId>grpc-util</artifactId>
             <version>1.73.0</version>
         </dependency>
+        <!-- RPC 四实现示例（RpcExample）：native 实现在 utils-support-common-starter，json/dubbo/sofa 在此三 starter -->
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-rpc-json-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-rpc-dubbo-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-rpc-sofa-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- SOFA-RPC 内嵌 logback space logger 依赖 logback 1.2.x 的 ContextInitializer.configureByResource(URL)
+             API（1.3+ 已移除）；项目默认解析 slf4j 2.0.x + logback 1.5.x 会 NoSuchMethodError。
+             此处按 sofa-common-log 要求显式对齐 slf4j 1.7.36 + logback 1.2.12（实测 RPC 四实现全通过）。 -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.36</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.12</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>1.2.12</version>
+        </dependency>
+        <!-- RPC 回归测试（RpcExampleTest，JUnit 5） -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.10.2</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <extensions>
@@ -442,11 +478,22 @@
                         <include>**/FlowCompleteExample.java</include>
                         <!-- 爬虫服务启动 -->
                         <include>**/SpiderServerApp.java</include>
-                        <include>**/SpiderStoreTest.java</include>
                         <!-- 辅助类 -->
                         <include>**/SimpleEngineDataSource.java</include>
                         <include>**/ExampleModelPricingProvider.java</include>
+                        <!-- RPC 示例（RpcExample / RpcEchoService(Impl) / RpcPayload / RpcServerMain） -->
+                        <include>**/network/rpc/*.java</include>
                     </includes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <!-- 根 pom 全局属性 skipTests=true 会跳过本模块测试，此处显式覆盖为 false 以执行 RpcExampleTest -->
+                    <skipTests>false</skipTests>
+                    <!-- RPC 实现（dubbo/sofa/native）在 Java 25 下需要反射穿透 -->
+                    <argLine>--add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.nio=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED</argLine>
                 </configuration>
             </plugin>
         </plugins>
