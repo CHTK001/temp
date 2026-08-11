@@ -88,9 +88,10 @@
             <artifactId>utils-support-pdf-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- MQTT 模块（mqtt-server 性能测试用） -->
         <dependency>
             <groupId>com.chua</groupId>
-            <artifactId>utils-support-openai-starter</artifactId>
+            <artifactId>utils-support-mqtt-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -485,6 +486,12 @@
                         <include>**/network/rpc/*.java</include>
                         <!-- TCP / SOCKS5 代理示例 -->
                         <include>**/network/proxy/*.java</include>
+                        <!-- HTTP 反向代理 / HTTP 服务器示例 -->
+                        <include>**/network/http/*.java</include>
+                        <!-- MQTT 服务器示例 -->
+                        <include>**/network/mqtt/*.java</include>
+                        <!-- 性能报告框架 -->
+                        <include>**/network/perf/*.java</include>
                         <!-- 云效链式客户端示例 -->
                         <include>**/network/yunxiao/*.java</include>
                     </includes>

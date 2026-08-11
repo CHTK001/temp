@@ -15,4 +15,7 @@ com.chua.example.media.ScreenCaptureExampleSpi
 com.chua.example.network.rpc.RpcExample
 com.chua.example.network.proxy.TcpProxyExampleSpi
 com.chua.example.network.proxy.Socks5ProxyExampleSpi
+com.chua.example.network.http.HttpProxyExampleSpi
+com.chua.example.network.http.HttpServerExampleSpi
+com.chua.example.network.mqtt.MqttServerExampleSpi
 com.chua.example.network.yunxiao.YunxiaoClientExampleSpi
