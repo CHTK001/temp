@@ -57,9 +57,9 @@ public class HttpProxyExampleSpi implements Example {
     private static final int DEFAULT_CONNECTIONS = 32;
     private static final int DEFAULT_PAYLOAD_SIZE = 128;
 
-    private static final int[] SWEEP_CONCURRENCY = {1, 4, 16, 32, 64, 128, 256, 500, 1000};
+    private static final int[] SWEEP_CONCURRENCY = {1, 4, 16, 64, 128, 256, 512, 1000, 2000};
     private static final int SWEEP_REQUESTS_PER_CONN = 500;
-    private static final int SWEEP_CONNECTIONS = 128;
+    private static final int SWEEP_CONNECTIONS = 256;
     private static final int SWEEP_PAYLOAD = 128;
 
     @Override
@@ -192,7 +192,7 @@ public class HttpProxyExampleSpi implements Example {
 
             List<PerfReport.SweepRow> rows = new ArrayList<>();
             for (int cc : SWEEP_CONCURRENCY) {
-                int conn = Math.min(SWEEP_CONNECTIONS, Math.max(1, cc / 4));
+                int conn = Math.min(SWEEP_CONNECTIONS, Math.max(1, cc / 8));
                 int req = SWEEP_REQUESTS_PER_CONN;
                 PerfReport.SweepRow row = runPerfInner(cc, conn, req, proxyPort);
                 if (row != null) {

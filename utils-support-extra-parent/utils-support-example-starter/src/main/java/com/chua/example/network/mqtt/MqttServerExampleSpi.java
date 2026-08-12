@@ -43,9 +43,9 @@ public class MqttServerExampleSpi implements Example {
     private static final int DEFAULT_CONNECTIONS = 8;
     private static final int DEFAULT_PAYLOAD_SIZE = 256;
 
-    private static final int[] SWEEP_CONCURRENCY = {1, 4, 8, 16, 32, 64, 128};
+    private static final int[] SWEEP_CONCURRENCY = {1, 4, 16, 64, 128, 256, 512};
     private static final int SWEEP_REQUESTS_PER_CONN = 500;
-    private static final int SWEEP_CONNECTIONS = 16;
+    private static final int SWEEP_CONNECTIONS = 256;
     private static final int SWEEP_PAYLOAD = 256;
 
     @Override
@@ -164,7 +164,7 @@ public class MqttServerExampleSpi implements Example {
 
             List<PerfReport.SweepRow> rows = new ArrayList<>();
             for (int cc : SWEEP_CONCURRENCY) {
-                int conn = Math.min(SWEEP_CONNECTIONS, Math.max(1, cc / 2));
+                int conn = Math.min(SWEEP_CONNECTIONS, Math.max(1, cc / 8));
                 int req = SWEEP_REQUESTS_PER_CONN;
                 PerfReport.SweepRow row = runPerfInner(cc, conn, req, payloadSize, port, server);
                 if (row != null) {

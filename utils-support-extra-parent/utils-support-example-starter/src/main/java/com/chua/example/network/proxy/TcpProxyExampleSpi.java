@@ -50,9 +50,9 @@ public class TcpProxyExampleSpi implements Example {
     private static final int DEFAULT_CONNECTIONS = 64;
     private static final int DEFAULT_PAYLOAD_SIZE = 64;
 
-    private static final int[] SWEEP_CONCURRENCY = {1, 4, 16, 64, 128, 256, 512, 1000};
-    private static final int SWEEP_REQUESTS_PER_CONN = 1000;
-    private static final int SWEEP_CONNECTIONS = 128;
+    private static final int[] SWEEP_CONCURRENCY = {1, 4, 16, 64, 128, 256, 512, 1000, 2000};
+    private static final int SWEEP_REQUESTS_PER_CONN = 500;
+    private static final int SWEEP_CONNECTIONS = 256;
     private static final int SWEEP_PAYLOAD = 64;
 
     @Override
@@ -241,7 +241,7 @@ public class TcpProxyExampleSpi implements Example {
                     rows.add(row);
                 }
             }
-            PerfReport.printSweepResult("tcp-proxy 64B echo 扫档 (按并发比例分配连接 / 1000 请求每连接 / 并发扫描)", payloadSize, rows);
+            PerfReport.printSweepResult("tcp-proxy 64B echo 扫档 (按并发比例分配连接 / 500 请求每连接 / 并发扫描)", payloadSize, rows);
             return !rows.isEmpty();
         } catch (Exception e) {
             fail("SWEEP 异常: " + e.getMessage());

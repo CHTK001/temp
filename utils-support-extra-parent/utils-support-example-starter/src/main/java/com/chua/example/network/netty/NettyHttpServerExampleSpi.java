@@ -50,7 +50,7 @@ public class NettyHttpServerExampleSpi implements Example {
     private static final int DEFAULT_CONNECTIONS = 64;
     private static final int DEFAULT_PAYLOAD_SIZE = 128;
 
-    private static final int[] SWEEP_CONCURRENCY = {1, 4, 16, 64, 128, 256, 512, 1000, 2000, 5000};
+    private static final int[] SWEEP_CONCURRENCY = {1, 4, 16, 64, 128, 256, 512, 1000, 2000};
     private static final int SWEEP_REQUESTS_PER_CONN = 500;
     private static final int SWEEP_CONNECTIONS = 256;
     private static final int SWEEP_PAYLOAD = 128;

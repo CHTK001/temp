@@ -48,9 +48,9 @@ public class Socks5ProxyExampleSpi implements Example {
     private static final int DEFAULT_CONNECTIONS = 32;
     private static final int DEFAULT_PAYLOAD_SIZE = 64;
 
-    private static final int[] SWEEP_CONCURRENCY = {1, 4, 16, 32, 64, 128, 256, 512, 1000};
-    private static final int SWEEP_REQUESTS_PER_CONN = 1000;
-    private static final int SWEEP_CONNECTIONS = 128;
+    private static final int[] SWEEP_CONCURRENCY = {1, 4, 16, 64, 128, 256, 512, 1000, 2000};
+    private static final int SWEEP_REQUESTS_PER_CONN = 500;
+    private static final int SWEEP_CONNECTIONS = 256;
     private static final int SWEEP_PAYLOAD = 64;
 
     @Override
@@ -307,14 +307,14 @@ public class Socks5ProxyExampleSpi implements Example {
 
             List<PerfReport.SweepRow> rows = new ArrayList<>();
             for (int cc : SWEEP_CONCURRENCY) {
-                int conn = Math.min(SWEEP_CONNECTIONS, Math.max(1, cc / 4));
+                int conn = Math.min(SWEEP_CONNECTIONS, Math.max(1, cc / 8));
                 int req = SWEEP_REQUESTS_PER_CONN;
                 PerfReport.SweepRow row = runPerfInner(cc, conn, req, payloadSize, proxy, backend.getPort());
                 if (row != null) {
                     rows.add(row);
                 }
             }
-            PerfReport.printSweepResult("socks5-proxy 64B echo 扫档 (按并发比例分配连接 / 1000 请求每连接 / 并发扫描)", payloadSize, rows);
+            PerfReport.printSweepResult("socks5-proxy 64B echo 扫档 (按并发比例分配连接 / 500 请求每连接 / 并发扫描)", payloadSize, rows);
             return !rows.isEmpty();
         } catch (Exception e) {
             log.error("SWEEP 异常: {}", e.getMessage(), e);
