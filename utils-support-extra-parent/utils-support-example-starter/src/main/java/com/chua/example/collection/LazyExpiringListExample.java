@@ -42,21 +42,44 @@ import java.util.concurrent.atomic.AtomicReference;
 @Slf4j
 public class LazyExpiringListExample implements Example {
 
+    /**
+     * 示例名称，用于 ExampleRunner 匹配和调度。
+     *
+     * @return 示例唯一标识 "lazy-expiring-list"
+     */
     @Override
     public String name() {
         return "lazy-expiring-list";
     }
 
+    /**
+     * 所属模块标识。
+     *
+     * @return 模块名 "common"
+     */
     @Override
     public String module() {
         return "common";
     }
 
+    /**
+     * 示例描述。
+     *
+     * @return 能力自检描述
+     */
     @Override
     public String description() {
         return "LazyExpiringList 懒加载/过期回收/堆外内存/线程安全能力自检";
     }
 
+    /**
+     * 执行示例自检。
+     *
+     * <p>支持通过 args 中的 "type" 参数选择单项测试，默认 "all" 执行全部。</p>
+     *
+     * @param args 参数映射，支持 type=lazy/expiry/evict/onheap/offheap/concurrent/capacity/lifecycle/identity/close/all
+     * @return 所有测试是否通过
+     */
     @Override
     public boolean run(Map<String, String> args) {
         String type = args.getOrDefault("type", "all");
@@ -88,6 +111,11 @@ public class LazyExpiringListExample implements Example {
 
     // ==================== 1. 懒加载 ====================
 
+    /**
+     * 测试懒加载：初始 UNLOADED，首次访问触发加载，多次访问只加载一次。
+     *
+     * @return 测试是否通过
+     */
     private boolean testLazyLoad() {
         log.info("===== 懒加载 =====");
         AtomicInteger loadCount = new AtomicInteger(0);
@@ -117,6 +145,11 @@ public class LazyExpiringListExample implements Example {
 
     // ==================== 2. 过期自动回收 ====================
 
+    /**
+     * 测试 TTL 过期自动回收：加载后等待过期，验证状态回到 UNLOADED，再次访问重新加载。
+     *
+     * @return 测试是否通过
+     */
     private boolean testExpiry() {
         log.info("===== 过期自动回收 =====");
         AtomicInteger loadCount = new AtomicInteger(0);
@@ -151,6 +184,11 @@ public class LazyExpiringListExample implements Example {
 
     // ==================== 3. 释放后退回初始状态 ====================
 
+    /**
+     * 测试 evict 手动释放：释放后回到 UNLOADED，再次访问重新懒加载。
+     *
+     * @return 测试是否通过
+     */
     private boolean testEvict() {
         log.info("===== 释放后退回初始状态 =====");
         AtomicInteger loadCount = new AtomicInteger(0);
@@ -177,6 +215,11 @@ public class LazyExpiringListExample implements Example {
 
     // ==================== 4. 堆内存储 ====================
 
+    /**
+     * 测试 OnHeapDataStore 基本读写：append/get/size/appendAll/clear/isEmpty。
+     *
+     * @return 测试是否通过
+     */
     private boolean testOnHeapDataStore() {
         log.info("===== 堆内存储 (OnHeapDataStore) =====");
 
@@ -209,6 +252,11 @@ public class LazyExpiringListExample implements Example {
 
     // ==================== 5. 堆外存储 ====================
 
+    /**
+     * 测试 OffHeapDataStore 堆外存储：序列化写入/get反序列化/isOffHeap/appendAll/clear释放。
+     *
+     * @return 测试是否通过
+     */
     private boolean testOffHeapDataStore() {
         log.info("===== 堆外存储 (OffHeapDataStore) =====");
 
@@ -241,6 +289,11 @@ public class LazyExpiringListExample implements Example {
 
     // ==================== 6. 线程安全 ====================
 
+    /**
+     * 测试并发懒加载：10 个线程同时首次访问，验证只加载一次且结果正确。
+     *
+     * @return 测试是否通过
+     */
     private boolean testConcurrentLoad() {
         log.info("===== 线程安全（并发懒加载） =====");
         AtomicInteger loadCount = new AtomicInteger(0);
@@ -289,6 +342,11 @@ public class LazyExpiringListExample implements Example {
 
     // ==================== 7. maxCapacity ====================
 
+    /**
+     * 测试 maxCapacity 容量保护：加载数据超过 maxCapacity 时自动截断。
+     *
+     * @return 测试是否通过
+     */
     private boolean testMaxCapacity() {
         log.info("===== maxCapacity 容量保护 =====");
 
@@ -309,6 +367,11 @@ public class LazyExpiringListExample implements Example {
 
     // ==================== 8. 生命周期回调 ====================
 
+    /**
+     * 测试生命周期回调：验证 LOADED/EVICTED/CLOSED 事件正确触发。
+     *
+     * @return 测试是否通过
+     */
     private boolean testLifecycle() {
         log.info("===== 生命周期回调 =====");
         List<String> events = new ArrayList<>();
@@ -337,6 +400,11 @@ public class LazyExpiringListExample implements Example {
 
     // ==================== 9. hashCode/equals 不触发懒加载 ====================
 
+    /**
+     * 测试 hashCode/equals/toString 不触发懒加载：调用后状态仍为 UNLOADED。
+     *
+     * @return 测试是否通过
+     */
     private boolean testIdentityMethods() {
         log.info("===== hashCode/equals/toString 不触发懒加载 =====");
         AtomicInteger loadCount = new AtomicInteger(0);
@@ -364,6 +432,11 @@ public class LazyExpiringListExample implements Example {
 
     // ==================== 10. close 后不可访问 ====================
 
+    /**
+     * 测试 close 后不可访问：close 后 size()/get() 抛 IllegalStateException。
+     *
+     * @return 测试是否通过
+     */
     private boolean testClose() {
         log.info("===== close 后不可访问 =====");
 
@@ -394,6 +467,12 @@ public class LazyExpiringListExample implements Example {
         return p1 && p2 && p3;
     }
 
+    /**
+     * 打印测试结果。
+     *
+     * @param name 测试名称
+     * @param passed 是否通过
+     */
     private static void printResult(String name, boolean passed) {
         log.info("{} {}", passed ? "[PASS]" : "[FAIL]", name);
     }
