@@ -344,6 +344,12 @@
             <artifactId>utils-support-playwright-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- Kimi 网页版逆向代理 ChatClient（KimiProxyExample，纯 HTTP 无需浏览器） -->
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-kimi-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <!-- Datalake 示例：覆盖 offset / sink / pipeline / server / subscribe / query -->
         <dependency>
             <groupId>com.chua</groupId>
