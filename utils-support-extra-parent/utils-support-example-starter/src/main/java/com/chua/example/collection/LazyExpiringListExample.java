@@ -34,6 +34,12 @@ import java.util.concurrent.atomic.AtomicReference;
  *   <li>生命周期回调</li>
  *   <li>hashCode/equals 不触发懒加载</li>
  *   <li>close 后不可访问</li>
+ *   <li>offHeap 模式集成：LazyExpiringList + OffHeapDataStore</li>
+ *   <li>LOAD_FAILED 事件：loader 异常状态回退</li>
+ *   <li>List API 方法：iterator/indexOf/toArray/subList/stream/forEach</li>
+ *   <li>堆外 add 不支持：UnsupportedOperationException</li>
+ *   <li>addAll 容量截断</li>
+ *   <li>clear/double close/DataStore close 后访问</li>
  * </ol>
  *
  * @author CH
@@ -94,6 +100,12 @@ public class LazyExpiringListExample implements Example {
             case "lifecycle":   return testLifecycle();
             case "identity":    return testIdentityMethods();
             case "close":       return testClose();
+            case "offheap-int": return testOffHeapIntegration();
+            case "load-fail":   return testLoadFailed();
+            case "list-api":    return testListApi();
+            case "offheap-add": return testOffHeapAddUnsupported();
+            case "addall-cap":  return testAddAllCapacityTruncation();
+            case "clear-dbl":   return testClearAndDoubleClose();
             case "all":
             default:
                 return testLazyLoad()
@@ -105,7 +117,13 @@ public class LazyExpiringListExample implements Example {
                         && testMaxCapacity()
                         && testLifecycle()
                         && testIdentityMethods()
-                        && testClose();
+                        && testClose()
+                        && testOffHeapIntegration()
+                        && testLoadFailed()
+                        && testListApi()
+                        && testOffHeapAddUnsupported()
+                        && testAddAllCapacityTruncation()
+                        && testClearAndDoubleClose();
         }
     }
 
@@ -465,6 +483,269 @@ public class LazyExpiringListExample implements Example {
         printResult("get(0) 抛 IllegalStateException", p3);
 
         return p1 && p2 && p3;
+    }
+
+    // ==================== 11. offHeap 模式集成 ====================
+
+    /**
+     * 测试 LazyExpiringList + OffHeapDataStore 集成：offHeap(true) 懒加载、读取、evict、close。
+     *
+     * @return 测试是否通过
+     */
+    private boolean testOffHeapIntegration() {
+        log.info("===== offHeap 模式集成 =====");
+
+        try (LazyExpiringList<String> list = LazyExpiringList.<String>builder()
+                .loader(() -> Arrays.asList("heap-alpha", "heap-beta"))
+                .offHeap(true)
+                .build()) {
+
+            boolean p0 = list.isOffHeap();
+            printResult("isOffHeap=true", p0);
+
+            boolean p1 = list.size() == 2;
+            printResult("offHeap 懒加载 size=2", p1);
+
+            boolean p2 = "heap-alpha".equals(list.get(0)) && "heap-beta".equals(list.get(1));
+            printResult("offHeap get 正确反序列化", p2);
+
+            boolean p3 = list.getOffHeapBytes() > 0;
+            printResult("offHeapBytes > 0", p3);
+
+            // evict 后重新加载
+            list.evict();
+            boolean p4 = list.getState() == ListState.UNLOADED;
+            printResult("offHeap evict 后 UNLOADED", p4);
+
+            list.get(0);
+            boolean p5 = list.getState() == ListState.LOADED;
+            printResult("offHeap 重新加载后 LOADED", p5);
+
+            return p0 && p1 && p2 && p3 && p4 && p5;
+        }
+    }
+
+    // ==================== 12. LOAD_FAILED 事件 ====================
+
+    /**
+     * 测试 loader 抛异常时状态回退到 UNLOADED，触发 LOAD_FAILED 事件。
+     *
+     * @return 测试是否通过
+     */
+    private boolean testLoadFailed() {
+        log.info("===== LOAD_FAILED 事件 =====");
+        List<String> events = new ArrayList<>();
+
+        try (LazyExpiringList<String> list = LazyExpiringList.<String>builder()
+                .loader(() -> { throw new RuntimeException("模拟加载失败"); })
+                .lifecycleListener(e -> events.add(e.getType().name()))
+                .build()) {
+
+            boolean p1 = false;
+            try {
+                list.size();
+            } catch (IllegalStateException e) {
+                p1 = e.getMessage().contains("懒加载数据失败");
+            }
+            printResult("size() 抛 IllegalStateException(懒加载数据失败)", p1);
+
+            boolean p2 = list.getState() == ListState.UNLOADED;
+            printResult("加载失败后状态 UNLOADED", p2);
+
+            boolean p3 = events.contains("LOAD_FAILED");
+            printResult("收到 LOAD_FAILED 事件", p3);
+
+            return p1 && p2 && p3;
+        }
+    }
+
+    // ==================== 13. List API 方法 ====================
+
+    /**
+     * 测试 List 接口方法：iterator/indexOf/lastIndexOf/toArray/subList/containsAll/stream/forEach。
+     *
+     * @return 测试是否通过
+     */
+    private boolean testListApi() {
+        log.info("===== List API 方法 =====");
+
+        try (LazyExpiringList<String> list = LazyExpiringList.<String>builder()
+                .loader(() -> Arrays.asList("x", "y", "z"))
+                .build()) {
+
+            // iterator
+            List<String> fromIter = new ArrayList<>();
+            list.iterator().forEachRemaining(fromIter::add);
+            boolean p1 = fromIter.equals(Arrays.asList("x", "y", "z"));
+            printResult("iterator 遍历正确", p1);
+
+            // indexOf / lastIndexOf
+            boolean p2 = list.indexOf("y") == 1 && list.lastIndexOf("x") == 0;
+            printResult("indexOf/lastIndexOf 正确", p2);
+
+            // indexOf 不存在
+            boolean p3 = list.indexOf("notexist") == -1;
+            printResult("indexOf 不存在返回 -1", p3);
+
+            // toArray
+            Object[] arr = list.toArray();
+            boolean p4 = arr.length == 3 && "x".equals(arr[0]);
+            printResult("toArray 正确", p4);
+
+            // subList
+            List<String> sub = list.subList(0, 2);
+            boolean p5 = sub.equals(Arrays.asList("x", "y"));
+            printResult("subList(0,2) 正确", p5);
+
+            // containsAll
+            boolean p6 = list.containsAll(Arrays.asList("x", "z"));
+            printResult("containsAll 正确", p6);
+
+            // stream
+            long count = list.stream().count();
+            boolean p7 = count == 3;
+            printResult("stream().count()=3", p7);
+
+            // forEach
+            List<String> collected = new ArrayList<>();
+            list.forEach(collected::add);
+            boolean p8 = collected.equals(Arrays.asList("x", "y", "z"));
+            printResult("forEach 正确", p8);
+
+            return p1 && p2 && p3 && p4 && p5 && p6 && p7 && p8;
+        }
+    }
+
+    // ==================== 14. 堆外 add 不支持 ====================
+
+    /**
+     * 测试 offHeap 模式下 add/addAll 抛 UnsupportedOperationException。
+     *
+     * @return 测试是否通过
+     */
+    private boolean testOffHeapAddUnsupported() {
+        log.info("===== 堆外 add 不支持 =====");
+
+        try (LazyExpiringList<String> list = LazyExpiringList.<String>builder()
+                .loader(() -> new ArrayList<>())
+                .offHeap(true)
+                .build()) {
+
+            list.size(); // 触发加载
+
+            boolean p1 = false;
+            try {
+                list.add("item");
+            } catch (UnsupportedOperationException e) {
+                p1 = true;
+            }
+            printResult("offHeap add 抛 UnsupportedOperationException", p1);
+
+            boolean p2 = false;
+            try {
+                list.addAll(Arrays.asList("a", "b"));
+            } catch (UnsupportedOperationException e) {
+                p2 = true;
+            }
+            printResult("offHeap addAll 抛 UnsupportedOperationException", p2);
+
+            return p1 && p2;
+        }
+    }
+
+    // ==================== 15. addAll 容量截断 ====================
+
+    /**
+     * 测试 addAll 超过 maxCapacity 时部分截断。
+     *
+     * @return 测试是否通过
+     */
+    private boolean testAddAllCapacityTruncation() {
+        log.info("===== addAll 容量截断 =====");
+
+        try (LazyExpiringList<String> list = LazyExpiringList.<String>builder()
+                .loader(() -> new ArrayList<>())
+                .maxCapacity(3)
+                .build()) {
+
+            list.size(); // 触发加载
+            list.addAll(Arrays.asList("a", "b", "c", "d", "e"));
+            boolean p1 = list.size() == 3;
+            printResult("addAll 截断到 maxCapacity=3", p1);
+
+            boolean p2 = "a".equals(list.get(0));
+            printResult("截断后首个元素正确", p2);
+
+            return p1 && p2;
+        }
+    }
+
+    // ==================== 16. clear / double close / DataStore close ====================
+
+    /**
+     * 测试 clear 回到 UNLOADED、double close 不报错、DataStore close 后访问抛异常。
+     *
+     * @return 测试是否通过
+     */
+    private boolean testClearAndDoubleClose() {
+        log.info("===== clear / double close / DataStore close =====");
+
+        // LazyExpiringList.clear()
+        try (LazyExpiringList<String> list = LazyExpiringList.<String>builder()
+                .loader(() -> Arrays.asList("c1", "c2"))
+                .build()) {
+
+            list.size();
+            list.clear();
+            boolean p1 = list.getState() == ListState.UNLOADED;
+            printResult("clear 后状态 UNLOADED", p1);
+
+            // 重新加载
+            list.get(0);
+            boolean p2 = list.getState() == ListState.LOADED;
+            printResult("clear 后重新加载 LOADED", p2);
+
+            if (!p1 || !p2) return false;
+        }
+
+        // double close
+        LazyExpiringList<String> list2 = LazyExpiringList.<String>builder()
+                .loader(() -> Arrays.asList("d"))
+                .build();
+        list2.close();
+        boolean p3 = true;
+        try {
+            list2.close(); // 第二次 close 不应报错
+        } catch (Exception e) {
+            p3 = false;
+        }
+        printResult("double close 不报错", p3);
+
+        // OnHeapDataStore close 后访问
+        OnHeapDataStore<String> onHeap = new OnHeapDataStore<>();
+        onHeap.append("x");
+        onHeap.close();
+        boolean p4 = false;
+        try {
+            onHeap.get(0);
+        } catch (IllegalStateException e) {
+            p4 = true;
+        }
+        printResult("OnHeapDataStore close 后 get 抛异常", p4);
+
+        // OffHeapDataStore close 后访问
+        OffHeapDataStore<String> offHeap = new OffHeapDataStore<>(new JavaSerializer<>());
+        offHeap.append("y");
+        offHeap.close();
+        boolean p5 = false;
+        try {
+            offHeap.get(0);
+        } catch (IllegalStateException e) {
+            p5 = true;
+        }
+        printResult("OffHeapDataStore close 后 get 抛异常", p5);
+
+        return p3 && p4 && p5;
     }
 
     /**
