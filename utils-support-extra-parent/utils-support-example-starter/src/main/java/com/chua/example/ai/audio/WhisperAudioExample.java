@@ -36,7 +36,6 @@ import java.nio.file.Path;
  * <h2>Provider 与能力</h2>
  * <table border="1">
  *   <tr><th>--provider</th><th>实现类</th><th>同步转写</th><th>异步任务</th><th>离线</th></tr>
- *   <tr><td>local</td><td>LocalAudioClient</td><td>✅</td><td>✅</td><td>✅</td></tr>
  *   <tr><td>whisper / whisper-tiny / whisper-onnx</td><td>WhisperAudioClient</td><td>✅</td><td>✅</td><td>✅</td></tr>
  * </table>
  *
@@ -70,11 +69,6 @@ public class WhisperAudioExample {
      * 默认语言代码
      */
     private static final String DEFAULT_LANGUAGE = "en";
-
-    /**
-     * local 桩 provider
-     */
-    private static final String PROVIDER_LOCAL = "local";
 
     /**
      * 30 秒最大音频窗口
@@ -130,30 +124,11 @@ public class WhisperAudioExample {
         log.info("audio: {}", audio);
 
         boolean allPassed = true;
-        allPassed &= testLocalStub(audio);
         allPassed &= testProviderSync(provider, model, language, audio);
         if (async) {
             allPassed &= testProviderAsync(provider, model, language, audio);
         }
         return allPassed;
-    }
-
-    /**
-     * 测试 local 桩 provider 始终可返回。
-     *
-     * @param audio 音频文件
-     * @return 是否通过
-     */
-    public boolean testLocalStub(Path audio) {
-        try (AudioClient client = AudioClient.create(PROVIDER_LOCAL, "")) {
-            String text = client.transcribe(audio);
-            boolean passed = text != null && text.contains("本地桩");
-            printResult("local 桩返回", passed, text);
-            return passed;
-        } catch (Exception e) {
-            log.error("[FAIL] local 桩异常: {}", e.getMessage(), e);
-            return false;
-        }
     }
 
     /**

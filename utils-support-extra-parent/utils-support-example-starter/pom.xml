@@ -88,17 +88,16 @@
             <artifactId>utils-support-pdf-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- MQTT 模块（mqtt-server 性能测试用） -->
+        <!-- OpenApiDocumentProvider 烟雾测试 (lang.document.OpenApiExportTestExample) -->
         <dependency>
-            <groupId>com.chua</groupId>
-            <artifactId>utils-support-mqtt-starter</artifactId>
-            <version>${project.version}</version>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-models-jakarta</artifactId>
+            <version>2.2.19</version>
         </dependency>
-        <!-- Netty 模块（netty-http 性能测试用） -->
         <dependency>
             <groupId>com.chua</groupId>
-            <artifactId>utils-support-netty-starter</artifactId>
-            <version>${project.version}</version>
+            <artifactId>spring-support-swagger-starter</artifactId>
+            <version>4.0.0.42</version>
         </dependency>
         <dependency>
             <groupId>com.chua</groupId>
@@ -113,6 +112,12 @@
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-tshark-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- ASR (whisper) SPI provider 位于 onnx-starter，供 WhisperAudioExample 使用 -->
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-deeplearning-onnx-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
         <!--
@@ -308,6 +313,12 @@
             <groupId>com.chua</groupId>
             <artifactId>utils-support-spider-starter</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- 流程编排模块，供 FlowExample 使用 -->
         <dependency>
@@ -320,6 +331,24 @@
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
             <version>${jsoup.version}</version>
+        </dependency>
+        <!-- AI Proxy 聊天示例（QwenProxyExample / AiProxyDetectorExample） -->
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-openai-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- Playwright Cookie 反代 ChatClient（QwenProxyExample / DoubaoProxyExample，含浏览器驱动） -->
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-playwright-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- Kimi 网页版逆向代理 ChatClient（KimiProxyExample，纯 HTTP 无需浏览器） -->
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-kimi-starter</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <!-- Datalake 示例：覆盖 offset / sink / pipeline / server / subscribe / query -->
         <dependency>
@@ -482,26 +511,23 @@
                         <!-- 流程编排示例 -->
                         <include>**/FlowExample.java</include>
                         <include>**/FlowEchoNode.java</include>
-                        <include>**/FlowCompleteExample.java</include>
-                        <!-- 爬虫服务启动 -->
-                        <include>**/SpiderServerApp.java</include>
+                         <include>**/FlowCompleteExample.java</include>
                         <!-- 辅助类 -->
                         <include>**/SimpleEngineDataSource.java</include>
-                        <include>**/ExampleModelPricingProvider.java</include>
                         <!-- RPC 示例（RpcExample / RpcEchoService(Impl) / RpcPayload / RpcServerMain） -->
                         <include>**/network/rpc/*.java</include>
-                        <!-- TCP / SOCKS5 代理示例 -->
-                        <include>**/network/proxy/*.java</include>
-                        <!-- HTTP 反向代理 / HTTP 服务器示例 -->
-                        <include>**/network/http/*.java</include>
-                        <!-- MQTT 服务器示例 -->
-                        <include>**/network/mqtt/*.java</include>
-                        <!-- Netty HTTP 服务器示例 -->
-                        <include>**/network/netty/*.java</include>
-                        <!-- 性能报告框架 -->
-                        <include>**/network/perf/*.java</include>
                         <!-- 云效链式客户端示例 -->
                         <include>**/network/yunxiao/*.java</include>
+                        <!-- lang.document 文档 SPI 烟雾测试 (OpenApiExportTestExample) -->
+                        <include>**/lang/document/*.java</include>
+                         <!-- AI 音频示例（WhisperAudioExample） -->
+                         <include>**/ai/audio/*.java</include>
+                         <!-- AI 用量定价 SPI 示例（ExampleModelPricingProvider） -->
+                         <include>**/ai/usage/*.java</include>
+                        <!-- AI Proxy 聊天示例（QwenProxyExample / AiProxyDetectorExample） -->
+                        <include>**/ai/chat/*.java</include>
+                         <!-- 集合示例（LazyExpiringListExample） -->
+                         <include>**/collection/*.java</include>
                     </includes>
                 </configuration>
             </plugin>
