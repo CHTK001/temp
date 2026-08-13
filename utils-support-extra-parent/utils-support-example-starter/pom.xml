@@ -114,7 +114,7 @@
             <artifactId>utils-support-tshark-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- TTS (tts-stub) / ASR (whisper) SPI provider 位于 onnx-starter，供 TextToAudioExample / WhisperAudioExample 使用 -->
+        <!-- ASR (whisper) SPI provider 位于 onnx-starter，供 WhisperAudioExample 使用 -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-deeplearning-onnx-starter</artifactId>
@@ -332,6 +332,12 @@
             <artifactId>jsoup</artifactId>
             <version>${jsoup.version}</version>
         </dependency>
+        <!-- Playwright Cookie 反代 ChatClient（QwenProxyExample / DoubaoProxyExample，含浏览器驱动） -->
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-playwright-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <!-- Datalake 示例：覆盖 offset / sink / pipeline / server / subscribe / query -->
         <dependency>
             <groupId>com.chua</groupId>
@@ -502,10 +508,12 @@
                         <include>**/network/yunxiao/*.java</include>
                         <!-- lang.document 文档 SPI 烟雾测试 (OpenApiExportTestExample) -->
                         <include>**/lang/document/*.java</include>
-                         <!-- AI 音频示例（WhisperAudioExample + TextToAudioExample） -->
+                         <!-- AI 音频示例（WhisperAudioExample） -->
                          <include>**/ai/audio/*.java</include>
                          <!-- AI 用量定价 SPI 示例（ExampleModelPricingProvider） -->
                          <include>**/ai/usage/*.java</include>
+                        <!-- AI Proxy 聊天示例（QwenProxyExample） -->
+                        <include>**/ai/chat/*.java</include>
                     </includes>
                 </configuration>
             </plugin>
