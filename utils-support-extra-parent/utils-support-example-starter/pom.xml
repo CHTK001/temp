@@ -332,6 +332,12 @@
             <artifactId>jsoup</artifactId>
             <version>${jsoup.version}</version>
         </dependency>
+        <!-- AI Proxy 聊天示例（QwenProxyExample / AiProxyDetectorExample） -->
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-openai-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <!-- Playwright Cookie 反代 ChatClient（QwenProxyExample / DoubaoProxyExample，含浏览器驱动） -->
         <dependency>
             <groupId>com.chua</groupId>
@@ -512,8 +518,10 @@
                          <include>**/ai/audio/*.java</include>
                          <!-- AI 用量定价 SPI 示例（ExampleModelPricingProvider） -->
                          <include>**/ai/usage/*.java</include>
-                        <!-- AI Proxy 聊天示例（QwenProxyExample） -->
+                        <!-- AI Proxy 聊天示例（QwenProxyExample / AiProxyDetectorExample） -->
                         <include>**/ai/chat/*.java</include>
+                         <!-- 集合示例（LazyExpiringListExample） -->
+                         <include>**/collection/*.java</include>
                     </includes>
                 </configuration>
             </plugin>

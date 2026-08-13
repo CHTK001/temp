@@ -40,6 +40,7 @@ import java.util.concurrent.atomic.AtomicReference;
  *   <li>堆外 add 不支持：UnsupportedOperationException</li>
  *   <li>addAll 容量截断</li>
  *   <li>clear/double close/DataStore close 后访问</li>
+ *   <li>堆外内存自动回收：evict/close/TTL过期后 offHeapBytes 归零</li>
  * </ol>
  *
  * @author CH
@@ -106,6 +107,7 @@ public class LazyExpiringListExample implements Example {
             case "offheap-add": return testOffHeapAddUnsupported();
             case "addall-cap":  return testAddAllCapacityTruncation();
             case "clear-dbl":   return testClearAndDoubleClose();
+            case "mem-reclaim": return testOffHeapMemoryReclaim();
             case "all":
             default:
                 return testLazyLoad()
@@ -123,7 +125,8 @@ public class LazyExpiringListExample implements Example {
                         && testListApi()
                         && testOffHeapAddUnsupported()
                         && testAddAllCapacityTruncation()
-                        && testClearAndDoubleClose();
+                        && testClearAndDoubleClose()
+                        && testOffHeapMemoryReclaim();
         }
     }
 
@@ -319,7 +322,7 @@ public class LazyExpiringListExample implements Example {
         try (LazyExpiringList<String> list = LazyExpiringList.<String>builder()
                 .loader(() -> {
                     loadCount.incrementAndGet();
-                    Thread.sleep(50);
+                    try { Thread.sleep(50); } catch (InterruptedException ignored) { Thread.currentThread().interrupt(); }
                     return Arrays.asList("concurrent");
                 })
                 .build()) {
@@ -393,6 +396,9 @@ public class LazyExpiringListExample implements Example {
     private boolean testLifecycle() {
         log.info("===== 生命周期回调 =====");
         List<String> events = new ArrayList<>();
+        boolean p1;
+        boolean p2;
+        boolean p3;
 
         try (LazyExpiringList<String> list = LazyExpiringList.<String>builder()
                 .loader(() -> Arrays.asList("data"))
@@ -402,15 +408,15 @@ public class LazyExpiringListExample implements Example {
             list.size();  // LOADED
             list.evict(); // EVICTED
 
-            boolean p1 = events.contains("LOADED");
+            p1 = events.contains("LOADED");
             printResult("收到 LOADED 事件", p1);
 
-            boolean p2 = events.contains("EVICTED");
+            p2 = events.contains("EVICTED");
             printResult("收到 EVICTED 事件", p2);
         }
 
         // close 在 try-with-resources 中触发
-        boolean p3 = events.contains("CLOSED");
+        p3 = events.contains("CLOSED");
         printResult("收到 CLOSED 事件", p3);
 
         return p1 && p2 && p3;
@@ -746,6 +752,122 @@ public class LazyExpiringListExample implements Example {
         printResult("OffHeapDataStore close 后 get 抛异常", p5);
 
         return p3 && p4 && p5;
+    }
+
+    // ==================== 17. 堆外内存自动回收 ====================
+
+    /**
+     * 测试堆外内存在 evict/close/TTL过期 后确定性释放。
+     *
+     * <p>验证三个关键场景：</p>
+     * <ol>
+     *   <li>evict 后 offHeapBytes 归零（DataStore.close → Arena.close）</li>
+     *   <li>close 后 offHeapBytes 归零</li>
+     *   <li>TTL 过期后 offHeapBytes 归零（自动回收）</li>
+     * </ol>
+     *
+     * @return 测试是否通过
+     */
+    private boolean testOffHeapMemoryReclaim() {
+        log.info("===== 堆外内存自动回收 =====");
+
+        // 1. evict 后堆外内存释放
+        try (LazyExpiringList<String> list = LazyExpiringList.<String>builder()
+                .loader(() -> Arrays.asList("mem-a", "mem-b", "mem-c"))
+                .offHeap(true)
+                .build()) {
+
+            list.size(); // 触发加载
+            long bytesAfterLoad = list.getOffHeapBytes();
+            boolean p1 = bytesAfterLoad > 0;
+            printResult("offHeap 加载后 offHeapBytes=" + bytesAfterLoad + " > 0", p1);
+
+            list.evict();
+            long bytesAfterEvict = list.getOffHeapBytes();
+            boolean p2 = bytesAfterEvict == 0;
+            printResult("evict 后 offHeapBytes=" + bytesAfterEvict + " == 0", p2);
+
+            if (!p1 || !p2) return false;
+        }
+
+        // 2. close 后堆外内存释放
+        {
+            LazyExpiringList<String> list = LazyExpiringList.<String>builder()
+                    .loader(() -> Arrays.asList("close-a", "close-b"))
+                    .offHeap(true)
+                    .build();
+
+            list.size(); // 触发加载
+            long bytesBefore = list.getOffHeapBytes();
+            boolean p3 = bytesBefore > 0;
+            printResult("close 前 offHeapBytes=" + bytesBefore + " > 0", p3);
+
+            list.close();
+            long bytesAfterClose = list.getOffHeapBytes();
+            boolean p4 = bytesAfterClose == 0;
+            printResult("close 后 offHeapBytes=" + bytesAfterClose + " == 0", p4);
+
+            if (!p3 || !p4) return false;
+        }
+
+        // 3. TTL 过期后堆外内存自动释放
+        try (LazyExpiringList<String> list = LazyExpiringList.<String>builder()
+                .loader(() -> Arrays.asList("ttl-a", "ttl-b"))
+                .offHeap(true)
+                .ttlMillis(100)
+                .expiryCheckIntervalMillis(50)
+                .build()) {
+
+            list.size(); // 触发加载
+            long bytesBeforeExpiry = list.getOffHeapBytes();
+            boolean p5 = bytesBeforeExpiry > 0;
+            printResult("TTL过期前 offHeapBytes=" + bytesBeforeExpiry + " > 0", p5);
+
+            // 等待 TTL 过期
+            Thread.sleep(300);
+            boolean p6 = list.getState() == ListState.UNLOADED;
+            printResult("TTL过期后状态 UNLOADED", p6);
+
+            long bytesAfterExpiry = list.getOffHeapBytes();
+            boolean p7 = bytesAfterExpiry == 0;
+            printResult("TTL过期后 offHeapBytes=" + bytesAfterExpiry + " == 0（自动回收）", p7);
+
+            if (!p5 || !p6 || !p7) return false;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.error("测试被中断", e);
+            return false;
+        }
+
+        // 4. OffHeapDataStore 独立 clear/close 内存释放
+        {
+            OffHeapDataStore<String> store = new OffHeapDataStore<>(new JavaSerializer<>());
+            store.append("x");
+            store.append("y");
+            long bytesAfterAppend = store.getOffHeapBytes();
+            boolean p8 = bytesAfterAppend > 0;
+            printResult("OffHeapDataStore append后 offHeapBytes=" + bytesAfterAppend + " > 0", p8);
+
+            store.clear();
+            long bytesAfterClear = store.getOffHeapBytes();
+            boolean p9 = bytesAfterClear == 0;
+            printResult("OffHeapDataStore clear后 offHeapBytes=" + bytesAfterClear + " == 0", p9);
+
+            // 再写入后 close
+            store.append("z");
+            long bytesBeforeClose = store.getOffHeapBytes();
+            boolean p10 = bytesBeforeClose > 0;
+            printResult("OffHeapDataStore 再写入后 offHeapBytes=" + bytesBeforeClose + " > 0", p10);
+
+            store.close();
+            long bytesAfterClose = store.getOffHeapBytes();
+            boolean p11 = bytesAfterClose == 0;
+            printResult("OffHeapDataStore close后 offHeapBytes=" + bytesAfterClose + " == 0", p11);
+
+            if (!p8 || !p9 || !p10 || !p11) return false;
+        }
+
+        return true;
     }
 
     /**
