@@ -344,12 +344,14 @@
             <artifactId>utils-support-playwright-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- Kimi 网页版逆向代理 ChatClient（KimiProxyExample，纯 HTTP 无需浏览器） -->
+        <!-- Kimi 网页版逆向代理 ChatClient（KimiProxyExample，纯 HTTP 无需浏览器）— 临时禁用：artifact 不可用 -->
+        <!--
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-kimi-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
+        -->
         <!-- Datalake 示例：覆盖 offset / sink / pipeline / server / subscribe / query -->
         <dependency>
             <groupId>com.chua</groupId>
@@ -524,10 +526,14 @@
                          <include>**/ai/audio/*.java</include>
                          <!-- AI 用量定价 SPI 示例（ExampleModelPricingProvider） -->
                          <include>**/ai/usage/*.java</include>
-                        <!-- AI Proxy 聊天示例（QwenProxyExample / AiProxyDetectorExample） -->
-                        <include>**/ai/chat/*.java</include>
+                        <!-- AI Proxy 聊天示例 — 排除 KimiProxyExample -->
+                        <include>**/ai/chat/Qwen*.java</include>
+                        <include>**/ai/chat/AiProxy*.java</include>
                          <!-- 集合示例（LazyExpiringListExample） -->
                          <include>**/collection/*.java</include>
+                        <!-- NIO HttpServer 示例（NioHttpServerExampleSpi + PerfReport） -->
+                        <include>**/network/nio/*.java</include>
+                        <include>**/network/perf/*.java</include>
                     </includes>
                 </configuration>
             </plugin>
