@@ -1,4 +1,4 @@
-package com.chua.deeplearning.support.onnx.embedding.minilm;
+package com.chua.deeplearning.support.onnx.embedding.bge;
 
 import com.chua.common.support.ai.embedding.EmbeddingClient;
 import com.chua.common.support.ai.embedding.EmbeddingClientSetting;
@@ -11,42 +11,54 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * all-MiniLM-L6-v2 本地离线嵌入客户端（SPI provider="minilm"）。
+ * bge-small-zh-v1.5 本地离线嵌入客户端（SPI provider="bge"）。
  *
- * <p>本地基于 Xenova/all-MiniLM-L6-v2 的 int8 量化 ONNX（23MB，~50ms/句，CPU 即可），
- * 文本 → 384 维 L2 归一化句向量。与 sentence-transformers/all-MiniLM-L6-v2 语义一致，
- * 可直接用于余弦相似度 / 向量检索 / 聚类。</p>
+ * <p>本地基于 BAAI/bge-small-zh-v1.5 的 fp16 ONNX（71MB，~25ms/句，CPU 即可），
+ * 文本 → 512 维 L2 归一化句向量。中文、英文均可，与 sentence-transformers
+ * bge-small-zh-v1.5 语义一致，可直接用于余弦相似度 / 向量检索 / 聚类。</p>
  *
  * <p>用法（与云端 EmbeddingClient 完全一致）：
  * <pre>{@code
- *   float[] v = EmbeddingClient.create("minilm", "")
- *       .model("minilm")
+ *   float[] v = EmbeddingClient.create("bge", "")
+ *       .model("bge-small-zh-v1.5")
  *       .embedding("你好世界");
  *
- *   EmbeddingClient client = EmbeddingClient.create("minilm", "")
- *       .model("minilm");
- *   float[][] vs = client.embeddingBatch(new String[]{"doc1", "doc2"});
+ *   EmbeddingClient client = EmbeddingClient.create(EmbeddingClientSetting.builder()
+ *           .provider("bge").model("bge-small-zh-v1.5").build());
+ *   float[][] vs = client.embeddingBatch(new String[]{"文档1", "文档2"});
  * }</pre>
  * </p>
  *
- * <p>资源位于 {@code nlp/embedding/minilm/model_quantized.onnx} + 配套
- * {@code vocab.txt}，由 jar {@code utils-support-models-onnx-minilm-l6v2} 提供。</p>
+ * <p>资源位于 {@code nlp/embedding/bge-small-zh-v1.5/model.onnx} + 配套
+ * {@code vocab.txt}，由 jar {@code utils-support-models-onnx-bge-small-zh} 提供。</p>
  *
  * @author CH
  * @since 4.0.0.42
  */
 @Slf4j
-public class MiniLMEmbeddingClient implements EmbeddingClient {
+public class BgeEmbeddingClient implements EmbeddingClient {
 
     /**
      * 默认最大序列长度（包含 [CLS]/[SEP]）
      */
     private static final int DEFAULT_MAX_LEN = 128;
 
+    /**
+     * 客户端配置：provider / model 等
+     */
     private final EmbeddingClientSetting setting;
-    private MiniLMEmbeddingTranslator translator;
 
-    public MiniLMEmbeddingClient(EmbeddingClientSetting setting) {
+    /**
+     * 底层 translator（懒加载单例）
+     */
+    private BgeEmbeddingTranslator translator;
+
+    /**
+     * 构造客户端。
+     *
+     * @param setting 客户端配置，含 provider / model
+     */
+    public BgeEmbeddingClient(EmbeddingClientSetting setting) {
         this.setting = setting;
     }
 
@@ -68,9 +80,14 @@ public class MiniLMEmbeddingClient implements EmbeddingClient {
         return this;
     }
 
-    private synchronized MiniLMEmbeddingTranslator translator() {
+    /**
+     * 懒加载 translator 单例。
+     *
+     * @return translator 实例
+     */
+    private synchronized BgeEmbeddingTranslator translator() {
         if (translator == null) {
-            translator = new MiniLMEmbeddingTranslator();
+            translator = new BgeEmbeddingTranslator();
         }
         return translator;
     }
@@ -78,10 +95,12 @@ public class MiniLMEmbeddingClient implements EmbeddingClient {
     @Override
     public float[] embedding(String text) {
         try {
-            int maxLen = setting.getMaxLen() != null && setting.getMaxLen() > 0 ? setting.getMaxLen() : DEFAULT_MAX_LEN;
+            int maxLen = setting.getMaxLen() != null && setting.getMaxLen() > 0
+                    ? setting.getMaxLen()
+                    : DEFAULT_MAX_LEN;
             return translator().embed(text, maxLen);
         } catch (Exception e) {
-            throw new RuntimeException("[minilm-embedding] embedding failed: " + e.getMessage(), e);
+            throw new RuntimeException("[bge-embedding] embedding failed: " + e.getMessage(), e);
         }
     }
 

@@ -524,6 +524,8 @@
                         <include>**/lang/document/*.java</include>
                          <!-- AI 音频示例（WhisperAudioExample） -->
                          <include>**/ai/audio/*.java</include>
+                         <!-- AI 视觉示例（EdgeSamExample） -->
+                         <include>**/ai/vision/*.java</include>
                          <!-- AI 用量定价 SPI 示例（ExampleModelPricingProvider） -->
                          <include>**/ai/usage/*.java</include>
                         <!-- AI Proxy 聊天示例 — 排除 KimiProxyExample -->
