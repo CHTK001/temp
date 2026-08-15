@@ -307,7 +307,7 @@ public class RpcExample implements Example {
                 null, null, 8, null,
                 null, null, null, null, null, null,
                 null, null, null, null, null, null,
-                null, null, null, null, null, null, null);
+                null, null, null, null);
     }
 
     /**
