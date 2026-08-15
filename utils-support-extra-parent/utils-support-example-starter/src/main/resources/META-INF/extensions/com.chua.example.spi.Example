@@ -4,3 +4,5 @@ com.chua.example.network.nio.NioHttpServerExampleSpi
 com.chua.example.network.http.HttpServerExampleSpi
 com.chua.example.lang.json.JsonProviderExampleSpi
 com.chua.example.lang.serialize.ForySerializerExampleSpi
+com.chua.example.pipeline.PipelineWalExampleSpi
+com.chua.example.pipeline.PipelineUnitExampleSpi
