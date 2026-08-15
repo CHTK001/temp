@@ -2,9 +2,12 @@ package com.chua.example.network.http;
 
 import com.chua.common.support.network.server.Server;
 import com.chua.common.support.network.server.ServerBuilder;
+import com.chua.common.support.network.server.ServerSetting;
 import com.chua.common.support.network.server.http.ConfigServer;
+import com.chua.common.support.network.server.nio.NioHttpServer;
 import com.chua.common.support.network.server.request.ServerRequest;
 import com.chua.common.support.network.server.response.ServerResponse;
+import com.chua.common.support.spi.ServiceProvider;
 import com.chua.example.network.perf.PerfReport;
 import com.chua.example.spi.Example;
 import lombok.extern.slf4j.Slf4j;
@@ -18,12 +21,15 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -58,6 +64,23 @@ public class HttpServerExampleSpi implements Example {
     private static final int SWEEP_REQUESTS_PER_CONN = 500;
     private static final int SWEEP_CONNECTIONS = 256;
     private static final int SWEEP_PAYLOAD = 128;
+
+    /** 压测报告要求的并发等级 */
+    private static final int[] BENCH_CONCURRENCY = {100, 500, 1000, 2000, 5000};
+    private static final int BENCH_REQUESTS_PER_CONN = 500;
+    private static final int BENCH_CONNECTIONS = 256;
+    private static final int BENCH_PAYLOAD = 128;
+
+    /** 压测报告输出路径 */
+    private static final String BENCH_REPORT_PATH = "target/http-server-benchmark.md";
+
+    /** 真·并发压测：并发等级 = 同时连接数（每连接 1 次请求，flash 模式） */
+    private static final int[] CONC_CONCURRENCY = {100, 500, 1000, 2000, 5000};
+    private static final int CONC_REQUESTS_PER_CONN = 1;
+    private static final int CONC_PAYLOAD = 128;
+
+    /** 真·并发压测报告输出路径 */
+    private static final String CONC_REPORT_PATH = "target/http-server-concurrent.md";
 
     /** 当前测试使用的服务器类型（jdk / nio） */
     private String serverType = "jdk";
@@ -106,6 +129,10 @@ public class HttpServerExampleSpi implements Example {
             passed &= testRemoteAddress();
             passed &= testByteBody();
             passed &= testSseStreaming();
+            passed &= testNotFound404();
+            passed &= testSslSelfSigned();
+            passed &= testConcurrencyLimit();
+            passed &= testWebSocketUpgrade();
         }
         if ("all".equals(mode) || "perf".equals(mode)) {
             int concurrency = Integer.parseInt(args.getOrDefault("concurrency", String.valueOf(DEFAULT_CONCURRENCY)));
@@ -117,6 +144,16 @@ public class HttpServerExampleSpi implements Example {
         if ("sweep".equals(mode)) {
             int payloadSize = Integer.parseInt(args.getOrDefault("payload", String.valueOf(SWEEP_PAYLOAD)));
             passed &= runSweep(payloadSize);
+        }
+        if ("bench".equals(mode)) {
+            int payloadSize = Integer.parseInt(args.getOrDefault("payload", String.valueOf(BENCH_PAYLOAD)));
+            String reportPath = args.getOrDefault("report", BENCH_REPORT_PATH);
+            passed &= runBench(payloadSize, reportPath);
+        }
+        if ("conc".equals(mode) || "concurrent".equals(mode)) {
+            int payloadSize = Integer.parseInt(args.getOrDefault("payload", String.valueOf(CONC_PAYLOAD)));
+            String reportPath = args.getOrDefault("report", CONC_REPORT_PATH);
+            passed &= runConcurrent(payloadSize, reportPath);
         }
         log.info("===== http-server [type={}] 结果: {} =====", serverType, passed ? "全部通过 ✓" : "存在失败 ✗");
         return passed;
@@ -653,6 +690,157 @@ public class HttpServerExampleSpi implements Example {
 
     // ==================== 性能 ====================
 
+    private boolean testNotFound404() {
+        log.info("  [FUNC-19] 未注册路径返回 404");
+        Server server = null;
+        try {
+            server = startServer(cfg -> cfg.registerMapping("/exists", (req, resp) -> resp.setResult("ok")));
+            HttpResponse<String> resp = get(server, "/not-exist");
+            assertEquals(404, resp.statusCode(), "404 状态码");
+            pass();
+            return true;
+        } catch (Exception e) {
+            fail("404 异常: " + e.getMessage());
+            return false;
+        } finally {
+            closeQuietly(server);
+        }
+    }
+
+    private boolean testSslSelfSigned() {
+        log.info("  [FUNC-20] HTTPS 自签名证书（selfSignedAuto）");
+        Server server = null;
+        try {
+            ServerSetting setting = ServerSetting.defaults();
+            setting.setHost("127.0.0.1");
+            setting.setPort(0);
+            setting.getSsl().setSelfSignedAuto(true);
+            Server s = ServiceProvider.of(Server.class).getNewExtension(serverType, setting);
+            server = s;
+            ((ConfigServer) server).registerMapping("/echo", (req, resp) -> resp.setResult("ssl-ok"));
+            server.start();
+            int port = server.getPort();
+
+            // 信任所有证书的 HTTPS 客户端
+            javax.net.ssl.SSLContext trustAll = javax.net.ssl.SSLContext.getInstance("TLS");
+            trustAll.init(null, new javax.net.ssl.TrustManager[]{new javax.net.ssl.X509TrustManager() {
+                public void checkClientTrusted(X509Certificate[] chain, String authType) {}
+                public void checkServerTrusted(X509Certificate[] chain, String authType) {}
+                public X509Certificate[] getAcceptedIssuers() { return new X509Certificate[0]; }
+            }}, new SecureRandom());
+            HttpClient client = HttpClient.newBuilder()
+                    .sslContext(trustAll)
+                    .connectTimeout(Duration.ofSeconds(10))
+                    .build();
+            HttpResponse<String> resp = client.send(
+                    HttpRequest.newBuilder(URI.create("https://127.0.0.1:" + port + "/echo"))
+                            .timeout(Duration.ofSeconds(10)).GET().build(),
+                    HttpResponse.BodyHandlers.ofString());
+            assertEquals(200, resp.statusCode(), "HTTPS 状态码");
+            assertEquals("ssl-ok", resp.body(), "HTTPS 响应体");
+            pass();
+            return true;
+        } catch (Exception e) {
+            fail("HTTPS 异常: " + e.getMessage());
+            return false;
+        } finally {
+            closeQuietly(server);
+        }
+    }
+
+    private boolean testConcurrencyLimit() {
+        log.info("  [FUNC-21] 并发限流（maxConcurrency=1 → 503）");
+        Server server = null;
+        try {
+            ServerSetting setting = ServerSetting.defaults();
+            setting.setHost("127.0.0.1");
+            setting.setPort(0);
+            setting.setMaxConcurrency(1);
+            Server s = ServiceProvider.of(Server.class).getNewExtension(serverType, setting);
+            server = s;
+            ((ConfigServer) server).registerMapping("/slow", (req, resp) -> {
+                try { Thread.sleep(500); } catch (InterruptedException ignored) {}
+                resp.setResult("done");
+            });
+            server.start();
+            int port = server.getPort();
+
+            ExecutorService pool = Executors.newVirtualThreadPerTaskExecutor();
+            CountDownLatch start = new CountDownLatch(1);
+            CountDownLatch done = new CountDownLatch(2);
+            List<Integer> codes = Collections.synchronizedList(new ArrayList<>());
+            Server srv = server;
+            for (int i = 0; i < 2; i++) {
+                pool.submit(() -> {
+                    try {
+                        start.await();
+                        HttpResponse<String> r = get(srv, "/slow");
+                        codes.add(r.statusCode());
+                    } catch (Exception ignored) {
+                    } finally {
+                        done.countDown();
+                    }
+                });
+            }
+            start.countDown();
+            done.await(15, TimeUnit.SECONDS);
+            pool.shutdownNow();
+            boolean saw503 = codes.stream().anyMatch(c -> c == 503);
+            assertTrue(saw503, "应出现 503 限流响应，实际: " + codes);
+            pass();
+            return true;
+        } catch (Exception e) {
+            fail("并发限流异常: " + e.getMessage());
+            return false;
+        } finally {
+            closeQuietly(server);
+        }
+    }
+
+    private boolean testWebSocketUpgrade() {
+        log.info("  [FUNC-22] WebSocket 升级（仅 nio 实现支持）");
+        if (!"nio".equals(serverType)) {
+            log.info("    跳过：当前类型 {} 不支持 WebSocket 升级", serverType);
+            return true;
+        }
+        Server server = null;
+        try {
+            NioHttpServer nio = new NioHttpServer(ServerSetting.defaults());
+            nio.getSetting().setHost("127.0.0.1");
+            nio.getSetting().setPort(0);
+            nio.onSubscribe("chat", (req, resp) -> resp.setResult("echo:" + req.getBodyString()));
+            server = nio;
+            nio.start();
+            int port = nio.getPort();
+
+            CompletableFuture<String> echoed = new CompletableFuture<>();
+            java.net.http.WebSocket ws = HttpClient.newHttpClient()
+                    .newWebSocketBuilder()
+                    .connectTimeout(Duration.ofSeconds(10))
+                    .buildAsync(URI.create("ws://127.0.0.1:" + port + "/ws"),
+                            new java.net.http.WebSocket.Listener() {
+                                public java.util.concurrent.CompletionStage<?> onText(
+                                        java.net.http.WebSocket webSocket, CharSequence data, boolean last) {
+                                    echoed.complete(data.toString());
+                                    webSocket.request(1);
+                                    return null;
+                                }
+                            })
+                    .join();
+            ws.sendText("chat\nhello", true);
+            String reply = echoed.get(10, TimeUnit.SECONDS);
+            assertEquals("echo:hello", reply, "WebSocket 回显");
+            ws.sendClose(java.net.http.WebSocket.NORMAL_CLOSURE, "bye");
+            pass();
+            return true;
+        } catch (Exception e) {
+            fail("WebSocket 异常: " + e.getMessage());
+            return false;
+        } finally {
+            closeQuietly(server);
+        }
+    }
+
     private boolean runPerf(int concurrency, int connections, int requestsPerConn, int payloadSize) {
         PerfReport.printEnvironment("HttpServer [" + serverType + "]", serverType, "SPI");
         Server server = null;
@@ -707,6 +895,103 @@ public class HttpServerExampleSpi implements Example {
             return !rows.isEmpty();
         } catch (Exception e) {
             fail("SWEEP 异常: " + e.getMessage());
+            return false;
+        } finally {
+            closeQuietly(server);
+        }
+    }
+
+    private boolean runBench(int payloadSize, String reportPath) {
+        Server server = null;
+        try {
+            byte[] payload = new byte[payloadSize];
+            Arrays.fill(payload, (byte) 'A');
+            String body = new String(payload, StandardCharsets.UTF_8);
+
+            server = startServer(cfg -> cfg.registerMapping("/echo",
+                    (req, resp) -> resp.setResult(body)));
+            int port = server.getPort();
+
+            PerfReport.printEnvironment("HttpServer [" + serverType + "] [bench]", serverType, "SPI");
+            List<PerfReport.SweepRow> rows = new ArrayList<>();
+            for (int cc : BENCH_CONCURRENCY) {
+                int conn = Math.min(BENCH_CONNECTIONS, Math.max(1, cc / 8));
+                log.info("  ┌─ 压测场景: 并发 {} ─┐", cc);
+                PerfReport.SweepRow row = runPerfInner(cc, conn, BENCH_REQUESTS_PER_CONN, port);
+                if (row != null) {
+                    rows.add(row);
+                    PerfReport.printResult("http-server [" + serverType + "] GET /echo @并发" + cc,
+                            row.concurrency, row.connections, row.requestsPerConn, payloadSize,
+                            row.total, row.errors, row.elapsedMs, row.sortedLatencyNs, 0L);
+                }
+            }
+            if (rows.isEmpty()) {
+                fail("BENCH 无有效结果");
+                return false;
+            }
+            String env = String.format("**环境**: %s / JDK %s / CPU %d 核 / 内存 max=%dMB",
+                    System.getProperty("os.name") + " " + System.getProperty("os.arch"),
+                    System.getProperty("java.version"),
+                    Runtime.getRuntime().availableProcessors(),
+                    Runtime.getRuntime().maxMemory() / 1024 / 1024);
+            String report = PerfReport.writeBenchmarkReport(
+                    reportPath, "HTTP Server 压测报告 [" + serverType + "]", env, rows);
+            log.info("压测报告预览:\n{}", report);
+            pass();
+            return true;
+        } catch (Exception e) {
+            fail("BENCH 异常: " + e.getMessage());
+            return false;
+        } finally {
+            closeQuietly(server);
+        }
+    }
+
+    /**
+     * 真·并发压测：连接数 = 并发数，每连接仅 1 次请求（flash 模式）。
+     * <p>与 {@link #runBench} 的吞吐测试（固定少量连接 × 大量请求）互补：
+     * 本模式直接考验服务器同时接纳 N 个连接的能力（backlog / accept / 限流）。</p>
+     */
+    private boolean runConcurrent(int payloadSize, String reportPath) {
+        Server server = null;
+        try {
+            byte[] payload = new byte[payloadSize];
+            Arrays.fill(payload, (byte) 'A');
+            String body = new String(payload, StandardCharsets.UTF_8);
+
+            server = startServer(cfg -> cfg.registerMapping("/echo",
+                    (req, resp) -> resp.setResult(body)));
+            int port = server.getPort();
+
+            PerfReport.printEnvironment("HttpServer [" + serverType + "] [conc]", serverType, "SPI");
+            List<PerfReport.SweepRow> rows = new ArrayList<>();
+            for (int cc : CONC_CONCURRENCY) {
+                log.info("  ┌─ 真并发场景: 同时 {} 连接 × {} 请求 ─┐", cc, CONC_REQUESTS_PER_CONN);
+                // 连接数 = 并发数，每连接 1 次请求
+                PerfReport.SweepRow row = runPerfInner(cc, cc, CONC_REQUESTS_PER_CONN, port);
+                if (row != null) {
+                    rows.add(row);
+                    PerfReport.printResult("http-server [" + serverType + "] GET /echo @同时" + cc + "连接",
+                            row.concurrency, row.connections, row.requestsPerConn, payloadSize,
+                            row.total, row.errors, row.elapsedMs, row.sortedLatencyNs, 0L);
+                }
+            }
+            if (rows.isEmpty()) {
+                fail("CONC 无有效结果");
+                return false;
+            }
+            String env = String.format("**环境**: %s / JDK %s / CPU %d 核 / 内存 max=%dMB",
+                    System.getProperty("os.name") + " " + System.getProperty("os.arch"),
+                    System.getProperty("java.version"),
+                    Runtime.getRuntime().availableProcessors(),
+                    Runtime.getRuntime().maxMemory() / 1024 / 1024);
+            String report = PerfReport.writeBenchmarkReport(
+                    reportPath, "HTTP Server 真并发压测报告 [" + serverType + "]", env, rows);
+            log.info("压测报告预览:\n{}", report);
+            pass();
+            return true;
+        } catch (Exception e) {
+            fail("CONC 异常: " + e.getMessage());
             return false;
         } finally {
             closeQuietly(server);

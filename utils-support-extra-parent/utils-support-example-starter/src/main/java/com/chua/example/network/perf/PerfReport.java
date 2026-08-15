@@ -161,6 +161,59 @@ public final class PerfReport {
         }
     }
 
+    /**
+     * 生成 Markdown 格式的压测报告文档，包含每个并发场景的 p50/p95/p99 与成功率。
+     *
+     * @param reportPath 报告文件路径
+     * @param title      报告标题
+     * @param env        环境描述（JDK/OS/CPU 等，可为 null）
+     * @param rows       每个并发场景一行
+     * @return 报告全文
+     */
+    public static String writeBenchmarkReport(String reportPath, String title, String env, List<SweepRow> rows) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("# ").append(title).append("\n\n");
+        sb.append("> 生成时间: ").append(java.time.LocalDateTime.now()
+                .format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).append("\n\n");
+        if (env != null && !env.isEmpty()) {
+            sb.append(env).append("\n\n");
+        }
+        sb.append("## 场景说明\n\n");
+        sb.append("| 参数 | 值 |\n|---|---|\n");
+        sb.append("| 场景 | ").append(title).append(" |\n");
+        sb.append("| 并发等级 | ");
+        for (int i = 0; i < rows.size(); i++) {
+            if (i > 0) sb.append(" / ");
+            sb.append(rows.get(i).concurrency);
+        }
+        sb.append(" |\n\n");
+        sb.append("## 压测结果\n\n");
+        sb.append("| 并发 | 连接数 | 每连接请求 | 总请求 | 成功 | 失败 | 成功率 | RPS | p50(µs) | p95(µs) | p99(µs) | 最大(µs) | 总耗时(ms) |\n");
+        sb.append("|:----:|:------:|:----------:|:------:|:----:|:----:|:------:|:---:|:-------:|:-------:|:-------:|:--------:|:----------:|\n");
+        for (SweepRow r : rows) {
+            double rps = (double) r.total * 1_000_000_000.0 / (double) (r.elapsedMs * 1_000_000L);
+            double p50 = percentileUs(r.sortedLatencyNs, 0.50);
+            double p95 = percentileUs(r.sortedLatencyNs, 0.95);
+            double p99 = percentileUs(r.sortedLatencyNs, 0.99);
+            double max = r.sortedLatencyNs.length > 0 ? r.sortedLatencyNs[r.sortedLatencyNs.length - 1] / 1000.0 : 0.0;
+            long success = r.total - r.errors;
+            String rate = r.total > 0 ? String.format(Locale.ROOT, "%.2f%%", success * 100.0 / r.total) : "-";
+            sb.append(String.format(Locale.ROOT,
+                    "| %d | %d | %d | %d | %d | %d | %s | %.0f | %.1f | %.1f | %.1f | %.1f | %d |%n",
+                    r.concurrency, r.connections, r.requestsPerConn, r.total, success, r.errors, rate,
+                    rps, p50, p95, p99, max, r.elapsedMs));
+        }
+        sb.append("\n");
+        try {
+            java.nio.file.Files.writeString(java.nio.file.Path.of(reportPath), sb.toString(),
+                    java.nio.charset.StandardCharsets.UTF_8);
+            log.info("压测报告已写入: {}", reportPath);
+        } catch (java.io.IOException e) {
+            log.warn("压测报告写入失败: {}", e.getMessage(), e);
+        }
+        return sb.toString();
+    }
+
     private static String padLeft(String s, int width) {
         if (s.length() >= width) {
             return s;
