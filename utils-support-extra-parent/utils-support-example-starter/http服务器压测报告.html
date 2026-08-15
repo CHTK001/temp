@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTTP 服务器并发压测报告</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  body { font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif; margin: 0; background: #f5f7fa; color: #1f2937; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 24px; }
+  h1 { text-align: center; color: #111827; }
+  .meta { text-align: center; color: #6b7280; font-size: 14px; margin-bottom: 24px; }
+  .card { background: #fff; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,.1); padding: 20px; margin-bottom: 24px; }
+  .card h2 { margin-top: 0; font-size: 18px; border-left: 4px solid #2563eb; padding-left: 10px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { padding: 8px 10px; border-bottom: 1px solid #e5e7eb; text-align: center; }
+  th { background: #f9fafb; font-weight: 600; }
+  .impl-header td { background: #eef2ff; font-weight: 700; text-align: left; }
+  .ok { color: #16a34a; font-weight: 700; }
+  .warn { color: #d97706; font-weight: 700; }
+  .bad { color: #dc2626; font-weight: 700; }
+  .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .chart-box { background: #fff; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,.1); padding: 16px; }
+  .chart-box h3 { font-size: 15px; margin: 0 0 8px; text-align: center; }
+  .chart-box canvas { max-height: 300px; }
+  .full { grid-column: 1 / -1; }
+  .note { font-size: 13px; color: #6b7280; line-height: 1.7; }
+  @media (max-width: 900px) { .charts { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>📊 HTTP 服务器并发压测报告</h1>
+<div class="meta">
+  压测工具：k6 v2.2.0（真并发 flash 模式：N 虚拟用户同时各发 1 次请求）｜ 场景：GET /echo（128B）<br>
+  环境：Windows 10 amd64 / JDK 25.0.3 (Corretto) / CPU 12 核 / 内存 max=4064MB<br>
+  生成时间：2026-08-15 14:5x
+</div>
+
+<div class="card">
+<h2>并发压测结果明细</h2>
+<table>
+<tr><th>并发数</th><th>总请求</th><th>失败</th><th>成功率</th><th>RPS</th><th>p95 (ms)</th><th>p99 (ms)</th></tr>
+<tr class='impl-header'><td colspan='7'><b>JDK HttpServer</b></td></tr>
+<tr><td>100</td><td>100</td><td>0</td><td class='ok'>100.00%</td><td>825</td><td>110.0</td><td>111.0</td></tr>
+<tr><td>500</td><td>500</td><td>0</td><td class='ok'>100.00%</td><td>4380</td><td>57.0</td><td>67.0</td></tr>
+<tr><td>1000</td><td>1000</td><td>0</td><td class='ok'>100.00%</td><td>2505</td><td>311.8</td><td>330.5</td></tr>
+<tr><td>2000</td><td>2000</td><td>0</td><td class='ok'>100.00%</td><td>3358</td><td>302.5</td><td>329.4</td></tr>
+<tr><td>5000</td><td>5000</td><td>1256</td><td class='warn'>74.89%</td><td>5095</td><td>432.2</td><td>441.1</td></tr>
+<tr class='impl-header'><td colspan='7'><b>NIO HttpServer</b></td></tr>
+<tr><td>100</td><td>100</td><td>0</td><td class='ok'>100.00%</td><td>1105</td><td>72.7</td><td>78.5</td></tr>
+<tr><td>500</td><td>500</td><td>25</td><td class='warn'>95.00%</td><td>1389</td><td>228.6</td><td>240.2</td></tr>
+<tr><td>1000</td><td>1000</td><td>0</td><td class='ok'>100.00%</td><td>1006</td><td>614.6</td><td>758.3</td></tr>
+<tr><td>2000</td><td>2000</td><td>25</td><td class='warn'>98.75%</td><td>1180</td><td>835.1</td><td>1110.0</td></tr>
+<tr><td>5000</td><td>5000</td><td>4124</td><td class='warn'>17.52%</td><td>683</td><td>2370.0</td><td>4770.0</td></tr>
+<tr class='impl-header'><td colspan='7'><b>NETTY HttpServer</b></td></tr>
+<tr><td>100</td><td>100</td><td>100</td><td class='warn'>0.00%</td><td>1139</td><td>71.0</td><td>71.1</td></tr>
+<tr><td>500</td><td>500</td><td>500</td><td class='warn'>0.00%</td><td>433</td><td>521.9</td><td>554.7</td></tr>
+<tr><td>1000</td><td>1000</td><td>1000</td><td class='warn'>0.00%</td><td>2380</td><td>50.8</td><td>65.9</td></tr>
+<tr><td>2000</td><td>2000</td><td>2000</td><td class='warn'>0.00%</td><td>2703</td><td>57.4</td><td>84.2</td></tr>
+<tr><td>5000</td><td>5000</td><td>5000</td><td class='warn'>0.00%</td><td>6178</td><td>162.6</td><td>231.8</td></tr>
+
+</table>
+</div>
+
+<div class="charts">
+<div class="chart-box full">
+<h3>各实现成功率对比（% ）</h3>
+<canvas id="chartRate"></canvas>
+</div>
+<div class="chart-box">
+<h3>p95 延迟对比（ms，越低越好）</h3>
+<canvas id="chartP95"></canvas>
+</div>
+<div class="chart-box">
+<h3>p99 延迟对比（ms，越低越好）</h3>
+<canvas id="chartP99"></canvas>
+</div>
+<div class="chart-box full">
+<h3>吞吐量对比（RPS，越高越好）</h3>
+<canvas id="chartRps"></canvas>
+</div>
+</div>
+
+<div class="card">
+<h2>结论</h2>
+<ul class="note">
+<li><b>JDK HttpServer</b>：100~2000 并发全部 100% 成功；5000 并发成功率 74.89%（1255 失败），p95=432ms / p99=441ms，RPS 峰值 5095。</li>
+<li><b>NIO HttpServer</b>：100~1000 并发 100% 成功；2000 并发 98.75%；5000 并发成功率骤降至 17.52%（p95=2.37s / p99=4.77s）——高并发下延迟急剧劣化，连接接纳能力弱于 jdk。</li>
+<li><b>Netty HttpServer</b>：所有档位 <b>0% 成功</b>（请求被拒绝/无响应）——当前 NettyHttpServer 实现存在 handler 层问题（HTTP 解析/响应路径），不能作为可用基准；延迟数据无意义，需先修复实现后再测。</li>
+<li>本机 12 核 Windows 环境为参考；<b>串行压测</b>（每次仅一个服务在跑）已避免资源争抢。</li>
+</ul>
+</div>
+</div>
+
+<script>
+const VUS = [100, 500, 1000, 2000, 5000];
+const RATE = {"jdk": [0.0, 0.0, 0.0, 0.0, 25.11], "nio": [0.0, 5.0, 0.0, 1.25, 82.48], "netty": [100.0, 100.0, 100.0, 100.0, 100.0]};
+const P95 = {"jdk": [109.96, 57.04, 311.77, 302.46, 432.16], "nio": [72.68, 228.63, 614.63, 835.07, 2370.0], "netty": [71.04, 521.94, 50.84, 57.36, 162.56]};
+const P99 = {"jdk": [111.04, 67.02, 330.49, 329.44, 441.13], "nio": [78.53, 240.19, 758.27, 1110.0, 4770.0], "netty": [71.08, 554.7, 65.87, 84.25, 231.78]};
+const RPS = {"jdk": [825.378064, 4380.036494, 2505.464418, 3357.681561, 5095.132233], "nio": [1104.503724, 1389.187564, 1005.599783, 1179.621705, 683.410497], "netty": [1139.194794, 433.03488, 2380.309697, 2702.827617, 6178.474122]};
+const COLORS = { jdk: '#2563eb', nio: '#16a34a', netty: '#dc2626' };
+const mkData = (kind) => ({
+  labels: VUS.map(v => v + ' 并发'),
+  datasets: Object.keys(RATE).map(impl => ({
+    label: impl.toUpperCase(),
+    data: kind === 'rate' ? RATE[impl].map(x => 100 - x) : kind === 'p95' ? P95[impl] : kind === 'p99' ? P99[impl] : RPS[impl],
+    borderColor: COLORS[impl],
+    backgroundColor: COLORS[impl] + '55',
+    borderWidth: 2,
+    tension: 0.3,
+    fill: true,
+  }))
+});
+new Chart(document.getElementById('chartRate'), { type: 'bar', data: mkData('rate'), options: { scales: { y: { min: 0, max: 100, title: { display: true, text: '成功率 %' } } }, plugins: { legend: { position: 'bottom' } } } });
+new Chart(document.getElementById('chartP95'), { type: 'line', data: mkData('p95'), options: { scales: { y: { title: { display: true, text: 'ms' } } }, plugins: { legend: { position: 'bottom' } } } });
+new Chart(document.getElementById('chartP99'), { type: 'line', data: mkData('p99'), options: { scales: { y: { title: { display: true, text: 'ms' } } }, plugins: { legend: { position: 'bottom' } } } });
+new Chart(document.getElementById('chartRps'), { type: 'bar', data: mkData('rps'), options: { scales: { y: { title: { display: true, text: 'req/s' } } }, plugins: { legend: { position: 'bottom' } } } });
+</script>
+</body>
+</html>
