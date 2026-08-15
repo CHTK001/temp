@@ -2,3 +2,5 @@ com.chua.example.lang.document.OpenApiExportTestExample
 com.chua.example.collection.LazyExpiringListExample
 com.chua.example.network.nio.NioHttpServerExampleSpi
 com.chua.example.network.http.HttpServerExampleSpi
+com.chua.example.lang.json.JsonProviderExampleSpi
+com.chua.example.lang.serialize.ForySerializerExampleSpi
