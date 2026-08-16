@@ -34,6 +34,12 @@ public class PipelineRetryExample {
         System.exit(passed ? 0 : 1);
     }
 
+    /**
+     * 根据类型运行对应测试方法。
+     *
+     * @param type 测试类型（fixed/exponential/fibonacci/exception/listener/all）
+     * @return 测试是否全部通过
+     */
     public static boolean runTest(String type) {
         boolean passed = true;
         switch (type.toLowerCase()) {
@@ -54,7 +60,11 @@ public class PipelineRetryExample {
         return passed;
     }
 
-    /** FIXED 退避：固定间隔重试。 */
+    /**
+     * 验证 FIXED 固定间隔重试。
+     *
+     * @return 测试是否通过
+     */
     public static boolean testFixedRetry() {
         log.info("===== testFixedRetry =====");
         try {
@@ -77,7 +87,8 @@ public class PipelineRetryExample {
                     .build();
 
             PipelineContext<?> ctx = pipeline.execute("input");
-            boolean ok = callCount.get() == 3; // 前2次失败，第3次成功
+            // 断言前 2 次失败、第 3 次成功
+            boolean ok = callCount.get() == 3;
             printResult("FIXED retry (calls=" + callCount.get() + ")", ok);
             return ok;
         } catch (Exception e) {
@@ -86,7 +97,11 @@ public class PipelineRetryExample {
         }
     }
 
-    /** EXPONENTIAL 退避：指数退避重试。 */
+    /**
+     * 验证 EXPONENTIAL 指数退避重试。
+     *
+     * @return 测试是否通过
+     */
     public static boolean testExponentialRetry() {
         log.info("===== testExponentialRetry =====");
         try {
@@ -109,7 +124,8 @@ public class PipelineRetryExample {
                     .build();
 
             PipelineContext<?> ctx = pipeline.execute("input");
-            boolean ok = callCount.get() == 2; // 第1次失败，第2次成功
+            // 断言第 1 次失败、第 2 次成功
+            boolean ok = callCount.get() == 2;
             printResult("EXPONENTIAL retry (calls=" + callCount.get() + ")", ok);
             return ok;
         } catch (Exception e) {
@@ -118,7 +134,11 @@ public class PipelineRetryExample {
         }
     }
 
-    /** FIBONACCI 退避：斐波那契退避重试。 */
+    /**
+     * 验证 FIBONACCI 斐波那契退避重试。
+     *
+     * @return 测试是否通过
+     */
     public static boolean testFibonacciRetry() {
         log.info("===== testFibonacciRetry =====");
         try {
@@ -150,7 +170,11 @@ public class PipelineRetryExample {
         }
     }
 
-    /** retryOnException：按异常类型条件重试。 */
+    /**
+     * 验证 retryOnException 按异常类型条件重试。
+     *
+     * @return 测试是否通过
+     */
     public static boolean testRetryOnException() {
         log.info("===== testRetryOnException =====");
         try {
@@ -178,7 +202,8 @@ public class PipelineRetryExample {
                 // 预期异常
             }
 
-            boolean noRetry = noRetryCount.get() == 1; // 不重试，只调用1次
+            // 不匹配重试条件的异常不应重试，只调用 1 次
+            boolean noRetry = noRetryCount.get() == 1;
 
             // 测试：抛出 IllegalStateException（在重试条件内），应重试
             AtomicInteger retryCount = new AtomicInteger(0);
@@ -198,9 +223,11 @@ public class PipelineRetryExample {
                 // 可能仍失败
             }
 
-            boolean retry = retryCount.get() >= 2; // 重试了
+            // 断言匹配重试条件的异常会触发重试
+            boolean retry = retryCount.get() >= 2;
 
-            boolean ok = noRetry; // 至少验证不匹配时不重试
+            // 至少验证不匹配时不重试
+            boolean ok = noRetry;
             printResult("retryOnException (noRetry=" + noRetry + ", retry=" + retry + ")", ok);
             return ok;
         } catch (Exception e) {
@@ -209,7 +236,11 @@ public class PipelineRetryExample {
         }
     }
 
-    /** retryListener：重试监听回调。 */
+    /**
+     * 验证 retryListener 重试监听回调。
+     *
+     * @return 测试是否通过
+     */
     public static boolean testRetryListener() {
         log.info("===== testRetryListener =====");
         try {
@@ -247,6 +278,12 @@ public class PipelineRetryExample {
         }
     }
 
+    /**
+     * 打印测试结果。
+     *
+     * @param name   测试名称
+     * @param passed 是否通过
+     */
     private static void printResult(String name, boolean passed) {
         log.info("{} {}", passed ? "[PASS]" : "[FAIL]", name);
     }

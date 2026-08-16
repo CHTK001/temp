@@ -451,7 +451,10 @@ public class NioHttpServerExampleSpi implements Example {
         Server server = null;
         try {
             server = startServer(cfg -> {
-                cfg.registerMapping("/s201", (req, resp) -> { resp.setStatus(201); resp.setResult("created"); });
+                cfg.registerMapping("/s201", (req, resp) -> {
+                    resp.setStatus(201);
+                    resp.setResult("created");
+                });
                 cfg.registerMapping("/s204", (req, resp) -> resp.setStatus(204));
                 cfg.registerMapping("/s302", (req, resp) -> resp.sendRedirect("/target"));
                 cfg.registerMapping("/s400", (req, resp) -> resp.sendError(400, "Bad Request"));
@@ -563,7 +566,8 @@ public class NioHttpServerExampleSpi implements Example {
         try {
             server = startServer(cfg -> {
                 cfg.registerMapping("/bytes", (req, resp) -> {
-                    byte[] data = {0x48, 0x65, 0x6C, 0x6C, 0x6F}; // "Hello"
+                    // 字节数组内容对应 ASCII "Hello"
+                    byte[] data = {0x48, 0x65, 0x6C, 0x6C, 0x6F};
                     resp.setBody(data);
                 });
                 cfg.registerMapping("/stream", (req, resp) -> {

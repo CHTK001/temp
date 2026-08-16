@@ -22,8 +22,31 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * OpenApiDocumentProvider 导出冒烟测试示例。
+ *
+ * <p>构建示例 OpenAPI 模型并导出 HTML，随后校验关键渲染节点（标题、路由、参数表等）。</p>
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
 public class OpenApiExportSmokeTest {
 
+    /**
+     * 程序退出码：成功
+     */
+    private static final int EXIT_CODE_SUCCESS = 0;
+
+    /**
+     * 程序退出码：失败
+     */
+    private static final int EXIT_CODE_FAILURE = 1;
+
+    /**
+     * 程序入口：构建示例 OpenAPI 数据并执行导出冒烟测试。
+     *
+     * @param args 命令行参数（未使用）
+     */
     public static void main(String[] args) {
         try {
             System.out.println("=== OpenApiDocumentProvider Smoke Test ===");
@@ -50,7 +73,7 @@ public class OpenApiExportSmokeTest {
                 } catch (Exception e2) {
                     System.err.println("  ✗ 直接实例化也失败: " + e2.getMessage());
                     e2.printStackTrace(System.err);
-                    System.exit(1);
+                    System.exit(EXIT_CODE_FAILURE);
                     return;
                 }
             }
@@ -81,14 +104,19 @@ public class OpenApiExportSmokeTest {
 
             System.out.println();
             System.out.println("  结果: " + passed + "/" + total + " 通过");
-            System.exit(passed == total ? 0 : 1);
+            System.exit(passed == total ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
         } catch (Exception e) {
             System.err.println("  ✗ 测试异常: " + e.getMessage());
             e.printStackTrace(System.err);
-            System.exit(1);
+            System.exit(EXIT_CODE_FAILURE);
         }
     }
 
+    /**
+     * 构建示例 OpenAPI 模型（用户管理 / 订单管理两张表）。
+     *
+     * @return 示例 OpenAPI 模型
+     */
     private static OpenAPI buildSampleOpenApi() {
         OpenAPI openAPI = new OpenAPI();
         openAPI.setInfo(new Info().title("示例 OpenAPI 接口文档").version("1.0.0-TEST")
@@ -126,6 +154,11 @@ public class OpenApiExportSmokeTest {
         return openAPI;
     }
 
+    /**
+     * 构建示例响应定义（200 成功 / 404 不存在）。
+     *
+     * @return 响应定义
+     */
     private static ApiResponses buildResponses() {
         Map<String, Schema> userProps = new LinkedHashMap<>();
         userProps.put("id", new Schema<>().type("integer"));
@@ -137,6 +170,11 @@ public class OpenApiExportSmokeTest {
                 .addApiResponse("404", new ApiResponse().description("资源不存在"));
     }
 
+    /**
+     * 构建「快速入门」章节内容。
+     *
+     * @return OpenApi 章节对象
+     */
     private static OpenApiSection buildIntroSection() {
         OpenApiSection sec = new OpenApiSection();
         sec.setTitle("快速入门");
@@ -144,6 +182,14 @@ public class OpenApiExportSmokeTest {
         return sec;
     }
 
+    /**
+     * 断言 HTML 中是否包含指定内容。
+     *
+     * @param html     HTML 文本
+     * @param expected 期望包含的内容
+     * @param label    断言标签名
+     * @return 断言是否通过
+     */
     private static boolean assertContains(String html, String expected, String label) {
         if (!html.contains(expected)) {
             System.err.println("  ✗ 断言失败 [" + label + "]: 未找到 " + expected);

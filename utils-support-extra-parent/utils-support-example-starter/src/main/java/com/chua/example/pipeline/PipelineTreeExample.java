@@ -29,6 +29,12 @@ public class PipelineTreeExample {
         System.exit(passed ? 0 : 1);
     }
 
+    /**
+     * 根据类型运行对应测试方法。
+     *
+     * @param type 测试类型（printtree/history/fromjson/all）
+     * @return 测试是否全部通过
+     */
     public static boolean runTest(String type) {
         boolean passed = true;
         switch (type.toLowerCase()) {
@@ -45,7 +51,11 @@ public class PipelineTreeExample {
         return passed;
     }
 
-    /** printTree：打印流水线 B+ 树拓扑结构。 */
+    /**
+     * 验证 printTree 打印流水线 B+ 树拓扑结构。
+     *
+     * @return 测试是否通过
+     */
     public static boolean testPrintTree() {
         log.info("===== testPrintTree =====");
         try {
@@ -57,7 +67,8 @@ public class PipelineTreeExample {
 
             // 打印树结构（不标记已执行节点）
             pipeline.printTree();
-            boolean ok = true; // 不抛异常即通过
+            // 断言不抛异常即通过
+            boolean ok = true;
             printResult("printTree()", ok);
             return ok;
         } catch (Exception e) {
@@ -66,7 +77,11 @@ public class PipelineTreeExample {
         }
     }
 
-    /** printTree with history：已执行节点标记高亮。 */
+    /**
+     * 验证 printTree(history) 已执行节点标记高亮。
+     *
+     * @return 测试是否通过
+     */
     public static boolean testPrintTreeWithHistory() {
         log.info("===== testPrintTreeWithHistory =====");
         try {
@@ -89,7 +104,11 @@ public class PipelineTreeExample {
         }
     }
 
-    /** fromJson：从 JSON 字符串构建流水线。 */
+    /**
+     * 验证 fromJson 从 JSON 字符串构建流水线。
+     *
+     * @return 测试是否通过
+     */
     public static boolean testFromJson() {
         log.info("===== testFromJson =====");
         try {
@@ -136,6 +155,12 @@ public class PipelineTreeExample {
         }
     }
 
+    /**
+     * 打印测试结果。
+     *
+     * @param name   测试名称
+     * @param passed 是否通过
+     */
     private static void printResult(String name, boolean passed) {
         log.info("{} {}", passed ? "[PASS]" : "[FAIL]", name);
     }

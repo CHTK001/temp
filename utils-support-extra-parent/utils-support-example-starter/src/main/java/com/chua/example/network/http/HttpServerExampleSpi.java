@@ -82,7 +82,14 @@ public class HttpServerExampleSpi implements Example {
     /** 真·并发压测报告输出路径 */
     private static final String CONC_REPORT_PATH = "target/http-server-concurrent.md";
 
-    /** 当前测试使用的服务器类型（jdk / nio） */
+    /** 全子类压测：遍历所有 HttpServer SPI 实现（按 classpath 实际可用为准） */
+    private static final String[] ALL_SERVER_TYPES = {
+            "jdk", "nio", "vertx-http", "http", "armeria-http", "jrebel", "kcp-http", "quarkus-http"
+    };
+    /** 全子类压测报告目录 */
+    private static final String ALL_REPORT_DIR = "target/http-server-all";
+
+    /** 当前测试使用的服务器类型（jdk / nio / vertx-http ...） */
     private String serverType = "jdk";
 
     @Override
@@ -155,8 +162,43 @@ public class HttpServerExampleSpi implements Example {
             String reportPath = args.getOrDefault("report", CONC_REPORT_PATH);
             passed &= runConcurrent(payloadSize, reportPath);
         }
+        if ("all".equals(mode) || "all-servers".equals(mode)) {
+            int payloadSize = Integer.parseInt(args.getOrDefault("payload", String.valueOf(BENCH_PAYLOAD)));
+            String reportDir = args.getOrDefault("reportDir", ALL_REPORT_DIR);
+            passed &= runAllServers(payloadSize, reportDir);
+        }
         log.info("===== http-server [type={}] 结果: {} =====", serverType, passed ? "全部通过 ✓" : "存在失败 ✗");
         return passed;
+    }
+
+    /**
+     * 压测全部 HttpServer 子类（按 classpath 实际可用为准），每个子类输出 html + md 报告。
+     */
+    private boolean runAllServers(int payloadSize, String reportDir) {
+        boolean allPassed = true;
+        try {
+            java.nio.file.Files.createDirectories(java.nio.file.Path.of(reportDir));
+        } catch (java.io.IOException e) {
+            log.warn("[all-servers] 报告目录创建失败: {}", e.getMessage());
+        }
+        for (String type : ALL_SERVER_TYPES) {
+            String prevType = serverType;
+            serverType = type;
+            try {
+                String mdPath = reportDir + "/" + type + "-benchmark.md";
+                String htmlPath = reportDir + "/" + type + "-benchmark.html";
+                boolean ok = runBench(payloadSize, mdPath, htmlPath);
+                log.info("[all-servers] {} : {}", type, ok ? "✓" : "✗ (依赖缺失或加载失败)");
+                allPassed &= ok;
+            } catch (Exception e) {
+                log.warn("[all-servers] {} 压测异常: {}", type, e.getMessage());
+                allPassed = false;
+            } finally {
+                serverType = prevType;
+            }
+        }
+        log.info("[all-servers] 报告输出目录: {}", reportDir);
+        return allPassed;
     }
 
     // ==================== SPI ====================
@@ -853,13 +895,17 @@ public class HttpServerExampleSpi implements Example {
                     (req, resp) -> resp.setResult(body)));
             int port = server.getPort();
 
+            PerfReport.printServerConfig(server.getSetting());
+            PerfReport.ResourceMonitor monitor = PerfReport.ResourceMonitor.start();
             PerfReport.SweepRow row = runPerfInner(concurrency, connections, requestsPerConn, port);
+            monitor.stop();
             if (row == null) {
                 return false;
             }
             PerfReport.printResult("http-server [" + serverType + "] GET /echo", row.concurrency,
                     row.connections, row.requestsPerConn, payloadSize,
                     row.total, row.errors, row.elapsedMs, row.sortedLatencyNs, 0L);
+            monitor.printSummary("perf 并发=" + row.concurrency + " 最大并发数=" + server.getSetting().getMaxConcurrency());
             pass();
             return true;
         } catch (Exception e) {
@@ -882,6 +928,8 @@ public class HttpServerExampleSpi implements Example {
                     (req, resp) -> resp.setResult(body)));
             int port = server.getPort();
 
+            PerfReport.printServerConfig(server.getSetting());
+            PerfReport.ResourceMonitor monitor = PerfReport.ResourceMonitor.start();
             List<PerfReport.SweepRow> rows = new ArrayList<>();
             for (int cc : SWEEP_CONCURRENCY) {
                 int conn = Math.min(SWEEP_CONNECTIONS, Math.max(1, cc / 8));
@@ -891,7 +939,9 @@ public class HttpServerExampleSpi implements Example {
                     rows.add(row);
                 }
             }
+            monitor.stop();
             PerfReport.printSweepResult("http-server [" + serverType + "] GET /echo 扫档", payloadSize, rows);
+            monitor.printSummary("sweep 最大并发数=" + server.getSetting().getMaxConcurrency());
             return !rows.isEmpty();
         } catch (Exception e) {
             fail("SWEEP 异常: " + e.getMessage());
@@ -902,6 +952,10 @@ public class HttpServerExampleSpi implements Example {
     }
 
     private boolean runBench(int payloadSize, String reportPath) {
+        return runBench(payloadSize, reportPath, null);
+    }
+
+    private boolean runBench(int payloadSize, String reportPath, String htmlPath) {
         Server server = null;
         try {
             byte[] payload = new byte[payloadSize];
@@ -913,6 +967,8 @@ public class HttpServerExampleSpi implements Example {
             int port = server.getPort();
 
             PerfReport.printEnvironment("HttpServer [" + serverType + "] [bench]", serverType, "SPI");
+            PerfReport.printServerConfig(server.getSetting());
+            PerfReport.ResourceMonitor monitor = PerfReport.ResourceMonitor.start();
             List<PerfReport.SweepRow> rows = new ArrayList<>();
             for (int cc : BENCH_CONCURRENCY) {
                 int conn = Math.min(BENCH_CONNECTIONS, Math.max(1, cc / 8));
@@ -925,18 +981,24 @@ public class HttpServerExampleSpi implements Example {
                             row.total, row.errors, row.elapsedMs, row.sortedLatencyNs, 0L);
                 }
             }
+            monitor.stop();
+            monitor.printSummary("bench 最大并发数=" + server.getSetting().getMaxConcurrency());
             if (rows.isEmpty()) {
                 fail("BENCH 无有效结果");
                 return false;
             }
-            String env = String.format("**环境**: %s / JDK %s / CPU %d 核 / 内存 max=%dMB",
+            String env = String.format("**环境**: %s / JDK %s / CPU %d 核 / 内存 max=%dMB / 最大并发数=%d",
                     System.getProperty("os.name") + " " + System.getProperty("os.arch"),
                     System.getProperty("java.version"),
                     Runtime.getRuntime().availableProcessors(),
-                    Runtime.getRuntime().maxMemory() / 1024 / 1024);
-            String report = PerfReport.writeBenchmarkReport(
-                    reportPath, "HTTP Server 压测报告 [" + serverType + "]", env, rows);
+                    Runtime.getRuntime().maxMemory() / 1024 / 1024,
+                    server.getSetting().getMaxConcurrency());
+            String title = "HTTP Server 压测报告 [" + serverType + "]";
+            String report = PerfReport.writeBenchmarkReport(reportPath, title, env, rows);
             log.info("压测报告预览:\n{}", report);
+            if (htmlPath != null) {
+                PerfReport.writeHtmlReport(htmlPath, title, env, rows);
+            }
             pass();
             return true;
         } catch (Exception e) {
@@ -964,6 +1026,8 @@ public class HttpServerExampleSpi implements Example {
             int port = server.getPort();
 
             PerfReport.printEnvironment("HttpServer [" + serverType + "] [conc]", serverType, "SPI");
+            PerfReport.printServerConfig(server.getSetting());
+            PerfReport.ResourceMonitor monitor = PerfReport.ResourceMonitor.start();
             List<PerfReport.SweepRow> rows = new ArrayList<>();
             for (int cc : CONC_CONCURRENCY) {
                 log.info("  ┌─ 真并发场景: 同时 {} 连接 × {} 请求 ─┐", cc, CONC_REQUESTS_PER_CONN);
@@ -976,15 +1040,18 @@ public class HttpServerExampleSpi implements Example {
                             row.total, row.errors, row.elapsedMs, row.sortedLatencyNs, 0L);
                 }
             }
+            monitor.stop();
+            monitor.printSummary("conc 最大并发数=" + server.getSetting().getMaxConcurrency());
             if (rows.isEmpty()) {
                 fail("CONC 无有效结果");
                 return false;
             }
-            String env = String.format("**环境**: %s / JDK %s / CPU %d 核 / 内存 max=%dMB",
+            String env = String.format("**环境**: %s / JDK %s / CPU %d 核 / 内存 max=%dMB / 最大并发数=%d",
                     System.getProperty("os.name") + " " + System.getProperty("os.arch"),
                     System.getProperty("java.version"),
                     Runtime.getRuntime().availableProcessors(),
-                    Runtime.getRuntime().maxMemory() / 1024 / 1024);
+                    Runtime.getRuntime().maxMemory() / 1024 / 1024,
+                    server.getSetting().getMaxConcurrency());
             String report = PerfReport.writeBenchmarkReport(
                     reportPath, "HTTP Server 真并发压测报告 [" + serverType + "]", env, rows);
             log.info("压测报告预览:\n{}", report);

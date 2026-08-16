@@ -35,6 +35,12 @@ public class PipelineCallbackExample {
         System.exit(passed ? 0 : 1);
     }
 
+    /**
+     * 根据类型运行对应测试方法。
+     *
+     * @param type 测试类型（onstart/oncomplete/onnextstep/listener/logging/all）
+     * @return 测试是否全部通过
+     */
     public static boolean runTest(String type) {
         boolean passed = true;
         switch (type.toLowerCase()) {
@@ -55,7 +61,11 @@ public class PipelineCallbackExample {
         return passed;
     }
 
-    /** onStart：流水线启动回调。 */
+    /**
+     * 验证流水线启动回调 onStart。
+     *
+     * @return 测试是否通过
+     */
     public static boolean testOnStart() {
         log.info("===== testOnStart =====");
         try {
@@ -76,7 +86,11 @@ public class PipelineCallbackExample {
         }
     }
 
-    /** onComplete：流水线完成回调。 */
+    /**
+     * 验证流水线完成回调 onComplete。
+     *
+     * @return 测试是否通过
+     */
     public static boolean testOnComplete() {
         log.info("===== testOnComplete =====");
         try {
@@ -97,7 +111,11 @@ public class PipelineCallbackExample {
         }
     }
 
-    /** onNextStep：节点间切换回调。 */
+    /**
+     * 验证节点间切换回调 onNextStep。
+     *
+     * @return 测试是否通过
+     */
     public static boolean testOnNextStep() {
         log.info("===== testOnNextStep =====");
         try {
@@ -120,7 +138,11 @@ public class PipelineCallbackExample {
         }
     }
 
-    /** addListener：自定义 PipelineListener（beforeNode/afterNode/onError）。 */
+    /**
+     * 验证自定义 PipelineListener（beforeNode/afterNode/onError）。
+     *
+     * @return 测试是否通过
+     */
     public static boolean testAddListener() {
         log.info("===== testAddListener =====");
         try {
@@ -140,7 +162,8 @@ public class PipelineCallbackExample {
                         @Override
                         public String onError(PipelineContext<?> context, Throwable e) {
                             events.add("error:" + context.getCurrentNodeId());
-                            return null; // 终止流水线
+                            // 返回 null 终止流水线
+                            return null;
                         }
                     })
                     .task("step1", ctx -> { return null; }).taskEnd()
@@ -162,7 +185,11 @@ public class PipelineCallbackExample {
         }
     }
 
-    /** logging：便捷方法启用日志监听。 */
+    /**
+     * 验证 logging() 便捷方法启用日志监听。
+     *
+     * @return 测试是否通过
+     */
     public static boolean testLogging() {
         log.info("===== testLogging =====");
         try {
@@ -182,6 +209,12 @@ public class PipelineCallbackExample {
         }
     }
 
+    /**
+     * 打印测试结果。
+     *
+     * @param name   测试名称
+     * @param passed 是否通过
+     */
     private static void printResult(String name, boolean passed) {
         log.info("{} {}", passed ? "[PASS]" : "[FAIL]", name);
     }

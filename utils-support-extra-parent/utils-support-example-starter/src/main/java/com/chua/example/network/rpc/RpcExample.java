@@ -236,7 +236,8 @@ public class RpcExample implements Example {
 
             RpcConsumerConfig consumer = new RpcConsumerConfig();
             consumer.setTimeout(5000);
-            consumer.setCheck(false); // 组播发现异步，不阻塞 get()
+            // 组播发现异步，不阻塞 get() 调用
+            consumer.setCheck(false);
             client = RpcClient.createClient("dubbo", List.of(registry), consumer, APP_NAME);
 
             RpcEchoService echo = client.get(RpcEchoService.class);
