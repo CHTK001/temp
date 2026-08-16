@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * SOFA-RPC 服务端实现。
  *
  * @author CH
- * @since 1.0.0
+ * @since 4.0.0.42
  */
 @Spi("sofa")
 @Slf4j
@@ -50,12 +50,23 @@ public class SofaRpcServer implements RpcServer {
     /**
      * 计算 local 注册中心使用的本地注册文件路径（server 与 client 必须同名才能互相发现）。
      *
+     * <p>目录选择优先级：系统属性 {@code sofa.rpc.registry.file.dir} → 用户目录
+     * {@code ~/.sofa-rpc} → 系统临时目录。避免固定落在 tmpdir 导致跨进程/容器重启后
+     * 注册文件被清理或不可见。</p>
+     *
      * @param appName 应用名（{@code null} / 空串时退化为 {@code default}）
-     * @return 注册文件绝对路径，位于系统临时目录下
+     * @return 注册文件绝对路径
      */
     static String localRegistryFile(String appName) {
         String safe = (appName == null || appName.isEmpty()) ? "default" : appName;
-        return Paths.get(System.getProperty("java.io.tmpdir", "."), "sofa-rpc-local-" + safe + ".data").toString();
+        String dir = System.getProperty("sofa.rpc.registry.file.dir");
+        if (dir == null || dir.trim().isEmpty()) {
+            String userHome = System.getProperty("user.home");
+            dir = userHome != null && !userHome.isEmpty()
+                    ? Paths.get(userHome, ".sofa-rpc").toString()
+                    : System.getProperty("java.io.tmpdir", ".");
+        }
+        return Paths.get(dir, "sofa-rpc-local-" + safe + ".data").toString();
     }
 
     private void initProtocol(RpcProtocolConfig config) {

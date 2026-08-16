@@ -28,21 +28,42 @@ import java.util.Map;
 @Slf4j
 public class ForySerializerExampleSpi implements Example {
 
+    /**
+     * 返回示例名称。
+     *
+     * @return 名称字符串
+     */
     @Override
     public String name() {
         return "fory-serializer";
     }
 
+    /**
+     * 返回所属模块。
+     *
+     * @return 模块名
+     */
     @Override
     public String module() {
         return "fory";
     }
 
+    /**
+     * 返回示例描述。
+     *
+     * @return 描述字符串
+     */
     @Override
     public String description() {
         return "ForySerializer / ForySerialization 往返序列化自检（循环引用 / null 输入 / 接口实现）";
     }
 
+    /**
+     * 运行序列化自检。
+     *
+     * @param args 参数映射（未使用）
+     * @return 全部用例是否通过
+     */
     @Override
     public boolean run(Map<String, String> args) {
         boolean passed = true;
@@ -52,6 +73,11 @@ public class ForySerializerExampleSpi implements Example {
         return passed;
     }
 
+    /**
+     * 自检用例一：ForySerializer 循环引用往返。
+     *
+     * @return 用例是否通过
+     */
     private boolean testRoundTrip() {
         log.info("\n===== fory-serializer --test =====");
         log.info("  [TC-01] ForySerializer 循环引用往返");
@@ -61,7 +87,8 @@ public class ForySerializerExampleSpi implements Example {
             user.setAge(18);
             user.getTags().add("java");
             user.getTags().add("fory");
-            user.setFriend(user); // 循环引用
+            // 设置循环引用（对象与自身互相引用）
+            user.setFriend(user);
 
             Serializer<User> serializer = new ForySerializer<>(User.class);
             byte[] bytes = serializer.serialize(user);
@@ -84,6 +111,11 @@ public class ForySerializerExampleSpi implements Example {
         }
     }
 
+    /**
+     * 自检用例二：null / 空输入。
+     *
+     * @return 用例是否通过
+     */
     private boolean testNullInput() {
         log.info("  [TC-02] null / 空输入");
         try {
@@ -99,6 +131,11 @@ public class ForySerializerExampleSpi implements Example {
         }
     }
 
+    /**
+     * 自检用例三：ForySerialization 接口实现。
+     *
+     * @return 用例是否通过
+     */
     private boolean testSerializationInterface() {
         log.info("  [TC-03] ForySerialization 接口实现");
         try {
@@ -127,40 +164,89 @@ public class ForySerializerExampleSpi implements Example {
      */
     @lombok.Data
     static class User implements Serializable {
+        /**
+         * 用户名
+         */
         private String name;
+
+        /**
+         * 年龄
+         */
         private int age;
+
+        /**
+         * 标签集合
+         */
         private List<String> tags = new ArrayList<>();
+
+        /**
+         * 好友引用，用于验证循环引用往返
+         */
         private User friend;
     }
 
+    /**
+     * 断言条件成立，否则抛出断言异常。
+     *
+     * @param condition 断言条件
+     * @param msg       失败消息
+     */
     private static void assertTrue(boolean condition, String msg) {
         if (!condition) {
             throw new AssertionError(msg);
         }
     }
 
+    /**
+     * 断言对象不为 null，否则抛出断言异常。
+     *
+     * @param o   待断言对象
+     * @param msg 失败消息
+     */
     private static void assertNotNull(Object o, String msg) {
         if (o == null) {
             throw new AssertionError(msg);
         }
     }
 
+    /**
+     * 断言两个对象引用同一实例，否则抛出断言异常。
+     *
+     * @param expected 期望对象
+     * @param actual   实际对象
+     * @param msg      失败消息
+     */
     private static void assertSame(Object expected, Object actual, String msg) {
         if (expected != actual) {
             throw new AssertionError(msg + " — 期望 " + expected + "，实际 " + actual);
         }
     }
 
+    /**
+     * 断言两个对象 equals 相等，否则抛出断言异常。
+     *
+     * @param expected 期望对象
+     * @param actual   实际对象
+     * @param msg      失败消息
+     */
     private static void assertEquals(Object expected, Object actual, String msg) {
         if (expected == null ? actual != null : !expected.equals(actual)) {
             throw new AssertionError(msg + " — 期望 " + expected + "，实际 " + actual);
         }
     }
 
+    /**
+     * 记录用例通过日志。
+     */
     private static void pass() {
         log.info("  ✓ 通过");
     }
 
+    /**
+     * 记录用例失败日志。
+     *
+     * @param msg 失败原因
+     */
     private static void fail(String msg) {
         log.info("  ✗ 失败: {}", msg);
     }

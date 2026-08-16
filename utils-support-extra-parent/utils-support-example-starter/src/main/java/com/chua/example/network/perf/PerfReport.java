@@ -57,6 +57,128 @@ public final class PerfReport {
     }
 
     /**
+     * 打印服务器配置信息（协议 / 监听 / 线程 / 连接 / 超时 / 压缩 / SSL 等）。
+     *
+     * @param setting 服务器配置
+     */
+    public static void printServerConfig(com.chua.common.support.network.server.ServerSetting setting) {
+        log.info("  │ 服务器配置");
+        log.info("  │   协议/类型   : {}", setting.getProtocol());
+        log.info("  │   监听地址   : {}:{}", setting.getHost(), setting.getPort());
+        log.info("  │   Boss线程   : {}", setting.getBossThreads());
+        log.info("  │   Worker线程 : {}", setting.getWorkerThreads());
+        log.info("  │   Backlog    : {}", setting.getBacklog());
+        log.info("  │   最大连接数 : {}", setting.getMaxConnections());
+        log.info("  │   最大并发数 : {}", setting.getMaxConcurrency());
+        log.info("  │   请求体上限 : {} B", setting.getMaxRequestSize());
+        log.info("  │   读超时     : {} ms", setting.getReadTimeout());
+        log.info("  │   写超时     : {} ms", setting.getWriteTimeout());
+        log.info("  │   Gzip       : {} (level {})", setting.isGzipEnabled(), setting.getGzipLevel());
+        log.info("  │   SSL        : {}", setting.getSsl() != null && setting.getSsl().isEnabled());
+        log.info("  │   Reactor    : {}", setting.isReactor());
+    }
+
+    /**
+     * 资源监控器：压测期间后台采样进程 CPU 使用率与堆内存占用。
+     *
+     * <p>提供：起始内存 / 平均 CPU / 峰值内存 / 结束内存 / 统计时长。</p>
+     */
+    public static final class ResourceMonitor {
+
+        private final long startUsedMb;
+        private final long startNanos;
+        private final List<Double> cpuPct = new ArrayList<>();
+        private volatile boolean running = true;
+        private final Thread sampler;
+        private volatile long peakUsedMb;
+
+        private ResourceMonitor() {
+            this.startUsedMb = usedMb();
+            this.peakUsedMb = startUsedMb;
+            this.startNanos = System.nanoTime();
+            this.sampler = new Thread(this::sample, "perf-resource-monitor");
+            this.sampler.setDaemon(true);
+            this.sampler.start();
+        }
+
+        /**
+         * 启动资源监控。
+         *
+         * @return 监控器实例
+         */
+        public static ResourceMonitor start() {
+            return new ResourceMonitor();
+        }
+
+        /**
+         * 停止采样线程。
+         */
+        public void stop() {
+            running = false;
+            try {
+                sampler.join(2000L);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        /**
+         * 打印资源统计汇总。
+         *
+         * @param label 场景名称
+         */
+        public void printSummary(String label) {
+            long used = usedMb();
+            long elapsedMs = (System.nanoTime() - startNanos) / 1_000_000L;
+            double avgCpu = cpuPct.stream().mapToDouble(Double::doubleValue).average().orElse(0);
+            log.info("  │ 资源统计 [{}]", label);
+            log.info("  │   起始内存   : {} MB (堆)", startUsedMb);
+            log.info("  │   峰值内存   : {} MB (堆)", peakUsedMb);
+            log.info("  │   结束内存   : {} MB (堆)", used);
+            log.info("  │   平均CPU    : {} %", String.format(Locale.ROOT, "%.1f", avgCpu));
+            log.info("  │   统计时长   : {} ms", elapsedMs);
+        }
+
+        private void sample() {
+            while (running) {
+                try {
+                    sampleCpu();
+                    sampleMemory();
+                    Thread.sleep(200L);
+                } catch (InterruptedException e) {
+                    break;
+                }
+            }
+        }
+
+        private void sampleCpu() {
+            try {
+                java.lang.management.OperatingSystemMXBean mx = ManagementFactory.getOperatingSystemMXBean();
+                if (mx instanceof com.sun.management.OperatingSystemMXBean sun) {
+                    double load = sun.getProcessCpuLoad();
+                    if (load >= 0) {
+                        cpuPct.add(load * 100.0);
+                    }
+                }
+            } catch (Throwable ignored) {
+                // 平台不支持时忽略 CPU 采样
+            }
+        }
+
+        private void sampleMemory() {
+            long used = usedMb();
+            if (used > peakUsedMb) {
+                peakUsedMb = used;
+            }
+        }
+
+        private static long usedMb() {
+            Runtime rt = Runtime.getRuntime();
+            return (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
+        }
+    }
+
+    /**
      * 打印测试参数与性能结果。
      */
     public static void printResult(String testName, int concurrency, int connections, int requestsPerConn,
@@ -212,6 +334,71 @@ public final class PerfReport {
             log.warn("压测报告写入失败: {}", e.getMessage(), e);
         }
         return sb.toString();
+    }
+
+    /**
+     * 生成 HTML 格式的压测报告，包含环境 / 服务器配置 / 并发场景结果 / 资源统计。
+     *
+     * @param reportPath 报告文件路径（.html）
+     * @param title      报告标题
+     * @param serverConfig 服务器配置描述（可为 null）
+     * @param rows       每个并发场景一行
+     * @return 报告全文
+     */
+    public static String writeHtmlReport(String reportPath, String title, String serverConfig, List<SweepRow> rows) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n<meta charset=\"UTF-8\">\n");
+        sb.append("<title>").append(escapeHtml(title)).append("</title>\n");
+        sb.append("<style>\n")
+                .append("body{font-family:'Microsoft YaHei',Arial,sans-serif;margin:24px;background:#f7f8fa;color:#333;}\n")
+                .append("h1{color:#1a73e8;}h2{color:#333;border-bottom:2px solid #1a73e8;padding-bottom:4px;}\n")
+                .append("table{border-collapse:collapse;width:100%;background:#fff;margin:8px 0 20px;}\n")
+                .append("th,td{border:1px solid #ddd;padding:8px 10px;text-align:right;}\n")
+                .append("th{background:#1a73e8;color:#fff;text-align:center;}\n")
+                .append("tr:nth-child(even){background:#f1f5fb;}\n")
+                .append(".env{background:#eef3ff;padding:10px 14px;border-left:4px solid #1a73e8;margin:8px 0 16px;}\n")
+                .append(".ok{color:#188038;font-weight:bold;}.err{color:#d93025;font-weight:bold;}\n")
+                .append("</style>\n</head>\n<body>\n");
+        sb.append("<h1>").append(escapeHtml(title)).append("</h1>\n");
+        sb.append("<p>生成时间: ").append(java.time.LocalDateTime.now()
+                .format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).append("</p>\n");
+        if (serverConfig != null && !serverConfig.isEmpty()) {
+            sb.append("<div class=\"env\">").append(escapeHtml(serverConfig)).append("</div>\n");
+        }
+        sb.append("<h2>压测结果</h2>\n<table>\n<tr>")
+                .append("<th>并发</th><th>连接数</th><th>每连接请求</th><th>总请求</th><th>成功</th><th>失败</th>")
+                .append("<th>成功率</th><th>RPS</th><th>p50(µs)</th><th>p95(µs)</th><th>p99(µs)</th><th>最大(µs)</th><th>总耗时(ms)</th></tr>\n");
+        for (SweepRow r : rows) {
+            double rps = (double) r.total * 1_000_000_000.0 / (double) (r.elapsedMs * 1_000_000L);
+            double p50 = percentileUs(r.sortedLatencyNs, 0.50);
+            double p95 = percentileUs(r.sortedLatencyNs, 0.95);
+            double p99 = percentileUs(r.sortedLatencyNs, 0.99);
+            double max = r.sortedLatencyNs.length > 0 ? r.sortedLatencyNs[r.sortedLatencyNs.length - 1] / 1000.0 : 0.0;
+            long success = r.total - r.errors;
+            String rate = r.total > 0 ? String.format(Locale.ROOT, "%.2f%%", success * 100.0 / r.total) : "-";
+            String rateClass = r.errors == 0 ? "ok" : "err";
+            sb.append(String.format(Locale.ROOT,
+                    "<tr><td>%d</td><td>%d</td><td>%d</td><td>%d</td><td>%d</td><td>%d</td>"
+                            + "<td class=\"%s\">%s</td><td>%.0f</td><td>%.1f</td><td>%.1f</td><td>%.1f</td><td>%.1f</td><td>%d</td></tr>%n",
+                    r.concurrency, r.connections, r.requestsPerConn, r.total, success, r.errors,
+                    rateClass, rate, rps, p50, p95, p99, max, r.elapsedMs));
+        }
+        sb.append("</table>\n</body>\n</html>\n");
+        try {
+            java.nio.file.Files.writeString(java.nio.file.Path.of(reportPath), sb.toString(),
+                    java.nio.charset.StandardCharsets.UTF_8);
+            log.info("HTML 压测报告已写入: {}", reportPath);
+        } catch (java.io.IOException e) {
+            log.warn("HTML 压测报告写入失败: {}", e.getMessage(), e);
+        }
+        return sb.toString();
+    }
+
+    private static String escapeHtml(String s) {
+        if (s == null) {
+            return "";
+        }
+        return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
     }
 
     private static String padLeft(String s, int width) {

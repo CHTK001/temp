@@ -14,7 +14,17 @@ import com.chua.deeplearning.support.model.DetectionInfo;
 import com.chua.deeplearning.support.model.FaceQualityInfo;
 import com.chua.deeplearning.support.model.PredictRectangle;
 import com.chua.deeplearning.support.utils.ImageCropUtils;
+import com.chua.deeplearning.support.utils.OpenCvImageUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
+import org.opencv.core.Size;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,6 +76,21 @@ public class FacePipeline {
      * 节点：活体
      */
     private static final String NODE_LIVENESS = "liveness";
+
+    /**
+     * 节点：对齐
+     */
+    private static final String NODE_ALIGN = "align";
+
+    /**
+     * 节点：修复
+     */
+    private static final String NODE_RESTORE = "restore";
+
+    /**
+     * 节点：高清化
+     */
+    private static final String NODE_ENHANCE = "enhance";
 
     /**
      * 节点：特征
@@ -247,20 +272,79 @@ public class FacePipeline {
      */
     public static final class Builder {
 
+        /**
+         * 人脸检测器
+         */
         private FaceDetector detector;
+
+        /**
+         * 活体检测器
+         */
         private LivenessDetector liveness;
+
+        /**
+         * 特征提取器
+         */
         private FeatureExtractor featureExtractor;
+
+        /**
+         * 向量存储
+         */
         private VectorStorage vectorStorage;
+
+        /**
+         * 动漫人脸检测器
+         */
         private FaceDetector animeDetector;
+
+        /**
+         * 超分辨率增强器
+         */
         private ImageEnhancer superResolution;
+
+        /**
+         * 图像修复增强器
+         */
         private ImageEnhancer restorer;
+
+        /**
+         * 属性分类器
+         */
         private ImageClassifier attributeClassifier;
+
+        /**
+         * 情绪分类器
+         */
         private ImageClassifier emotionClassifier;
+
+        /**
+         * 关键点提取器
+         */
         private FeatureExtractor landmarkExtractor;
+
+        /**
+         * 人脸质量评估器
+         */
         private FaceQualityAssessor qualityAssessor;
+
+        /**
+         * 深伪检测分类器
+         */
         private ImageClassifier deepfakeClassifier;
+
+        /**
+         * Top-K 命中数量
+         */
         private int topK = 5;
+
+        /**
+         * 是否要求活体检测通过
+         */
         private boolean requireLive = true;
+
+        /**
+         * 活体检测置信度阈值
+         */
         private float livenessThreshold = 0.5f;
 
         /**
@@ -570,7 +654,16 @@ public class FacePipeline {
                 .decision("hasFace", ctx -> current(ctx).currentFace() != null ? NODE_LIVENESS : NODE_END)
                 .task(NODE_LIVENESS, ctx -> {
                     FaceContext fc = current(ctx);
-                    LivenessResult lr = evaluateLiveness(fc.currentFace());
+                    // 活体检测用外扩 100% 的头部区域（FLRGB 等需含上下文，紧贴框会误判）
+                    byte[] liveFace = fc.currentFace();
+                    PredictRectangle box = fc.currentBox();
+                    if (liveFace != null && box != null && liveness != null) {
+                        byte[] expanded = expandFaceCrop(fc.imageData(), box);
+                        if (expanded != null) {
+                            liveFace = expanded;
+                        }
+                    }
+                    LivenessResult lr = evaluateLiveness(liveFace);
                     fc.currentLive(lr.live(), lr.score());
                     return null;
                 }).taskEnd()
@@ -588,7 +681,7 @@ public class FacePipeline {
     }
 
     /**
-     * 编排单张人脸识别管线（裁剪 → 活体 → 特征 → 检索 → 收集）。
+     * 编排单张人脸识别管线（裁剪 → 活体 → 对齐 → 修复 → 高清化 → 特征 → 检索）。
      *
      * @return 管线实例
      */
@@ -609,11 +702,48 @@ public class FacePipeline {
                     fc.currentLive(lr.live(), lr.score());
                     return null;
                 }).taskEnd()
-                .decision("isLive", ctx -> !requireLive || liveness == null || current(ctx).currentLive() ? NODE_FEATURE : NODE_END)
+                .decision("isLive", ctx -> !requireLive || liveness == null || current(ctx).currentLive() ? NODE_ALIGN : NODE_END)
+                .task(NODE_ALIGN, ctx -> {
+                    // 人脸对齐：基于关键点摆正（旋转到两眼水平），提升后续特征提取精度
+                    FaceContext fc = current(ctx);
+                    byte[] face = fc.currentFace();
+                    if (face != null) {
+                        fc.currentAlignedFace(alignFace(face));
+                    }
+                    return null;
+                }).taskEnd()
+                .decision("hasAligned", ctx -> current(ctx).currentAlignedFace() != null ? NODE_RESTORE : NODE_END)
+                .task(NODE_RESTORE, ctx -> {
+                    // 人脸修复（对齐之后）：修复遮挡/模糊/老化，输出高清修复人脸
+                    FaceContext fc = current(ctx);
+                    byte[] face = fc.currentAlignedFace();
+                    if (face != null) {
+                        fc.currentRestoredFace(restorer == null ? face : restorer.enhance(face));
+                    }
+                    return null;
+                }).taskEnd()
+                .decision("hasRestored", ctx -> current(ctx).currentRestoredFace() != null ? NODE_ENHANCE : NODE_END)
+                .task(NODE_ENHANCE, ctx -> {
+                    // 人脸高清化（修复之后）：超分提升分辨率
+                    FaceContext fc = current(ctx);
+                    byte[] face = fc.currentRestoredFace();
+                    if (face != null) {
+                        fc.currentEnhancedFace(superResolution == null ? face : superResolution.enhance(face));
+                    }
+                    return null;
+                }).taskEnd()
                 .task(NODE_FEATURE, ctx -> {
                     FaceContext fc = current(ctx);
-                    if (featureExtractor != null && fc.currentFace() != null) {
-                        fc.currentFeature(featureExtractor.extract(fc.currentFace()));
+                    // 特征提取用高清化后人脸（或对齐后/原图兜底）
+                    byte[] face = fc.currentEnhancedFace();
+                    if (face == null) {
+                        face = fc.currentAlignedFace();
+                    }
+                    if (face == null) {
+                        face = fc.currentFace();
+                    }
+                    if (featureExtractor != null && face != null) {
+                        fc.currentFeature(featureExtractor.extract(face));
                     }
                     return null;
                 }).taskEnd()
@@ -1137,6 +1267,140 @@ public class FacePipeline {
         return hits;
     }
 
+    /**
+     * 人脸对齐：基于关键点摆正（旋转到左右眼水平）。
+     *
+     * <p>使用 {@code landmarkExtractor} 提取人脸关键点（68 点：索引 36-41 左眼、
+     * 42-47 右眼；106 点：索引 74-75 左眼中心、77-78 右眼中心）。
+     * 计算左右眼连线倾角，通过仿射旋转将人脸摆正，提升后续修复/高清化/特征提取精度。
+     * 未配置关键点或提取失败时原样返回。</p>
+     *
+     * @param face 裁剪人脸图
+     * @return 对齐后人脸图
+     */
+    private byte[] alignFace(byte[] face) {
+        if (landmarkExtractor == null) {
+            return face;
+        }
+        try {
+            float[] landmark = landmarkExtractor.extract(face);
+            if (landmark == null || landmark.length < 4) {
+                return face;
+            }
+            Point leftEye = eyeCenter(landmark, 36, 41, 74, 75);
+            Point rightEye = eyeCenter(landmark, 42, 47, 77, 78);
+            if (leftEye == null || rightEye == null || leftEye.x == rightEye.x) {
+                return face;
+            }
+            double angle = Math.toDegrees(Math.atan2(rightEye.y - leftEye.y, rightEye.x - leftEye.x));
+            if (Math.abs(angle) < 0.5) {
+                return face;
+            }
+            nu.pattern.OpenCV.loadLocally();
+            Mat src = Imgcodecs.imdecode(new MatOfByte(face), Imgcodecs.IMREAD_COLOR);
+            if (src == null || src.empty()) {
+                return face;
+            }
+            try {
+                Mat out = new Mat();
+                Mat rot = Imgproc.getRotationMatrix2D(new Point(src.cols() / 2.0, src.rows() / 2.0), angle, 1.0);
+                Imgproc.warpAffine(src, out, rot, new Size(src.cols(), src.rows()), Imgproc.INTER_CUBIC, Core.BORDER_REPLICATE);
+                MatOfByte mob = new MatOfByte();
+                Imgcodecs.imencode(".png", out, mob);
+                byte[] result = mob.toArray();
+                rot.release();
+                out.release();
+                return result;
+            } finally {
+                src.release();
+            }
+        } catch (Exception e) {
+            log.warn("[face-pipeline] 人脸对齐失败，使用原图: {}", e.getMessage());
+            return face;
+        }
+    }
+
+    /**
+     * 计算眼睛中心坐标。
+     *
+     * <p>兼容 68 点（左眼 36-41、右眼 42-47）与 106 点（左眼 74-75、右眼 77-78）
+     * 两种关键点布局：优先取瞳孔索引，否则取眼眶均值。</p>
+     *
+     * @param landmark  关键点数组（x,y 交替）
+     * @param pupilIdx  瞳孔索引（如 74）
+     * @param pupilIdx2 瞳孔索引2（如 75）
+     * @param ringStart 眼眶起点
+     * @param ringEnd   眼眶终点
+     * @return 眼睛中心，数据不足返回 null
+     */
+    private static Point eyeCenter(float[] landmark, int pupilIdx, int pupilIdx2, int ringStart, int ringEnd) {
+        int n = landmark.length / 2;
+        if (n > pupilIdx2) {
+            // 瞳孔索引存在
+            return new Point(landmark[pupilIdx * 2], landmark[pupilIdx * 2 + 1]);
+        }
+        if (n > ringEnd) {
+            // 眼眶均值
+            double x = 0, y = 0;
+            int count = 0;
+            for (int i = ringStart; i <= ringEnd && i < n; i++) {
+                x += landmark[i * 2];
+                y += landmark[i * 2 + 1];
+                count++;
+            }
+            if (count == 0) {
+                return null;
+            }
+            return new Point(x / count, y / count);
+        }
+        return null;
+    }
+
+    /**
+     * 外扩 100% 裁剪人脸区域（AIAS 同款），供活体检测等需要上下文的能力使用。
+     *
+     * @param imageData 原图
+     * @param box       人脸框（像素）
+     * @return 外扩裁剪图，越界或失败返回 null
+     */
+    private static byte[] expandFaceCrop(byte[] imageData, PredictRectangle box) {
+        if (imageData == null || box == null) {
+            return null;
+        }
+        try {
+            Mat src = OpenCvImageUtils.decode(imageData);
+            if (src == null || src.empty()) {
+                return null;
+            }
+            int iw = src.cols(), ih = src.rows();
+            int x1 = (int) box.x(), y1 = (int) box.y();
+            int x2 = x1 + (int) box.width(), y2 = y1 + (int) box.height();
+            int newX1 = Math.max((int) (x1 + x1 * 0.5f - x2 * 0.5f), 0);
+            int newX2 = Math.min((int) (x2 + x2 * 0.5f - x1 * 0.5f), iw - 1);
+            int newY1 = Math.max((int) (y1 + y1 * 0.5f - y2 * 0.5f), 0);
+            int newY2 = Math.min((int) (y2 + y2 * 0.5f - y1 * 0.5f), ih - 1);
+            int cw = newX2 - newX1, ch = newY2 - newY1;
+            if (cw <= 0 || ch <= 0) {
+                src.release();
+                return null;
+            }
+            Mat sub = new Mat(src, new Rect(newX1, newY1, cw, ch));
+            byte[] result = OpenCvImageUtils.encode(sub);
+            sub.release();
+            src.release();
+            return result;
+        } catch (Exception e) {
+            log.warn("[face-pipeline] 活体外扩裁剪失败: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * 选择面积最大的检测框。
+     *
+     * @param boxes 检测框列表
+     * @return 面积最大的检测框
+     */
     private static PredictRectangle pickLargest(List<PredictRectangle> boxes) {
         PredictRectangle largest = boxes.get(0);
         float maxArea = largest.width() * largest.height();
@@ -1151,6 +1415,13 @@ public class FacePipeline {
         return largest;
     }
 
+    /**
+     * 计算两个特征向量的余弦相似度。
+     *
+     * @param a 特征向量 A
+     * @param b 特征向量 B
+     * @return 余弦相似度，参数非法时返回 0
+     */
     private static double cosineSimilarity(float[] a, float[] b) {
         if (a == null || b == null || a.length == 0 || a.length != b.length) {
             return 0d;

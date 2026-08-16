@@ -24,11 +24,15 @@ import java.util.List;
  * }</pre>
  *
  * @author CH
+ * @since 4.0.0.42
  */
 @Slf4j
 public final class ContextCompressor {
 
+    /** 压缩配置 */
     private final ContextCompressionConfig config;
+
+    /** 底层压缩服务 */
     private final AgentContextCompressionService delegate;
 
     private ContextCompressor(ContextCompressionConfig config, ChatClient fallbackClient) {

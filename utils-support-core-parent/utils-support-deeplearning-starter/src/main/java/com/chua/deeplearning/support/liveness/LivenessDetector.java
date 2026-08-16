@@ -4,6 +4,7 @@ import com.chua.deeplearning.support.config.ModelSetting;
 import com.chua.deeplearning.support.engine.AbstractIdentificationEngine;
 import com.chua.deeplearning.support.engine.IdentificationEngine;
 import com.chua.deeplearning.support.translator.ITranslator;
+import java.util.List;
 
 /**
  * 活体检测器，判断人脸图像是否为真实活体而非照片/视频攻击。
@@ -22,6 +23,19 @@ public interface LivenessDetector {
     static LivenessDetector create(String name) {
         return new DefaultLivenessDetector(AbstractIdentificationEngine.getInstance(), name, ModelSetting.builder().build());
     }
+
+    /**
+     * 查询该能力下全部可用模型。
+     *
+     * <p>按能力接口从 {@link com.chua.deeplearning.support.engine.ModelRegistry} 枚举
+     * 全部已注册模型，供统一能力清单与前端按能力筛选使用。</p>
+     *
+     * @return 模型 ID 列表
+     */
+    static List<String> listModels() {
+        return com.chua.deeplearning.support.engine.ModelRegistry.getModelIdsByCapability(com.chua.deeplearning.support.liveness.LivenessDetector.class);
+    }
+
 
     /**
      * 创建活体检测器。
@@ -164,22 +178,42 @@ class DefaultLivenessDetector implements LivenessDetector {
     @Override
     @SuppressWarnings("unchecked")
     public boolean isLive(byte[] imageData) {
-        ITranslator<byte[], Boolean> t =
-                (ITranslator<byte[], Boolean>) engine.get(modelName, ITranslator.class);
+        ITranslator<byte[], Object> t =
+                (ITranslator<byte[], Object>) engine.get(modelName, ITranslator.class);
         if (t == null) {
             throw new IllegalStateException("模型未注册: " + modelName);
         }
-        return t.translate(imageData);
+        Object result = t.translate(imageData);
+        // 兼容 Boolean / Float / Number 输出（FLRGB 等返回活体分数）
+        if (result instanceof Boolean bool) {
+            return bool;
+        }
+        if (result instanceof Number number) {
+            return number.floatValue() >= threshold;
+        }
+        if (result instanceof CharSequence cs) {
+            String lower = cs.toString().toLowerCase();
+            return lower.contains("live") || lower.contains("true") || lower.contains("真实")
+                    || lower.contains("活体");
+        }
+        return false;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public float liveScore(byte[] imageData) {
-        ITranslator<byte[], Float> t =
-                (ITranslator<byte[], Float>) engine.get(modelName, ITranslator.class);
+        ITranslator<byte[], Object> t =
+                (ITranslator<byte[], Object>) engine.get(modelName, ITranslator.class);
         if (t == null) {
             throw new IllegalStateException("模型未注册: " + modelName);
         }
-        return t.translate(imageData);
+        Object result = t.translate(imageData);
+        if (result instanceof Number number) {
+            return number.floatValue();
+        }
+        if (result instanceof Boolean bool) {
+            return bool ? 1f : 0f;
+        }
+        return 0f;
     }
 }

@@ -82,20 +82,73 @@ public class PipelineFaceOrchestrationExample {
     /** 换脸检测结果 */
     record DeepfakeResult(boolean isDeepfake, float score) {}
 
-    /** 人脸上下文 — 贯穿整个管线的数据载体 */
+    /**
+     * 人脸上下文 — 贯穿整个管线的数据载体。
+     */
     static class FaceContext {
+        /**
+         * 输入图片原始字节
+         */
         private final byte[] imageData;
+
+        /**
+         * 检测到的人脸框集合
+         */
         private final List<FaceBox> boxes = new ArrayList<>();
+
+        /**
+         * 当前处理的人脸框
+         */
         private FaceBox currentBox;
+
+        /**
+         * 当前裁剪后的人脸图片数据
+         */
         private byte[] currentFace;
+
+        /**
+         * 活体检测结果
+         */
         private LivenessResult livenessResult;
+
+        /**
+         * 人脸特征向量
+         */
         private FaceFeature feature;
+
+        /**
+         * 1:N 检索命中列表
+         */
         private List<SearchHit> searchHits;
+
+        /**
+         * 属性分析结果
+         */
         private AttributeResult attributeResult;
+
+        /**
+         * 表情识别结果
+         */
         private EmotionResult emotionResult;
+
+        /**
+         * 图像质量评估结果
+         */
         private QualityResult qualityResult;
+
+        /**
+         * 换脸检测结果
+         */
         private DeepfakeResult deepfakeResult;
+
+        /**
+         * 检测是否失败（用于错误恢复流程）
+         */
         private boolean detectFailed;
+
+        /**
+         * 检测重试次数
+         */
         private int detectRetryCount;
 
         FaceContext(byte[] imageData) {
@@ -131,13 +184,27 @@ public class PipelineFaceOrchestrationExample {
 
     // ==================== 模拟模型推理 ====================
 
+    /**
+     * 从管线上下文中取出人脸上下文。
+     *
+     * @param ctx 管线上下文
+     * @return 人脸上下文
+     */
     private static FaceContext getFaceCtx(PipelineContext<?> ctx) {
         return (FaceContext) ctx.getAttribute("face");
     }
 
-    /** 模拟检测（第1次可能失败，第2次成功，用于测试 retry） */
+    /**
+     * 模拟检测模型推理（前 2 次可能失败，第 3 次成功，用于测试 retry）。
+     */
     private static int detectCallCount = 0;
 
+    /**
+     * 模拟人脸检测：前 2 次模拟推理失败，之后检测出 1 张人脸。
+     *
+     * @param ctx 管线上下文
+     * @return 路由结果（null 表示继续）
+     */
     private static String simulateDetect(PipelineContext<?> ctx) {
         FaceContext fc = getFaceCtx(ctx);
         detectCallCount++;
@@ -156,10 +223,17 @@ public class PipelineFaceOrchestrationExample {
         return null;
     }
 
+    /**
+     * 模拟人脸裁剪：按当前人脸框生成人脸图片数据。
+     *
+     * @param ctx 管线上下文
+     * @return 路由结果（null 表示继续）
+     */
     private static String simulateCrop(PipelineContext<?> ctx) {
         FaceContext fc = getFaceCtx(ctx);
         if (fc.currentBox() != null) {
-            fc.currentFace(new byte[1024]); // 模拟裁剪后的人脸数据
+            // 模拟裁剪后的人脸数据
+            fc.currentFace(new byte[1024]);
             log.info("  [crop] 裁剪人脸区域 ({},{},{},{})",
                     fc.currentBox().x(), fc.currentBox().y(),
                     fc.currentBox().width(), fc.currentBox().height());
@@ -167,6 +241,12 @@ public class PipelineFaceOrchestrationExample {
         return null;
     }
 
+    /**
+     * 模拟活体检测：读取环境阈值并输出通过与否。
+     *
+     * @param ctx 管线上下文
+     * @return 路由结果（null 表示继续）
+     */
     private static String simulateLiveness(PipelineContext<?> ctx) {
         FaceContext fc = getFaceCtx(ctx);
         float threshold = ctx.getNodeLocalValue("env.livenessThreshold") != null
@@ -179,13 +259,26 @@ public class PipelineFaceOrchestrationExample {
         return null;
     }
 
+    /**
+     * 模拟人脸特征提取：生成 128 维特征向量。
+     *
+     * @param ctx 管线上下文
+     * @return 路由结果（null 表示继续）
+     */
     private static String simulateFeature(PipelineContext<?> ctx) {
         FaceContext fc = getFaceCtx(ctx);
-        fc.feature(new FaceFeature(new float[128])); // 模拟128维特征向量
+        // 模拟 128 维特征向量
+        fc.feature(new FaceFeature(new float[128]));
         log.info("  [feature] 提取特征向量 dim={}", fc.feature().vector().length);
         return null;
     }
 
+    /**
+     * 模拟 1:N 人脸检索：返回固定命中列表。
+     *
+     * @param ctx 管线上下文
+     * @return 路由结果（null 表示继续）
+     */
     private static String simulateSearch(PipelineContext<?> ctx) {
         FaceContext fc = getFaceCtx(ctx);
         int topK = ctx.getNodeLocalValue("env.topK") != null
@@ -199,6 +292,12 @@ public class PipelineFaceOrchestrationExample {
         return null;
     }
 
+    /**
+     * 模拟人脸属性分析：输出年龄、性别、种族。
+     *
+     * @param ctx 管线上下文
+     * @return 路由结果（null 表示继续）
+     */
     private static String simulateAttribute(PipelineContext<?> ctx) {
         FaceContext fc = getFaceCtx(ctx);
         fc.attributeResult(new AttributeResult("25-30", "male", "asian"));
@@ -207,6 +306,12 @@ public class PipelineFaceOrchestrationExample {
         return null;
     }
 
+    /**
+     * 模拟表情识别：输出表情与其置信度。
+     *
+     * @param ctx 管线上下文
+     * @return 路由结果（null 表示继续）
+     */
     private static String simulateEmotion(PipelineContext<?> ctx) {
         FaceContext fc = getFaceCtx(ctx);
         fc.emotionResult(new EmotionResult("happy", 0.87f));
@@ -214,6 +319,12 @@ public class PipelineFaceOrchestrationExample {
         return null;
     }
 
+    /**
+     * 模拟图像质量评估：输出质量分数与是否达标。
+     *
+     * @param ctx 管线上下文
+     * @return 路由结果（null 表示继续）
+     */
     private static String simulateQuality(PipelineContext<?> ctx) {
         FaceContext fc = getFaceCtx(ctx);
         float threshold = ctx.getNodeLocalValue("env.qualityThreshold") != null
@@ -225,6 +336,12 @@ public class PipelineFaceOrchestrationExample {
         return null;
     }
 
+    /**
+     * 模拟换脸检测：输出是否为深度伪造。
+     *
+     * @param ctx 管线上下文
+     * @return 路由结果（null 表示继续）
+     */
     private static String simulateDeepfake(PipelineContext<?> ctx) {
         FaceContext fc = getFaceCtx(ctx);
         fc.deepfakeResult(new DeepfakeResult(false, 0.05f));
@@ -233,6 +350,12 @@ public class PipelineFaceOrchestrationExample {
         return null;
     }
 
+    /**
+     * 模拟结果收集：打印各阶段产出的汇总信息。
+     *
+     * @param ctx 管线上下文
+     * @return 路由结果（null 表示继续）
+     */
     private static String simulateCollect(PipelineContext<?> ctx) {
         FaceContext fc = getFaceCtx(ctx);
         log.info("  [collect] 收集结果: box={}, live={}, feature={}, hits={}, attr={}, emotion={}, quality={}, deepfake={}",
@@ -247,6 +370,12 @@ public class PipelineFaceOrchestrationExample {
         return null;
     }
 
+    /**
+     * 模拟错误恢复降级处理：标记检测失败状态。
+     *
+     * @param ctx 管线上下文
+     * @return 路由结果（null 表示继续）
+     */
     private static String simulateFallback(PipelineContext<?> ctx) {
         FaceContext fc = getFaceCtx(ctx);
         fc.detectFailed(true);
@@ -263,6 +392,12 @@ public class PipelineFaceOrchestrationExample {
         System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
     }
 
+    /**
+     * 从命令行参数中解析 {@code --type=xxx} 类型。
+     *
+     * @param args 命令行参数列表
+     * @return 指定类型，默认 {@code all}
+     */
     static String parseType(String[] args) {
         for (String arg : args) {
             if (arg.startsWith("--type=")) {
@@ -272,6 +407,12 @@ public class PipelineFaceOrchestrationExample {
         return "all";
     }
 
+    /**
+     * 根据类型运行对应测试方法。
+     *
+     * @param type 测试类型（detect/identify/decision/fork/retry/error/subpipeline/env/full/all）
+     * @return 测试是否全部通过
+     */
     public static boolean runTest(String type) {
         boolean passed = true;
         switch (type.toLowerCase()) {
@@ -313,7 +454,8 @@ public class PipelineFaceOrchestrationExample {
     public static boolean testDetectPipeline() {
         log.info("===== testDetectPipeline =====");
         try {
-            detectCallCount = 0; // 重置计数器
+            // 重置全局调用计数器
+            detectCallCount = 0;
             Pipeline pipeline = PipelineBuilder.newBuilder("face-detect")
                     .logging()
                     .task("detect", ctx -> simulateDetect(ctx)).taskEnd()
@@ -508,7 +650,8 @@ public class PipelineFaceOrchestrationExample {
     public static boolean testRetryStrategy() {
         log.info("===== testRetryStrategy =====");
         try {
-            detectCallCount = 0; // 重置，前2次会失败
+            // 重置全局调用计数器，前 2 次会模拟失败
+            detectCallCount = 0;
 
             // FIXED 退避策略
             Pipeline pipeline = PipelineBuilder.newBuilder("face-retry")
@@ -548,15 +691,18 @@ public class PipelineFaceOrchestrationExample {
     public static boolean testErrorRecovery() {
         log.info("===== testErrorRecovery =====");
         try {
-            detectCallCount = 100; // 确保检测永远失败（>2次也会成功，所以用特殊值）
+            // 设置为 100，确保检测任务永远失败（模拟模型加载异常）
+            detectCallCount = 100;
 
             Pipeline pipeline = PipelineBuilder.newBuilder("face-error-recovery")
                     .onError((ctx, e) -> {
                         log.info("  [onError] 节点 {} 异常: {}", ctx.getCurrentNodeId(), e.getMessage());
                         if ("detect".equals(ctx.getCurrentNodeId())) {
-                            return "fallback";  // 路由到降级节点
+                            // 路由到降级节点
+                            return "fallback";
                         }
-                        return null;  // 其他节点异常终止
+                        // 其他节点异常时终止流水线
+                        return null;
                     })
                     .task("detect", ctx -> {
                         throw new RuntimeException("检测模型加载失败");
@@ -787,6 +933,12 @@ public class PipelineFaceOrchestrationExample {
 
     // ==================== 工具方法 ====================
 
+    /**
+     * 打印测试结果。
+     *
+     * @param name   测试名称
+     * @param passed 是否通过
+     */
     private static void printResult(String name, boolean passed) {
         log.info("{} {}", passed ? "[PASS]" : "[FAIL]", name);
     }

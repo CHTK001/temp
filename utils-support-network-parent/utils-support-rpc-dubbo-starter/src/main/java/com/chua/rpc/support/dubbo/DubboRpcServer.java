@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Dubbo RPC 服务端实现。
  *
  * @author CH
- * @since 1.0.0
+ * @since 4.0.0.42
  */
 @Spi("dubbo")
 @Slf4j
@@ -31,7 +31,7 @@ public class DubboRpcServer implements RpcServer {
     private final ApplicationConfig applicationConfig;
 
     public DubboRpcServer(List<RpcRegistryConfig> rpcRegistryConfigs, RpcProtocolConfig protocolConfig, String name) {
-        applicationConfig = DubboConfigs.application(name);
+        applicationConfig = DubboConfigs.get(name);
         initRegistries(rpcRegistryConfigs);
         initProtocol(protocolConfig);
     }
@@ -99,6 +99,8 @@ public class DubboRpcServer implements RpcServer {
             }
         }
         serviceConfigs.clear();
+        // 释放共享应用配置引用，避免静态缓存跨应用/反复启停泄漏
+        DubboConfigs.release(applicationConfig.getName());
         log.info("DubboRpcServer closed");
     }
 

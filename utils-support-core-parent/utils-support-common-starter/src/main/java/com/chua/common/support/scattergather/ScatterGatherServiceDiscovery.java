@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
  * <p>将服务发现查询散射到多个节点，聚合结果后返回。</p>
  *
  * @author CH
+ * @since 4.0.0.42
  */
 @Slf4j
 public class ScatterGatherServiceDiscovery extends AbstractServiceDiscovery {
@@ -800,19 +801,15 @@ public class ScatterGatherServiceDiscovery extends AbstractServiceDiscovery {
         try {
             ensureRuntime();
             String path = setting.getServicePath();
-            Set<Discovery> local = getPath(path);
             List<ScatterGatherNode> remoteNodes = new ArrayList<>();
-            if (local != null && !local.isEmpty()) {
-                for (Discovery d : local) {
-                    if (METADATA_SEED.equals(d.getMetadata().get(METADATA_SEED))) {
-                        continue;
-                    }
-                    remoteNodes.add(ScatterGatherNode.from(d));
+            // 仅向 seeds 解析的节点(NodeServer 端口)发起 sync 查询:
+            // 直接用 resolveSeedNodes()(seeds 端口,如 19013),不用 mode.resolveRemoteNodes——
+            // 后者可能返回 local 自注册的业务节点(TCP 代理端口 19012),向其发 sync/request
+            // 只会连接 TcpProxyServer(无法解析被丢弃),NodeServer 收不到 → 自动发现不收敛
+            for (ScatterGatherNode node : resolveSeedNodes()) {
+                if (!remoteNodes.contains(node)) {
+                    remoteNodes.add(node);
                 }
-            }
-            // 如果本地没有远程节点，委托当前模式解析
-            if (remoteNodes.isEmpty() && mode != null) {
-                remoteNodes.addAll(mode.resolveRemoteNodes(this));
             }
             if (remoteNodes.isEmpty()) {
                 return;
@@ -855,6 +852,9 @@ public class ScatterGatherServiceDiscovery extends AbstractServiceDiscovery {
             }
             CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
                     .get(setting.getTimeoutMillis(), TimeUnit.MILLISECONDS);
+        } catch (java.util.concurrent.TimeoutException e) {
+            // 单次自动检索超时属正常(远程节点未及时响应),降级为 debug,避免周期性告警刷屏
+            log.debug("自动检索超时(部分远程节点未响应)");
         } catch (Exception e) {
             log.warn("自动检索异常: {}", e.getMessage());
         }

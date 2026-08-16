@@ -81,7 +81,6 @@ public class ExampleRunner {
             "com.chua.example.datalake.sink.DataSinkExample",
             "com.chua.example.datalake.subscribe.SubscriberExample",
             "com.chua.example.datalake.integrated.DatalakeIntegratedExample",
-            "com.chua.example.ai.chat.AiProxyDetectorExample",
             "com.chua.example.lang.document.DocumentExample",
             "com.chua.example.tui.TuiDashboardExample",
             "com.chua.example.media.VideoCodecExample",

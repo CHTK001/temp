@@ -11,6 +11,7 @@ import java.util.Map;
  * 记忆条目可写实体 — 供 {@link EngineMemoryStore} / Engine ORM 使用。
  *
  * @author CH
+ * @since 4.0.0.42
  */
 @Data
 public class MemoryEntryEntity {
@@ -31,13 +32,25 @@ public class MemoryEntryEntity {
      * 会话 ID
      */
     private String sessionId;
+    /**
+     * Agent 标识
+     */
     private String agentId;
     /**
      * 创建时间
      */
     private Long createdAt;
+    /**
+     * 重要性
+     */
     private Double importance;
+    /**
+     * 检索标签
+     */
     private List<String> tags;
+    /**
+     * 扩展元数据
+     */
     private Map<String, Object> metadata;
 
     public static MemoryEntryEntity from(MemoryEntry entry) {

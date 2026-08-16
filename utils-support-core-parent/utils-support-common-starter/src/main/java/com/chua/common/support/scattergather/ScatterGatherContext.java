@@ -8,6 +8,7 @@ import java.util.Objects;
  * <p>封装单次查询的元数据，包括请求ID、路径、超时、最小成功数及属性。</p>
  *
  * @author CH
+ * @since 4.0.0.42
  */
 public final class ScatterGatherContext {
 
@@ -144,5 +145,17 @@ public final class ScatterGatherContext {
      */
     public Object attribute(String name) {
         return attributes.get(name);
+    }
+
+    /**
+     * 可解析的序列化形式(sync 文本协议经 topic:payload 传输,需 toString 携带关键信息)。
+     *
+     * @return JSON 风格字符串
+     */
+    @Override
+    public String toString() {
+        return "{\"requestId\":\"" + requestId + "\",\"path\":\"" + path
+                + "\",\"timeoutMillis\":" + timeoutMillis
+                + ",\"minSuccessCount\":" + minSuccessCount + "}";
     }
 }

@@ -124,7 +124,9 @@ public class NettyHttpServerExampleSpi implements Example {
         Server server = null;
         try {
             server = ServerBuilder.create().type("netty").host("127.0.0.1").port(0).build();
-            ((ConfigServer) server).registerMapping("/echo", (req, resp) -> { resp.setResult("netty-http-echo"); });
+            ((ConfigServer) server).registerMapping("/echo", (req, resp) -> {
+                resp.setResult("netty-http-echo");
+            });
             server.start();
             int port = server.getPort();
 
@@ -151,7 +153,9 @@ public class NettyHttpServerExampleSpi implements Example {
         Server server = null;
         try {
             server = ServerBuilder.create().type("netty").host("127.0.0.1").port(0).build();
-            ((ConfigServer) server).registerMapping("/echo", (req, resp) -> { resp.setResult(req.getBodyString()); });
+            ((ConfigServer) server).registerMapping("/echo", (req, resp) -> {
+                resp.setResult(req.getBodyString());
+            });
             server.start();
             int port = server.getPort();
 
@@ -185,7 +189,9 @@ public class NettyHttpServerExampleSpi implements Example {
             byte[] payload = new byte[payloadSize];
             Arrays.fill(payload, (byte) 'A');
             String body = new String(payload, StandardCharsets.UTF_8);
-            ((ConfigServer) server).registerMapping("/echo", (req, resp) -> { resp.setResult(body); });
+            ((ConfigServer) server).registerMapping("/echo", (req, resp) -> {
+                resp.setResult(body);
+            });
             server.start();
             int port = server.getPort();
 
@@ -214,7 +220,9 @@ public class NettyHttpServerExampleSpi implements Example {
             byte[] payload = new byte[payloadSize];
             Arrays.fill(payload, (byte) 'A');
             String body = new String(payload, StandardCharsets.UTF_8);
-            ((ConfigServer) server).registerMapping("/echo", (req, resp) -> { resp.setResult(body); });
+            ((ConfigServer) server).registerMapping("/echo", (req, resp) -> {
+                resp.setResult(body);
+            });
             server.start();
             int port = server.getPort();
 

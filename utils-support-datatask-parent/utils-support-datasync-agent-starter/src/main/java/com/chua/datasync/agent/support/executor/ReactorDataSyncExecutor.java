@@ -18,7 +18,7 @@ import java.util.function.Consumer;
  * </p>
  *
  * @author CH
- * @since 4.0.0
+ * @since 4.0.0.42
  */
 @Slf4j
 public class ReactorDataSyncExecutor {
@@ -98,7 +98,7 @@ public class ReactorDataSyncExecutor {
      * @param consumer 消息回调
      */
     public void subscribe(String sinkId, Consumer<List<Map<String, Object>>> consumer) {
-        chronicleProvider.subscribe(new ConsumerDispatcherDefinition<>(consumer, List.of(buildTopic(sinkId))));
+        chronicleProvider.subscribe(new ConsumerDispatcherDefinition<>(consumer, List.class, List.of(buildTopic(sinkId))));
     }
 
     /**

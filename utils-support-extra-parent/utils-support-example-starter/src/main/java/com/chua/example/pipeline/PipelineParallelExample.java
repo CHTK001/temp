@@ -33,6 +33,12 @@ public class PipelineParallelExample {
         System.exit(passed ? 0 : 1);
     }
 
+    /**
+     * 根据类型运行对应测试方法。
+     *
+     * @param type 测试类型（basic/async/complete/merge/all）
+     * @return 测试是否全部通过
+     */
     public static boolean runTest(String type) {
         boolean passed = true;
         switch (type.toLowerCase()) {
@@ -51,7 +57,11 @@ public class PipelineParallelExample {
         return passed;
     }
 
-    /** 基础并行：parallel 子流水线并行执行，主干不阻塞。 */
+    /**
+     * 验证基础并行：parallel 子流水线并行执行，主干不阻塞。
+     *
+     * @return 测试是否通过
+     */
     public static boolean testBasicParallel() {
         log.info("===== testBasicParallel =====");
         try {
@@ -79,7 +89,11 @@ public class PipelineParallelExample {
         }
     }
 
-    /** AsyncResult：异步结果句柄 await/isCompleted/getOutput。 */
+    /**
+     * 验证 AsyncResult 异步结果句柄 await/isCompleted/getOutput。
+     *
+     * @return 测试是否通过
+     */
     public static boolean testAsyncResult() {
         log.info("===== testAsyncResult =====");
         try {
@@ -117,7 +131,11 @@ public class PipelineParallelExample {
         }
     }
 
-    /** onComplete：并行完成回调。 */
+    /**
+     * 验证并行完成回调 onComplete。
+     *
+     * @return 测试是否通过
+     */
     public static boolean testOnComplete() {
         log.info("===== testOnComplete =====");
         try {
@@ -156,7 +174,11 @@ public class PipelineParallelExample {
         }
     }
 
-    /** mergeCurrentData：并行完成后回写 currentData。 */
+    /**
+     * 验证 mergeCurrentData 并行完成后回写 currentData。
+     *
+     * @return 测试是否通过
+     */
     public static boolean testMergeCurrentData() {
         log.info("===== testMergeCurrentData =====");
         try {
@@ -202,7 +224,8 @@ public class PipelineParallelExample {
             Thread.sleep(100);
             boolean notMerged = !"merged-data".equals(ctx2.getCurrentData());
 
-            boolean ok = merged || notMerged; // 至少一种模式工作
+            // 两种模式至少一种生效即视为通过
+            boolean ok = merged || notMerged;
             printResult("mergeCurrentData (merged=" + merged + ", notMerged=" + notMerged + ")", ok);
             return ok;
         } catch (Exception e) {
@@ -211,6 +234,12 @@ public class PipelineParallelExample {
         }
     }
 
+    /**
+     * 打印测试结果。
+     *
+     * @param name   测试名称
+     * @param passed 是否通过
+     */
     private static void printResult(String name, boolean passed) {
         log.info("{} {}", passed ? "[PASS]" : "[FAIL]", name);
     }

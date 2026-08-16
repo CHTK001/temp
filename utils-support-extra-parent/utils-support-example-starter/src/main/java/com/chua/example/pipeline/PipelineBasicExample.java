@@ -41,6 +41,12 @@ public class PipelineBasicExample {
         System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
     }
 
+    /**
+     * 从命令行参数中解析 {@code --type=xxx} 类型。
+     *
+     * @param args 命令行参数列表
+     * @return 指定类型，默认 {@code all}
+     */
     static String parseType(String[] args) {
         for (String arg : args) {
             if (arg.startsWith("--type=")) {
@@ -50,6 +56,12 @@ public class PipelineBasicExample {
         return "all";
     }
 
+    /**
+     * 根据类型运行对应测试方法。
+     *
+     * @param type 测试类型（sequential/onstep/step/exit/start/all）
+     * @return 测试是否全部通过
+     */
     public static boolean runTest(String type) {
         boolean passed = true;
         switch (type.toLowerCase()) {
@@ -133,7 +145,8 @@ public class PipelineBasicExample {
                     .taskStart("route")
                     .step(ctx -> {
                         sb.append("route");
-                        return "target";  // 跳转到 target 节点
+                        // 返回目标节点名，路由跳转到 target 节点
+                        return "target";
                     })
                     .taskEnd()
                     .task("target", ctx -> { sb.append("->target"); return null; }).taskEnd()
@@ -196,6 +209,12 @@ public class PipelineBasicExample {
         }
     }
 
+    /**
+     * 打印测试结果。
+     *
+     * @param name   测试名称
+     * @param passed 是否通过
+     */
     private static void printResult(String name, boolean passed) {
         log.info("{} {}", passed ? "[PASS]" : "[FAIL]", name);
     }

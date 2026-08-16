@@ -192,9 +192,13 @@ public class HttpServerResponse implements ServerResponse {
         if (bytes == null || bytes.length == 0) {
             return;
         }
-        if (sseMode && sseOutputStream != null) {
+        if (sseMode) {
             try {
+                if (sseOutputStream == null) {
+                    throw new IllegalStateException("SSE not initialized, call sse() first");
+                }
                 sseOutputStream.write(bytes);
+                sseOutputStream.flush();
             } catch (IOException e) {
                 throw new RuntimeException("SSE write failed", e);
             }
@@ -215,8 +219,8 @@ public class HttpServerResponse implements ServerResponse {
         }
         sent = true;
         if (sseMode) {
-            // SSE 流生命周期完全由 sseClose() 管理：handleBlocking 的 finally 可能先于
-            // 异步流式回调执行 end()（ended=true），若在此关闭流会导致回调写流报 stream closed。
+            // SSE 流生命周期由 sseClose() 管理：JdkHttpServer 的 finally 必然调用 complete()，
+            // 若在此关闭流会提前终止异步流式回调，与 NIO 实现语义保持一致。
             return;
         }
         if (!ended) {
@@ -233,10 +237,17 @@ public class HttpServerResponse implements ServerResponse {
             } else {
                 data = new byte[0];
             }
-            exchange.sendResponseHeaders(statusCode, data.length);
             if (data.length > 0) {
+                exchange.sendResponseHeaders(statusCode, data.length);
                 responseBody = exchange.getResponseBody();
                 responseBody.write(data);
+            } else {
+                // 空 body 响应(302/201/204 等):JDK HttpServer 在 sendResponseHeaders(code, 0) 后
+                // 若不获取并关闭响应体流,响应不会发送终止信号,客户端会一直挂起直到超时。
+                // 204/304 按规范用 0(无 body),其余用 -1(chunked)并立即关闭流以终止响应。
+                long len = (statusCode == 204 || statusCode == 304) ? 0 : -1;
+                exchange.sendResponseHeaders(statusCode, len);
+                responseBody = exchange.getResponseBody();
             }
         } catch (IOException e) {
             throw new RuntimeException("response complete failed", e);
@@ -269,13 +280,14 @@ public class HttpServerResponse implements ServerResponse {
         setContentType("text/event-stream; charset=utf-8");
         setHeader("Cache-Control", "no-cache");
         setHeader("Connection", "keep-alive");
-        committed = true;
+        exchange.getResponseHeaders().remove("Content-Length");
         try {
-            exchange.sendResponseHeaders(200, -1);
+            exchange.sendResponseHeaders(200, 0);
             sseOutputStream = exchange.getResponseBody();
         } catch (IOException e) {
             throw new RuntimeException("SSE init failed", e);
         }
+        committed = true;
         return this;
     }
 

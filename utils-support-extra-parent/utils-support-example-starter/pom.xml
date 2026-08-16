@@ -561,12 +561,18 @@
                         <!-- AI Proxy 聊天示例 — 排除 KimiProxyExample -->
                         <include>**/ai/chat/Qwen*.java</include>
                         <include>**/ai/chat/AiProxy*.java</include>
-                         <!-- 集合示例（LazyExpiringListExample） -->
-                         <include>**/collection/*.java</include>
+<!-- 集合示例（LazyExpiringListExample） -->
+                        <include>**/collection/*.java</include>
+                        <!-- ThreadFlow 并发示例（ThreadFlowExample / ThreadFlowExampleSpi） -->
+                        <include>**/concurrent/threadflow/*.java</include>
+                        <!-- 无锁队列示例（LockFreeQueueExample） -->
+                        <include>**/concurrent/queue/*.java</include>
                         <!-- NIO HttpServer 示例（NioHttpServerExampleSpi + PerfReport） -->
                         <include>**/network/nio/*.java</include>
                         <include>**/network/perf/*.java</include>
-                    </includes>
+                        <!-- HTTP HttpServer 示例（HttpServerExampleSpi） -->
+                        <include>**/network/http/*.java</include>
+                                            </includes>
                 </configuration>
             </plugin>
             <plugin>
@@ -582,4 +588,5 @@
         </plugins>
     </build>
 </project>
+
 

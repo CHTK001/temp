@@ -181,7 +181,8 @@ public class LazyExpiringListExample implements Example {
                 .expiryCheckIntervalMillis(50)
                 .build()) {
 
-            list.get(0); // 触发加载
+            // 触发加载
+            list.get(0);
             boolean p1 = list.getState() == ListState.LOADED;
             printResult("加载后状态 LOADED", p1);
 
@@ -218,7 +219,8 @@ public class LazyExpiringListExample implements Example {
                 .loader(() -> { loadCount.incrementAndGet(); return Arrays.asList("r" + loadCount.get()); })
                 .build()) {
 
-            list.size(); // 触发加载
+            // 首次访问触发加载
+            list.size();
             boolean p1 = list.getState() == ListState.LOADED;
             printResult("加载后 LOADED", p1);
 
@@ -226,7 +228,8 @@ public class LazyExpiringListExample implements Example {
             boolean p2 = list.getState() == ListState.UNLOADED;
             printResult("evict 后 UNLOADED", p2);
 
-            String val = list.get(0); // 重新加载
+            // evict 后重新访问触发懒加载
+            String val = list.get(0);
             boolean p3 = "r2".equals(val) && loadCount.get() == 2;
             printResult("evict 后重新加载，loadCount=2", p3);
 
@@ -405,8 +408,10 @@ public class LazyExpiringListExample implements Example {
                 .lifecycleListener(e -> events.add(e.getType().name()))
                 .build()) {
 
-            list.size();  // LOADED
-            list.evict(); // EVICTED
+            // 触发 LOADED 事件
+            list.size();
+            // 触发 EVICTED 事件
+            list.evict();
 
             p1 = events.contains("LOADED");
             printResult("收到 LOADED 事件", p1);
@@ -637,7 +642,8 @@ public class LazyExpiringListExample implements Example {
                 .offHeap(true)
                 .build()) {
 
-            list.size(); // 触发加载
+            // 触发加载
+            list.size();
 
             boolean p1 = false;
             try {
@@ -674,7 +680,8 @@ public class LazyExpiringListExample implements Example {
                 .maxCapacity(3)
                 .build()) {
 
-            list.size(); // 触发加载
+            // 触发加载
+            list.size();
             list.addAll(Arrays.asList("a", "b", "c", "d", "e"));
             boolean p1 = list.size() == 3;
             printResult("addAll 截断到 maxCapacity=3", p1);
@@ -711,7 +718,9 @@ public class LazyExpiringListExample implements Example {
             boolean p2 = list.getState() == ListState.LOADED;
             printResult("clear 后重新加载 LOADED", p2);
 
-            if (!p1 || !p2) return false;
+            if (!p1 || !p2) {
+                return false;
+            }
         }
 
         // double close
@@ -721,7 +730,8 @@ public class LazyExpiringListExample implements Example {
         list2.close();
         boolean p3 = true;
         try {
-            list2.close(); // 第二次 close 不应报错
+            // 第二次 close 不应报错
+            list2.close();
         } catch (Exception e) {
             p3 = false;
         }
@@ -777,7 +787,8 @@ public class LazyExpiringListExample implements Example {
                 .offHeap(true)
                 .build()) {
 
-            list.size(); // 触发加载
+            // 触发加载
+            list.size();
             long bytesAfterLoad = list.getOffHeapBytes();
             boolean p1 = bytesAfterLoad > 0;
             printResult("offHeap 加载后 offHeapBytes=" + bytesAfterLoad + " > 0", p1);
@@ -787,7 +798,9 @@ public class LazyExpiringListExample implements Example {
             boolean p2 = bytesAfterEvict == 0;
             printResult("evict 后 offHeapBytes=" + bytesAfterEvict + " == 0", p2);
 
-            if (!p1 || !p2) return false;
+            if (!p1 || !p2) {
+                return false;
+            }
         }
 
         // 2. close 后堆外内存释放
@@ -797,7 +810,8 @@ public class LazyExpiringListExample implements Example {
                     .offHeap(true)
                     .build();
 
-            list.size(); // 触发加载
+            // 触发加载
+            list.size();
             long bytesBefore = list.getOffHeapBytes();
             boolean p3 = bytesBefore > 0;
             printResult("close 前 offHeapBytes=" + bytesBefore + " > 0", p3);
@@ -807,7 +821,9 @@ public class LazyExpiringListExample implements Example {
             boolean p4 = bytesAfterClose == 0;
             printResult("close 后 offHeapBytes=" + bytesAfterClose + " == 0", p4);
 
-            if (!p3 || !p4) return false;
+            if (!p3 || !p4) {
+                return false;
+            }
         }
 
         // 3. TTL 过期后堆外内存自动释放
@@ -818,7 +834,8 @@ public class LazyExpiringListExample implements Example {
                 .expiryCheckIntervalMillis(50)
                 .build()) {
 
-            list.size(); // 触发加载
+            // 触发加载
+            list.size();
             long bytesBeforeExpiry = list.getOffHeapBytes();
             boolean p5 = bytesBeforeExpiry > 0;
             printResult("TTL过期前 offHeapBytes=" + bytesBeforeExpiry + " > 0", p5);
@@ -832,7 +849,9 @@ public class LazyExpiringListExample implements Example {
             boolean p7 = bytesAfterExpiry == 0;
             printResult("TTL过期后 offHeapBytes=" + bytesAfterExpiry + " == 0（自动回收）", p7);
 
-            if (!p5 || !p6 || !p7) return false;
+            if (!p5 || !p6 || !p7) {
+                return false;
+            }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             log.error("测试被中断", e);
@@ -864,7 +883,9 @@ public class LazyExpiringListExample implements Example {
             boolean p11 = bytesAfterClose == 0;
             printResult("OffHeapDataStore close后 offHeapBytes=" + bytesAfterClose + " == 0", p11);
 
-            if (!p8 || !p9 || !p10 || !p11) return false;
+            if (!p8 || !p9 || !p10 || !p11) {
+                return false;
+            }
         }
 
         return true;

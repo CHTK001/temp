@@ -20,6 +20,7 @@ import static com.chua.common.support.constant.CommonConstant.SYMBOL_EMPTY;
  * 服务发现信息模型，用于描述网络服务的元数据。
  *
  * @author CH
+ * @since 4.0.0.42
  */
 @Data
 @Builder
@@ -37,6 +38,12 @@ public class Discovery implements Serializable {
      * 服务器唯一标识符
      */
     private String serverId;
+
+    /**
+     * 业务分组标识(scatterId):同一服务路径下按业务隔离,
+     * 仅相同 scatterId 的节点纳入同一负载均衡池,避免不同业务节点互相污染
+     */
+    private String scatterId;
 
     /**
      * 通信协议 (默认: http)

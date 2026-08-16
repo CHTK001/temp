@@ -86,7 +86,9 @@ public class ChronicleWalLog implements WalLog {
                 ValueIn in = dc.wire().read(FIELD_LSN);
                 if (in.isPresent()) {
                     long lsn = in.int64();
-                    if (lsn > maxLsn) maxLsn = lsn;
+                    if (lsn > maxLsn) {
+                        maxLsn = lsn;
+                    }
                 }
             }
         }
@@ -94,8 +96,12 @@ public class ChronicleWalLog implements WalLog {
         ExcerptTailer cpTailer = queue.createTailer();
         while (true) {
             try (DocumentContext dc = cpTailer.readingDocument(true)) {
-                if (!dc.isPresent()) break;
-                if (!dc.isData()) continue;
+                if (!dc.isPresent()) {
+                    break;
+                }
+                if (!dc.isData()) {
+                    continue;
+                }
                 ValueIn in = dc.wire().read(FIELD_CHECKPOINT);
                 if (in.isPresent()) {
                     cp = in.int64();
@@ -182,14 +188,22 @@ public class ChronicleWalLog implements WalLog {
         boolean stopped = false;
         while (true) {
             try (DocumentContext dc = tailer.readingDocument(true)) {
-                if (!dc.isPresent()) break;
-                if (!dc.isData()) continue;
+                if (!dc.isPresent()) {
+                    break;
+                }
+                if (!dc.isData()) {
+                    continue;
+                }
                 ValueIn lsnIn = dc.wire().read(FIELD_LSN);
-                if (!lsnIn.isPresent()) continue;
+                if (!lsnIn.isPresent()) {
+                    continue;
+                }
                 long lsn = lsnIn.int64();
                 byte op = dc.wire().read(FIELD_OP).int8();
                 byte[] payload = dc.wire().read(FIELD_PAYLOAD).bytes();
-                if (payload == null) payload = new byte[0];
+                if (payload == null) {
+                    continue;
+                }
                 if (lsn < fromLsn || lsn >= toLsn) {
                     continue;
                 }
@@ -236,19 +250,28 @@ public class ChronicleWalLog implements WalLog {
         ExcerptTailer tailer = queue.createTailer();
         while (true) {
             try (DocumentContext dc = tailer.readingDocument(true)) {
-                if (!dc.isPresent()) return Optional.empty();
-                if (!dc.isData()) continue;
+                if (!dc.isPresent()) {
+                    break;
+                }
+                if (!dc.isData()) {
+                    continue;
+                }
                 ValueIn lsnIn = dc.wire().read(FIELD_LSN);
-                if (!lsnIn.isPresent()) continue;
+                if (!lsnIn.isPresent()) {
+                    continue;
+                }
                 long cur = lsnIn.int64();
                 byte op = dc.wire().read(FIELD_OP).int8();
                 byte[] payload = dc.wire().read(FIELD_PAYLOAD).bytes();
-                if (payload == null) payload = new byte[0];
+                if (payload == null) {
+                    continue;
+                }
                 if (cur == lsn) {
                     return Optional.of(new WalRecord(cur, op, payload));
                 }
             }
         }
+        return Optional.empty();
     }
 
     @Override
@@ -273,7 +296,9 @@ public class ChronicleWalLog implements WalLog {
 
     @Override
     public void close() throws IOException {
-        if (closed) return;
+        if (closed) {
+            return;
+        }
         closed = true;
         try {
             queue.close();
@@ -283,7 +308,9 @@ public class ChronicleWalLog implements WalLog {
     }
 
     private void ensureOpen() {
-        if (closed) throw new WalException("WAL already closed");
+        if (closed) {
+            throw new IllegalStateException("Chronicle WAL is closed");
+        }
     }
 
     private static final class ChronicleWalChain implements WalChain {

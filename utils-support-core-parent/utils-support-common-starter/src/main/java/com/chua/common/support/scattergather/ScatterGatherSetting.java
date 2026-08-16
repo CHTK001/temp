@@ -10,6 +10,7 @@ import lombok.experimental.Accessors;
  * <p>集中管理节点、发现、容错、重试、心跳等所有配置项。</p>
  *
  * @author CH
+ * @since 4.0.0.42
  */
 @Getter
 @Setter
@@ -115,6 +116,12 @@ public class ScatterGatherSetting {
      * 节点ID，默认 "local"
      */
     private String nodeId = DEFAULT_NODE_ID;
+
+    /**
+     * 业务分组标识(scatterId):节点按业务分组注册与路由,
+     * 同一服务路径下仅与同 scatterId 的节点互通,默认 "default"
+     */
+    private String scatterId = "default";
 
     /**
      * 主机地址，默认 127.0.0.1
