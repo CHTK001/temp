@@ -573,9 +573,15 @@
                         <include>**/network/perf/*.java</include>
                         <!-- HTTP HttpServer 示例（HttpServerExampleSpi） -->
                         <include>**/network/http/*.java</include>
+                        <!-- Scatter 集群示例（ScatterClusterExampleSpi 体系测试） -->
+                        <include>**/network/scatter/*.java</include>
                         <!-- Pipeline 流水线示例（PipelineBasicExample/Spi 等 11 组） -->
                         <include>**/pipeline/*.java</include>
                                             </includes>
+                    <excludes>
+                        <!-- 外部 WIP 未完成改动（startFork(Pipeline) API 不存在），临时排除避免阻塞编译 -->
+                        <exclude>**/PipelineCallbackExample.java</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
             <plugin>

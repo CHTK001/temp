@@ -553,6 +553,27 @@ public class ScatterClusterExampleSpi implements Example {
         }
     }
 
+    /**
+     * TCP 往返：发送 msg 并读取等长回显。
+     */
+    private static String tcpRoundTrip(String host, int port, String msg) throws Exception {
+        try (java.net.Socket socket = new java.net.Socket(host, port)) {
+            socket.setSoTimeout(5000);
+            socket.getOutputStream().write(msg.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            socket.getOutputStream().flush();
+            byte[] buf = new byte[msg.getBytes(java.nio.charset.StandardCharsets.UTF_8).length];
+            int read = 0;
+            while (read < buf.length) {
+                int n = socket.getInputStream().read(buf, read, buf.length - read);
+                if (n < 0) {
+                    break;
+                }
+                read += n;
+            }
+            return new String(buf, java.nio.charset.StandardCharsets.UTF_8);
+        }
+    }
+
     private static void assertEquals(Object expected, Object actual, String msg) {
         if (!java.util.Objects.equals(expected, actual)) {
             throw new AssertionError(msg + " 期望=" + expected + " 实际=" + actual);

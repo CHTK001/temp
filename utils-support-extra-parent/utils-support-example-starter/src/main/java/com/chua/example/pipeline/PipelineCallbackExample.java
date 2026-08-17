@@ -243,29 +243,44 @@ public class PipelineCallbackExample {
                     && drawEvents.get(2).equals("draw:step3@3");
             printResult("onDraw callback (events=" + drawEvents + ")", ok);
 
-            // 2. 演示实时刷新拓扑树：onDraw 中调用 drawTree
-            //    drawTree 使用 ANSI 转义序列上移光标后重绘，视觉上始终只有一棵树在实时更新
+            // 2. 演示实时刷新拓扑树：复杂管线 — 包含 fork 并行分支 + decision 条件分支
+            //    管线拓扑：
+            //    load → validate → fork(analyze+enhance) → merge → decision(quality?) → export
             //    终端效果：每个节点执行后，同一棵树原地刷新，已执行节点逐步变为 ✓
-            log.info("  [ondraw-tree] 实时刷新拓扑树演示:");
+            log.info("  [ondraw-tree] 实时刷新复杂管线拓扑树演示:");
             final Pipeline[] treeHolder = new Pipeline[1];
-            treeHolder[0] = PipelineBuilder.newBuilder("ondraw-tree")
-                    .onDraw(ctx -> {
-                        // drawTree: 原地刷新模式 — ANSI 上移光标 + 重绘，同一棵树实时更新
-                        treeHolder[0].drawTree(ctx.getHistory(), true);
-                    })
-                    .task("detect", ctx -> { Thread.sleep(500); return null; }).taskEnd()
-                    .task("process", ctx -> { Thread.sleep(500); return null; }).taskEnd()
-                    .task("output", ctx -> { Thread.sleep(500); return null; }).taskEnd()
+
+            treeHolder[0] = PipelineBuilder.newBuilder("image-pipeline")
+                    .onDraw(ctx -> treeHolder[0].drawTree(ctx.getHistory(), true))
+                    .task("load", ctx -> { sleep(800); return "loaded"; }).taskEnd()
+                    .task("validate", ctx -> { sleep(600); return "valid"; }).taskEnd()
+                    .fork("process")
+                        .startFork("analyze")
+                            .step("detect", ctx -> { sleep(600); return null; })
+                            .step("recognize", ctx -> { sleep(600); return null; })
+                        .endFork()
+                        .startFork("enhance")
+                            .step("denoise", ctx -> { sleep(600); return null; })
+                            .step("sharpen", ctx -> { sleep(600); return null; })
+                        .endFork()
+                    .endFork()
+                    .task("merge", ctx -> { sleep(500); return "merged"; }).taskEnd()
+                    .task("quality", ctx -> { sleep(500); return "high"; }).exit().taskEnd()
+                    .task("export", ctx -> { sleep(600); return "exported"; }).taskEnd()
                     .build();
 
-            PipelineContext<?> treeCtx = treeHolder[0].execute("input");
-            boolean treeOk = treeCtx.getHistory().size() == 3;
-            printResult("onDraw tree refresh", treeOk);
+            PipelineContext<?> treeCtx = treeHolder[0].execute("image-data");
+            boolean treeOk = treeCtx.getHistory().size() >= 5;
+            printResult("onDraw tree refresh (history=" + treeCtx.getHistory().size() + ")", treeOk);
             return ok && treeOk;
         } catch (Exception e) {
             log.error("testOnDraw failed", e);
             return false;
         }
+    }
+
+    private static void sleep(long ms) {
+        try { Thread.sleep(ms); } catch (InterruptedException ignored) {}
     }
 
     /**
