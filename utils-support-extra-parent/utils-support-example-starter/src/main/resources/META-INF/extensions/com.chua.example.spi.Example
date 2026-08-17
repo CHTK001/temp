@@ -4,6 +4,7 @@ com.chua.example.network.nio.NioHttpServerExampleSpi
 com.chua.example.network.http.HttpServerExampleSpi
 com.chua.example.lang.json.JsonProviderExampleSpi
 com.chua.example.lang.serialize.ForySerializerExampleSpi
+com.chua.example.lang.protobuf.ProtobufSerializerExampleSpi
 com.chua.example.concurrent.threadflow.ThreadFlowExampleSpi
 com.chua.example.network.yunxiao.YunxiaoClientExampleSpi
 com.chua.example.lang.document.DocumentExampleSpi
@@ -19,3 +20,4 @@ com.chua.example.pipeline.PipelineWalExampleSpi
 com.chua.example.pipeline.PipelineUnitExampleSpi
 com.chua.example.pipeline.PipelineFaceOrchestrationExampleSpi
 com.chua.example.network.scatter.ScatterClusterExampleSpi
+com.chua.example.ionet.IonetExampleSpi
