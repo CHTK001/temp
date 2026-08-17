@@ -1,6 +1,6 @@
 package com.chua.example.lang.protobuf;
 
-import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
+import io.protostuff.Tag;
 import com.chua.common.support.base.serialize.Serialization;
 import com.chua.common.support.serialize.Serializer;
 import com.chua.example.spi.Example;
@@ -267,7 +267,7 @@ public class ProtobufSerializerExampleSpi implements Example {
         }
     }
 
-    // ========== 测试实体类（使用 jprotobuf @Protobuf 注解） ==========
+    // ========== 测试实体类（使用 protostuff @Tag 注解） ==========
 
     /**
      * 测试用户实体。
@@ -277,31 +277,31 @@ public class ProtobufSerializerExampleSpi implements Example {
         /**
          * 用户名
          */
-        @Protobuf
+        @Tag(1)
         private String name;
 
         /**
          * 年龄
          */
-        @Protobuf
+        @Tag(2)
         private int age;
 
         /**
          * 邮箱
          */
-        @Protobuf
+        @Tag(3)
         private String email;
 
         /**
          * 是否活跃
          */
-        @Protobuf
+        @Tag(4)
         private boolean active;
 
         /**
          * 标签集合
          */
-        @Protobuf
+        @Tag(5)
         private List<String> tags = new ArrayList<>();
     }
 
@@ -313,19 +313,19 @@ public class ProtobufSerializerExampleSpi implements Example {
         /**
          * 订单ID
          */
-        @Protobuf
+        @Tag(1)
         private String orderId;
 
         /**
          * 金额
          */
-        @Protobuf
+        @Tag(2)
         private double amount;
 
         /**
          * 买家
          */
-        @Protobuf
+        @Tag(3)
         private User buyer;
     }
 

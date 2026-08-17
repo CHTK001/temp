@@ -609,6 +609,8 @@
                         <include>**/network/http/*.java</include>
                         <!-- Scatter 集群示例（ScatterClusterExampleSpi 体系测试） -->
                         <include>**/network/scatter/*.java</include>
+                        <!-- Sync 全子类示例（SyncExampleSpi） -->
+                        <include>**/network/sync/*.java</include>
                         <!-- ionet 分布式网络通信示例（IonetExampleSpi） -->
                         <include>**/ionet/*.java</include>
                         <!-- Pipeline 流水线示例（PipelineBasicExample/Spi 等 11 组） -->
@@ -629,5 +631,4 @@
         </plugins>
     </build>
 </project>
-
 
