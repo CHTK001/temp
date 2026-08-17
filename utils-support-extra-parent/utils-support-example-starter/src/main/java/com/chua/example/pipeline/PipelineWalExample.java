@@ -269,7 +269,7 @@ public class PipelineWalExample {
     }
 
     private static void printResult(String testName, boolean ok) {
-        log.info("[{}] {}", ok ? "PASS" : "FAIL", testName);
+        System.out.println((ok ? "[PASS] " : "[FAIL] ") + testName);
     }
 
     private static void cleanupDir(Path dir) {

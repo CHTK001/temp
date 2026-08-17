@@ -253,9 +253,9 @@ public class PipelineCallbackExample {
                         // drawTree: 原地刷新模式 — ANSI 上移光标 + 重绘，同一棵树实时更新
                         treeHolder[0].drawTree(ctx.getHistory(), true);
                     })
-                    .task("detect", ctx -> { return null; }).taskEnd()
-                    .task("process", ctx -> { return null; }).taskEnd()
-                    .task("output", ctx -> { return null; }).taskEnd()
+                    .task("detect", ctx -> { Thread.sleep(500); return null; }).taskEnd()
+                    .task("process", ctx -> { Thread.sleep(500); return null; }).taskEnd()
+                    .task("output", ctx -> { Thread.sleep(500); return null; }).taskEnd()
                     .build();
 
             PipelineContext<?> treeCtx = treeHolder[0].execute("input");
@@ -275,6 +275,6 @@ public class PipelineCallbackExample {
      * @param passed 是否通过
      */
     private static void printResult(String name, boolean passed) {
-        log.info("{} {}", passed ? "[PASS]" : "[FAIL]", name);
+        System.out.println((passed ? "[PASS] " : "[FAIL] ") + name);
     }
 }

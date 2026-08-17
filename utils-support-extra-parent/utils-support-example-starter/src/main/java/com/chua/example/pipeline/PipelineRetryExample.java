@@ -287,6 +287,6 @@ public class PipelineRetryExample {
      * @param passed 是否通过
      */
     private static void printResult(String name, boolean passed) {
-        log.info("{} {}", passed ? "[PASS]" : "[FAIL]", name);
+        System.out.println((passed ? "[PASS] " : "[FAIL] ") + name);
     }
 }
