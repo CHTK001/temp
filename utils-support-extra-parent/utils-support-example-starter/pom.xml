@@ -138,32 +138,16 @@
             <artifactId>utils-support-kcp-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- kcp-netty 1.5.2 基于 netty 4.1.x 构建；dubbo/sofa/vertx 等传递引入 netty 4.2.15 会 NoSuchMethodError/NoClassDefFoundError，
-             就近声明 netty 4.1.68.Final 覆盖传递版本（与 kcp-starter 一致） -->
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-transport</artifactId>
-            <version>4.1.68.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-common</artifactId>
-            <version>4.1.68.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-buffer</artifactId>
-            <version>4.1.68.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-resolver</artifactId>
-            <version>4.1.68.Final</version>
-        </dependency>
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-tshark-starter</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <!-- kcp-base 1.6.2(AbstractKcpServer) 静态引用 io.netty.channel.kqueue.KQueue，补齐 netty 4.2 的 kqueue 类 -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport-classes-kqueue</artifactId>
+            <version>4.2.15.Final</version>
         </dependency>
         <!-- ASR (whisper) SPI provider 位于 onnx-starter，供 WhisperAudioExample 使用 -->
         <dependency>
