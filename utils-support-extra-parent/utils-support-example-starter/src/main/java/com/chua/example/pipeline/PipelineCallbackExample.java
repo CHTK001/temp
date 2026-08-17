@@ -20,6 +20,7 @@ import java.util.List;
  *   <tr><td>onNextStep</td><td>{@link #testOnNextStep()}</td><td>节点间切换回调</td></tr>
  *   <tr><td>addListener</td><td>{@link #testAddListener()}</td><td>自定义 PipelineListener（beforeNode/afterNode/onError）</td></tr>
  *   <tr><td>logging</td><td>{@link #testLogging()}</td><td>便捷方法启用日志监听</td></tr>
+ *   <tr><td>onDraw</td><td>{@link #testOnDraw()}</td><td>节点绘制回调 — 实时刷新管线拓扑树</td></tr>
  * </table>
  *
  * @author CH
@@ -49,12 +50,14 @@ public class PipelineCallbackExample {
             case "onnextstep" -> passed = testOnNextStep();
             case "listener" -> passed = testAddListener();
             case "logging" -> passed = testLogging();
+            case "ondraw" -> passed = testOnDraw();
             case "all" -> {
                 passed &= testOnStart();
                 passed &= testOnComplete();
                 passed &= testOnNextStep();
                 passed &= testAddListener();
                 passed &= testLogging();
+                passed &= testOnDraw();
             }
             default -> { log.error("[FAIL] 未知 type: {}", type); passed = false; }
         }
@@ -205,6 +208,65 @@ public class PipelineCallbackExample {
             return ok;
         } catch (Exception e) {
             log.error("testLogging failed", e);
+            return false;
+        }
+    }
+
+    /**
+     * 验证 onDraw 节点绘制回调 — 每个节点执行后触发，可实时刷新管线拓扑树。
+     *
+     * <p>演示两种用法：</p>
+     * <ol>
+     *   <li>收集绘制事件（验证回调触发时机和次数）</li>
+     *   <li>实时打印带执行标记的拓扑树（演示 {@code \b} 刷新效果）</li>
+     * </ol>
+     *
+     * @return 测试是否通过
+     */
+    public static boolean testOnDraw() {
+        log.info("===== testOnDraw =====");
+        try {
+            // 1. 验证 onDraw 回调触发时机：每个节点执行后触发一次
+            List<String> drawEvents = new ArrayList<>();
+            Pipeline pipeline = PipelineBuilder.newBuilder("ondraw-demo")
+                    .onDraw(ctx -> drawEvents.add("draw:" + ctx.getCurrentNodeId() + "@" + ctx.getHistory().size()))
+                    .task("step1", ctx -> { return null; }).taskEnd()
+                    .task("step2", ctx -> { return null; }).taskEnd()
+                    .task("step3", ctx -> { return null; }).taskEnd()
+                    .build();
+
+            pipeline.execute("input");
+            // step1 执行后 history=1, step2 执行后 history=2, step3 执行后 history=3
+            boolean ok = drawEvents.size() == 3
+                    && drawEvents.get(0).equals("draw:step1@1")
+                    && drawEvents.get(1).equals("draw:step2@2")
+                    && drawEvents.get(2).equals("draw:step3@3");
+            printResult("onDraw callback (events=" + drawEvents + ")", ok);
+
+            // 2. 演示实时刷新拓扑树：onDraw 中调用 printTree
+            //    终端环境下可用 ANSI 转义序列清屏后重绘，实现实时刷新效果：
+            //    System.out.print("\033[H\033[2J"); System.out.flush();
+            //    pipeline.printTree(ctx.getHistory(), true);
+            log.info("  [ondraw-tree] 实时刷新拓扑树演示:");
+            final Pipeline[] treeHolder = new Pipeline[1];
+            treeHolder[0] = PipelineBuilder.newBuilder("ondraw-tree")
+                    .onDraw(ctx -> {
+                        // 每个节点执行后打印当前拓扑树（带执行标记 ✓）
+                        // 终端环境下可加 ANSI 清屏实现 \b 实时刷新：
+                        //   System.out.print("\033[H\033[2J"); System.out.flush();
+                        treeHolder[0].printTree(ctx.getHistory(), true);
+                    })
+                    .task("detect", ctx -> { return null; }).taskEnd()
+                    .task("process", ctx -> { return null; }).taskEnd()
+                    .task("output", ctx -> { return null; }).taskEnd()
+                    .build();
+
+            PipelineContext<?> treeCtx = treeHolder[0].execute("input");
+            boolean treeOk = treeCtx.getHistory().size() == 3;
+            printResult("onDraw tree refresh", treeOk);
+            return ok && treeOk;
+        } catch (Exception e) {
+            log.error("testOnDraw failed", e);
             return false;
         }
     }
