@@ -252,8 +252,8 @@ public class PipelineCallbackExample {
 
             treeHolder[0] = PipelineBuilder.newBuilder("image-pipeline")
                     .onDraw(ctx -> treeHolder[0].drawTree(ctx.getHistory(), true))
-                    .task("load", ctx -> { sleep(800); return "loaded"; }).taskEnd()
-                    .task("validate", ctx -> { sleep(600); return "valid"; }).taskEnd()
+                    .task("load", ctx -> { sleep(800); return null; }).taskEnd()
+                    .task("validate", ctx -> { sleep(600); return null; }).taskEnd()
                     .fork("process")
                         .startFork("analyze")
                             .step("detect", ctx -> { sleep(600); return null; })
@@ -264,9 +264,9 @@ public class PipelineCallbackExample {
                             .step("sharpen", ctx -> { sleep(600); return null; })
                         .endFork()
                     .endFork()
-                    .task("merge", ctx -> { sleep(500); return "merged"; }).taskEnd()
-                    .task("quality", ctx -> { sleep(500); return "high"; }).exit().taskEnd()
-                    .task("export", ctx -> { sleep(600); return "exported"; }).taskEnd()
+                    .task("merge", ctx -> { sleep(500); return null; }).taskEnd()
+                    .task("quality", ctx -> { sleep(500); return null; }).exit().taskEnd()
+                    .task("export", ctx -> { sleep(600); return null; }).taskEnd()
                     .build();
 
             PipelineContext<?> treeCtx = treeHolder[0].execute("image-data");
