@@ -18,3 +18,4 @@ com.chua.example.pipeline.PipelineTreeExampleSpi
 com.chua.example.pipeline.PipelineWalExampleSpi
 com.chua.example.pipeline.PipelineUnitExampleSpi
 com.chua.example.pipeline.PipelineFaceOrchestrationExampleSpi
+com.chua.example.network.scatter.ScatterClusterExampleSpi
