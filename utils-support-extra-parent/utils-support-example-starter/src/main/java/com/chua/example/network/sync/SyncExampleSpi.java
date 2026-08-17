@@ -134,8 +134,12 @@ public class SyncExampleSpi implements Example {
             for (int i = 0; i < messages; i++) {
                 server.publish("perf/down", "m" + i);
             }
-            boolean downOk = clientGot.await(60, TimeUnit.SECONDS);
+            boolean downOk = clientGot.await(10, TimeUnit.SECONDS);
             long downElapsedMs = (System.nanoTime() - downStart) / 1_000_000;
+            if (!downOk) {
+                log.warn("  [{}] 下行 await 超时: 剩余 {} 条未收到, 服务端连接数 {}",
+                        protocol, clientGot.getCount(), server.getConnectedClients());
+            }
 
             // 客户端 → 服务端：上行吞吐
             long upStart = System.nanoTime();
