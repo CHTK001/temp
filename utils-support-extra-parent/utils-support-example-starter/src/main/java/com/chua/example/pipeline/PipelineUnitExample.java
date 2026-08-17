@@ -79,7 +79,7 @@ public class PipelineUnitExample {
 
             Pipeline pipeline = PipelineBuilder.newBuilder("unit-basic")
                     .task("step1", ctx -> {
-                        ctx.setCurrentData("hello");
+                        ((PipelineContext) ctx).setCurrentData("hello");
                         return null;
                     }).taskEnd()
                     .task("step2", ctx -> {
@@ -118,11 +118,11 @@ public class PipelineUnitExample {
 
             Pipeline pipeline = PipelineBuilder.newBuilder("unit-multiple")
                     .task("stepA", ctx -> {
-                        ctx.setCurrentData("A");
+                        ((PipelineContext) ctx).setCurrentData("A");
                         return null;
                     }).taskEnd()
                     .task("stepB", ctx -> {
-                        ctx.setCurrentData("B");
+                        ((PipelineContext) ctx).setCurrentData("B");
                         return null;
                     }).taskEnd()
                     .task("stepC", ctx -> {
@@ -194,11 +194,11 @@ public class PipelineUnitExample {
 
             Pipeline pipeline = PipelineBuilder.newBuilder("unit-cross")
                     .task("extract", ctx -> {
-                        ctx.setCurrentData("extracted-data");
+                        ((PipelineContext) ctx).setCurrentData("extracted-data");
                         return null;
                     }).taskEnd()
                     .task("transform", ctx -> {
-                        ctx.setCurrentData("transformed-data");
+                        ((PipelineContext) ctx).setCurrentData("transformed-data");
                         return null;
                     }).taskEnd()
                     .task("load", ctx -> {

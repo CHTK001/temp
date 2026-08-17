@@ -82,7 +82,8 @@ public class PipelineRetryExample {
                         if (count < 3) {
                             throw new RuntimeException("Simulated failure #" + count);
                         }
-                        return "success";
+                        // 成功后返回 null 按默认顺序继续（非 null 返回值是路由目标）
+                        return null;
                     }).retry(config).taskEnd()
                     .build();
 
@@ -119,7 +120,8 @@ public class PipelineRetryExample {
                         if (count < 2) {
                             throw new RuntimeException("Simulated failure #" + count);
                         }
-                        return "success";
+                        // 成功后返回 null 按默认顺序继续（非 null 返回值是路由目标）
+                        return null;
                     }).retry(config).taskEnd()
                     .build();
 
@@ -144,11 +146,10 @@ public class PipelineRetryExample {
         try {
             AtomicInteger callCount = new AtomicInteger(0);
 
-            RetryConfig config = RetryConfig.builder()
-                    .maxRetries(3)
-                    .delay(10)
-                    .backoffStrategy(BackoffStrategy.FIBONACCI)
-                    .build();
+            RetryConfig config = new RetryConfig()
+                    .setMaxRetries(3)
+                    .setDelay(10)
+                    .setBackoffStrategy(RetryConfig.BackoffStrategy.FIBONACCI);
 
             Pipeline pipeline = PipelineBuilder.newBuilder("retry-fib")
                     .task("flaky", ctx -> {
@@ -156,7 +157,8 @@ public class PipelineRetryExample {
                         if (count < 2) {
                             throw new RuntimeException("Simulated failure #" + count);
                         }
-                        return "success";
+                        // 成功后返回 null 按默认顺序继续（非 null 返回值是路由目标）
+                        return null;
                     }).retry(config).taskEnd()
                     .build();
 
@@ -180,12 +182,11 @@ public class PipelineRetryExample {
         try {
             AtomicInteger callCount = new AtomicInteger(0);
 
-            RetryConfig config = RetryConfig.builder()
-                    .maxRetries(3)
-                    .delay(10)
-                    .backoffStrategy(BackoffStrategy.FIXED)
-                    .retryOnException(e -> e instanceof IllegalStateException)
-                    .build();
+            RetryConfig config = new RetryConfig()
+                    .setMaxRetries(3)
+                    .setDelay(10)
+                    .setBackoffStrategy(RetryConfig.BackoffStrategy.FIXED)
+                    .setRetryOnException(e -> e instanceof IllegalStateException);
 
             // 测试：抛出 IllegalArgumentException（不在重试条件内），不应重试
             AtomicInteger noRetryCount = new AtomicInteger(0);
@@ -213,7 +214,8 @@ public class PipelineRetryExample {
                         if (count < 2) {
                             throw new IllegalStateException("Retryable #" + count);
                         }
-                        return "success";
+                        // 成功后返回 null 按默认顺序继续（非 null 返回值是路由目标）
+                        return null;
                     }).retry(config).taskEnd()
                     .build();
 
@@ -247,16 +249,15 @@ public class PipelineRetryExample {
             AtomicInteger callCount = new AtomicInteger(0);
             AtomicInteger listenerCount = new AtomicInteger(0);
 
-            RetryConfig config = RetryConfig.builder()
-                    .maxRetries(3)
-                    .delay(10)
-                    .backoffStrategy(BackoffStrategy.FIXED)
-                    .retryListener((attempt, maxRetries, delay, e) -> {
+            RetryConfig config = new RetryConfig()
+                    .setMaxRetries(3)
+                    .setDelay(10)
+                    .setBackoffStrategy(RetryConfig.BackoffStrategy.FIXED)
+                    .setRetryListener((attempt, cause) -> {
                         listenerCount.incrementAndGet();
-                        log.info("Retry listener: attempt={}/{}, delay={}ms, error={}",
-                                attempt, maxRetries, delay, e.getMessage());
-                    })
-                    .build();
+                        log.info("Retry listener: attempt={}, error={}",
+                                attempt, cause.getMessage());
+                    });
 
             Pipeline pipeline = PipelineBuilder.newBuilder("retry-listener")
                     .task("flaky", ctx -> {
@@ -264,7 +265,8 @@ public class PipelineRetryExample {
                         if (count < 3) {
                             throw new RuntimeException("Simulated failure #" + count);
                         }
-                        return "success";
+                        // 成功后返回 null 按默认顺序继续（非 null 返回值是路由目标）
+                        return null;
                     }).retry(config).taskEnd()
                     .build();
 

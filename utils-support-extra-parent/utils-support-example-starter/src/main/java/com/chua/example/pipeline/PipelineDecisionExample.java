@@ -55,7 +55,7 @@ public class PipelineDecisionExample {
                         boolean valid = ctx.getCurrentData() != null;
                         return valid ? "process" : "error";
                     }).taskEnd()
-                    .task("process", ctx -> { sb.append("PROCESSED"); return null; }).taskEnd()
+                    .task("process", ctx -> { sb.append("PROCESSED"); return null; }).exit().taskEnd()
                     .task("error", ctx -> { sb.append("ERROR"); return null; }).exit().taskEnd()
                     .build();
 
@@ -65,7 +65,7 @@ public class PipelineDecisionExample {
 
             // 测试无效数据 → error
             sb.setLength(0);
-            PipelineContext<?> ctx2 = pipeline.execute(null);
+            PipelineContext<?> ctx2 = pipeline.execute((Object) null);
             boolean ok2 = "ERROR".equals(sb.toString());
 
             printResult("two-way branch", ok1 && ok2);
@@ -90,26 +90,25 @@ public class PipelineDecisionExample {
                             default -> "nodeDefault";
                         };
                     }).taskEnd()
-                    .task("nodeA", ctx -> { sb.append("A"); return null; }).taskEnd()
-                    .task("nodeB", ctx -> { sb.append("B"); return null; }).taskEnd()
-                    .task("nodeDefault", ctx -> { sb.append("D"); return null; }).taskEnd()
+                    .task("nodeA", ctx -> { sb.append("A"); return null; }).exit().taskEnd()
+                    .task("nodeB", ctx -> { sb.append("B"); return null; }).exit().taskEnd()
+                    .task("nodeDefault", ctx -> { sb.append("D"); return null; }).exit().taskEnd()
                     .build();
 
-            // 测试路由到 A
-            PipelineContext<?> ctx1 = pipeline.execute(null);
-            ctx1.setAttribute("type", "A");
-            // 重新执行
-            PipelineContext<?> result = PipelineBuilder.newBuilder("multi-way")
-                    .task("route", ctx -> {
-                        String t = ctx.getAttribute("type");
-                        return "A".equals(t) ? "nodeA" : "B".equals(t) ? "nodeB" : "nodeDefault";
-                    }).taskEnd()
-                    .task("nodeA", ctx -> { sb.append("A"); return null; }).taskEnd()
-                    .task("nodeB", ctx -> { sb.append("B"); return null; }).taskEnd()
-                    .task("nodeDefault", ctx -> { sb.append("D"); return null; }).taskEnd()
-                    .build().execute(null);
+            // 测试路由到 A：先设置属性再执行
+            PipelineContext<Object> ctxA = new PipelineContext<>("multi-way", null);
+            ctxA.setAttribute("type", "A");
+            pipeline.execute(ctxA);
+            String routedA = sb.toString();
+            sb.setLength(0);
 
-            boolean ok = "A".equals(sb.toString()) || "B".equals(sb.toString()) || "D".equals(sb.toString());
+            // 测试路由到 B
+            PipelineContext<Object> ctxB = new PipelineContext<>("multi-way", null);
+            ctxB.setAttribute("type", "B");
+            pipeline.execute(ctxB);
+            String routedB = sb.toString();
+
+            boolean ok = "A".equals(routedA) && "B".equals(routedB);
             printResult("multi-way branch", ok);
             return ok;
         } catch (Exception e) {
@@ -126,34 +125,23 @@ public class PipelineDecisionExample {
             Pipeline pipeline = PipelineBuilder.newBuilder("decision-def")
                     .task("check", ctx -> {
                         int score = ctx.getAttribute("score") != null ? (int) ctx.getAttribute("score") : 0;
-                        return score >= 60 ? "pass" : "fail";
+                        // 返回实际节点 ID（branch 映射仅用于可视化，路由由返回值决定）
+                        return score >= 60 ? "passedNode" : "failedNode";
                     })
                     .decision()
                     .branch("pass", "passedNode")
                     .branch("fail", "failedNode")
                     .taskEnd()
-                    .task("passedNode", ctx -> { sb.append("PASS"); return null; }).taskEnd()
+                    .task("passedNode", ctx -> { sb.append("PASS"); return null; }).exit().taskEnd()
                     .task("failedNode", ctx -> { sb.append("FAIL"); return null; }).exit().taskEnd()
                     .build();
 
-            PipelineContext<?> ctx = pipeline.execute(null);
+            // 先设置 score 再执行 → 走 pass 分支
+            PipelineContext<Object> ctx = new PipelineContext<>("decision-def", null);
             ctx.setAttribute("score", 80);
+            pipeline.execute(ctx);
 
-            // 重新构建并执行
-            StringBuilder sb2 = new StringBuilder();
-            Pipeline p2 = PipelineBuilder.newBuilder("decision-def2")
-                    .task("check", ctx2 -> {
-                        int score = ctx2.getAttribute("score") != null ? (int) ctx2.getAttribute("score") : 0;
-                        return score >= 60 ? "passedNode" : "failedNode";
-                    }).taskEnd()
-                    .task("passedNode", ctx2 -> { sb2.append("PASS"); return null; }).taskEnd()
-                    .task("failedNode", ctx2 -> { sb2.append("FAIL"); return null; }).exit().taskEnd()
-                    .build();
-
-            PipelineContext<?> c2 = p2.execute(null);
-            c2.setAttribute("score", 80);
-
-            boolean ok = sb2.length() > 0;
+            boolean ok = "PASS".equals(sb.toString());
             printResult("decision definition API", ok);
             return ok;
         } catch (Exception e) {

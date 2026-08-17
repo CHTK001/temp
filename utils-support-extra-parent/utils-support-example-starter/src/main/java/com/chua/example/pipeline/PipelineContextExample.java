@@ -61,12 +61,12 @@ public class PipelineContextExample {
             Pipeline pipeline = PipelineBuilder.newBuilder("currentdata-demo")
                     .task("step1", ctx -> {
                         // 设置当前数据，传递到下一个节点
-                        ctx.setCurrentData("processed:" + ctx.getCurrentData());
+                        ((PipelineContext) ctx).setCurrentData("processed:" + ctx.getCurrentData());
                         return null;
                     }).taskEnd()
                     .task("step2", ctx -> {
                         // 获取上一个节点设置的数据
-                        String data = ctx.getCurrentData();
+                        String data = (String) ctx.getCurrentData();
                         ctx.setAttribute("result", data);
                         return null;
                     }).taskEnd()
@@ -100,7 +100,7 @@ public class PipelineContextExample {
                     }).taskEnd()
                     .build();
 
-            PipelineContext<?> ctx = pipeline.execute(null);
+            PipelineContext<?> ctx = pipeline.execute((Object) null);
             boolean ok = "shared-value:42".equals(ctx.getAttribute("consumed"));
             printResult("attributes shared across nodes", ok);
             return ok;
@@ -116,7 +116,9 @@ public class PipelineContextExample {
         try {
             Pipeline pipeline = PipelineBuilder.newBuilder("nodeoutputs-demo")
                     .task("producer", ctx -> {
-                        return "node-output-data";
+                        // 引擎将 currentData 存入 nodeOutputs，返回 null 走默认顺序
+                        ((PipelineContext) ctx).setCurrentData("node-output-data");
+                        return null;
                     }).taskEnd()
                     .task("consumer", ctx -> {
                         // 通过 nodeOutputs 获取之前节点的输出
@@ -126,7 +128,7 @@ public class PipelineContextExample {
                     }).taskEnd()
                     .build();
 
-            PipelineContext<?> ctx = pipeline.execute(null);
+            PipelineContext<?> ctx = pipeline.execute((Object) null);
             boolean ok = "node-output-data".equals(ctx.getAttribute("received"));
             printResult("nodeOutputs auto-stored by engine", ok);
             return ok;
@@ -142,7 +144,8 @@ public class PipelineContextExample {
         try {
             Pipeline pipeline = PipelineBuilder.newBuilder("getdata-demo")
                     .task("producer", ctx -> {
-                        return 12345;
+                        ((PipelineContext) ctx).setCurrentData(12345);
+                        return null;
                     }).taskEnd()
                     .task("consumer", ctx -> {
                         // 便捷方法 getData
@@ -152,7 +155,7 @@ public class PipelineContextExample {
                     }).taskEnd()
                     .build();
 
-            PipelineContext<?> ctx = pipeline.execute(null);
+            PipelineContext<?> ctx = pipeline.execute((Object) null);
             boolean ok = Integer.valueOf(12345).equals(ctx.getAttribute("intResult"));
             printResult("getData convenience method", ok);
             return ok;
@@ -185,7 +188,7 @@ public class PipelineContextExample {
                     }).taskEnd()
                     .build();
 
-            PipelineContext<?> ctx = pipeline.execute(null);
+            PipelineContext<?> ctx = pipeline.execute((Object) null);
             boolean localIsNull = Boolean.TRUE.equals(ctx.getAttribute("localIsNull"));
             boolean globalExists = Boolean.TRUE.equals(ctx.getAttribute("globalExists"));
             boolean ok = localIsNull && globalExists;
@@ -207,7 +210,7 @@ public class PipelineContextExample {
                     .task("step3", ctx -> { return null; }).taskEnd()
                     .build();
 
-            PipelineContext<?> ctx = pipeline.execute(null);
+            PipelineContext<?> ctx = pipeline.execute((Object) null);
             boolean ok = ctx.getHistory().size() == 3
                     && "step1".equals(ctx.getHistory().get(0))
                     && "step2".equals(ctx.getHistory().get(1))

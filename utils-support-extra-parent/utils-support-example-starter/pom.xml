@@ -513,15 +513,11 @@
                 <configuration>
                     <classpathScope>runtime</classpathScope>
                     <mainClass>com.chua.example.runner.ExampleRunner</mainClass>
+                    <arguments>
+                        <argument>${exec.args}</argument>
+                    </arguments>
                     <jvmArgs>
-                        <jvmArg>--add-opens=java.base/java.lang=ALL-UNNAMED</jvmArg>
-                        <jvmArg>--add-opens=java.base/java.nio=ALL-UNNAMED</jvmArg>
-                        <jvmArg>--add-opens=java.base/java.lang.reflect=ALL-UNNAMED</jvmArg>
-                        <jvmArg>--add-opens=java.base/java.io=ALL-UNNAMED</jvmArg>
-                        <jvmArg>--add-opens=java.base/java.util=ALL-UNNAMED</jvmArg>
-                        <jvmArg>--add-opens=java.base/sun.nio.ch=ALL-UNNAMED</jvmArg>
-                        <jvmArg>--add-exports=java.base/sun.nio.ch=ALL-UNNAMED</jvmArg>
-                        <jvmArg>--add-exports=java.base/java.lang.invoke=ALL-UNNAMED</jvmArg>
+                        <jvmArg>--enable-preview</jvmArg>
                     </jvmArgs>
                 </configuration>
             </plugin>
@@ -572,6 +568,8 @@
                         <include>**/network/perf/*.java</include>
                         <!-- HTTP HttpServer 示例（HttpServerExampleSpi） -->
                         <include>**/network/http/*.java</include>
+                        <!-- Pipeline 流水线示例（PipelineBasicExample/Spi 等 11 组） -->
+                        <include>**/pipeline/*.java</include>
                                             </includes>
                 </configuration>
             </plugin>

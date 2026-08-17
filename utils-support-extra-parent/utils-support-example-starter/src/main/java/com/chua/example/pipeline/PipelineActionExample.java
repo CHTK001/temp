@@ -68,7 +68,7 @@ public class PipelineActionExample {
                     .task("target", ctx -> { sb.append("T"); return null; }).taskEnd()
                     .build();
 
-            PipelineContext<?> ctx = pipeline.execute(null);
+            PipelineContext<?> ctx = pipeline.execute((Object) null);
             boolean ok = "ST".equals(sb.toString()) && ctx.getHistory().size() == 2;
             printResult("JUMP action", ok);
             return ok;
@@ -93,7 +93,7 @@ public class PipelineActionExample {
                     .task("step3", ctx -> { sb.append("C"); return null; }).taskEnd()
                     .build();
 
-            PipelineContext<?> ctx = pipeline.execute(null);
+            PipelineContext<?> ctx = pipeline.execute((Object) null);
             boolean ok = "AB".equals(sb.toString()) && ctx.getHistory().size() == 2;
             printResult("EXIT action", ok);
             return ok;
@@ -121,7 +121,7 @@ public class PipelineActionExample {
                     }).taskEnd()
                     .build();
 
-            PipelineContext<?> ctx = pipeline.execute(null);
+            PipelineContext<?> ctx = pipeline.execute((Object) null);
             boolean ok = "R1R2R3".equals(sb.toString()) && ctx.getHistory().size() == 3;
             printResult("REPLAY action", ok);
             return ok;
@@ -151,7 +151,7 @@ public class PipelineActionExample {
                     .task("step3", ctx -> { sb.append("C"); return null; }).taskEnd()
                     .build();
 
-            PipelineContext<?> ctx = pipeline.execute(null);
+            PipelineContext<?> ctx = pipeline.execute((Object) null);
             // step1 → step2 → (PREV) → step1 → step2 → step3
             boolean ok = "ABAB C".replace(" ", "").equals(sb.toString().replace(" ", ""))
                     || sb.toString().contains("A") && sb.toString().contains("B") && sb.toString().contains("C");
@@ -179,7 +179,7 @@ public class PipelineActionExample {
                     .build();
 
             // 第一次执行，到 WAIT 节点挂起
-            PipelineContext<?> ctx = pipeline.execute(null);
+            PipelineContext<?> ctx = pipeline.execute((Object) null);
             boolean waitOk = "AW".equals(sb.toString());
 
             // resume 恢复执行

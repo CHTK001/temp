@@ -124,7 +124,7 @@ public class PipelineBasicExample {
                     .taskEnd()
                     .build();
 
-            PipelineContext<?> ctx = pipeline.execute(null);
+            PipelineContext<?> ctx = pipeline.execute((Object) null);
             boolean ok = "init-process".equals(sb.toString());
             printResult("onStep (Consumer mode)", ok);
             return ok;
@@ -152,7 +152,7 @@ public class PipelineBasicExample {
                     .task("target", ctx -> { sb.append("->target"); return null; }).taskEnd()
                     .build();
 
-            PipelineContext<?> ctx = pipeline.execute(null);
+            PipelineContext<?> ctx = pipeline.execute((Object) null);
             boolean ok = "route->target".equals(sb.toString());
             printResult("step (Function mode with routing)", ok);
             return ok;
@@ -175,7 +175,7 @@ public class PipelineBasicExample {
                     .task("step3", ctx -> { sb.append("C"); return null; }).taskEnd()
                     .build();
 
-            PipelineContext<?> ctx = pipeline.execute(null);
+            PipelineContext<?> ctx = pipeline.execute((Object) null);
             boolean ok = "AB".equals(sb.toString()) && ctx.getHistory().size() == 2;
             printResult("exit terminates pipeline", ok);
             return ok;
@@ -199,7 +199,7 @@ public class PipelineBasicExample {
                     .start("start-here")
                     .build();
 
-            PipelineContext<?> ctx = pipeline.execute(null);
+            PipelineContext<?> ctx = pipeline.execute((Object) null);
             boolean ok = "ST".equals(sb.toString()) && ctx.getHistory().size() == 2;
             printResult("start from specified node", ok);
             return ok;
