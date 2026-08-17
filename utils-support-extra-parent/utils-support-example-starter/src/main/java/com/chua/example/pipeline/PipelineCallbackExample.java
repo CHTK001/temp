@@ -243,18 +243,15 @@ public class PipelineCallbackExample {
                     && drawEvents.get(2).equals("draw:step3@3");
             printResult("onDraw callback (events=" + drawEvents + ")", ok);
 
-            // 2. 演示实时刷新拓扑树：onDraw 中调用 printTree
-            //    终端环境下可用 ANSI 转义序列清屏后重绘，实现实时刷新效果：
-            //    System.out.print("\033[H\033[2J"); System.out.flush();
-            //    pipeline.printTree(ctx.getHistory(), true);
+            // 2. 演示实时刷新拓扑树：onDraw 中调用 drawTree
+            //    drawTree 使用 ANSI 转义序列上移光标后重绘，视觉上始终只有一棵树在实时更新
+            //    终端效果：每个节点执行后，同一棵树原地刷新，已执行节点逐步变为 ✓
             log.info("  [ondraw-tree] 实时刷新拓扑树演示:");
             final Pipeline[] treeHolder = new Pipeline[1];
             treeHolder[0] = PipelineBuilder.newBuilder("ondraw-tree")
                     .onDraw(ctx -> {
-                        // 每个节点执行后打印当前拓扑树（带执行标记 ✓）
-                        // 终端环境下可加 ANSI 清屏实现 \b 实时刷新：
-                        //   System.out.print("\033[H\033[2J"); System.out.flush();
-                        treeHolder[0].printTree(ctx.getHistory(), true);
+                        // drawTree: 原地刷新模式 — ANSI 上移光标 + 重绘，同一棵树实时更新
+                        treeHolder[0].drawTree(ctx.getHistory(), true);
                     })
                     .task("detect", ctx -> { return null; }).taskEnd()
                     .task("process", ctx -> { return null; }).taskEnd()
