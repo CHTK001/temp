@@ -484,4 +484,21 @@ public class TcpProxyExampleSpi implements Example {
             handlerPool.shutdownNow();
         }
     }
+
+    /**
+     * 独立入口：{@code java ... TcpProxyExampleSpi --mode=perf}
+     *
+     * @param args 命令行参数（--key=value）
+     */
+    public static void main(String[] args) {
+        Map<String, String> map = new java.util.HashMap<>();
+        for (String arg : args) {
+            if (arg.startsWith("--")) {
+                String kv = arg.substring(2);
+                int eq = kv.indexOf('=');
+                map.put(eq > 0 ? kv.substring(0, eq) : kv, eq > 0 ? kv.substring(eq + 1) : "");
+            }
+        }
+        new TcpProxyExampleSpi().run(map);
+    }
 }

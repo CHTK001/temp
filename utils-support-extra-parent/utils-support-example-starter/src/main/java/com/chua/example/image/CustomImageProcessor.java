@@ -22,11 +22,11 @@ import com.chua.common.support.spi.annotations.SpiOrder;
  */
 @Spi("image-processor")
 @SpiOrder(200)
-public class TestImageProcessor extends JdkImageProcessor implements ImageProcessor {
+public class CustomImageProcessor extends JdkImageProcessor implements ImageProcessor {
 
     @Override
     public String name() {
-        return "test";
+        return "custom";
     }
 
     @Override

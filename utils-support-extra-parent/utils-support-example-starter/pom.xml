@@ -607,6 +607,8 @@
                         <include>**/network/perf/*.java</include>
                         <!-- HTTP HttpServer 示例（HttpServerExampleSpi） -->
                         <include>**/network/http/*.java</include>
+                        <!-- TCP 反向代理示例（TcpProxyExampleSpi） -->
+                        <include>**/network/proxy/*.java</include>
                         <!-- Scatter 集群示例（ScatterClusterExampleSpi 体系测试） -->
                         <include>**/network/scatter/*.java</include>
                         <!-- Sync 全子类示例（SyncExampleSpi） -->

@@ -23,7 +23,7 @@ import java.util.Map;
  * <p>本示例验证 {@link ImageProcessor} 的 SPI 机制：</p>
  * <ul>
  *   <li>discover 发现：{@code ServiceProvider.of(ImageProcessor.class)} 发现全部实现并按 {@code @SpiOrder} 排序</li>
- *   <li>subclass 子类：自定义 {@link TestImageProcessor} 子类注册后参与优先级竞争</li>
+ *   <li>subclass 子类：自定义 {@link CustomImageProcessor} 子类注册后参与优先级竞争</li>
  *   <li>proxy 代理：{@code getExtensionFactory} 返回按优先级自动降级的代理</li>
  *   <li>degrade 降级：高优先级实现不可用/失败时自动回退到下一实现</li>
  *   <li>all-fail 全败：所有实现失败时抛出异常</li>
@@ -136,7 +136,7 @@ public class ImageProcessorSpiExample {
     }
 
     /**
-     * 能力点 2：自定义 {@link TestImageProcessor} 子类参与 SPI 注册与优先级竞争。
+     * 能力点 2：自定义 {@link CustomImageProcessor} 子类参与 SPI 注册与优先级竞争。
      *
      * @return 通过返回 true
      */

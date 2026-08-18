@@ -21,6 +21,7 @@ com.chua.example.pipeline.PipelineWalExampleSpi
 com.chua.example.pipeline.PipelineUnitExampleSpi
 com.chua.example.pipeline.PipelineFaceOrchestrationExampleSpi
 com.chua.example.network.scatter.ScatterClusterExampleSpi
+com.chua.example.network.proxy.TcpProxyExampleSpi
 com.chua.example.network.sync.SyncExampleSpi
 com.chua.example.ionet.IonetExampleSpi
 com.chua.example.lang.serialize.SerializationBenchmarkExample
