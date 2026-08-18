@@ -8,8 +8,14 @@ import com.chua.common.support.network.rpc.RpcServer;
 import com.chua.example.spi.Example;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * RPC 四实现综合自检（SPI 形式）— 覆盖 {@code native / json / dubbo / sofa}。
@@ -25,7 +31,9 @@ import java.util.Map;
  * </ul>
  *
  * <p>除 echo/add 基础回环外，每种实现还断言<b>异常传播</b>（{@link RpcEchoService#fail(String)}
- * 抛出的远程异常原样传回客户端）与<b>复杂对象传输</b>（{@link RpcPayload} 序列化往返）。</p>
+ * 抛出的远程异常原样传回客户端）、<b>复杂对象传输</b>（{@link RpcPayload} 序列化往返）、
+ * <b>集合传输</b>（{@link RpcEchoService#batch(List)} 列表往返）；native 额外覆盖
+ * <b>并发调用</b>（多线程共享同一代理）。</p>
  *
  * <h2>用法</h2>
  * <pre>
@@ -37,6 +45,9 @@ import java.util.Map;
  *   java ExampleRunner --example=rpc --type=json
  *   java ExampleRunner --example=rpc --type=dubbo
  *   java ExampleRunner --example=rpc --type=sofa
+ *
+ *   # 压测（native 实现，自动调优配置）
+ *   java ExampleRunner --example=rpc --type=bench --threads=16 --seconds=3 --ops=2000
  * </pre>
  *
  * <p><b>注意</b>：SPI 工厂创建的服务端实例不会自动触发 {@code afterPropertiesSet()}
@@ -110,6 +121,7 @@ public class RpcExample implements Example {
             case "json" -> testJson();
             case "dubbo" -> testDubbo();
             case "sofa" -> testSofa();
+            case "bench", "benchmark", "stress", "压测" -> benchmark(args);
             default -> {
                 boolean passed = true;
                 passed &= testNative();
@@ -133,6 +145,152 @@ public class RpcExample implements Example {
         } catch (Exception e) {
             log.warn("    枚举 RPC 实现失败（不影响测试）: {}", e.toString());
         }
+    }
+
+    // ==================== benchmark（压测：自动调优配置 + 并发负载） ====================
+
+    /**
+     * 压测：基于 {@link RpcConsumerConfig#auto()} 自动调优配置，对 native 实现做并发负载测试。
+     *
+     * <p>流程：以 {@code auto} 配置启动服务端与客户端 → 预热 → 指定线程数并发调用，
+     * 统计总调用数、成功率、QPS、平均/最大延迟，并输出分位延迟（P50/P90/P99）。</p>
+     *
+     * @param args 命令行参数：{@code threads}（并发线程数，默认 16）、
+     *             {@code seconds}（压测时长秒，默认 3）、{@code ops}（单线程调用次数，默认 2000）
+     * @return 全部调用成功且 QPS &gt; 0 返回 {@code true}
+     */
+    private boolean benchmark(Map<String, String> args) {
+        int threads = parseInt(args.get("threads"), 16);
+        int seconds = parseInt(args.get("seconds"), 3);
+        int ops = parseInt(args.get("ops"), 2000);
+        log.info("\n[bench] native 压测 (threads={}, seconds={}, ops/thread={})", threads, seconds, ops);
+
+        RpcServer server = null;
+        RpcClient client = null;
+        try {
+            RpcRegistryConfig registry = new RpcRegistryConfig();
+            registry.setProtocol("direct");
+            registry.setAddress("127.0.0.1:" + NATIVE_PORT);
+
+            // 自动调优配置：协议（服务端线程池/缓冲区）+ 消费者（超时/连接数）
+            RpcProtocolConfig protocol = RpcProtocolConfig.auto("native", NATIVE_PORT);
+            server = RpcServer.createService("native", List.of(registry), protocol, APP_NAME);
+            server.afterPropertiesSet();
+            server.register(RpcEchoService.class.getName(), new RpcEchoServiceImpl());
+
+            RpcConsumerConfig consumer = RpcConsumerConfig.auto();
+            log.info("  [auto] 消费者自动调优: timeout={}ms, connectTimeout={}ms, connections={}, retryDelay={}ms",
+                    consumer.getTimeout(), consumer.getConnectTimeout(),
+                    consumer.getConnections(), consumer.getRetryDelay());
+            log.info("  [auto] 协议自动调优: coreThreads={}, maxThreads={}, ioThreads={}, queues={}, buffer={}",
+                    protocol.coreThreads(), protocol.maxThreads(),
+                    protocol.ioThreads(), protocol.queues(), protocol.buffer());
+
+            client = RpcClient.createClient("native", List.of(registry), consumer, APP_NAME);
+            RpcEchoService echo = client.get(RpcEchoService.class);
+
+            // 预热：串行 200 次，建立连接与 JIT 热点
+            log.info("  [warmup] 预热中...");
+            for (int i = 0; i < 200; i++) {
+                echo.echo("warm-" + i);
+            }
+
+            // 并发压测
+            ExecutorService pool = Executors.newFixedThreadPool(threads);
+            CountDownLatch ready = new CountDownLatch(threads);
+            CountDownLatch start = new CountDownLatch(1);
+            CountDownLatch done = new CountDownLatch(threads);
+            AtomicInteger ok = new AtomicInteger();
+            AtomicInteger fail = new AtomicInteger();
+            List<Long> latencies = java.util.Collections.synchronizedList(new ArrayList<>());
+
+            for (int t = 0; t < threads; t++) {
+                final int tid = t;
+                pool.submit(() -> {
+                    ready.countDown();
+                    try {
+                        start.await();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        return;
+                    }
+                    for (int i = 0; i < ops; i++) {
+                        long begin = System.nanoTime();
+                        try {
+                            echo.echo("load-" + tid + "-" + i);
+                            ok.incrementAndGet();
+                        } catch (Exception e) {
+                            fail.incrementAndGet();
+                        }
+                        latencies.add(System.nanoTime() - begin);
+                    }
+                    done.countDown();
+                });
+            }
+            ready.await(10, TimeUnit.SECONDS);
+            long wallBegin = System.nanoTime();
+            start.countDown();
+            done.await(seconds, TimeUnit.SECONDS);
+            long wallElapsedMs = (System.nanoTime() - wallBegin) / 1_000_000;
+            pool.shutdownNow();
+
+            long total = ok.get() + fail.get();
+            long qps = wallElapsedMs > 0 ? total * 1000 / Math.max(wallElapsedMs, 1) : 0;
+            double successRate = total > 0 ? ok.get() * 100.0 / total : 0;
+            long[] sorted = latencies.stream().mapToLong(Long::longValue).sorted().toArray();
+            double avgUs = sorted.length > 0 ? java.util.Arrays.stream(sorted).average().orElse(0) / 1000 : 0;
+            long maxUs = sorted.length > 0 ? sorted[sorted.length - 1] / 1000 : 0;
+            long p50 = percentile(sorted, 50) / 1000;
+            long p90 = percentile(sorted, 90) / 1000;
+            long p99 = percentile(sorted, 99) / 1000;
+
+            log.info("  [result] 总调用={}, 成功={}, 失败={}, 成功率={}%", total, ok.get(), fail.get(),
+                    String.format("%.2f", successRate));
+            log.info("  [result] 墙钟={}ms, QPS={}, 平均延迟={}µs, 最大延迟={}µs",
+                    wallElapsedMs, qps, String.format("%.1f", avgUs), maxUs);
+            log.info("  [result] P50={}µs, P90={}µs, P99={}µs", p50, p90, p99);
+
+            return fail.get() == 0 && qps > 0;
+        } catch (Exception e) {
+            fail("bench 压测异常: " + e);
+            return false;
+        } finally {
+            closeQuietly(client);
+            closeQuietly(server);
+        }
+    }
+
+    /**
+     * 解析整数参数，解析失败或非法时返回默认值。
+     *
+     * @param value  字符串值
+     * @param defVal 默认值
+     * @return 解析后的整数值
+     */
+    private static int parseInt(String value, int defVal) {
+        if (value == null || value.isEmpty()) {
+            return defVal;
+        }
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            return defVal;
+        }
+    }
+
+    /**
+     * 计算有序延迟数组的指定分位数（纳秒）。
+     *
+     * @param sorted 已排序的纳秒数组
+     * @param p      分位（0-100）
+     * @return 分位值（纳秒），空数组返回 0
+     */
+    private static long percentile(long[] sorted, int p) {
+        if (sorted.length == 0) {
+            return 0;
+        }
+        int idx = (int) Math.ceil(p / 100.0 * sorted.length) - 1;
+        return sorted[Math.max(idx, 0)];
     }
 
     // ==================== native（纯 JDK TCP NIO） ====================
@@ -366,6 +524,70 @@ public class RpcExample implements Example {
                 || !batch.get(2).equals("echo:ccc")) {
             throw new AssertionError(label + " batch 集合往返不一致: " + batch);
         }
+    }
+
+    /**
+     * 并发断言：多线程共享同一远程代理并发调用，验证连接复用与线程安全。
+     *
+     * <p>使用 {@code 8} 个线程 × {@code 50} 次调用，每个线程携带独立消息，
+     * 若任一调用结果被串扰（返回了别的线程的消息）或抛异常，则断言失败。</p>
+     *
+     * @param echo  远程代理对象
+     * @param label 实现标识（用于日志与异常消息）
+     * @throws Exception 并发断言失败或线程中断时抛出
+     */
+    private static void assertConcurrent(RpcEchoService echo, String label) throws Exception {
+        int threads = 8;
+        int perThread = 50;
+        ExecutorService pool = Executors.newFixedThreadPool(threads);
+        CountDownLatch ready = new CountDownLatch(threads);
+        CountDownLatch start = new CountDownLatch(1);
+        AtomicInteger success = new AtomicInteger();
+        AtomicInteger failed = new AtomicInteger();
+        List<String> errors = new ArrayList<>();
+
+        try {
+            for (int t = 0; t < threads; t++) {
+                int threadId = t;
+                pool.submit(() -> {
+                    ready.countDown();
+                    try {
+                        start.await();
+                        for (int i = 0; i < perThread; i++) {
+                            String msg = "t" + threadId + "-" + i;
+                            String resp = echo.echo(msg);
+                            if (!("echo:" + msg).equals(resp)) {
+                                synchronized (errors) {
+                                    errors.add("线程" + threadId + " 第" + i + "次串扰: 期望 echo:" + msg + "，实际 " + resp);
+                                }
+                                failed.incrementAndGet();
+                                return;
+                            }
+                            success.incrementAndGet();
+                        }
+                    } catch (Exception e) {
+                        synchronized (errors) {
+                            errors.add("线程" + threadId + " 异常: " + e);
+                        }
+                        failed.incrementAndGet();
+                    }
+                });
+            }
+            ready.await(10, TimeUnit.SECONDS);
+            start.countDown();
+            pool.shutdown();
+            if (!pool.awaitTermination(30, TimeUnit.SECONDS)) {
+                pool.shutdownNow();
+                throw new AssertionError(label + " 并发测试超时未结束");
+            }
+        } finally {
+            pool.shutdownNow();
+        }
+
+        if (failed.get() > 0) {
+            throw new AssertionError(label + " 并发测试失败 " + failed.get() + " 次: " + errors);
+        }
+        log.info("    [并发] {} 线程 × {} 次/线程 = {} 次调用全部成功", threads, perThread, success.get());
     }
 
     /**
