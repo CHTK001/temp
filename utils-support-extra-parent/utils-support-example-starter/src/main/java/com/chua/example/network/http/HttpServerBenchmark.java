@@ -58,22 +58,39 @@ public final class HttpServerBenchmark {
 
     /** 单个压测场景结果 */
     public static final class ScenarioResult {
+        /** 服务器类型 */
         public final String serverType;
+        /** DelayMS */
         public final int delayMs;
+        /** Concurrency */
         public final int concurrency;
+        /** 总数 */
         public final long total;
+        /** Errors */
         public final long errors;
+        /** ElapsedMS */
         public final long elapsedMs;
+        /** RPS */
         public final double rps;
+        /** P50 */
         public final double p50;
+        /** P95 */
         public final double p95;
+        /** P99 */
         public final double p99;
+        /** P999 */
         public final double p999;
+        /** 最大值 */
         public final double max;
+        /** Mean */
         public final double mean;
+        /** Success比率 */
         public final double successRate;
+        /** 开始MEMMB */
         public final long startMemMb;
+        /** PeakMEMMB */
         public final long peakMemMb;
+        /** 结束MEMMB */
         public final long endMemMb;
 
         ScenarioResult(String serverType, int delayMs, int concurrency,

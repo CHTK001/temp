@@ -52,14 +52,22 @@ import java.util.concurrent.atomic.LongAdder;
 @Slf4j
 public class HttpProxyExampleSpi implements Example {
 
+    /** Default_concurrency */
     private static final int DEFAULT_CONCURRENCY = 64;
+    /** Default_requests_per_conn */
     private static final int DEFAULT_REQUESTS_PER_CONN = 300;
+    /** Default_connections */
     private static final int DEFAULT_CONNECTIONS = 32;
+    /** Default_payload_size */
     private static final int DEFAULT_PAYLOAD_SIZE = 128;
 
+    /** Sweep_concurrency */
     private static final int[] SWEEP_CONCURRENCY = {1, 4, 16, 64, 128, 256, 512, 1000, 2000};
+    /** Sweep_requests_per_conn */
     private static final int SWEEP_REQUESTS_PER_CONN = 500;
+    /** Sweep_connections */
     private static final int SWEEP_CONNECTIONS = 256;
+    /** Sweep_payload */
     private static final int SWEEP_PAYLOAD = 128;
 
     @Override
@@ -321,6 +329,7 @@ public class HttpProxyExampleSpi implements Example {
      * 供反向代理过滤器读取。
      */
     private static final class FixedDiscoveryFilter implements ServerFilter {
+        /** Backend端口 */
         private final int backendPort;
 
         FixedDiscoveryFilter(int backendPort) {
@@ -353,7 +362,9 @@ public class HttpProxyExampleSpi implements Example {
      * 把响应体回写到客户端。用于自检 + 性能压测。
      */
     private static final class SimpleForwardFilter implements ServerFilter {
+        /** Backend端口 */
         private final int backendPort;
+        /** 超时秒 */
         private final int timeoutSeconds;
         private volatile HttpClient httpClient;
 

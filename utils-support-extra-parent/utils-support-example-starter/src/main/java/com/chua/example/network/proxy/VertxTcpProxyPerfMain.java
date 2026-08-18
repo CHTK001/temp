@@ -33,7 +33,9 @@ public class VertxTcpProxyPerfMain {
      * 最小回显后端。
      */
     static final class EchoServer implements AutoCloseable {
+        /** 服务器Socket */
         private final ServerSocket serverSocket;
+        /** 池 */
         private final ExecutorService pool = Executors.newVirtualThreadPerTaskExecutor();
         private volatile boolean running = true;
 

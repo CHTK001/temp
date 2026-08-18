@@ -260,8 +260,11 @@ public class ExampleRunner {
      */
     private static final class ReflectionExample implements Example {
 
+        /** 名称 */
         private final String name;
+        /** Display名称 */
         private final String displayName;
+        /** Class名称 */
         private final String className;
 
         ReflectionExample(String name, String displayName, String className) {

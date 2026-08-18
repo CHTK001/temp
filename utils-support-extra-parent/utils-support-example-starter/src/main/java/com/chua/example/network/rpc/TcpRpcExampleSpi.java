@@ -37,10 +37,13 @@ import java.util.concurrent.atomic.AtomicReference;
 public class TcpRpcExampleSpi implements Example {
 
     /** RPC 请求主题 */
+    /** Rpc_req_topic */
     private static final String RPC_REQ_TOPIC = "rpc/echo";
     /** RPC 响应主题 */
+    /** Rpc_resp_topic */
     private static final String RPC_RESP_TOPIC = "rpc/echo-resp";
     /** 服务名（注册中心 key） */
+    /** Service_name */
     private static final String SERVICE_NAME = "rpc/tcp-echo";
 
     @Override

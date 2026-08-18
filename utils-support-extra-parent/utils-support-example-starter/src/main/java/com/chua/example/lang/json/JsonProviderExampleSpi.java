@@ -311,11 +311,14 @@ public class JsonProviderExampleSpi implements Example {
      */
     static class User implements Serializable {
         @JsonName("user_name")
+        /** 名称 */
         private String name;
 
         @JsonIgnore
+        /** 密码 */
         private String password;
 
+        /** AGE */
         private int age;
 
         public User() {

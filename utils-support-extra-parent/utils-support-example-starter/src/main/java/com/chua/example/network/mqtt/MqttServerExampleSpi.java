@@ -38,14 +38,22 @@ import java.util.concurrent.atomic.LongAdder;
 @Slf4j
 public class MqttServerExampleSpi implements Example {
 
+    /** Default_concurrency */
     private static final int DEFAULT_CONCURRENCY = 8;
+    /** Default_requests_per_conn */
     private static final int DEFAULT_REQUESTS_PER_CONN = 200;
+    /** Default_connections */
     private static final int DEFAULT_CONNECTIONS = 8;
+    /** Default_payload_size */
     private static final int DEFAULT_PAYLOAD_SIZE = 256;
 
+    /** Sweep_concurrency */
     private static final int[] SWEEP_CONCURRENCY = {1, 4, 16, 64, 128, 256, 512};
+    /** Sweep_requests_per_conn */
     private static final int SWEEP_REQUESTS_PER_CONN = 500;
+    /** Sweep_connections */
     private static final int SWEEP_CONNECTIONS = 256;
+    /** Sweep_payload */
     private static final int SWEEP_PAYLOAD = 256;
 
     @Override

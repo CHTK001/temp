@@ -27,7 +27,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 public class PipelineWalExample {
 
+    /** Exit_code_success */
     private static final int EXIT_CODE_SUCCESS = 0;
+    /** Exit_code_failure */
     private static final int EXIT_CODE_FAILURE = 1;
 
     public static void main(String[] args) {

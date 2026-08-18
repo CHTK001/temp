@@ -33,6 +33,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class SyncExampleSpi implements Example {
 
     /** 参与自检的 sync 协议子类 */
+    /** Protocols */
     private static final List<String> PROTOCOLS = List.of("tcp", "udp", "kcp", "http", "websocket");
 
     @Override
