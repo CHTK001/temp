@@ -1,5 +1,8 @@
 package com.chua.example.network.rpc;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * {@link RpcEchoService} 的本地实现 — {@link RpcExample} 的服务端注册对象。
  *
@@ -44,6 +47,24 @@ public class RpcEchoServiceImpl implements RpcEchoService {
     @Override
     public RpcPayload echoPayload(RpcPayload payload) {
         return payload;
+    }
+
+    /**
+     * 批量回显：对列表内每个元素前置 {@code echo:} 前缀。
+     *
+     * @param messages 消息列表，可为 {@code null}
+     * @return 回显后的列表，元素个数与输入一致
+     */
+    @Override
+    public List<String> batch(List<String> messages) {
+        if (messages == null) {
+            return new ArrayList<>();
+        }
+        List<String> result = new ArrayList<>(messages.size());
+        for (String message : messages) {
+            result.add("echo:" + message);
+        }
+        return result;
     }
 
     /**

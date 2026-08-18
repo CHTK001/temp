@@ -163,6 +163,7 @@ public class RpcExample implements Example {
             RpcEchoService echo = client.get(RpcEchoService.class);
             assertEcho(echo, "native");
             assertRemoteFail(echo, "native");
+            assertConcurrent(echo, "native");
             pass();
             return true;
         } catch (Exception e) {
@@ -324,7 +325,8 @@ public class RpcExample implements Example {
             try {
                 assertEquals("echo:hello", echo.echo("hello"), label + " echo 返回值");
                 assertEquals(5, echo.add(2, 3), label + " add 返回值");
-                log.info("    echo(\"hello\") = {}, add(2,3) = {}", "echo:hello", 5);
+                assertComplexRoundTrip(echo, label);
+                log.info("    echo(\"hello\") = {}, add(2,3) = {}, payload/batch 往返 OK", "echo:hello", 5);
                 return;
             } catch (Throwable t) {
                 last = t;
@@ -336,6 +338,34 @@ public class RpcExample implements Example {
             throw e;
         }
         throw new AssertionError(label + " 断言失败", last);
+    }
+
+    /**
+     * 复杂场景断言：复杂对象往返 + 集合参数/返回值往返。
+     *
+     * <p>覆盖比 {@code echo/add} 更深的序列化链路：</p>
+     * <ul>
+     *   <li>{@link RpcEchoService#echoPayload(RpcPayload)} — 嵌套字段复杂对象原样往返</li>
+     *   <li>{@link RpcEchoService#batch(List)} — 集合参数、集合返回值、泛型擦除后的元素还原</li>
+     * </ul>
+     *
+     * @param echo  远程代理对象
+     * @param label 实现标识（用于日志与异常消息）
+     */
+    private static void assertComplexRoundTrip(RpcEchoService echo, String label) {
+        RpcPayload sent = new RpcPayload("订单-2026-0818", 42);
+        RpcPayload back = echo.echoPayload(sent);
+        if (!sent.equals(back)) {
+            throw new AssertionError(label + " echoPayload 对象往返不一致: 期望 " + sent + "，实际 " + back);
+        }
+
+        List<String> batch = echo.batch(List.of("a", "bb", "ccc"));
+        if (batch == null || batch.size() != 3
+                || !batch.get(0).equals("echo:a")
+                || !batch.get(1).equals("echo:bb")
+                || !batch.get(2).equals("echo:ccc")) {
+            throw new AssertionError(label + " batch 集合往返不一致: " + batch);
+        }
     }
 
     /**

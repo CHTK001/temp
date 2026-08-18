@@ -1,13 +1,17 @@
 package com.chua.example.network.rpc;
 
+import java.util.List;
+
 /**
  * RPC 回显服务接口 — {@link RpcExample} 的公共测试契约。
  *
  * <p>该接口同时被 native / json / dubbo / sofa 四种 RPC 实现注册与调用，
- * 覆盖两种典型方法形态：</p>
+ * 覆盖典型方法形态：</p>
  * <ul>
  *   <li>{@link #echo(String)} — 字符串参数 + 字符串返回值（序列化往返）</li>
  *   <li>{@link #add(int, int)} — 多基本类型参数 + 基本类型返回值（装箱/拆箱）</li>
+ *   <li>{@link #echoPayload(RpcPayload)} — 复杂对象参数 + 复杂对象返回值（对象序列化往返）</li>
+ *   <li>{@link #batch(List)} — 集合参数 + 集合返回值（泛型擦除与列表序列化）</li>
  * </ul>
  *
  * <h2>注册约定</h2>
@@ -46,6 +50,14 @@ public interface RpcEchoService {
      * @return 原样返回的负载对象
      */
     RpcPayload echoPayload(RpcPayload payload);
+
+    /**
+     * 批量回显：对列表内每个元素前置 {@code echo:} 前缀后原样返回（验证集合参数/返回值序列化）。
+     *
+     * @param messages 消息列表，可为 {@code null}
+     * @return 回显后的列表，元素个数与输入一致
+     */
+    List<String> batch(List<String> messages);
 
     /**
      * 异常传播：抛出一个消息为 {@code <message>} 的 {@link RuntimeException}。

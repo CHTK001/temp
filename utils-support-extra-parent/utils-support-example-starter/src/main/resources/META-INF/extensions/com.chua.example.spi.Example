@@ -26,3 +26,4 @@ com.chua.example.network.sync.SyncExampleSpi
 com.chua.example.ionet.IonetExampleSpi
 com.chua.example.lang.serialize.SerializationBenchmarkExample
 com.chua.example.image.ImageProcessorSpiExampleSpi
+com.chua.example.network.rpc.RpcExample
