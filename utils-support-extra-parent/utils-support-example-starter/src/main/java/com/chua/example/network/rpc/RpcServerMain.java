@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 
 /**
- * 跨进程 RPC 服务端独立启动入口 — 供 {@link RpcExampleTest} 的跨进程用例通过
+ * 跨进程 RPC 服务端独立启动入口 — 供 {@link RpcExample} 的跨进程用例通过
  * {@link ProcessBuilder} 以独立 JVM 启动，验证「服务端与客户端分离进程」场景。
  *
  * <pre>

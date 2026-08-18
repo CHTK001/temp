@@ -610,7 +610,7 @@
                         <include>**/ionet/*.java</include>
 <!-- Pipeline 流水线示例（PipelineBasicExample/Spi 等 11 组） -->
                          <include>**/pipeline/*.java</include>
-                         <!-- ImageProcessor SPI 机制示例（ImageProcessorSpiExample / TestImageProcessor / ImageProcessorSpiExampleSpi） -->
+                         <!-- ImageProcessor SPI 机制示例（ImageProcessorSpiExample / CustomImageProcessor / ImageProcessorSpiExampleSpi） -->
                          <include>**/image/*.java</include>
                                              </includes>
                 </configuration>
