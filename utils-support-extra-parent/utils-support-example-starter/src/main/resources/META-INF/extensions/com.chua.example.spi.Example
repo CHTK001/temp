@@ -22,3 +22,4 @@ com.chua.example.pipeline.PipelineFaceOrchestrationExampleSpi
 com.chua.example.network.scatter.ScatterClusterExampleSpi
 com.chua.example.network.sync.SyncExampleSpi
 com.chua.example.ionet.IonetExampleSpi
+com.chua.example.lang.serialize.SerializationBenchmarkExample
