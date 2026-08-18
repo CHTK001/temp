@@ -613,9 +613,11 @@
                         <include>**/network/sync/*.java</include>
                         <!-- ionet 分布式网络通信示例（IonetExampleSpi） -->
                         <include>**/ionet/*.java</include>
-                        <!-- Pipeline 流水线示例（PipelineBasicExample/Spi 等 11 组） -->
-                        <include>**/pipeline/*.java</include>
-                                            </includes>
+<!-- Pipeline 流水线示例（PipelineBasicExample/Spi 等 11 组） -->
+                         <include>**/pipeline/*.java</include>
+                         <!-- ImageProcessor SPI 机制示例（ImageProcessorSpiExample / TestImageProcessor / ImageProcessorSpiExampleSpi） -->
+                         <include>**/image/*.java</include>
+                                             </includes>
                 </configuration>
             </plugin>
             <plugin>
