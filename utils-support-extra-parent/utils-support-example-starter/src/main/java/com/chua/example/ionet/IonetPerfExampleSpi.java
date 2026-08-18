@@ -41,6 +41,7 @@ public class IonetPerfExampleSpi implements Example {
     public static class PerfAction {
         @ActionMethod(PerfCmd.echo)
         public String echo(String message) {
+            log.info("[PerfAction] 收到请求: {}", message);
             return message;
         }
     }
@@ -128,7 +129,7 @@ public class IonetPerfExampleSpi implements Example {
         try {
             server.start();
             client.connect();
-            if (!client.awaitConnection(10, TimeUnit.SECONDS)) {
+            if (!client.awaitConnection(30, TimeUnit.SECONDS)) {
                 log.error("  ionet 客户端连接超时");
                 return false;
             }
