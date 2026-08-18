@@ -15,6 +15,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -156,29 +157,42 @@ public class RpcExample implements Example {
      * 统计总调用数、成功率、QPS、平均/最大延迟，并输出分位延迟（P50/P90/P99）。</p>
      *
      * @param args 命令行参数：{@code threads}（并发线程数，默认 16）、
-     *             {@code seconds}（压测时长秒，默认 3）、{@code ops}（单线程调用次数，默认 2000）
+     *             {@code seconds}（压测时长秒，默认 3）、{@code ops}（单线程调用次数，默认 2000）、
+     *             {@code protocol}（压测协议：native 默认 / dubbo）
      * @return 全部调用成功且 QPS &gt; 0 返回 {@code true}
      */
     private boolean benchmark(Map<String, String> args) {
         int threads = parseInt(args.get("threads"), 16);
         int seconds = parseInt(args.get("seconds"), 3);
         int ops = parseInt(args.get("ops"), 2000);
-        log.info("\n[bench] native 压测 (threads={}, seconds={}, ops/thread={})", threads, seconds, ops);
+        // 压测协议：native（默认）/ dubbo，走各自端口与注册方式
+        String protocolName = args.getOrDefault("protocol", "native").toLowerCase();
+        log.info("\n[bench] {} 压测 (threads={}, seconds={}, ops/thread={})", protocolName, threads, seconds, ops);
 
         RpcServer server = null;
         RpcClient client = null;
         try {
             RpcRegistryConfig registry = new RpcRegistryConfig();
-            registry.setProtocol("direct");
-            registry.setAddress("127.0.0.1:" + NATIVE_PORT);
+            int port;
+            if ("dubbo".equals(protocolName)) {
+                registry.setProtocol("multicast");
+                registry.setAddress("multicast://224.5.6.7:1234");
+                port = DUBBO_PORT;
+            } else {
+                protocolName = "native";
+                registry.setProtocol("direct");
+                registry.setAddress("127.0.0.1:" + NATIVE_PORT);
+                port = NATIVE_PORT;
+            }
 
             // 自动调优配置：协议（服务端线程池/缓冲区）+ 消费者（超时/连接数）
-            RpcProtocolConfig protocol = RpcProtocolConfig.auto("native", NATIVE_PORT);
-            server = RpcServer.createService("native", List.of(registry), protocol, APP_NAME);
+            RpcProtocolConfig protocol = RpcProtocolConfig.auto(protocolName, port);
+            server = RpcServer.createService(protocolName, List.of(registry), protocol, APP_NAME);
             server.afterPropertiesSet();
             server.register(RpcEchoService.class.getName(), new RpcEchoServiceImpl());
 
             RpcConsumerConfig consumer = RpcConsumerConfig.auto();
+            consumer.setCheck(false);
             log.info("  [auto] 消费者自动调优: timeout={}ms, connectTimeout={}ms, connections={}, retryDelay={}ms",
                     consumer.getTimeout(), consumer.getConnectTimeout(),
                     consumer.getConnections(), consumer.getRetryDelay());
@@ -186,7 +200,7 @@ public class RpcExample implements Example {
                     protocol.coreThreads(), protocol.maxThreads(),
                     protocol.ioThreads(), protocol.queues(), protocol.buffer());
 
-            client = RpcClient.createClient("native", List.of(registry), consumer, APP_NAME);
+            client = RpcClient.createClient(protocolName, List.of(registry), consumer, APP_NAME);
             RpcEchoService echo = client.get(RpcEchoService.class);
 
             // 预热：串行 200 次，建立连接与 JIT 热点
@@ -202,6 +216,7 @@ public class RpcExample implements Example {
             CountDownLatch done = new CountDownLatch(threads);
             AtomicInteger ok = new AtomicInteger();
             AtomicInteger fail = new AtomicInteger();
+            AtomicBoolean deadline = new AtomicBoolean(false);
             List<Long> latencies = java.util.Collections.synchronizedList(new ArrayList<>());
 
             for (int t = 0; t < threads; t++) {
@@ -214,7 +229,12 @@ public class RpcExample implements Example {
                         Thread.currentThread().interrupt();
                         return;
                     }
+                    long deadlineNanos = System.nanoTime() + seconds * 1_000_000_000L;
                     for (int i = 0; i < ops; i++) {
+                        if (System.nanoTime() > deadlineNanos) {
+                            deadline.set(true);
+                            break;
+                        }
                         long begin = System.nanoTime();
                         try {
                             echo.echo("load-" + tid + "-" + i);
@@ -230,7 +250,7 @@ public class RpcExample implements Example {
             ready.await(10, TimeUnit.SECONDS);
             long wallBegin = System.nanoTime();
             start.countDown();
-            done.await(seconds, TimeUnit.SECONDS);
+            done.await(seconds + 10L, TimeUnit.SECONDS);
             long wallElapsedMs = (System.nanoTime() - wallBegin) / 1_000_000;
             pool.shutdownNow();
 
@@ -244,8 +264,8 @@ public class RpcExample implements Example {
             long p90 = percentile(sorted, 90) / 1000;
             long p99 = percentile(sorted, 99) / 1000;
 
-            log.info("  [result] 总调用={}, 成功={}, 失败={}, 成功率={}%", total, ok.get(), fail.get(),
-                    String.format("%.2f", successRate));
+            log.info("  [result] 总调用={}, 成功={}, 失败={}, 成功率={}%{}", total, ok.get(), fail.get(),
+                    String.format("%.2f", successRate), deadline.get() ? " (达到时间上限)" : "");
             log.info("  [result] 墙钟={}ms, QPS={}, 平均延迟={}µs, 最大延迟={}µs",
                     wallElapsedMs, qps, String.format("%.1f", avgUs), maxUs);
             log.info("  [result] P50={}µs, P90={}µs, P99={}µs", p50, p90, p99);
