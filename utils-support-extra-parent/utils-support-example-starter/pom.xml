@@ -526,13 +526,6 @@
             <artifactId>logback-core</artifactId>
             <version>1.2.12</version>
         </dependency>
-        <!-- RPC 回归测试（RpcExampleTest，JUnit 5） -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>5.10.2</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
     <build>
         <extensions>
@@ -620,16 +613,6 @@
                          <!-- ImageProcessor SPI 机制示例（ImageProcessorSpiExample / TestImageProcessor / ImageProcessorSpiExampleSpi） -->
                          <include>**/image/*.java</include>
                                              </includes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <!-- 根 pom 全局属性 skipTests=true 会跳过本模块测试，此处显式覆盖为 false 以执行 RpcExampleTest -->
-                    <skipTests>false</skipTests>
-                    <!-- RPC 实现（dubbo/sofa/native）在 Java 25 下需要反射穿透 -->
-                    <argLine>--add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.nio=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED</argLine>
                 </configuration>
             </plugin>
         </plugins>

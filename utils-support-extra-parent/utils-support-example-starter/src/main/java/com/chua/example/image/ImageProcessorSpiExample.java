@@ -145,19 +145,19 @@ public class ImageProcessorSpiExample {
         List<ImageProcessor> extensions = provider.getNewExtensions("image-processor");
         boolean found = false;
         for (ImageProcessor p : extensions) {
-            if (p instanceof TestImageProcessor) {
+            if (p instanceof CustomImageProcessor) {
                 found = true;
-                log.info("[subclass] 发现自定义子类 TestImageProcessor (order=200)");
+                log.info("[subclass] 发现自定义子类 CustomImageProcessor (order=200)");
             }
         }
         if (!found) {
-            log.warn("[subclass] 未发现 TestImageProcessor 子类");
+            log.warn("[subclass] 未发现 CustomImageProcessor 子类");
         }
-        // 校验优先级：order=200 的 TestImageProcessor 应排在 rust(100) 之前
+        // 校验优先级：order=200 的 CustomImageProcessor 应排在 rust(100) 之前
         boolean ordered = false;
         if (!extensions.isEmpty()) {
-            ordered = extensions.get(0).name().equals("test");
-            log.info("[subclass] 最高优先级实现: {} (期望 test)", extensions.get(0).name());
+            ordered = extensions.get(0).name().equals("custom");
+            log.info("[subclass] 最高优先级实现: {} (期望 custom)", extensions.get(0).name());
         }
         return found && ordered;
     }
@@ -175,13 +175,13 @@ public class ImageProcessorSpiExample {
             return false;
         }
         log.info("[proxy] 代理类型: {}", proxy.getClass().getName());
-        // 代理内部按优先级调用 name()：TestImageProcessor(order=200) 应最先响应
+        // 代理内部按优先级调用 name()：CustomImageProcessor(order=200) 应最先响应
         String name = proxy.name();
-        log.info("[proxy] 代理 name()={} (期望 test)", name);
+        log.info("[proxy] 代理 name()={} (期望 custom)", name);
         // 再验证 new 代理工厂
         ImageProcessor newProxy = provider.getNewExtensionFactory("image-processor");
-        boolean newProxyOk = newProxy != null && "test".equals(newProxy.name());
-        return "test".equals(name) && newProxyOk;
+        boolean newProxyOk = newProxy != null && "custom".equals(newProxy.name());
+        return "custom".equals(name) && newProxyOk;
     }
 
     /**
