@@ -1,4 +1,4 @@
-﻿package com.chua.example.network.http;
+package com.chua.example.network.http;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,4 +31,3 @@ public final class HttpServerBenchmarkMain {
         System.exit(passed ? 0 : 1);
     }
 }
-
