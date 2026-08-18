@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -74,12 +75,13 @@ public class SyncExampleSpi implements Example {
             int messages = Integer.parseInt(args.getOrDefault("messages", "2000"));
             return throughput(protocol, messages);
         }
-        // --mode=rpc 时执行并发请求-响应吞吐测试（真实往返）
+        // --mode=rpc 时执行并发请求-响应吞吐测试（真实往返，支持多客户端连接并发）
         if ("rpc".equalsIgnoreCase(args.getOrDefault("mode", ""))) {
             String protocol = args.getOrDefault("protocol", "tcp");
             int messages = Integer.parseInt(args.getOrDefault("messages", "2000"));
             int threads = Integer.parseInt(args.getOrDefault("threads", "4"));
-            return rpcThroughput(protocol, messages, threads);
+            int clients = Integer.parseInt(args.getOrDefault("clients", "1"));
+            return rpcThroughput(protocol, messages, threads, clients);
         }
         log.info("===== sync 全子类自检开始 =====");
         boolean allPassed = true;
@@ -100,10 +102,10 @@ public class SyncExampleSpi implements Example {
      * @param threads  并发线程数
      * @return 是否通过（全部响应收满即通过）
      */
-    private boolean rpcThroughput(String protocol, int messages, int threads) {
+    private boolean rpcThroughput(String protocol, int messages, int threads, int clients) {
         int port = freePort();
         SyncServer server = null;
-        SyncClient client = null;
+        List<SyncClient> clientList = new ArrayList<>();
         try {
             ServerSetting setting = ServerSetting.builder()
                     .host("127.0.0.1").port(port).protocol(protocol).build();
@@ -131,48 +133,58 @@ public class SyncExampleSpi implements Example {
             });
             server.start();
             String serverUrl = protocol + "://127.0.0.1:" + port;
-            if ("ionet".equals(protocol)) {
-                client = com.chua.ionet.support.client.IonetSyncClient.builder()
-                        .host("127.0.0.1")
-                        .port(port)
-                        .addRegion(new com.chua.example.ionet.IonetExampleSpi.DemoRegion())
-                        .build();
-            } else {
-                client = ServiceProvider.of(SyncClient.class).getNewExtension(protocol, serverUrl);
-            }
-            if (client == null) {
-                log.warn("  [{}] SyncClient 未注册，无法测请求-响应", protocol);
-                return false;
-            }
-            // 客户端计数：收到响应
-            final SyncClient cli = client;
-            CountDownLatch clientGot = new CountDownLatch(messages);
-            client.subscribe("perf/resp", new SyncMessageHandler() {
-                @Override
-                public void handle(String topic, Object message) {
-                    clientGot.countDown();
-                }
-            });
-            client.connect();
 
-            // N 线程并发发送请求
-            long start = System.nanoTime();
-            int perThread = messages / threads;
-            int remainder = messages % threads;
-            Thread[] workers = new Thread[threads];
-            for (int t = 0; t < threads; t++) {
-                int count = perThread + (t < remainder ? 1 : 0);
-                final int tid = t;
-                workers[t] = new Thread(() -> {
-                    for (int i = 0; i < count; i++) {
-                        try {
-                            cli.send("perf/req", "m" + tid + "-" + i);
-                        } catch (Exception e) {
-                            log.warn("  [{}] 请求发送异常: {}", protocol, e.getMessage());
-                        }
+            // 创建 N 个独立客户端连接
+            CountDownLatch clientGot = new CountDownLatch(messages);
+            for (int c = 0; c < clients; c++) {
+                SyncClient client;
+                if ("ionet".equals(protocol)) {
+                    client = com.chua.ionet.support.client.IonetSyncClient.builder()
+                            .host("127.0.0.1")
+                            .port(port)
+                            .addRegion(new com.chua.example.ionet.IonetExampleSpi.DemoRegion())
+                            .build();
+                } else {
+                    client = ServiceProvider.of(SyncClient.class).getNewExtension(protocol, serverUrl);
+                }
+                if (client == null) {
+                    log.warn("  [{}] SyncClient 未注册，无法测请求-响应", protocol);
+                    return false;
+                }
+                // 客户端计数：收到响应
+                client.subscribe("perf/resp", new SyncMessageHandler() {
+                    @Override
+                    public void handle(String topic, Object message) {
+                        clientGot.countDown();
                     }
-                }, "rpc-" + tid);
-                workers[t].start();
+                });
+                client.connect();
+                clientList.add(client);
+            }
+            final int fClients = clients;
+
+            // N 客户端 × threads 线程并发发送请求
+            long start = System.nanoTime();
+            int perThread = messages / (threads * fClients);
+            int remainder = messages % (threads * fClients);
+            Thread[] workers = new Thread[threads * fClients];
+            for (int c = 0; c < fClients; c++) {
+                final SyncClient cli = clientList.get(c);
+                for (int t = 0; t < threads; t++) {
+                    int idx = c * threads + t;
+                    int count = perThread + (idx < remainder ? 1 : 0);
+                    final int tid = idx;
+                    workers[idx] = new Thread(() -> {
+                        for (int i = 0; i < count; i++) {
+                            try {
+                                cli.send("perf/req", "m" + tid + "-" + i);
+                            } catch (Exception e) {
+                                log.warn("  [{}] 请求发送异常: {}", protocol, e.getMessage());
+                            }
+                        }
+                    }, "rpc-c" + c + "-t" + tid);
+                    workers[idx].start();
+                }
             }
             for (Thread w : workers) {
                 try {
@@ -183,14 +195,14 @@ public class SyncExampleSpi implements Example {
             boolean ok = clientGot.await(30, TimeUnit.SECONDS);
             long elapsedMs = (System.nanoTime() - start) / 1_000_000;
             double ops = ok ? messages * 1000.0 / Math.max(elapsedMs, 1) : 0;
-            log.info("  [{}] 请求-响应吞吐({}线程): {} 请求/{}ms = {} rpc/s, 收到 {} 条",
-                    protocol, threads, messages, elapsedMs, Math.round(ops), clientGot.getCount());
+            log.info("  [{}] 请求-响应吞吐({}客户端×{}线程): {} 请求/{}ms = {} rpc/s, 剩余 {} 条",
+                    protocol, fClients, threads, messages, elapsedMs, Math.round(ops), clientGot.getCount());
             return ok;
         } catch (Exception e) {
             log.error("  [{}] 请求-响应吞吐测试异常: {}", protocol, e.getMessage(), e);
             return false;
         } finally {
-            if (client != null) {
+            for (SyncClient client : clientList) {
                 try {
                     client.close();
                 } catch (Exception ignored) {

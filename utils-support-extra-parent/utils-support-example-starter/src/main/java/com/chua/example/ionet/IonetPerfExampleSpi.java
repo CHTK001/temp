@@ -79,6 +79,14 @@ public class IonetPerfExampleSpi implements Example {
         }
 
         /**
+         * 发送单条请求（多线程并发时使用）。
+         */
+        public void sendOne() {
+            CmdInfo cmd = IonetCmd.of(PerfCmd.cmd, PerfCmd.echo);
+            ofRequestCommand(cmd).execute();
+        }
+
+        /**
          * 等待全部响应。
          *
          * @param timeout 超时秒数
@@ -112,8 +120,10 @@ public class IonetPerfExampleSpi implements Example {
     @Override
     public boolean run(Map<String, String> args) {
         int messages = Integer.parseInt(args.getOrDefault("messages", "2000"));
+        int threads = Integer.parseInt(args.getOrDefault("threads", "1"));
         int port = 10100 + (int) (Math.random() * 1000);
-        log.info("===== ionet-perf 真实链路吞吐开始: messages={} port={} =====", messages, port);
+        log.info("===== ionet-perf 真实链路吞吐开始: messages={} threads={} port={} =====",
+                messages, threads, port);
 
         IonetServer server = IonetServer.builder()
                 .port(port)
@@ -133,15 +143,40 @@ public class IonetPerfExampleSpi implements Example {
                 log.error("  ionet 客户端连接超时");
                 return false;
             }
-            log.info("  客户端已连接，开始发送 {} 条请求...", messages);
+            log.info("  客户端已连接，{} 线程并发发送 {} 条请求...", threads, messages);
 
             long start = System.nanoTime();
-            region.sendBatch(messages);
+            if (threads <= 1) {
+                region.sendBatch(messages);
+            } else {
+                int perThread = messages / threads;
+                int remainder = messages % threads;
+                Thread[] workers = new Thread[threads];
+                for (int t = 0; t < threads; t++) {
+                    int count = perThread + (t < remainder ? 1 : 0);
+                    workers[t] = new Thread(() -> {
+                        for (int i = 0; i < count; i++) {
+                            try {
+                                region.sendOne();
+                            } catch (Exception e) {
+                                log.warn("  ionet 请求发送异常: {}", e.getMessage());
+                            }
+                        }
+                    }, "ionet-perf-" + t);
+                    workers[t].start();
+                }
+                for (Thread w : workers) {
+                    try {
+                        w.join();
+                    } catch (InterruptedException ignored) {
+                    }
+                }
+            }
             boolean ok = region.awaitAll(30);
             long elapsedMs = (System.nanoTime() - start) / 1_000_000;
             double ops = ok ? messages * 1000.0 / Math.max(elapsedMs, 1) : 0;
-            log.info("  [ionet] Action 真实链路吞吐: {} 条/{}ms = {} ops/s, 收到 {} 条",
-                    messages, elapsedMs, Math.round(ops), region.received.get());
+            log.info("  [ionet] Action 真实链路吞吐({}线程): {} 条/{}ms = {} ops/s, 收到 {} 条",
+                    threads, messages, elapsedMs, Math.round(ops), region.received.get());
             return ok && region.received.get() == messages;
         } catch (Exception e) {
             log.error("  ionet-perf 异常: {}", e.getMessage(), e);
