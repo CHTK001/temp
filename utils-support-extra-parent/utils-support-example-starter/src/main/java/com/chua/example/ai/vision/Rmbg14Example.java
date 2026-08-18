@@ -22,6 +22,7 @@ import java.nio.file.Path;
 @Slf4j
 public class Rmbg14Example {
 
+    /** Test_size */
     private static final int TEST_SIZE = 256;
 
     public static void main(String[] args) {

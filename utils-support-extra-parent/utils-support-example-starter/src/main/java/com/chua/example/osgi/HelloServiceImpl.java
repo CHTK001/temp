@@ -7,6 +7,7 @@ package com.chua.example.osgi;
  * @since 4.0.0.42
  */
 public final class HelloServiceImpl implements HelloService {
+    /** Greeting */
     private final String greeting;
 
     public HelloServiceImpl() {

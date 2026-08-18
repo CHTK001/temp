@@ -53,7 +53,9 @@ import java.util.*;
 @Slf4j
 public class PipelineFaceOrchestrationExample {
 
+    /** Exit_code_success */
     private static final int EXIT_CODE_SUCCESS = 0;
+    /** Exit_code_failure */
     private static final int EXIT_CODE_FAILURE = 1;
 
     // ==================== 模拟数据模型 ====================

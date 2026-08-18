@@ -278,30 +278,35 @@ public class ProtobufSerializerExampleSpi implements Example {
          * 用户名
          */
         @Tag(1)
+        /** 名称 */
         private String name;
 
         /**
          * 年龄
          */
         @Tag(2)
+        /** AGE */
         private int age;
 
         /**
          * 邮箱
          */
         @Tag(3)
+        /** Email */
         private String email;
 
         /**
          * 是否活跃
          */
         @Tag(4)
+        /** 是否激活 */
         private boolean active;
 
         /**
          * 标签集合
          */
         @Tag(5)
+        /** Tags */
         private List<String> tags = new ArrayList<>();
     }
 
@@ -314,18 +319,21 @@ public class ProtobufSerializerExampleSpi implements Example {
          * 订单ID
          */
         @Tag(1)
+        /** 排序ID */
         private String orderId;
 
         /**
          * 金额
          */
         @Tag(2)
+        /** Amount */
         private double amount;
 
         /**
          * 买家
          */
         @Tag(3)
+        /** Buyer */
         private User buyer;
     }
 

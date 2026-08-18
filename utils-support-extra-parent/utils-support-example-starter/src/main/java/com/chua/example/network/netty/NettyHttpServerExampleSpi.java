@@ -45,14 +45,22 @@ import java.util.concurrent.atomic.LongAdder;
 @Slf4j
 public class NettyHttpServerExampleSpi implements Example {
 
+    /** Default_concurrency */
     private static final int DEFAULT_CONCURRENCY = 256;
+    /** Default_requests_per_conn */
     private static final int DEFAULT_REQUESTS_PER_CONN = 1000;
+    /** Default_connections */
     private static final int DEFAULT_CONNECTIONS = 64;
+    /** Default_payload_size */
     private static final int DEFAULT_PAYLOAD_SIZE = 128;
 
+    /** Sweep_concurrency */
     private static final int[] SWEEP_CONCURRENCY = {1, 4, 16, 64, 128, 256, 512, 1000, 2000};
+    /** Sweep_requests_per_conn */
     private static final int SWEEP_REQUESTS_PER_CONN = 500;
+    /** Sweep_connections */
     private static final int SWEEP_CONNECTIONS = 256;
+    /** Sweep_payload */
     private static final int SWEEP_PAYLOAD = 128;
 
     @Override

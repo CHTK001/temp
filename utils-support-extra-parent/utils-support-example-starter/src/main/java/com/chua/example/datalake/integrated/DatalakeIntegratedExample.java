@@ -214,7 +214,9 @@ public class DatalakeIntegratedExample {
      * 注：OSHI 已通过 datalake-parent 传递依赖进入 example-starter。
      */
     public static class SystemMetricsSource implements DataSyncAgentSource {
+        /** 来源ID */
         private final String sourceId;
+        /** 输入ID */
         private final String inputId;
 
         public SystemMetricsSource(String sourceId, String inputId) {
@@ -281,8 +283,11 @@ public class DatalakeIntegratedExample {
      * 这一层桥接让 datasync scheduler 的 publish 间接触发 datalake pipeline。
      */
     public static class MetricSinkAdapter implements DataSyncAgentSink {
+        /** SinkID */
         private final String sinkId;
+        /** 引擎 */
         private final com.chua.datalake.support.spi.pipeline.PipelineEngine engine;
+        /** 计数器 */
         private final AtomicInteger counter = new AtomicInteger();
 
         public MetricSinkAdapter(String sinkId,

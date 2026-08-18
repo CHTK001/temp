@@ -11,10 +11,15 @@ import com.chua.common.support.lang.datasource.engine.EngineDataSource;
  */
 public class SimpleEngineDataSource implements EngineDataSource<Object> {
 
+    /** 名称 */
     private final String name;
+    /** URL */
     private final String url;
+    /** Username */
     private final String username;
+    /** 密码 */
     private final String password;
+    /** 来源 */
     private Object source;
 
     public SimpleEngineDataSource(String url) {

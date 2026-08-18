@@ -1,9 +1,10 @@
-package com.chua.example.network.http;
+﻿package com.chua.example.network.http;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * @author CH
  * 直接运行 HttpServer 全子类压测的入口(绕开 ExampleRunner 的 SPI 注册)。
  */
 public final class HttpServerBenchmarkMain {
@@ -30,3 +31,4 @@ public final class HttpServerBenchmarkMain {
         System.exit(passed ? 0 : 1);
     }
 }
+

@@ -85,10 +85,14 @@ public final class PerfReport {
      */
     public static final class ResourceMonitor {
 
+        /** 开始usedMB */
         private final long startUsedMb;
+        /** 开始nanos */
         private final long startNanos;
+        /** CPUPCT */
         private final List<Double> cpuPct = new ArrayList<>();
         private volatile boolean running = true;
+        /** Sampler */
         private final Thread sampler;
         private volatile long peakUsedMb;
 
@@ -264,12 +268,19 @@ public final class PerfReport {
     }
 
     public static class SweepRow {
+        /** Concurrency */
         public final int concurrency;
+        /** Connections */
         public final int connections;
+        /** RequestsPERconn */
         public final int requestsPerConn;
+        /** 总数 */
         public final long total;
+        /** Errors */
         public final long errors;
+        /** ElapsedMS */
         public final long elapsedMs;
+        /** SortedlatencyNS */
         public final long[] sortedLatencyNs;
 
         public SweepRow(int concurrency, int connections, int requestsPerConn, long total, long errors, long elapsedMs, long[] sortedLatencyNs) {
