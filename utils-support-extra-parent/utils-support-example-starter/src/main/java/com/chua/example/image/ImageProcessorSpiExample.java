@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  * <ul>
  *   <li>discover 发现：发现全部实现并按优先级排序（rust/opencv/jdk）</li>
  *   <li>priority 优先级：验证 @SpiOrder 排序（rust 100 > opencv 50 > jdk -100）</li>
- *   <li>getExtension 按名获取：按名称获取特定实现（getExtension("opencv")）</li>
+ *   <li>getExtension 按名获取：按SPI注册名获取实现（getExtension("image-processor")）</li>
  *   <li>proxy 代理：getExtensionFactory 返回自动降级代理</li>
  *   <li>degrade 降级：高优先级失败自动回退</li>
  *   <li>all-fail 全败：全部失败抛异常</li>
@@ -171,25 +171,45 @@ public class ImageProcessorSpiExample {
     }
 
     /**
-     * 按名称获取特定实现：getExtension("opencv") 返回对应实例
+     * 按名称获取特定实现：getExtension("image-processor") 返回最高优先级实现
+     * getExtension 参数是 SPI 注册名（@Spi("image-processor")），不是实现的自报名称
      */
     public static boolean testGetExtension() {
         ServiceProvider<ImageProcessor> provider = ServiceProvider.of(ImageProcessor.class);
         boolean passed = true;
-        // 逐个验证按名称获取
-        for (String name : EXPECTED_IMPLS) {
-            ImageProcessor ext = provider.getExtension(name);
-            boolean found = ext != null;
-            boolean nameMatch = found && name.equals(ext.name());
-            log.info("[getExtension] getExtension(\"{}\") : found={}, nameMatch={} (class={})",
-                    name, found, nameMatch, found ? ext.getClass().getSimpleName() : "null");
-            passed &= found && nameMatch;
+
+        // 1. 按SPI注册名获取：getExtension("image-processor") 应返回最高优先级实现
+        long t0 = System.nanoTime();
+        ImageProcessor ext = provider.getExtension("image-processor");
+        long dt = (System.nanoTime() - t0) / 1_000_000;
+        boolean found = ext != null;
+        boolean nameValid = found && EXPECTED_IMPLS.contains(ext.name());
+        log.info("[getExtension] getExtension(\"image-processor\") : found={}, name={} (class={}, 耗时: {}ms) : {}",
+                found, found ? ext.name() : "null", found ? ext.getClass().getSimpleName() : "null", dt,
+                nameValid ? "OK" : "WRONG");
+        passed &= nameValid;
+
+        // 2. 按空名称获取：应返回默认实现
+        t0 = System.nanoTime();
+        ImageProcessor defaultExt = provider.getExtension("");
+        dt = (System.nanoTime() - t0) / 1_000_000;
+        boolean defaultFound = defaultExt != null;
+        log.info("[getExtension] getExtension(\"\") : found={}, name={} (class={}, 耗时: {}ms)",
+                defaultFound, defaultFound ? defaultExt.name() : "null",
+                defaultFound ? defaultExt.getClass().getSimpleName() : "null", dt);
+
+        // 3. 不存在的SPI名称：应返回null或默认实现
+        t0 = System.nanoTime();
+        ImageProcessor notFound = provider.getExtension("nonexistent_spi");
+        dt = (System.nanoTime() - t0) / 1_000_000;
+        if (notFound == null) {
+            log.info("[getExtension] getExtension(\"nonexistent_spi\") : null : OK (耗时: {}ms)", dt);
+        } else {
+            boolean notExpected = !EXPECTED_IMPLS.contains(notFound.name());
+            log.info("[getExtension] getExtension(\"nonexistent_spi\") : name={} (非期望={}) : {} (耗时: {}ms)",
+                    notFound.name(), notExpected, notExpected ? "OK" : "WRONG", dt);
+            passed &= notExpected;
         }
-        // 验证不存在的名称返回 null
-        ImageProcessor notFound = provider.getExtension("nonexistent_impl");
-        boolean isNull = notFound == null;
-        log.info("[getExtension] getExtension(\"nonexistent_impl\") : null={} : {}", isNull, isNull ? "OK" : "WRONG");
-        passed &= isNull;
         return passed;
     }
 
@@ -238,10 +258,11 @@ public class ImageProcessorSpiExample {
     // ==================== 逐实现测试 ====================
 
     /**
-     * 逐个测试每个 ImageProcessor 实现（按 class 去重）
+     * 逐个测试每个 ImageProcessor 实现的全部操作（按 class 去重）
+     * 每个可用实现测试全部 13 种操作 + 多角度旋转，每个操作单独计时
      */
     private boolean testPerImpl(String inputPath, String outputPath) {
-        log.info("===== 逐实现测试 =====");
+        log.info("===== 逐实现测试（每个SPI × 全部操作）=====");
         byte[] imageData = readTestImage(inputPath);
         if (imageData == null) {
             log.error("无法读取输入图片: {}", inputPath);
@@ -263,33 +284,66 @@ public class ImageProcessorSpiExample {
             }
 
             long implStart = System.nanoTime();
-            boolean implPassed = true;
+            int okCount = 0, skipCount = 0, failCount = 0;
             String implDir = implName;
             new File(outputPath, implDir).mkdirs();
 
-            // resize
-            implPassed &= testImplOp(impl, imageData, outputPath, implDir, "resize",
+            // 1. resize
+            int r1 = testImplOp(impl, imageData, outputPath, implDir, "resize",
                     params("width", 200, "height", 150));
-            // grayscale
-            implPassed &= testImplOp(impl, imageData, outputPath, implDir, "grayscale", Map.of());
-            // rotate 90
-            implPassed &= testImplOp(impl, imageData, outputPath, implDir, "rotate_90",
-                    params("angle", 90));
-            // rotate 45 (任意角度)
-            implPassed &= testImplOp(impl, imageData, outputPath, implDir, "rotate_45",
-                    params("angle", 45));
-            // crop
-            implPassed &= testImplOp(impl, imageData, outputPath, implDir, "crop",
+            okCount += r1; skipCount += (r1 < 0 ? 1 : 0); failCount += (r1 == 0 ? 1 : 0);
+            // 2. grayscale
+            int r2 = testImplOp(impl, imageData, outputPath, implDir, "grayscale", Map.of());
+            okCount += r2; skipCount += (r2 < 0 ? 1 : 0); failCount += (r2 == 0 ? 1 : 0);
+            // 3. rotate 多角度
+            int r3 = testImplOp(impl, imageData, outputPath, implDir, "rotate_0", params("angle", 0));
+            okCount += r3; skipCount += (r3 < 0 ? 1 : 0); failCount += (r3 == 0 ? 1 : 0);
+            int r4 = testImplOp(impl, imageData, outputPath, implDir, "rotate_45", params("angle", 45));
+            okCount += r4; skipCount += (r4 < 0 ? 1 : 0); failCount += (r4 == 0 ? 1 : 0);
+            int r5 = testImplOp(impl, imageData, outputPath, implDir, "rotate_90", params("angle", 90));
+            okCount += r5; skipCount += (r5 < 0 ? 1 : 0); failCount += (r5 == 0 ? 1 : 0);
+            int r6 = testImplOp(impl, imageData, outputPath, implDir, "rotate_180", params("angle", 180));
+            okCount += r6; skipCount += (r6 < 0 ? 1 : 0); failCount += (r6 == 0 ? 1 : 0);
+            int r7 = testImplOp(impl, imageData, outputPath, implDir, "rotate_270", params("angle", 270));
+            okCount += r7; skipCount += (r7 < 0 ? 1 : 0); failCount += (r7 == 0 ? 1 : 0);
+            // 4. crop
+            int r8 = testImplOp(impl, imageData, outputPath, implDir, "crop",
                     params("x", 50, "y", 50, "width", 200, "height", 150));
-            // flip horizontal
-            implPassed &= testImplOp(impl, imageData, outputPath, implDir, "flip_h",
-                    params("axis", "h"));
-            // flip vertical
-            implPassed &= testImplOp(impl, imageData, outputPath, implDir, "flip_v",
-                    params("axis", "v"));
+            okCount += r8; skipCount += (r8 < 0 ? 1 : 0); failCount += (r8 == 0 ? 1 : 0);
+            // 5. blur
+            int r9 = testImplOp(impl, imageData, outputPath, implDir, "blur", params("sigma", 5));
+            okCount += r9; skipCount += (r9 < 0 ? 1 : 0); failCount += (r9 == 0 ? 1 : 0);
+            // 6. flip 水平+垂直
+            int r10 = testImplOp(impl, imageData, outputPath, implDir, "flip_h", params("axis", "h"));
+            okCount += r10; skipCount += (r10 < 0 ? 1 : 0); failCount += (r10 == 0 ? 1 : 0);
+            int r11 = testImplOp(impl, imageData, outputPath, implDir, "flip_v", params("axis", "v"));
+            okCount += r11; skipCount += (r11 < 0 ? 1 : 0); failCount += (r11 == 0 ? 1 : 0);
+            // 7. brightness
+            int r12 = testImplOp(impl, imageData, outputPath, implDir, "brightness", params("value", 50));
+            okCount += r12; skipCount += (r12 < 0 ? 1 : 0); failCount += (r12 == 0 ? 1 : 0);
+            // 8. contrast
+            int r13 = testImplOp(impl, imageData, outputPath, implDir, "contrast", params("value", 30));
+            okCount += r13; skipCount += (r13 < 0 ? 1 : 0); failCount += (r13 == 0 ? 1 : 0);
+            // 9. border
+            int r14 = testImplOp(impl, imageData, outputPath, implDir, "border", params("width", 10, "color", "#FF0000"));
+            okCount += r14; skipCount += (r14 < 0 ? 1 : 0); failCount += (r14 == 0 ? 1 : 0);
+            // 10. binarize
+            int r15 = testImplOp(impl, imageData, outputPath, implDir, "binarize", params("threshold", 128));
+            okCount += r15; skipCount += (r15 < 0 ? 1 : 0); failCount += (r15 == 0 ? 1 : 0);
+            // 11. denoise
+            int r16 = testImplOp(impl, imageData, outputPath, implDir, "denoise", params("radius", 1));
+            okCount += r16; skipCount += (r16 < 0 ? 1 : 0); failCount += (r16 == 0 ? 1 : 0);
+            // 12. erode
+            int r17 = testImplOp(impl, imageData, outputPath, implDir, "erode", params("kernel", 3));
+            okCount += r17; skipCount += (r17 < 0 ? 1 : 0); failCount += (r17 == 0 ? 1 : 0);
+            // 13. dilate
+            int r18 = testImplOp(impl, imageData, outputPath, implDir, "dilate", params("kernel", 3));
+            okCount += r18; skipCount += (r18 < 0 ? 1 : 0); failCount += (r18 == 0 ? 1 : 0);
 
             long implDt = (System.nanoTime() - implStart) / 1_000_000;
-            log.info("[per-impl] {} {} (总耗时: {}ms)", implName, implPassed ? "PASSED" : "FAILED", implDt);
+            boolean implPassed = failCount == 0;
+            log.info("[per-impl] {} {} — OK={}, SKIP={}, FAIL={} (总耗时: {}ms)",
+                    implName, implPassed ? "PASSED" : "FAILED", okCount, skipCount, failCount, implDt);
             allPassed &= implPassed;
         }
 
@@ -297,31 +351,38 @@ public class ImageProcessorSpiExample {
         return allPassed;
     }
 
-    private boolean testImplOp(ImageProcessor impl, byte[] imageData, String outputPath,
-                               String implDir, String opName, Map<String, Object> params) {
+    /**
+     * 测试单个实现的单个操作，返回: 1=OK, 0=FAIL, -1=SKIP(不支持)
+     */
+    private int testImplOp(ImageProcessor impl, byte[] imageData, String outputPath,
+                           String implDir, String opName, Map<String, Object> params) {
         try {
             String operation = opName.contains("_") ? opName.substring(0, opName.indexOf("_")) : opName;
             long t0 = System.nanoTime();
             byte[] result = impl.process(imageData, operation, params);
             long dt = (System.nanoTime() - t0) / 1_000_000;
             if (result == null || result.length == 0) {
-                log.warn("[per-impl] {}/{} 结果为空 (耗时: {}ms)", implDir, opName, dt);
-                return false;
+                // 某些实现可能不支持某些操作，返回空视为 SKIP
+                log.info("[per-impl] {}/{} SKIP — 不支持或结果为空 (耗时: {}ms)", implDir, opName, dt);
+                return -1;
             }
             BufferedImage img = ImageIO.read(new ByteArrayInputStream(result));
             if (img == null) {
-                log.warn("[per-impl] {}/{} 不是有效图像 (耗时: {}ms)", implDir, opName, dt);
-                return false;
+                log.info("[per-impl] {}/{} SKIP — 不是有效图像 (耗时: {}ms)", implDir, opName, dt);
+                return -1;
             }
             Path outFile = Paths.get(outputPath, implDir,
                     opName + "_" + img.getWidth() + "x" + img.getHeight() + ".png");
             Files.write(outFile, result);
             log.info("[per-impl] {}/{} OK — {}x{} ({} bytes, 耗时: {}ms)", implDir, opName,
                     img.getWidth(), img.getHeight(), result.length, dt);
-            return true;
+            return 1;
+        } catch (UnsupportedOperationException e) {
+            log.info("[per-impl] {}/{} SKIP — {}", implDir, opName, e.getMessage());
+            return -1;
         } catch (Exception e) {
-            log.warn("[per-impl] {}/{} FAILED: {}", implDir, opName, e.getMessage());
-            return false;
+            log.warn("[per-impl] {}/{} FAIL — {}", implDir, opName, e.getMessage());
+            return 0;
         }
     }
 

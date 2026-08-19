@@ -193,6 +193,12 @@ public class RpcExample implements Example {
 
             RpcConsumerConfig consumer = RpcConsumerConfig.auto();
             consumer.setCheck(false);
+            // 同 JVM 直调：跳过网络与序列化，仅用于压测无序列化方案的极限吞吐
+            boolean inline = "true".equalsIgnoreCase(args.getOrDefault("inline", "false"));
+            consumer.setInline(inline);
+            if (inline) {
+                log.info("  [inline] 同 JVM 直调已启用（零网络、零序列化）");
+            }
             log.info("  [auto] 消费者自动调优: timeout={}ms, connectTimeout={}ms, connections={}, retryDelay={}ms",
                     consumer.getTimeout(), consumer.getConnectTimeout(),
                     consumer.getConnections(), consumer.getRetryDelay());

@@ -616,9 +616,11 @@
                         <include>**/ionet/*.java</include>
 <!-- Pipeline 流水线示例（PipelineBasicExample/Spi 等 11 组） -->
                          <include>**/pipeline/*.java</include>
-                         <!-- ImageProcessor SPI 机制示例（ImageProcessorSpiExample / CustomImageProcessor / ImageProcessorSpiExampleSpi） -->
-                         <include>**/image/*.java</include>
-                                             </includes>
+<!-- ImageProcessor SPI 机制示例（ImageProcessorSpiExample / CustomImageProcessor / ImageProcessorSpiExampleSpi） -->
+                          <include>**/image/*.java</include>
+                          <!-- OCR 管线示例（OcrPipelineExample） -->
+                          <include>**/ocr/*.java</include>
+                                              </includes>
                 </configuration>
             </plugin>
         </plugins>
