@@ -339,34 +339,40 @@ public class ProtobufSerializerExampleSpi implements Example {
 
     // ========== 断言辅助方法 ==========
 
+    /** AssertTrue */
     private static void assertTrue(boolean condition, String msg) {
         if (!condition) {
             throw new AssertionError(msg);
         }
     }
 
+    /** AssertNotNull */
     private static void assertNotNull(Object o, String msg) {
         if (o == null) {
             throw new AssertionError(msg);
         }
     }
 
+    /** Assert判断相等 */
     private static void assertEquals(Object expected, Object actual, String msg) {
         if (expected == null ? actual != null : !expected.equals(actual)) {
             throw new AssertionError(msg + " — 期望 " + expected + "，实际 " + actual);
         }
     }
 
+    /** Assert判断相等 */
     private static void assertEquals(double expected, double actual, double delta, String msg) {
         if (Math.abs(expected - actual) > delta) {
             throw new AssertionError(msg + " — 期望 " + expected + "，实际 " + actual);
         }
     }
 
+    /** Pass */
     private static void pass() {
         log.info("  ✓ 通过");
     }
 
+    /** Fail */
     private static void fail(String msg) {
         log.info("  ✗ 失败: {}", msg);
     }

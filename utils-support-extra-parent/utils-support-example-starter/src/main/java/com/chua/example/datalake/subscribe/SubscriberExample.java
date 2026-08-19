@@ -54,6 +54,7 @@ public class SubscriberExample {
      */
     private static final String TEST_DIR = System.getProperty("java.io.tmpdir") + "/datalake-sub-example-" + System.currentTimeMillis();
 
+    /** Main */
     public static void main(String[] args) {
         CommandLine cli = CommandLine.parse(args)
                 .program("SubscriberExample")
@@ -121,6 +122,7 @@ public class SubscriberExample {
         }
     }
 
+    /** SampleEnvelope */
     private static DataEnvelope sampleEnvelope() {
         Map<String, Object> data = new HashMap<>();
         data.put("id", 1);
@@ -132,10 +134,12 @@ public class SubscriberExample {
     }
 
     @SuppressWarnings("unused")
+    /** IgnoredMono */
     private static Mono<Void> ignoredMono() {
         return Mono.empty();
     }
 
+    /** PrintResult */
     private static void printResult(String name, boolean passed) {
         log.info("{}{}", (passed ? "[PASS]" : "[FAIL]"), name);
     }

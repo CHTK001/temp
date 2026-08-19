@@ -53,10 +53,12 @@ public class VertxTcpProxyPerfMain {
             });
         }
 
+        /** 开始 */
         static EchoServer start(int port) throws IOException {
             return new EchoServer(port);
         }
 
+        /** 处理 */
         private void handle(Socket socket) {
             try (socket) {
                 InputStream in = socket.getInputStream();
@@ -76,6 +78,7 @@ public class VertxTcpProxyPerfMain {
         }
 
         @Override
+        /** 关闭 */
         public void close() {
             running = false;
             try {
@@ -86,6 +89,7 @@ public class VertxTcpProxyPerfMain {
         }
     }
 
+    /** Main */
     public static void main(String[] args) throws Exception {
         int concurrency = Integer.parseInt(args.length > 0 ? args[0] : "64");
         int requestsPerConn = 500;

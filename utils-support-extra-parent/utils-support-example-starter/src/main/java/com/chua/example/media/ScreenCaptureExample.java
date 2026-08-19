@@ -230,6 +230,7 @@ public class ScreenCaptureExample {
         log.info("采集器已关闭，成功采集 {} / {} 帧", successCount, frameCount);
     }
 
+    /** Main */
     public static void main(String[] args) {
         CommandLine cli = CommandLine.parse(args)
                 .program("ScreenCaptureExample")

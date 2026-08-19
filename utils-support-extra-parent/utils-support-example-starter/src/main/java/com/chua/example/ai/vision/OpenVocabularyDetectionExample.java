@@ -38,6 +38,7 @@ public class OpenVocabularyDetectionExample {
             new String[]{"siglip-zero-shot-classification", "SiglipZeroShotClassificationTranslator"}
     );
 
+    /** Main */
     public static void main(String[] args) {
         // 主动扫描 SPI，触发 OnnxModelRegistrar 注册
         ModelRegistry.discoverAll();
@@ -50,6 +51,7 @@ public class OpenVocabularyDetectionExample {
         System.exit(passed ? 0 : 1);
     }
 
+    /** 验证 */
     private static boolean verify(String modelId, String expectedTranslator) {
         ModelRegistry.Entry entry = ModelRegistry.get(modelId);
         if (entry == null) {

@@ -24,21 +24,25 @@ import java.util.Map;
 public class PipelineUnitExampleSpi implements Example {
 
     @Override
+    /** Name */
     public String name() {
         return "pipeline-unit";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "common";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "Pipeline unit 数据依赖示例（声明式依赖/自动注入/缺失校验/ETL跨节点）";
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         String type = args.getOrDefault("type", "all");
         log.info("PipelineUnitExampleSpi --type={}", type);

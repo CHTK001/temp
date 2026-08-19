@@ -67,6 +67,7 @@ public class OffsetFlowExample {
      */
     private static final String SUB_ID = "test-subscriber-1";
 
+    /** Main */
     public static void main(String[] args) {
         CommandLine cli = CommandLine.parse(args)
                 .program("OffsetFlowExample")
@@ -203,6 +204,7 @@ public class OffsetFlowExample {
         }
     }
 
+    /** PrintResult */
     private static void printResult(String name, boolean passed) {
         log.info("{}{}", (passed ? "[PASS]" : "[FAIL]"), name);
     }

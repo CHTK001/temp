@@ -18,21 +18,25 @@ import java.util.Map;
 public class ScreenCaptureExampleSpi implements Example {
 
     @Override
+    /** Name */
     public String name() {
         return "screen-capture";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "media";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "屏幕捕获自检（robot / ffmpeg 等实现）";
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         String captureType = args.getOrDefault("type", "robot");
         int width = Integer.parseInt(args.getOrDefault("width", "1920"));

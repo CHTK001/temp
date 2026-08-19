@@ -36,6 +36,7 @@ public class PipelineUnitExample {
     /** Exit_code_failure */
     private static final int EXIT_CODE_FAILURE = 1;
 
+    /** Main */
     public static void main(String[] args) {
         String type = PipelineBasicExample.parseType(args);
         boolean passed = runTest(type);
@@ -43,6 +44,7 @@ public class PipelineUnitExample {
         System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
     }
 
+    /** 运行Test */
     public static boolean runTest(String type) {
         boolean passed = true;
         switch (type.toLowerCase()) {
@@ -221,6 +223,7 @@ public class PipelineUnitExample {
         }
     }
 
+    /** PrintResult */
     private static void printResult(String testName, boolean ok) {
         System.out.println((ok ? "[PASS] " : "[FAIL] ") + testName);
     }

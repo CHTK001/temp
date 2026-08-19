@@ -22,11 +22,13 @@ public class ZeroShotClassificationExample {
     /** 失败退出码 */
     private static final int EXIT_CODE_FAILURE = 1;
 
+    /** Main */
     public static void main(String[] args) throws Exception {
         boolean passed = runTest();
         System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
     }
 
+    /** 运行Test */
     public static boolean runTest() throws Exception {
         // 通过参数传递候选类别
         ModelSetting setting = ModelSetting.builder()

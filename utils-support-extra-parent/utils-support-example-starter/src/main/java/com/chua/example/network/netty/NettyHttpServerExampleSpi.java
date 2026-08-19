@@ -64,21 +64,25 @@ public class NettyHttpServerExampleSpi implements Example {
     private static final int SWEEP_PAYLOAD = 128;
 
     @Override
+    /** Name */
     public String name() {
         return "netty-http";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "netty-http";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "NettyHttpServer 自检 + SPI 切换 + 性能基准（Netty 4.2.15 NIO）";
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         String mode = args.getOrDefault("mode", "all");
         log.info("===== netty-http --test [mode={}] =====", mode);
@@ -106,6 +110,7 @@ public class NettyHttpServerExampleSpi implements Example {
 
     // ==================== SPI ====================
 
+    /** TestSpiSwitch */
     private boolean testSpiSwitch() {
         log.info("  [SPI-01] ServerBuilder.type(\"netty\") 加载 NettyHttpServer");
         Server server = null;
@@ -127,6 +132,7 @@ public class NettyHttpServerExampleSpi implements Example {
 
     // ==================== 功能 ====================
 
+    /** Test获取Echo */
     private boolean testGetEcho() {
         log.info("  [FUNC-01] GET /echo 回显");
         Server server = null;
@@ -156,6 +162,7 @@ public class NettyHttpServerExampleSpi implements Example {
         }
     }
 
+    /** TestPostEcho */
     private boolean testPostEcho() {
         log.info("  [FUNC-02] POST /echo 回显请求体");
         Server server = null;
@@ -188,6 +195,7 @@ public class NettyHttpServerExampleSpi implements Example {
 
     // ==================== 性能 ====================
 
+    /** 运行Perf */
     private boolean runPerf(int concurrency, int connections, int requestsPerConn, int payloadSize) {
         PerfReport.printEnvironment("NettyHttpServer", "netty", "无 (直连)");
         log.info("  │ 代理路径 : HttpClient -> NettyHttpServer (Netty 4.2.15 NIO + virtual-thread 业务)");
@@ -219,6 +227,7 @@ public class NettyHttpServerExampleSpi implements Example {
         }
     }
 
+    /** 运行Sweep */
     private boolean runSweep(int payloadSize) {
         PerfReport.printEnvironment("NettyHttpServer [sweep]", "netty", "无 (直连)");
         log.info("  │ 代理路径 : HttpClient -> NettyHttpServer (Netty 4.2.15 NIO + virtual-thread 业务)");
@@ -253,6 +262,7 @@ public class NettyHttpServerExampleSpi implements Example {
         }
     }
 
+    /** 运行PerfInner */
     private PerfReport.SweepRow runPerfInner(int concurrency, int connections, int requestsPerConn, int port) {
         ExecutorService pool = null;
         try {
@@ -326,32 +336,38 @@ public class NettyHttpServerExampleSpi implements Example {
 
     // ==================== 辅助 ====================
 
+    /** Assert判断相等 */
     private static void assertEquals(Object expected, Object actual, String msg) {
         if (expected == null ? actual != null : !expected.equals(actual)) {
             throw new AssertionError(msg + " — 期望 " + expected + "，实际 " + actual);
         }
     }
 
+    /** Assert判断相等 */
     private static void assertEquals(int expected, int actual, String msg) {
         if (expected != actual) {
             throw new AssertionError(msg + " — 期望 " + expected + "，实际 " + actual);
         }
     }
 
+    /** AssertTrue */
     private static void assertTrue(boolean cond, String msg) {
         if (!cond) {
             throw new AssertionError(msg);
         }
     }
 
+    /** Pass */
     private static void pass() {
         log.info("  \u2713 通过");
     }
 
+    /** Fail */
     private static void fail(String msg) {
         log.info("  \u2717 失败: {}", msg);
     }
 
+    /** 关闭Quietly */
     private static void closeQuietly(AutoCloseable c) {
         if (c != null) {
             try {

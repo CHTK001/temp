@@ -105,6 +105,7 @@ public class ExampleRunner {
         }
     }
 
+    /** CamelToKebab */
     private static String camelToKebab(String s) {
         if (s == null || s.isEmpty()) {
             return s;
@@ -274,21 +275,25 @@ public class ExampleRunner {
         }
 
         @Override
+        /** Name */
         public String name() {
             return name;
         }
 
         @Override
+        /** Module */
         public String module() {
             return "reflection-fallback";
         }
 
         @Override
+        /** Description */
         public String description() {
             return displayName + " (待迁移为 SPI)";
         }
 
         @Override
+        /** 运行 */
         public boolean run(Map<String, String> args) {
             log.warn("[ReflectionExample] {} 尚未迁移为真正的 SPI 实现，请参考 VectorStorageExampleSpi 改造",
                     className);

@@ -32,6 +32,7 @@ public class MiniLmEmbeddingExample {
      */
     private static final int EXIT_CODE_FAILURE = 1;
 
+    /** Main */
     public static void main(String[] args) {
         MiniLmEmbeddingExample example = new MiniLmEmbeddingExample();
         boolean passed = example.runSelfTest();

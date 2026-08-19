@@ -51,6 +51,7 @@ public class PipelineEngineExample {
      */
     private static final int EXIT_CODE_FAILURE = 1;
 
+    /** Main */
     public static void main(String[] args) {
         CommandLine cli = CommandLine.parse(args)
                 .program("PipelineEngineExample")
@@ -154,6 +155,7 @@ public class PipelineEngineExample {
         }
     }
 
+    /** SampleData */
     public static Map<String, Object> sampleData() {
         Map<String, Object> map = new HashMap<>();
         map.put("id", 1);
@@ -161,6 +163,7 @@ public class PipelineEngineExample {
         return map;
     }
 
+    /** PrintResult */
     private static void printResult(String name, boolean passed) {
         log.info("{}{}", (passed ? "[PASS]" : "[FAIL]"), name);
     }

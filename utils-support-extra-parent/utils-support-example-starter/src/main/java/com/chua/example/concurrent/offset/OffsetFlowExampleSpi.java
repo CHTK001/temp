@@ -16,21 +16,25 @@ import java.util.Map;
 public class OffsetFlowExampleSpi implements Example {
 
     @Override
+    /** Name */
     public String name() {
         return "offset-flow";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "common";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "OffsetFlow 推进/重置/持久化/SPI加载/清空能力自检";
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         String type = args.getOrDefault("type", "all");
         return new OffsetFlowExample().runTest(type);

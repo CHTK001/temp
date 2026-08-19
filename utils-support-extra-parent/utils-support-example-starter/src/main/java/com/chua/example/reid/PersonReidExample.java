@@ -29,11 +29,13 @@ public class PersonReidExample {
     /** Top-K 数量 */
     private static final int TOP_K = 5;
 
+    /** Main */
     public static void main(String[] args) throws Exception {
         boolean passed = runTest();
         System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
     }
 
+    /** 运行Test */
     public static boolean runTest() throws Exception {
         // 使用 dino-v2-small-embedding 作为特征提取器（96MB 内嵌 jar，无需下载）
         FeatureExtractor fe = FeatureExtractor.create("dino-v2-small-embedding");

@@ -25,6 +25,7 @@ public class Rmbg14Example {
     /** Test_size */
     private static final int TEST_SIZE = 256;
 
+    /** Main */
     public static void main(String[] args) {
         try {
             ModelRegistry.discoverAll();

@@ -13,21 +13,25 @@ import java.util.Map;
 public class SubscriberExampleSpi implements Example {
 
     @Override
+    /** Name */
     public String name() {
         return "subscriber";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "datalake";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "Subscriber 自检（push 推送 / reset 偏移重置）";
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         boolean passed = true;
         passed &= SubscriberExample.testPush();

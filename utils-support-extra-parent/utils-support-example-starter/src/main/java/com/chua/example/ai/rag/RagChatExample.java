@@ -89,6 +89,7 @@ public class RagChatExample {
      */
     private static final List<String> COMMANDS = List.of("upload", "query", "search", "list", "delete", "reindex");
 
+    /** Main */
     public static void main(String[] args) {
         CommandLine cli = CommandLine.parse(args)
                 .program("RagChatExample")
@@ -284,6 +285,7 @@ public class RagChatExample {
 
     // ==================== 子命令实现 ====================
 
+    /** DoUpload */
     private static void doUpload(RagChatHarness harness, CommandLine cli) throws Exception {
         String filePath = cli.get("file");
         if (filePath == null || filePath.isBlank()) {
@@ -306,6 +308,7 @@ public class RagChatExample {
         }
     }
 
+    /** Do查询 */
     private static void doQuery(RagChatHarness harness, CommandLine cli) {
         String question = cli.get("q");
         if (question == null || question.isBlank()) {
@@ -324,6 +327,7 @@ public class RagChatExample {
         }
     }
 
+    /** Do搜索 */
     private static void doSearch(RagChatHarness harness, CommandLine cli) {
         String question = cli.get("q");
         if (question == null || question.isBlank()) {
@@ -340,6 +344,7 @@ public class RagChatExample {
         }
     }
 
+    /** DoList */
     private static void doList(RagChatHarness harness) {
         int total = harness.ragClient.documentCount();
         log.info("[list] total documents={}", total);
@@ -350,6 +355,7 @@ public class RagChatExample {
         }
     }
 
+    /** Do删除 */
     private static void doDelete(RagChatHarness harness, CommandLine cli) {
         String id = cli.get("id");
         if (id == null || id.isBlank()) {
@@ -361,11 +367,13 @@ public class RagChatExample {
         log.info("[delete] id={} ok={}", id, ok);
     }
 
+    /** DoReindex */
     private static void doReindex(RagChatHarness harness) {
         int count = harness.ragClient.reindex();
         log.info("[reindex] ok docs={}", count);
     }
 
+    /** Truncate */
     private static String truncate(String text, int max) {
         if (text == null) {
             return "";
@@ -391,6 +399,7 @@ public class RagChatExample {
         }
 
         @Override
+        /** 关闭 */
         public void close() {
             try {
                 ragClient.close();

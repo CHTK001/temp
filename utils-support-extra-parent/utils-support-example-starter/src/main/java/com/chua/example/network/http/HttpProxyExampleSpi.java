@@ -71,21 +71,25 @@ public class HttpProxyExampleSpi implements Example {
     private static final int SWEEP_PAYLOAD = 128;
 
     @Override
+    /** Name */
     public String name() {
         return "http-proxy";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "http-proxy";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "HTTP 反向代理自检 + 性能基准（SimpleForwardFilter，JDK HttpClient 同步）";
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         String mode = args.getOrDefault("mode", "all");
         log.info("===== http-proxy --test [mode={}] =====", mode);
@@ -109,6 +113,7 @@ public class HttpProxyExampleSpi implements Example {
 
     // ==================== 功能 ====================
 
+    /** TestProxyHttpPath */
     private boolean testProxyHttpPath() {
         log.info("  [FUNC-01] HTTP 反向代理 GET /echo");
         HttpServer backend = null;
@@ -149,6 +154,7 @@ public class HttpProxyExampleSpi implements Example {
 
     // ==================== 性能 ====================
 
+    /** 运行Perf */
     private boolean runPerf(int concurrency, int connections, int requestsPerConn, int payloadSize) {
         PerfReport.printEnvironment("HTTP ReverseProxy", "jdk + SimpleForwardFilter (JDK HttpClient sync)",
                 "fixed (后端固定地址)");
@@ -183,6 +189,7 @@ public class HttpProxyExampleSpi implements Example {
         }
     }
 
+    /** 运行Sweep */
     private boolean runSweep(int payloadSize) {
         PerfReport.printEnvironment("HTTP ReverseProxy [sweep]", "jdk + SimpleForwardFilter (JDK HttpClient sync)",
                 "fixed (后端固定地址)");
@@ -220,6 +227,7 @@ public class HttpProxyExampleSpi implements Example {
         }
     }
 
+    /** 运行PerfInner */
     private PerfReport.SweepRow runPerfInner(int concurrency, int connections, int requestsPerConn, int proxyPort) {
         ExecutorService pool = null;
         try {
@@ -295,10 +303,12 @@ public class HttpProxyExampleSpi implements Example {
 
     // ==================== 后端 ====================
 
+    /** 开始BackendHttp */
     private static HttpServer startBackendHttp(int port) throws IOException {
         return startBackendHttp(port, 0);
     }
 
+    /** 开始BackendHttp */
     private static HttpServer startBackendHttp(int port, int payloadSize) throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
         server.createContext("/echo", exchange -> {
@@ -337,11 +347,13 @@ public class HttpProxyExampleSpi implements Example {
         }
 
         @Override
+        /** 获取Order */
         public int getOrder() {
             return Integer.MIN_VALUE + 1;
         }
 
         @Override
+        /** Do过滤 */
         public void doFilter(ServerRequest request, ServerResponse response, ServerFilterChain chain) throws Exception {
             Discovery discovery = Discovery.builder()
                     .host("127.0.0.1")
@@ -353,6 +365,7 @@ public class HttpProxyExampleSpi implements Example {
         }
 
         @Override
+        /** 初始化 */
         public void init(ServerFilterConfig config) {
         }
     }
@@ -375,11 +388,13 @@ public class HttpProxyExampleSpi implements Example {
         }
 
         @Override
+        /** 获取Order */
         public int getOrder() {
             return Integer.MAX_VALUE - 100;
         }
 
         @Override
+        /** Do过滤 */
         public void doFilter(ServerRequest request, ServerResponse response, ServerFilterChain chain) throws Exception {
             HttpClient client = getClient();
             URI uri = URI.create("http://127.0.0.1:" + backendPort + request.getPath());
@@ -409,6 +424,7 @@ public class HttpProxyExampleSpi implements Example {
             }
         }
 
+        /** 获取Client */
         private HttpClient getClient() {
             HttpClient c = httpClient;
             if (c == null) {
@@ -425,38 +441,45 @@ public class HttpProxyExampleSpi implements Example {
         }
 
         @Override
+        /** 初始化 */
         public void init(ServerFilterConfig config) {
         }
     }
 
     // ==================== 辅助 ====================
 
+    /** Assert判断相等 */
     private static void assertEquals(Object expected, Object actual, String msg) {
         if (expected == null ? actual != null : !expected.equals(actual)) {
             throw new AssertionError(msg + " — 期望 " + expected + "，实际 " + actual);
         }
     }
 
+    /** Assert判断相等 */
     private static void assertEquals(int expected, int actual, String msg) {
         if (expected != actual) {
             throw new AssertionError(msg + " — 期望 " + expected + "，实际 " + actual);
         }
     }
 
+    /** AssertTrue */
     private static void assertTrue(boolean cond, String msg) {
         if (!cond) {
             throw new AssertionError(msg);
         }
     }
 
+    /** Pass */
     private static void pass() {
         log.info("  \u2713 通过");
     }
 
+    /** Fail */
     private static void fail(String msg) {
         log.info("  \u2717 失败: {}", msg);
     }
 
+    /** 关闭Quietly */
     private static void closeQuietly(AutoCloseable c) {
         if (c != null) {
             try {

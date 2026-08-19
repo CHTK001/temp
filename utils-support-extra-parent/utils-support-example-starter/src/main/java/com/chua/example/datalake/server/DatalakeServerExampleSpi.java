@@ -13,21 +13,25 @@ import java.util.Map;
 public class DatalakeServerExampleSpi implements Example {
 
     @Override
+    /** Name */
     public String name() {
         return "datalake-server";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "datalake";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "DatalakeServer 生命周期自检（启动 / 接收数据 / 关闭）";
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         return DatalakeServerExample.testBasicLifecycle();
     }

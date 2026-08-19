@@ -44,16 +44,19 @@ import java.util.concurrent.atomic.AtomicReference;
 public class SipExampleSpi implements Example {
 
     @Override
+    /** Name */
     public String name() {
         return "sip";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "network";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "SIP 信令服务器/客户端自检：注册+寻址+消息+响应+推送+隧道内网穿透+断连清理";
     }
@@ -76,6 +79,7 @@ public class SipExampleSpi implements Example {
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         String mode = args.getOrDefault("mode", "all");
         log.info("===== sip [mode={}] =====", mode);
@@ -340,26 +344,31 @@ public class SipExampleSpi implements Example {
         }
     }
 
+    /** Assert判断相等 */
     private static void assertEquals(Object expected, Object actual, String msg) {
         if (!java.util.Objects.equals(expected, actual)) {
             throw new AssertionError(msg + " — 期望 " + expected + "，实际 " + actual);
         }
     }
 
+    /** AssertTrue */
     private static void assertTrue(boolean cond, String msg) {
         if (!cond) {
             throw new AssertionError(msg);
         }
     }
 
+    /** Pass */
     private static void pass() {
         log.info("    ✓ 通过");
     }
 
+    /** Fail */
     private static void fail(String msg) {
         log.error("    ✗ 失败: {}", msg);
     }
 
+    /** 关闭Quietly */
     private static void closeQuietly(Runnable closer) {
         if (closer != null) {
             try {
@@ -465,6 +474,7 @@ public class SipExampleSpi implements Example {
         }
 
         @Override
+        /** 关闭 */
         public void close() {
             running = false;
             try {

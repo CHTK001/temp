@@ -15,21 +15,25 @@ import java.util.Map;
 public class PipelineBasicExampleSpi implements Example {
 
     @Override
+    /** Name */
     public String name() {
         return "pipeline-basic";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "common";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "Pipeline 基本能力示例（顺序执行/taskStart/step/exit/start）";
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         String type = args.getOrDefault("type", "all");
         log.info("PipelineBasicExampleSpi --type={}", type);

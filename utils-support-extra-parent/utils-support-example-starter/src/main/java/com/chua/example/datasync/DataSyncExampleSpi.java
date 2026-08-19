@@ -13,21 +13,25 @@ import java.util.Map;
 public class DataSyncExampleSpi implements Example {
 
     @Override
+    /** Name */
     public String name() {
         return "data-sync";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "datasync";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "DataSync 数据源/调度集成自检（basic / repeat / direct / all）";
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         String type = args.getOrDefault("type", "all");
         return new DataSyncExample().runTest(type);

@@ -47,21 +47,25 @@ import java.util.Map;
 public class OpenApiExportTestExample implements Example {
 
     @Override
+    /** Name */
     public String name() {
         return "openapi-export-test";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "lang-document";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "OpenApiDocumentProvider SPI 烟雾测试 (Sample OpenAPI → 泛微E10风格HTML)";
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         try {
             System.out.println("=== OpenApiDocumentProvider 烟雾测试 ===");

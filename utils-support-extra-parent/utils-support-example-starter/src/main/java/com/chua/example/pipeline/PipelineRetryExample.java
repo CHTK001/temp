@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 public class PipelineRetryExample {
 
+    /** Main */
     public static void main(String[] args) {
         String type = PipelineBasicExample.parseType(args);
         boolean passed = runTest(type);

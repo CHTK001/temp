@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PipelineTreeExample {
 
+    /** Main */
     public static void main(String[] args) {
         String type = PipelineBasicExample.parseType(args);
         boolean passed = runTest(type);

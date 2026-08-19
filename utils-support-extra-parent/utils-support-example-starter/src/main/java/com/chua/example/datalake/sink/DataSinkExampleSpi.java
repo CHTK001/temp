@@ -13,21 +13,25 @@ import java.util.Map;
 public class DataSinkExampleSpi implements Example {
 
     @Override
+    /** Name */
     public String name() {
         return "data-sink";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "datalake";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "DataSink 自检（access / store / write）";
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         boolean passed = true;
         passed &= DataSinkExample.testAccessSinks();

@@ -57,21 +57,25 @@ public class MqttServerExampleSpi implements Example {
     private static final int SWEEP_PAYLOAD = 256;
 
     @Override
+    /** Name */
     public String name() {
         return "mqtt-server";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "mqtt-server";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "MqttServer 自检 + 性能基准（MQTT 3.1.1）";
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         String mode = args.getOrDefault("mode", "all");
         log.info("===== mqtt-server --test [mode={}] =====", mode);
@@ -95,6 +99,7 @@ public class MqttServerExampleSpi implements Example {
 
     // ==================== 功能 ====================
 
+    /** Test连接发布 */
     private boolean testConnectPublish() {
         log.info("  [FUNC-01] MQTT CONNECT + PUBLISH/SUBSCRIBE");
         MqttServer server = null;
@@ -138,6 +143,7 @@ public class MqttServerExampleSpi implements Example {
 
     // ==================== 性能 ====================
 
+    /** 运行Perf */
     private boolean runPerf(int concurrency, int connections, int requestsPerConn, int payloadSize) {
         PerfReport.printEnvironment("MqttServer", "mqtt", "无 (本地直连)");
         log.info("  │ 代理路径 : MqttClientWrapper (Paho) -> MqttServer (原生 ServerSocket + fixed worker pool)");
@@ -161,6 +167,7 @@ public class MqttServerExampleSpi implements Example {
         }
     }
 
+    /** 运行Sweep */
     private boolean runSweep(int payloadSize) {
         PerfReport.printEnvironment("MqttServer [sweep]", "mqtt", "无 (本地直连)");
         log.info("  │ 代理路径 : MqttClientWrapper (Paho) -> MqttServer (原生 ServerSocket + fixed worker pool)");
@@ -190,6 +197,7 @@ public class MqttServerExampleSpi implements Example {
         }
     }
 
+    /** NewMqttServer */
     private MqttServer newMqttServer(int connections) {
         ServerSetting setting = ServerSetting.defaults();
         setting.setHost("127.0.0.1");
@@ -200,6 +208,15 @@ public class MqttServerExampleSpi implements Example {
         return s;
     }
 
+    /**
+     * 运行PerfInner
+     * @param concurrency concurrency
+     * @param connections connections
+     * @param requestsPerConn requestsPerConn
+     * @param payloadSize payloadSize
+     * @param port port
+     * @param server server
+     */
     private PerfReport.SweepRow runPerfInner(int concurrency, int connections, int requestsPerConn, int payloadSize,
                                               int port, MqttServer server) {
         ExecutorService pool = null;
@@ -287,26 +304,31 @@ public class MqttServerExampleSpi implements Example {
 
     // ==================== 辅助 ====================
 
+    /** Assert判断相等 */
     private static void assertEquals(Object expected, Object actual, String msg) {
         if (expected == null ? actual != null : !expected.equals(actual)) {
             throw new AssertionError(msg + " — 期望 " + expected + "，实际 " + actual);
         }
     }
 
+    /** AssertTrue */
     private static void assertTrue(boolean cond, String msg) {
         if (!cond) {
             throw new AssertionError(msg);
         }
     }
 
+    /** Pass */
     private static void pass() {
         log.info("  \u2713 通过");
     }
 
+    /** Fail */
     private static void fail(String msg) {
         log.info("  \u2717 失败: {}", msg);
     }
 
+    /** 关闭Quietly */
     private static void closeQuietly(AutoCloseable c) {
         if (c != null) {
             try {

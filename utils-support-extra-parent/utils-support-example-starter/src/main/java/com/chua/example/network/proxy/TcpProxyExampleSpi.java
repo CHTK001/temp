@@ -64,21 +64,25 @@ public class TcpProxyExampleSpi implements Example {
     private static final int SWEEP_PAYLOAD = 64;
 
     @Override
+    /** Name */
     public String name() {
         return "tcp-proxy";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "tcp-proxy";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "TcpProxyServer 自检 + SPI 切换 + 性能基准";
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         String mode = args.getOrDefault("mode", "all");
         log.info("===== tcp-proxy --test [mode={}] =====", mode);
@@ -107,6 +111,7 @@ public class TcpProxyExampleSpi implements Example {
 
     // ==================== SPI ====================
 
+    /** TestSpiSwitch */
     private boolean testSpiSwitch() {
         log.info("  [SPI-01] ServerBuilder.type(\"tcp-proxy\") 切换 SPI");
         Server proxy = null;
@@ -130,6 +135,7 @@ public class TcpProxyExampleSpi implements Example {
 
     // ==================== 功能 ====================
 
+    /** TestFixedBackend */
     private boolean testFixedBackend() {
         log.info("  [FUNC-01] 固定后端转发");
         EchoServer backend = null;
@@ -155,6 +161,7 @@ public class TcpProxyExampleSpi implements Example {
         }
     }
 
+    /** TestTargetResolver */
     private boolean testTargetResolver() {
         log.info("  [FUNC-02] 自定义目标解析器");
         EchoServer backend = null;
@@ -182,6 +189,7 @@ public class TcpProxyExampleSpi implements Example {
         }
     }
 
+    /** TestRejectWhenResolverNull */
     private boolean testRejectWhenResolverNull() {
         log.info("  [FUNC-03] 目标解析器返回 null 拒绝连接");
         TcpProxyServer proxy = null;
@@ -211,6 +219,7 @@ public class TcpProxyExampleSpi implements Example {
 
     // ==================== 性能 ====================
 
+    /** 运行Perf */
     private boolean runPerf(int concurrency, int connections, int requestsPerConn, int payloadSize) {
         PerfReport.printEnvironment("TcpProxyServer", "tcp-proxy", "static-resolver (固定后端)");
         log.info("  │ 代理路径 : client -> TcpProxyServer(virtual-thread) -> EchoServer");
@@ -226,6 +235,7 @@ public class TcpProxyExampleSpi implements Example {
         }
     }
 
+    /** 运行Sweep */
     private boolean runSweep(int payloadSize) {
         PerfReport.printEnvironment("TcpProxyServer [sweep]", "tcp-proxy", "static-resolver (固定后端)");
         log.info("  │ 代理路径 : client -> TcpProxyServer(virtual-thread) -> EchoServer");
@@ -384,6 +394,7 @@ public class TcpProxyExampleSpi implements Example {
 
     // ==================== 辅助 ====================
 
+    /** RoundTrip */
     private static String roundTrip(String host, int port, String payload) throws IOException {
         try (Socket s = new Socket(host, port)) {
             s.setSoTimeout(5000);
@@ -398,32 +409,38 @@ public class TcpProxyExampleSpi implements Example {
         }
     }
 
+    /** Assert判断相等 */
     private static void assertEquals(Object expected, Object actual, String msg) {
         if (expected == null ? actual != null : !expected.equals(actual)) {
             throw new AssertionError(msg + " — 期望 " + expected + "，实际 " + actual);
         }
     }
 
+    /** Assert判断相等 */
     private static void assertEquals(int expected, int actual, String msg) {
         if (expected != actual) {
             throw new AssertionError(msg + " — 期望 " + expected + "，实际 " + actual);
         }
     }
 
+    /** AssertTrue */
     private static void assertTrue(boolean cond, String msg) {
         if (!cond) {
             throw new AssertionError(msg);
         }
     }
 
+    /** Pass */
     private static void pass() {
         log.info("  \u2713 通过");
     }
 
+    /** Fail */
     private static void fail(String msg) {
         log.info("  \u2717 失败: {}", msg);
     }
 
+    /** 关闭Quietly */
     private static void closeQuietly(AutoCloseable c) {
         if (c != null) {
             try {
@@ -443,6 +460,10 @@ public class TcpProxyExampleSpi implements Example {
         /** running */
         private volatile boolean running = true;
 
+        /**
+         * 创建 EchoServer 实例
+         * @param port port
+         */
         private EchoServer(int port) throws IOException {
             this.serverSocket = new ServerSocket(port);
             // virtual-thread 处理高并发 echo
@@ -452,6 +473,7 @@ public class TcpProxyExampleSpi implements Example {
             this.acceptThread.start();
         }
 
+        /** 开始 */
         static EchoServer start(int port) throws IOException {
             return new EchoServer(port);
         }
@@ -460,6 +482,7 @@ public class TcpProxyExampleSpi implements Example {
             return serverSocket.getLocalPort();
         }
 
+        /** AcceptLoop */
         private void acceptLoop() {
             while (running) {
                 try {
@@ -473,6 +496,7 @@ public class TcpProxyExampleSpi implements Example {
             }
         }
 
+        /** 处理 */
         private void handle(Socket client) {
             try (InputStream in = client.getInputStream();
                  OutputStream out = client.getOutputStream()) {
@@ -487,6 +511,7 @@ public class TcpProxyExampleSpi implements Example {
         }
 
         @Override
+        /** 关闭 */
         public void close() {
             running = false;
             try {

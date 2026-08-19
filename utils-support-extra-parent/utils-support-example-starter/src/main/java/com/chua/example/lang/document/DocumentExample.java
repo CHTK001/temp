@@ -80,6 +80,7 @@ public class DocumentExample {
      */
     private static final String MYSQL_DRIVER = "com.mysql.cj.jdbc.Driver";
 
+    /** Main */
     public static void main(String[] args) {
         CommandLine cli = CommandLine.parse(args)
                 .program("DocumentExample")
@@ -185,6 +186,7 @@ public class DocumentExample {
         return passed;
     }
 
+    /** 读取Resource */
     private static String readResource(String path) throws Exception {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         if (cl == null) {

@@ -27,6 +27,7 @@ import java.util.Locale;
 @Slf4j
 public final class PerfReport {
 
+    /** 创建 PerfReport 实例 */
     private PerfReport() {
     }
 
@@ -97,6 +98,7 @@ public final class PerfReport {
         /** peakUsedMb */
         private volatile long peakUsedMb;
 
+        /** 创建 ResourceMonitor 实例 */
         private ResourceMonitor() {
             this.startUsedMb = usedMb();
             this.peakUsedMb = startUsedMb;
@@ -144,6 +146,7 @@ public final class PerfReport {
             log.info("  │   统计时长   : {} ms", elapsedMs);
         }
 
+        /** Sample */
         private void sample() {
             while (running) {
                 try {
@@ -156,6 +159,7 @@ public final class PerfReport {
             }
         }
 
+        /** SampleCpu */
         private void sampleCpu() {
             try {
                 java.lang.management.OperatingSystemMXBean mx = ManagementFactory.getOperatingSystemMXBean();
@@ -170,6 +174,7 @@ public final class PerfReport {
             }
         }
 
+        /** SampleMemory */
         private void sampleMemory() {
             long used = usedMb();
             if (used > peakUsedMb) {
@@ -177,6 +182,7 @@ public final class PerfReport {
             }
         }
 
+        /** UsedMb */
         private static long usedMb() {
             Runtime rt = Runtime.getRuntime();
             return (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
@@ -284,6 +290,17 @@ public final class PerfReport {
         /** SortedlatencyNS */
         public final long[] sortedLatencyNs;
 
+        /**
+         * 创建 SweepRow 实例
+         * @param concurrency concurrency
+         * @param int int
+         * @param int int
+         * @param long long
+         * @param long long
+         * @param long long
+         * @param long long
+         * @param sortedLatencyNs sortedLatencyNs
+         */
         public SweepRow(int concurrency, int connections, int requestsPerConn, long total, long errors, long elapsedMs, long[] sortedLatencyNs) {
             this.concurrency = concurrency;
             this.connections = connections;
@@ -406,6 +423,7 @@ public final class PerfReport {
         return sb.toString();
     }
 
+    /** EscapeHtml */
     private static String escapeHtml(String s) {
         if (s == null) {
             return "";
@@ -413,6 +431,7 @@ public final class PerfReport {
         return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
     }
 
+    /** PadLeft */
     private static String padLeft(String s, int width) {
         if (s.length() >= width) {
             return s;

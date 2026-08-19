@@ -9,15 +9,21 @@ public final class HelloServiceImpl implements HelloService {
     /** Greeting */
     private final String greeting;
 
+    /** 创建 HelloServiceImpl 实例 */
     public HelloServiceImpl() {
         this("default");
     }
 
+    /**
+     * 创建 HelloServiceImpl 实例
+     * @param greeting greeting
+     */
     public HelloServiceImpl(String greeting) {
         this.greeting = greeting;
     }
 
     @Override
+    /** Greet */
     public String greet() {
         return greeting;
     }

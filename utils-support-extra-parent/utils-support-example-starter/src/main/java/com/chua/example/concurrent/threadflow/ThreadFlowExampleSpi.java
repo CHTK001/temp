@@ -16,21 +16,25 @@ import java.util.Map;
 public class ThreadFlowExampleSpi implements Example {
 
     @Override
+    /** Name */
     public String name() {
         return "thread-flow";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "common";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "ThreadFlow 四种执行器/五种合并策略/上下文/超时/并发自检";
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         String type = args.getOrDefault("type", "all");
         return new ThreadFlowExample().runTest(type);

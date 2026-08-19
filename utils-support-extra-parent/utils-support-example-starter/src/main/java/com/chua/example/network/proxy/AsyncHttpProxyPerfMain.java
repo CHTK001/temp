@@ -33,6 +33,7 @@ public class AsyncHttpProxyPerfMain {
     private static final org.slf4j.Logger log =
             org.slf4j.LoggerFactory.getLogger(AsyncHttpProxyPerfMain.class);
 
+    /** Main */
     public static void main(String[] args) throws Exception {
         int durSec = args.length > 0 ? Integer.parseInt(args[0]) : 10;
         int conc = args.length > 1 ? Integer.parseInt(args[1]) : 2000;
@@ -100,6 +101,16 @@ public class AsyncHttpProxyPerfMain {
         vertx.close();
     }
 
+    /**
+     * Fire
+     * @param client client
+     * @param opts opts
+     * @param inflight inflight
+     * @param ok ok
+     * @param errors errors
+     * @param deadline deadline
+     * @param allDone allDone
+     */
     private static void fire(HttpClient client, RequestOptions opts, Semaphore inflight,
                              LongAdder ok, LongAdder errors, long deadline, CountDownLatch allDone) {
         if (System.nanoTime() > deadline) {

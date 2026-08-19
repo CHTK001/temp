@@ -63,6 +63,7 @@ public class ImageProcessorSpiExample {
     /** 期望的三个 SPI 实现，按优先级从高到低 */
     private static final List<String> EXPECTED_IMPLS = Arrays.asList("rust", "opencv", "jdk");
 
+    /** Main */
     public static void main(String[] args) {
         CommandLine cli = CommandLine.parse(args)
                 .program("ImageProcessorSpiExample")
@@ -82,6 +83,7 @@ public class ImageProcessorSpiExample {
         System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
     }
 
+    /** 运行Test */
     public boolean runTest(String type, String inputPath, String outputPath) {
         if (type == null || type.isEmpty()) type = DEFAULT_TYPE;
         File outputDir = new File(outputPath);
@@ -98,6 +100,7 @@ public class ImageProcessorSpiExample {
 
     // ==================== SPI 机制测试 ====================
 
+    /** TestSpiAll */
     private boolean testSpiAll() {
         log.info("===== SPI 机制测试 =====");
         boolean passed = true;
@@ -218,6 +221,7 @@ public class ImageProcessorSpiExample {
         return passed;
     }
 
+    /** TestProxy */
     public static boolean testProxy() {
         ServiceProvider<ImageProcessor> provider = ServiceProvider.of(ImageProcessor.class);
         ImageProcessor proxy = provider.getExtensionFactory("image-processor");
@@ -230,6 +234,7 @@ public class ImageProcessorSpiExample {
         return nameValid;
     }
 
+    /** TestDegrade */
     public static boolean testDegrade() {
         ServiceProvider<ImageProcessor> provider = ServiceProvider.of(ImageProcessor.class);
         ImageProcessor proxy = provider.getExtensionFactory("image-processor");
@@ -246,6 +251,7 @@ public class ImageProcessorSpiExample {
         return passed;
     }
 
+    /** TestAllFail */
     public static boolean testAllFail() {
         ServiceProvider<ImageProcessor> provider = ServiceProvider.of(ImageProcessor.class);
         ImageProcessor proxy = provider.getExtensionFactory("image-processor");
@@ -393,6 +399,7 @@ public class ImageProcessorSpiExample {
 
     // ==================== 全操作测试 ====================
 
+    /** TestAllOperations */
     private boolean testAllOperations(String inputPath, String outputPath) {
         log.info("===== 图像操作测试（输入: {}）=====", inputPath);
         byte[] imageData = readTestImage(inputPath);
@@ -450,6 +457,14 @@ public class ImageProcessorSpiExample {
         return allPassed;
     }
 
+    /**
+     * TestOp
+     * @param processor processor
+     * @param imageData imageData
+     * @param outputPath outputPath
+     * @param opName opName
+     * @param params params
+     */
     private boolean testOp(ImageProcessor processor, byte[] imageData, String outputPath,
                            String opName, Map<String, Object> params) {
         try {
@@ -482,6 +497,7 @@ public class ImageProcessorSpiExample {
         }
     }
 
+    /** TestBatch */
     private boolean testBatch(String inputPath, String outputPath) {
         try {
             byte[] imageData = readTestImage(inputPath);
@@ -546,6 +562,7 @@ public class ImageProcessorSpiExample {
         return new ArrayList<>(unique.values());
     }
 
+    /** 读取TestImage */
     private static byte[] readTestImage(String path) {
         try {
             Path p = Paths.get(path);
@@ -557,6 +574,7 @@ public class ImageProcessorSpiExample {
         }
     }
 
+    /** Params */
     private static Map<String, Object> params(Object... keyValues) {
         Map<String, Object> map = new HashMap<>();
         for (int i = 0; i < keyValues.length; i += 2) {

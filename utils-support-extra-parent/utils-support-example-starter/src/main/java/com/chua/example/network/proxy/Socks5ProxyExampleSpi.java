@@ -62,21 +62,25 @@ public class Socks5ProxyExampleSpi implements Example {
     private static final int SWEEP_PAYLOAD = 64;
 
     @Override
+    /** Name */
     public String name() {
         return "socks5-proxy";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "socks5-proxy";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "Socks5ProxyServer 自检 + SPI 切换 + 性能基准";
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         String mode = args.getOrDefault("mode", "all");
         log.info("===== socks5-proxy --test [mode={}] =====", mode);
@@ -106,6 +110,7 @@ public class Socks5ProxyExampleSpi implements Example {
 
     // ==================== SPI ====================
 
+    /** TestSpiSwitch */
     private boolean testSpiSwitch() {
         log.info("  [SPI-01] ServerBuilder.type(\"socks5-proxy\") 切换 SPI");
         Server proxy = null;
@@ -126,6 +131,7 @@ public class Socks5ProxyExampleSpi implements Example {
 
     // ==================== 功能 ====================
 
+    /** Test连接Ipv */
     private boolean testConnectIpv4() {
         log.info("  [FUNC-01] SOCKS5 IPv4 CONNECT");
         EchoServer backend = null;
@@ -168,6 +174,7 @@ public class Socks5ProxyExampleSpi implements Example {
         }
     }
 
+    /** Test连接Domain */
     private boolean testConnectDomain() {
         log.info("  [FUNC-02] SOCKS5 域名 CONNECT");
         EchoServer backend = null;
@@ -210,6 +217,7 @@ public class Socks5ProxyExampleSpi implements Example {
         }
     }
 
+    /** TestUnsupportedMethod */
     private boolean testUnsupportedMethod() {
         log.info("  [FUNC-03] SOCKS5 不支持的认证方法");
         Socks5ProxyServer proxy = null;
@@ -235,6 +243,7 @@ public class Socks5ProxyExampleSpi implements Example {
         }
     }
 
+    /** TestUserPassAuth */
     private boolean testUserPassAuth() {
         log.info("  [FUNC-04] SOCKS5 用户名/口令认证");
         Socks5ProxyServer proxy = null;
@@ -271,6 +280,7 @@ public class Socks5ProxyExampleSpi implements Example {
 
     // ==================== 性能 ====================
 
+    /** 运行Perf */
     private boolean runPerf(int concurrency, int connections, int requestsPerConn, int payloadSize) {
         PerfReport.printEnvironment("Socks5ProxyServer", "socks5-proxy", "static-resolver (固定后端)");
         log.info("  │ 代理路径 : client -> Socks5ProxyServer(virtual-thread) -> EchoServer");
@@ -301,6 +311,7 @@ public class Socks5ProxyExampleSpi implements Example {
         }
     }
 
+    /** 运行Sweep */
     private boolean runSweep(int payloadSize) {
         PerfReport.printEnvironment("Socks5ProxyServer [sweep]", "socks5-proxy", "static-resolver (固定后端)");
         log.info("  │ 代理路径 : client -> Socks5ProxyServer(virtual-thread) -> EchoServer");
@@ -334,6 +345,15 @@ public class Socks5ProxyExampleSpi implements Example {
         }
     }
 
+    /**
+     * 运行PerfInner
+     * @param concurrency concurrency
+     * @param connections connections
+     * @param requestsPerConn requestsPerConn
+     * @param payloadSize payloadSize
+     * @param proxy proxy
+     * @param backendPort backendPort
+     */
     private PerfReport.SweepRow runPerfInner(int concurrency, int connections, int requestsPerConn, int payloadSize,
                                               Socks5ProxyServer proxy, int backendPort) {
         ExecutorService pool = null;
@@ -431,6 +451,7 @@ public class Socks5ProxyExampleSpi implements Example {
 
     // ==================== 辅助 ====================
 
+    /** 读取Exact */
     private static byte[] readExact(InputStream in, int count) throws IOException {
         byte[] buf = new byte[count];
         int off = 0;
@@ -444,6 +465,7 @@ public class Socks5ProxyExampleSpi implements Example {
         return buf;
     }
 
+    /** Assert判断相等 */
     private static void assertEquals(byte expected, byte actual, String msg) {
         if (expected != actual) {
             throw new AssertionError(msg + " — 期望 " + String.format("%02X", expected)
@@ -451,26 +473,31 @@ public class Socks5ProxyExampleSpi implements Example {
         }
     }
 
+    /** Assert判断相等 */
     private static void assertEquals(Object expected, Object actual, String msg) {
         if (expected == null ? actual != null : !expected.equals(actual)) {
             throw new AssertionError(msg + " — 期望 " + expected + "，实际 " + actual);
         }
     }
 
+    /** AssertTrue */
     private static void assertTrue(boolean cond, String msg) {
         if (!cond) {
             throw new AssertionError(msg);
         }
     }
 
+    /** Pass */
     private static void pass() {
         log.info("  \u2713 通过");
     }
 
+    /** Fail */
     private static void fail(String msg) {
         log.info("  \u2717 失败: {}", msg);
     }
 
+    /** 关闭Quietly */
     private static void closeQuietly(AutoCloseable c) {
         if (c != null) {
             try {
@@ -490,6 +517,10 @@ public class Socks5ProxyExampleSpi implements Example {
         /** running */
         private volatile boolean running = true;
 
+        /**
+         * 创建 EchoServer 实例
+         * @param port port
+         */
         private EchoServer(int port) throws IOException {
             this.serverSocket = new ServerSocket(port);
             this.handlerPool = Executors.newVirtualThreadPerTaskExecutor();
@@ -498,6 +529,7 @@ public class Socks5ProxyExampleSpi implements Example {
             this.acceptThread.start();
         }
 
+        /** 开始 */
         static EchoServer start(int port) throws IOException {
             return new EchoServer(port);
         }
@@ -506,6 +538,7 @@ public class Socks5ProxyExampleSpi implements Example {
             return serverSocket.getLocalPort();
         }
 
+        /** AcceptLoop */
         private void acceptLoop() {
             while (running) {
                 try {
@@ -519,6 +552,7 @@ public class Socks5ProxyExampleSpi implements Example {
             }
         }
 
+        /** 处理 */
         private void handle(Socket client) {
             try (InputStream in = client.getInputStream();
                  OutputStream out = client.getOutputStream()) {
@@ -533,6 +567,7 @@ public class Socks5ProxyExampleSpi implements Example {
         }
 
         @Override
+        /** 关闭 */
         public void close() {
             running = false;
             try {

@@ -48,12 +48,14 @@ public class TaskDistributionExample {
      */
     private static final int EXIT_CODE_FAILURE = 1;
 
+    /** Main */
     public static void main(String[] args) {
         TaskDistributionExample example = new TaskDistributionExample();
         boolean passed = example.runTest();
         System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
     }
 
+    /** 运行Test */
     public boolean runTest() {
         log.info("===== 任务分发示例开始 =====");
         try {
@@ -92,11 +94,13 @@ public class TaskDistributionExample {
             // 注册执行器
             registry.register(new TaskExecutor<String>() {
                 @Override
+                /** TaskType */
                 public String taskType() {
                     return "echo";
                 }
 
                 @Override
+                /** 执行 */
                 public TaskResult<String> execute(Task<String> task) {
                     return TaskResult.success(task.getTaskId(), "Hello: " + task.getPayload(), "worker-1");
                 }
@@ -106,6 +110,7 @@ public class TaskDistributionExample {
             InMemoryDispatcherProvider dispatcher = new InMemoryDispatcherProvider();
             dispatcher.listener(new DispatcherListener() {
                 @Override
+                /** OnTask */
                 public void onTask(Task<?> task) {
                     TaskExecutor<?> executor = registry.findExecutor(task);
                     if (executor != null) {
@@ -117,6 +122,7 @@ public class TaskDistributionExample {
                 }
 
                 @Override
+                /** OnResult */
                 public void onResult(TaskResult<?> result) {
                     latch.countDown();
                 }
@@ -135,6 +141,7 @@ public class TaskDistributionExample {
 
             taskManager.addTask(task, new TaskCallback() {
                 @Override
+                /** OnResult */
                 public void onResult(TaskResult<?> result) {
                     log.info("收到结果: {} -> {}", result.getTaskId(), result.getData());
                 }
@@ -213,6 +220,7 @@ public class TaskDistributionExample {
 
             taskManager.addTask(task, new TaskCallback() {
                 @Override
+                /** OnTimeout */
                 public void onTimeout(String taskId) {
                     latch.countDown();
                 }

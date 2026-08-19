@@ -8,9 +8,11 @@ import java.util.Map;
  */
 public final class HttpServerBenchmarkMain {
 
+    /** 创建 HttpServerBenchmarkMain 实例 */
     private HttpServerBenchmarkMain() {
     }
 
+    /** Main */
     public static void main(String[] args) {
         Map<String, String> kv = new HashMap<>();
         kv.put("mode", "all-servers");

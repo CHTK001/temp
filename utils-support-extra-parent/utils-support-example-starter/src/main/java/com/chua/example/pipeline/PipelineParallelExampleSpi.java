@@ -15,21 +15,25 @@ import java.util.Map;
 public class PipelineParallelExampleSpi implements Example {
 
     @Override
+    /** Name */
     public String name() {
         return "pipeline-parallel";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "common";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "Pipeline 并行执行示例（parallel/并行分支/错误策略/结果合并）";
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         String type = args.getOrDefault("type", "all");
         log.info("PipelineParallelExampleSpi --type={}", type);

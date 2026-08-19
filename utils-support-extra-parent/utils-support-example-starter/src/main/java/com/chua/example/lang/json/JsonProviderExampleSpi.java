@@ -59,21 +59,25 @@ import java.util.Map;
 public class JsonProviderExampleSpi implements Example {
 
     @Override
+    /** Name */
     public String name() {
         return "json-provider";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "json";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "JsonProvider 统一门户注解与节点类型自检（gson / fory / fastjson 三实现 SPI 切换）";
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         String type = args.getOrDefault("type", "all").toLowerCase();
         boolean passed = true;
@@ -131,6 +135,7 @@ public class JsonProviderExampleSpi implements Example {
         return passed;
     }
 
+    /** TestSpiDiscovery */
     private boolean testSpiDiscovery(String type, JsonProvider provider) {
         log.info("  [TC-01] SPI 发现 ({})", type);
         try {
@@ -145,6 +150,7 @@ public class JsonProviderExampleSpi implements Example {
         }
     }
 
+    /** Test设置Implementation */
     private boolean testSetImplementation(JsonProvider provider) {
         log.info("  [TC-02] Json.setImplementation 门面委托");
         try {
@@ -158,6 +164,7 @@ public class JsonProviderExampleSpi implements Example {
         }
     }
 
+    /** TestUnifiedAnnotations */
     private boolean testUnifiedAnnotations() {
         log.info("  [TC-03] 统一门户注解 @JsonName / @JsonIgnore");
         try {
@@ -183,6 +190,7 @@ public class JsonProviderExampleSpi implements Example {
         }
     }
 
+    /** TestRoundTrip */
     private boolean testRoundTrip() {
         log.info("  [TC-04] 基础编解码往返");
         try {
@@ -207,6 +215,7 @@ public class JsonProviderExampleSpi implements Example {
         }
     }
 
+    /** TestToJsonIgnores */
     private boolean testToJsonIgnores(JsonProvider provider) {
         log.info("  [TC-05] toJson ignores 剔除字段");
         try {
@@ -221,6 +230,7 @@ public class JsonProviderExampleSpi implements Example {
         }
     }
 
+    /** TestTypeDeserialization */
     private boolean testTypeDeserialization(JsonProvider provider, String type) {
         log.info("  [TC-06] 通用 Type 反序列化 ({})", type);
         try {
@@ -230,16 +240,19 @@ public class JsonProviderExampleSpi implements Example {
                 }.getType();
                 case "fory" -> new ParameterizedType() {
                     @Override
+                    /** 获取ActualTypeArguments */
                     public Type[] getActualTypeArguments() {
                         return new Type[]{Map.class};
                     }
 
                     @Override
+                    /** 获取RawType */
                     public Type getRawType() {
                         return List.class;
                     }
 
                     @Override
+                    /** 获取OwnerType */
                     public Type getOwnerType() {
                         return null;
                     }
@@ -259,6 +272,7 @@ public class JsonProviderExampleSpi implements Example {
         }
     }
 
+    /** TestStreamEntries */
     private boolean testStreamEntries(JsonProvider provider) {
         log.info("  [TC-07] stream / reader / writer 入口");
         try {
@@ -282,6 +296,7 @@ public class JsonProviderExampleSpi implements Example {
         }
     }
 
+    /** TestNodeFactorySubclasses */
     private boolean testNodeFactorySubclasses(Class<?> objCls, Class<?> arrCls, Class<?> nodeCls) {
         log.info("  [TC-08] 节点工厂返回 {} / {} / {}", objCls.getSimpleName(), arrCls.getSimpleName(), nodeCls.getSimpleName());
         try {
@@ -321,64 +336,82 @@ public class JsonProviderExampleSpi implements Example {
         /** AGE */
         private int age;
 
+        /** 创建 User 实例 */
         public User() {
         }
 
+        /**
+         * 创建 User 实例
+         * @param name name
+         * @param String String
+         * @param int int
+         */
         public User(String name, String password, int age) {
             this.name = name;
             this.password = password;
             this.age = age;
         }
 
+        /** 获取Name */
         public String getName() {
             return name;
         }
 
+        /** 设置Name */
         public void setName(String name) {
             this.name = name;
         }
 
+        /** 获取Password */
         public String getPassword() {
             return password;
         }
 
+        /** 设置Password */
         public void setPassword(String password) {
             this.password = password;
         }
 
+        /** 获取Age */
         public int getAge() {
             return age;
         }
 
+        /** 设置Age */
         public void setAge(int age) {
             this.age = age;
         }
     }
 
+    /** AssertTrue */
     private static void assertTrue(boolean condition, String msg) {
         if (!condition) {
             throw new AssertionError(msg);
         }
     }
 
+    /** AssertFalse */
     private static void assertFalse(boolean condition, String msg) {
         if (condition) {
             throw new AssertionError(msg);
         }
     }
 
+    /** AssertNotNull */
     private static void assertNotNull(Object o, String msg) {
         if (o == null) {
             throw new AssertionError(msg);
         }
     }
 
+    /** AssertSame */
     private static void assertSame(Object expected, Object actual, String msg) {
         if (expected != actual) {
             throw new AssertionError(msg + " — 期望 " + expected + "，实际 " + actual);
         }
     }
 
+    /** AssertInstanceOf */
     private static void assertInstanceOf(Class<?> type, Object o, String msg) {
         if (o == null || !type.isInstance(o)) {
             throw new AssertionError(msg + " — 期望类型 " + type.getSimpleName() + "，实际 "
@@ -386,16 +419,19 @@ public class JsonProviderExampleSpi implements Example {
         }
     }
 
+    /** Assert判断相等 */
     private static void assertEquals(Object expected, Object actual, String msg) {
         if (expected == null ? actual != null : !expected.equals(actual)) {
             throw new AssertionError(msg + " — 期望 " + expected + "，实际 " + actual);
         }
     }
 
+    /** Pass */
     private static void pass() {
         log.info("  ✓ 通过");
     }
 
+    /** Fail */
     private static void fail(String msg) {
         log.info("  ✗ 失败: {}", msg);
     }

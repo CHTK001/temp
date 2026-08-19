@@ -65,6 +65,7 @@ public class ThreadFlowExample {
      */
     private static final String DEFAULT_TYPE = "all";
 
+    /** Main */
     public static void main(String[] args) {
         CommandLine cli = CommandLine.parse(args)
                 .program("ThreadFlowExample")
@@ -302,26 +303,31 @@ public class ThreadFlowExample {
                     .maxConcurrent(2)
                     .listener(new ThreadFlowListener() {
                         @Override
+                        /** On开始 */
                         public void onStart(ThreadExecutor<?> executor) {
                             onStartCount.incrementAndGet();
                         }
 
                         @Override
+                        /** OnTask开始 */
                         public void onTaskStart(int index) {
                             onTaskStartCount.incrementAndGet();
                         }
 
                         @Override
+                        /** OnNext */
                         public void onNext(int index, Object value) {
                             onNextCount.incrementAndGet();
                         }
 
                         @Override
+                        /** On处理 */
                         public void onProcess(int completed, int total) {
                             onProcessLast.set(completed);
                         }
 
                         @Override
+                        /** OnComplete */
                         public void onComplete(ThreadFlowResult<?> r) {
                             onCompleteCount.incrementAndGet();
                         }
@@ -453,11 +459,13 @@ public class ThreadFlowExample {
                     .timeout(5, TimeUnit.SECONDS)
                     .listener(new ThreadFlowListener() {
                         @Override
+                        /** On处理 */
                         public void onProcess(int completed, int total) {
                             log.info("进度: {}/{}", completed, total);
                         }
 
                         @Override
+                        /** OnComplete */
                         public void onComplete(ThreadFlowResult<?> r) {
                             log.info("核销完成: success={}, cost={}ms", r.isSuccess(), r.getCostMillis());
                         }
@@ -492,6 +500,7 @@ public class ThreadFlowExample {
         }
     }
 
+    /** PrintResult */
     private static void printResult(String name, boolean passed) {
         log.info("{}{}", (passed ? "[PASS]" : "[FAIL]"), name);
     }

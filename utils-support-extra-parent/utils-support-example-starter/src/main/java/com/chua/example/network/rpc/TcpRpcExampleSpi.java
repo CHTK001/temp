@@ -44,21 +44,25 @@ public class TcpRpcExampleSpi implements Example {
     private static final String SERVICE_NAME = "rpc/tcp-echo";
 
     @Override
+    /** Name */
     public String name() {
         return "tcp-rpc";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "network";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "基于 TcpServer + TcpClient + ServiceDiscovery 的 RPC 客户端/服务端示例";
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         log.info("===== tcp-rpc 示例开始 =====");
         SyncServer server = null;
@@ -78,6 +82,7 @@ public class TcpRpcExampleSpi implements Example {
             final SyncServer srv = server;
             server.addListener(new SyncServerListener() {
                 @Override
+                /** OnMessage */
                 public void onMessage(String clientId, String topic, Object message) {
                     if (RPC_REQ_TOPIC.equals(topic)) {
                         srv.publish(RPC_RESP_TOPIC, "echo:" + message);
@@ -113,6 +118,7 @@ public class TcpRpcExampleSpi implements Example {
             AtomicReference<String> resp = new AtomicReference<>();
             client.subscribe(RPC_RESP_TOPIC, new SyncMessageHandler() {
                 @Override
+                /** 处理 */
                 public void handle(String topic, Object message) {
                     resp.set(String.valueOf(message));
                     respLatch.countDown();

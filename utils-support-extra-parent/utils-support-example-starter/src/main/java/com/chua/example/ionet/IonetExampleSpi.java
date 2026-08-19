@@ -30,21 +30,25 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class IonetExampleSpi implements Example {
 
     @Override
+    /** Name */
     public String name() {
         return "ionet";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "ionet";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "ionet 分布式网络通信：Server/Client/SyncServer/SyncClient 封装演示";
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         log.info("===== ionet 示例开始 =====");
 
@@ -155,11 +159,13 @@ public class IonetExampleSpi implements Example {
     public static class DemoAction {
 
         @ActionMethod(DemoCmd.hello)
+        /** Hello */
         public String hello(String name) {
             return "Hello, " + name + "!";
         }
 
         @ActionMethod(DemoCmd.echo)
+        /** Echo */
         public String echo(String message) {
             return "Echo: " + message;
         }
@@ -179,6 +185,7 @@ public class IonetExampleSpi implements Example {
      */
     public static class DemoRegion extends AbstractInputCommandRegion {
         @Override
+        /** 初始化InputCommand */
         public void initInputCommand() {
             ofCommand(DemoCmd.hello)
                     .setTitle("hello")

@@ -87,21 +87,25 @@ public class YunxiaoClientExampleSpi implements Example {
     private static final String PARAM_DELETE_VERSION = "deleteVersion";
 
     @Override
+    /** Name */
     public String name() {
         return "yunxiao";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "yunxiao";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "云效 OpenAPI 链式客户端（制品仓库 / 制品 / 删除）";
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         String domain = args.get(PARAM_DOMAIN);
         String token = args.get(PARAM_TOKEN);

@@ -67,6 +67,7 @@ public class QwenProxyExample {
      */
     private static final String VIDEO_RATIO = "16:9";
 
+    /** Main */
     public static void main(String[] args) {
         CommandLine cli = CommandLine.parse(args)
                 .program("QwenProxyExample")

@@ -40,6 +40,7 @@ public class IonetPerfExampleSpi implements Example {
     @ActionController(PerfCmd.cmd)
     public static class PerfAction {
         @ActionMethod(PerfCmd.echo)
+        /** Echo */
         public String echo(String message) {
             log.info("[PerfAction] 收到请求: {}", message);
             return message;
@@ -52,6 +53,7 @@ public class IonetPerfExampleSpi implements Example {
         volatile CountDownLatch latch;
 
         @Override
+        /** 初始化InputCommand */
         public void initInputCommand() {
             setCmd(PerfCmd.cmd);
             ofCommand(PerfCmd.echo)
@@ -103,21 +105,25 @@ public class IonetPerfExampleSpi implements Example {
     }
 
     @Override
+    /** Name */
     public String name() {
         return "ionet-perf";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "ionet";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "ionet 基于 ioaha Action 真实链路的吞吐量测试";
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         int messages = Integer.parseInt(args.getOrDefault("messages", "2000"));
         int threads = Integer.parseInt(args.getOrDefault("threads", "1"));

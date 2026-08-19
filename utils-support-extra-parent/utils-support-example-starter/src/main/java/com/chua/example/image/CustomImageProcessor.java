@@ -15,11 +15,13 @@ import com.chua.common.support.image.processor.JdkImageProcessor;
 public class CustomImageProcessor extends JdkImageProcessor implements ImageProcessor {
 
     @Override
+    /** Name */
     public String name() {
         return "custom";
     }
 
     @Override
+    /** Available */
     public boolean available() {
         return true;
     }

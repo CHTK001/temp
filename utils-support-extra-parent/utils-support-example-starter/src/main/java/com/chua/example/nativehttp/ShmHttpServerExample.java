@@ -59,6 +59,7 @@ public class ShmHttpServerExample {
      */
     private static final int SELF_TEST_REQUESTS = 1000;
 
+    /** Main */
     public static void main(String[] args) {
         Args parsed = Args.parse(args);
         if (parsed.help()) {
@@ -168,6 +169,7 @@ public class ShmHttpServerExample {
         }
     }
 
+    /** TestHello */
     private static boolean testHello(int port) throws Exception {
         java.net.http.HttpClient client = java.net.http.HttpClient.newHttpClient();
         java.net.http.HttpResponse<String> resp = client.send(
@@ -181,6 +183,7 @@ public class ShmHttpServerExample {
         return ok;
     }
 
+    /** TestJson */
     private static boolean testJson(int port) throws Exception {
         java.net.http.HttpClient client = java.net.http.HttpClient.newHttpClient();
         java.net.http.HttpResponse<String> resp = client.send(
@@ -195,6 +198,7 @@ public class ShmHttpServerExample {
         return ok;
     }
 
+    /** TestBurst */
     private static boolean testBurst(int port) throws Exception {
         java.net.http.HttpClient client = java.net.http.HttpClient.newHttpClient();
         long t0 = System.nanoTime();
@@ -219,6 +223,7 @@ public class ShmHttpServerExample {
         return ok;
     }
 
+    /** Await关闭 */
     private static void awaitShutdown() {
         try {
             Thread.currentThread().join();
@@ -227,6 +232,7 @@ public class ShmHttpServerExample {
         }
     }
 
+    /** PrintHelp */
     private static void printHelp() {
         System.out.println("ShmHttpServerExample - 基于共享内存 + Rust hyper 的 HTTP 示例");
         System.out.println();
@@ -245,6 +251,7 @@ public class ShmHttpServerExample {
             this(0, null, false, false);
         }
 
+        /** 解析 */
         static Args parse(String[] args) {
             Args r = new Args();
             int i = 0;

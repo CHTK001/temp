@@ -15,21 +15,25 @@ import java.util.Map;
 public class PipelineRetryExampleSpi implements Example {
 
     @Override
+    /** Name */
     public String name() {
         return "pipeline-retry";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "common";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "Pipeline 重试机制示例（retry/retryWith/重试回调/退避策略）";
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         String type = args.getOrDefault("type", "all");
         log.info("PipelineRetryExampleSpi --type={}", type);

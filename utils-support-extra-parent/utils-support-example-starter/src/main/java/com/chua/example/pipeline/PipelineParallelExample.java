@@ -26,6 +26,7 @@ import java.util.concurrent.atomic.AtomicReference;
 @Slf4j
 public class PipelineParallelExample {
 
+    /** Main */
     public static void main(String[] args) {
         String type = PipelineBasicExample.parseType(args);
         boolean passed = runTest(type);

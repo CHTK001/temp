@@ -24,21 +24,25 @@ import java.util.Map;
 public class PipelineWalExampleSpi implements Example {
 
     @Override
+    /** Name */
     public String name() {
         return "pipeline-wal";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "common";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "Pipeline WAL 持久化示例（崩溃恢复/resume/stop/降级）";
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         String type = args.getOrDefault("type", "all");
         log.info("PipelineWalExampleSpi --type={}", type);

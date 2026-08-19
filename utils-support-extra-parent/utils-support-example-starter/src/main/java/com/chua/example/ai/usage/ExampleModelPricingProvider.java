@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 public class ExampleModelPricingProvider implements ModelPricingProvider {
 
     @Override
+    /** 获取ModelPricing */
     public ModelDefinition getModelPricing(String provider, String model) {
         if ("openai".equalsIgnoreCase(provider) && "gpt-4".equalsIgnoreCase(model)) {
             return ModelDefinition.builder()

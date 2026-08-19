@@ -30,6 +30,7 @@ import java.util.concurrent.atomic.LongAdder;
 @Slf4j
 public class VertxHttpProxyPerfMain {
 
+    /** Main */
     public static void main(String[] args) throws Exception {
         int concurrency = args.length > 0 ? Integer.parseInt(args[0]) : 64;
         int requestsPerConn = 200;

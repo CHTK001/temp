@@ -15,21 +15,25 @@ import java.util.Map;
 public class ImageProcessorSpiExampleSpi implements Example {
 
     @Override
+    /** Name */
     public String name() {
         return "image-processor-spi";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "common";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "ImageProcessor SPI 发现/优先级/自动降级 (rust/opencv/jdk) + 13种图像操作能力自检";
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         String type = args.getOrDefault("type", "all");
         String input = args.getOrDefault("input", "D:/images/test_1.jpg");

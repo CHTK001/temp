@@ -55,21 +55,25 @@ import java.util.function.Function;
 public class SerializationBenchmarkExample implements Example {
 
     @Override
+    /** Name */
     public String name() {
         return "serialization-bench";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "serialize";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "全部序列化实现性能基准（Jackson/Gson/Fastjson/Fory-JSON/Fury/Protobuf/Smile/Java/JsonSerializer）";
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         String impl = args.getOrDefault("impl", "all").toLowerCase();
         long warmupMs = Long.parseLong(args.getOrDefault("warmup-ms", "300"));
@@ -299,26 +303,31 @@ public class SerializationBenchmarkExample implements Example {
     private static BenchAdapter jsonAdapter(String label, JsonProvider p) {
         return new BenchAdapter() {
             @Override
+            /** Label */
             public String label() {
                 return label;
             }
 
             @Override
+            /** Category */
             public String category() {
                 return "JSON文本";
             }
 
             @Override
+            /** 序列化 */
             public Object serialize(Object o) {
                 return p.toJson(o);
             }
 
             @Override
+            /** 反序列化 */
             public Object deserialize(Object d, Class<?> t) {
                 return p.fromJson((String) d, t);
             }
 
             @Override
+            /** 获取大小Of */
             public int sizeOf(Object d) {
                 return ((String) d).getBytes(StandardCharsets.UTF_8).length;
             }
@@ -335,27 +344,32 @@ public class SerializationBenchmarkExample implements Example {
     private static BenchAdapter binaryAdapter(String label, Serialization s) {
         return new BenchAdapter() {
             @Override
+            /** Label */
             public String label() {
                 return label;
             }
 
             @Override
+            /** Category */
             public String category() {
                 return "二进制";
             }
 
             @Override
+            /** 序列化 */
             public Object serialize(Object o) throws Exception {
                 return s.serialize(o);
             }
 
             @SuppressWarnings("unchecked")
             @Override
+            /** 反序列化 */
             public Object deserialize(Object d, Class<?> t) throws Exception {
                 return s.deserialize((byte[]) d, (Class<Object>) t);
             }
 
             @Override
+            /** 获取大小Of */
             public int sizeOf(Object d) {
                 return ((byte[]) d).length;
             }
@@ -377,26 +391,31 @@ public class SerializationBenchmarkExample implements Example {
     private static BenchAdapter serializerFactoryAdapter(String label, Function<Class<?>, Serializer> factory) {
         return new BenchAdapter() {
             @Override
+            /** Label */
             public String label() {
                 return label;
             }
 
             @Override
+            /** Category */
             public String category() {
                 return "Serializer";
             }
 
             @Override
+            /** 序列化 */
             public Object serialize(Object o) {
                 return factory.apply(o.getClass()).serialize((Serializable) o);
             }
 
             @Override
+            /** 反序列化 */
             public Object deserialize(Object d, Class<?> t) {
                 return factory.apply(t).deserialize((byte[]) d);
             }
 
             @Override
+            /** 获取大小Of */
             public int sizeOf(Object d) {
                 return ((byte[]) d).length;
             }
@@ -538,9 +557,16 @@ public class SerializationBenchmarkExample implements Example {
          */
         private String zip;
 
+        /** 创建 Address 实例 */
         public Address() {
         }
 
+        /**
+         * 创建 Address 实例
+         * @param province province
+         * @param String String
+         * @param String String
+         */
         public Address(String province, String city, String zip) {
             this.province = province;
             this.city = city;
@@ -562,9 +588,15 @@ public class SerializationBenchmarkExample implements Example {
          */
         private double amount;
 
+        /** 创建 Order 实例 */
         public Order() {
         }
 
+        /**
+         * 创建 Order 实例
+         * @param id id
+         * @param double double
+         */
         public Order(String id, double amount) {
             this.id = id;
             this.amount = amount;

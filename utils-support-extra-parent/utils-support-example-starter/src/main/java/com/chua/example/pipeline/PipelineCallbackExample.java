@@ -29,6 +29,7 @@ import java.util.List;
 @Slf4j
 public class PipelineCallbackExample {
 
+    /** Main */
     public static void main(String[] args) {
         String type = PipelineBasicExample.parseType(args);
         boolean passed = runTest(type);
@@ -153,16 +154,19 @@ public class PipelineCallbackExample {
             Pipeline pipeline = PipelineBuilder.newBuilder("listener-demo")
                     .addListener(new PipelineListener() {
                         @Override
+                        /** BeforeNode */
                         public void beforeNode(PipelineContext<?> context) {
                             events.add("before:" + context.getCurrentNodeId());
                         }
 
                         @Override
+                        /** AfterNode */
                         public void afterNode(PipelineContext<?> context) {
                             events.add("after:" + context.getCurrentNodeId());
                         }
 
                         @Override
+                        /** On记录错误 */
                         public String onError(PipelineContext<?> context, Throwable e) {
                             events.add("error:" + context.getCurrentNodeId());
                             // 返回 null 终止流水线
@@ -279,6 +283,7 @@ public class PipelineCallbackExample {
         }
     }
 
+    /** Sleep */
     private static void sleep(long ms) {
         try { Thread.sleep(ms); } catch (InterruptedException ignored) {}
     }

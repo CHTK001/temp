@@ -25,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PipelineActionExample {
 
+    /** Main */
     public static void main(String[] args) {
         String type = PipelineBasicExample.parseType(args);
         boolean passed = runTest(type);
@@ -32,6 +33,7 @@ public class PipelineActionExample {
         System.exit(passed ? 0 : 1);
     }
 
+    /** 运行Test */
     public static boolean runTest(String type) {
         boolean passed = true;
         switch (type.toLowerCase()) {
@@ -195,6 +197,7 @@ public class PipelineActionExample {
         }
     }
 
+    /** PrintResult */
     private static void printResult(String name, boolean passed) {
         System.out.println((passed ? "[PASS] " : "[FAIL] ") + name);
     }

@@ -74,21 +74,25 @@ public class NioHttpServerExampleSpi implements Example {
     private static final String SERVER_TYPE = "nio";
 
     @Override
+    /** Name */
     public String name() {
         return "nio-http";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "nio-http";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "NioHttpServer 全功能自检 + SPI 切换 + 性能基准（JDK NIO）";
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         String mode = args.getOrDefault("mode", "all");
         log.info("===== nio-http [mode={}] =====", mode);
@@ -134,6 +138,7 @@ public class NioHttpServerExampleSpi implements Example {
 
     // ==================== SPI ====================
 
+    /** TestSpiSwitch */
     private boolean testSpiSwitch() {
         log.info("  [SPI-01] ServerBuilder.type(\"nio\") 加载 NioHttpServer");
         Server server = null;
@@ -154,6 +159,7 @@ public class NioHttpServerExampleSpi implements Example {
 
     // ==================== 功能测试 ====================
 
+    /** Test获取Echo */
     private boolean testGetEcho() {
         log.info("  [FUNC-01] GET /echo 回显");
         Server server = null;
@@ -173,6 +179,7 @@ public class NioHttpServerExampleSpi implements Example {
         }
     }
 
+    /** Test获取查询Params */
     private boolean testGetQueryParams() {
         log.info("  [FUNC-02] GET /query?name=hello&age=18 查询参数");
         Server server = null;
@@ -195,6 +202,7 @@ public class NioHttpServerExampleSpi implements Example {
         }
     }
 
+    /** TestPostPlainText */
     private boolean testPostPlainText() {
         log.info("  [FUNC-03] POST /echo 纯文本回显");
         Server server = null;
@@ -214,6 +222,7 @@ public class NioHttpServerExampleSpi implements Example {
         }
     }
 
+    /** TestPostJson */
     private boolean testPostJson() {
         log.info("  [FUNC-04] POST /json JSON 请求体解析");
         Server server = null;
@@ -239,6 +248,7 @@ public class NioHttpServerExampleSpi implements Example {
         }
     }
 
+    /** TestPostFormUrlEncoded */
     private boolean testPostFormUrlEncoded() {
         log.info("  [FUNC-05] POST /form 表单 application/x-www-form-urlencoded");
         Server server = null;
@@ -261,6 +271,7 @@ public class NioHttpServerExampleSpi implements Example {
         }
     }
 
+    /** TestPutMethod */
     private boolean testPutMethod() {
         log.info("  [FUNC-06] PUT /update 回显");
         Server server = null;
@@ -286,6 +297,7 @@ public class NioHttpServerExampleSpi implements Example {
         }
     }
 
+    /** Test删除Method */
     private boolean testDeleteMethod() {
         log.info("  [FUNC-07] DELETE /remove 回显");
         Server server = null;
@@ -308,6 +320,7 @@ public class NioHttpServerExampleSpi implements Example {
         }
     }
 
+    /** TestPatchMethod */
     private boolean testPatchMethod() {
         log.info("  [FUNC-08] PATCH /patch 部分更新回显");
         Server server = null;
@@ -333,6 +346,7 @@ public class NioHttpServerExampleSpi implements Example {
         }
     }
 
+    /** TestHeadMethod */
     private boolean testHeadMethod() {
         log.info("  [FUNC-09] HEAD /head 只返回头");
         Server server = null;
@@ -361,6 +375,7 @@ public class NioHttpServerExampleSpi implements Example {
         }
     }
 
+    /** TestOptionsMethod */
     private boolean testOptionsMethod() {
         log.info("  [FUNC-10] OPTIONS /options");
         Server server = null;
@@ -390,6 +405,7 @@ public class NioHttpServerExampleSpi implements Example {
         }
     }
 
+    /** TestCustomHeaders */
     private boolean testCustomHeaders() {
         log.info("  [FUNC-11] 自定义请求头 + 响应头");
         Server server = null;
@@ -419,6 +435,7 @@ public class NioHttpServerExampleSpi implements Example {
         }
     }
 
+    /** TestHeaderCaseInsensitivity */
     private boolean testHeaderCaseInsensitivity() {
         log.info("  [FUNC-12] 请求头大小写不敏感");
         Server server = null;
@@ -455,6 +472,7 @@ public class NioHttpServerExampleSpi implements Example {
         }
     }
 
+    /** TestStatusCodes */
     private boolean testStatusCodes() {
         log.info("  [FUNC-13] 状态码: 201, 204, 302, 400, 404, 500");
         Server server = null;
@@ -492,6 +510,7 @@ public class NioHttpServerExampleSpi implements Example {
         }
     }
 
+    /** TestKeepAlive */
     private boolean testKeepAlive() {
         log.info("  [FUNC-14] Keep-Alive 连接复用（5 次请求同一连接）");
         Server server = null;
@@ -521,6 +540,7 @@ public class NioHttpServerExampleSpi implements Example {
         }
     }
 
+    /** TestLargeBody */
     private boolean testLargeBody() {
         log.info("  [FUNC-15] 大报文 1MB round-trip");
         Server server = null;
@@ -548,6 +568,7 @@ public class NioHttpServerExampleSpi implements Example {
         }
     }
 
+    /** TestRemoteAddress */
     private boolean testRemoteAddress() {
         log.info("  [FUNC-16] RemoteAddress / RemotePort");
         Server server = null;
@@ -569,6 +590,7 @@ public class NioHttpServerExampleSpi implements Example {
         }
     }
 
+    /** TestByteBody */
     private boolean testByteBody() {
         log.info("  [FUNC-17] setBody(byte[]) + getOutputStream()");
         Server server = null;
@@ -618,6 +640,7 @@ public class NioHttpServerExampleSpi implements Example {
         }
     }
 
+    /** TestSseStreaming */
     private boolean testSseStreaming() {
         log.info("  [FUNC-18] SSE 流式推送（3 个事件）");
         Server server = null;
@@ -667,6 +690,7 @@ public class NioHttpServerExampleSpi implements Example {
 
     // ==================== 性能 ====================
 
+    /** 运行Perf */
     private boolean runPerf(int concurrency, int connections, int requestsPerConn, int payloadSize) {
         PerfReport.printEnvironment("NioHttpServer", SERVER_TYPE, "SPI");
         log.info("  │ 代理路径 : HttpClient -> NioHttpServer (JDK NIO + virtual-thread 业务)");
@@ -697,6 +721,7 @@ public class NioHttpServerExampleSpi implements Example {
         }
     }
 
+    /** 运行Sweep */
     private boolean runSweep(int payloadSize) {
         PerfReport.printEnvironment("NioHttpServer [sweep]", SERVER_TYPE, "SPI");
         log.info("  │ 代理路径 : HttpClient -> NioHttpServer (JDK NIO + virtual-thread 业务)");
@@ -729,6 +754,7 @@ public class NioHttpServerExampleSpi implements Example {
         }
     }
 
+    /** 运行PerfInner */
     private PerfReport.SweepRow runPerfInner(int concurrency, int connections, int requestsPerConn, int port) {
         ExecutorService pool = null;
         try {
@@ -806,10 +832,12 @@ public class NioHttpServerExampleSpi implements Example {
         void configure(ConfigServer server);
     }
 
+    /** 创建Server */
     private Server createServer() {
         return ServerBuilder.create().type(SERVER_TYPE).host("127.0.0.1").port(0).build();
     }
 
+    /** 开始Server */
     private Server startServer(ServerConfigurer configurer) {
         Server server = createServer();
         configurer.configure((ConfigServer) server);
@@ -817,14 +845,17 @@ public class NioHttpServerExampleSpi implements Example {
         return server;
     }
 
+    /** Client */
     private HttpClient client() {
         return HttpClient.newHttpClient();
     }
 
+    /** Uri */
     private URI uri(Server server, String path) {
         return URI.create("http://127.0.0.1:" + server.getPort() + path);
     }
 
+    /** 获取 */
     private HttpResponse<String> get(Server server, String path) throws Exception {
         return client().send(
                 HttpRequest.newBuilder(uri(server, path))
@@ -832,6 +863,7 @@ public class NioHttpServerExampleSpi implements Example {
                 HttpResponse.BodyHandlers.ofString());
     }
 
+    /** Post */
     private HttpResponse<String> post(Server server, String path, String contentType, String body) throws Exception {
         return client().send(
                 HttpRequest.newBuilder(uri(server, path))
@@ -842,32 +874,38 @@ public class NioHttpServerExampleSpi implements Example {
                 HttpResponse.BodyHandlers.ofString());
     }
 
+    /** Assert判断相等 */
     private static void assertEquals(Object expected, Object actual, String msg) {
         if (expected == null ? actual != null : !expected.equals(actual)) {
             throw new AssertionError(msg + " — 期望 " + expected + "，实际 " + actual);
         }
     }
 
+    /** Assert判断相等 */
     private static void assertEquals(int expected, int actual, String msg) {
         if (expected != actual) {
             throw new AssertionError(msg + " — 期望 " + expected + "，实际 " + actual);
         }
     }
 
+    /** AssertTrue */
     private static void assertTrue(boolean cond, String msg) {
         if (!cond) {
             throw new AssertionError(msg);
         }
     }
 
+    /** Pass */
     private static void pass() {
         log.info("  \u2713 通过");
     }
 
+    /** Fail */
     private static void fail(String msg) {
         log.info("  \u2717 失败: {}", msg);
     }
 
+    /** 关闭Quietly */
     private static void closeQuietly(AutoCloseable c) {
         if (c != null) {
             try {

@@ -50,6 +50,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @Slf4j
 public final class HttpServerBenchmark {
 
+    /** 创建 HttpServerBenchmark 实例 */
     private HttpServerBenchmark() {
     }
 
@@ -589,11 +590,13 @@ public final class HttpServerBenchmark {
 
     // ==================== 工具 ====================
 
+    /** UsedMemMb */
     private static long usedMemMb() {
         Runtime rt = Runtime.getRuntime();
         return (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
     }
 
+    /** 合并 */
     private static long[] merge(List<long[]> latencies) {
         int total = 0;
         for (long[] arr : latencies) {
@@ -608,6 +611,7 @@ public final class HttpServerBenchmark {
         return all;
     }
 
+    /** Percentile */
     private static double percentile(long[] sortedMs, double p) {
         if (sortedMs.length == 0) {
             return 0;
@@ -617,10 +621,12 @@ public final class HttpServerBenchmark {
         return sortedMs[idx];
     }
 
+    /** Fmt */
     private static String fmt(double v) {
         return String.format(Locale.ROOT, "%.0f", v);
     }
 
+    /** Esc */
     private static String esc(String s) {
         if (s == null) {
             return "";
@@ -628,6 +634,7 @@ public final class HttpServerBenchmark {
         return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
     }
 
+    /** EscJs */
     private static String escJs(String s) {
         if (s == null) {
             return "";
@@ -635,6 +642,7 @@ public final class HttpServerBenchmark {
         return s.replace("\\", "\\\\").replace("'", "\\'");
     }
 
+    /** JsIntArray */
     private static String jsIntArray(int[] arr) {
         StringBuilder sb = new StringBuilder("[");
         for (int v : arr) {
@@ -644,12 +652,14 @@ public final class HttpServerBenchmark {
         return sb.append(']').toString();
     }
 
+    /** 去空格TrailingComma */
     private static void trimTrailingComma(StringBuilder sb) {
         if (sb.length() > 0 && sb.charAt(sb.length() - 1) == ',') {
             sb.setLength(sb.length() - 1);
         }
     }
 
+    /** 解析Ints */
     private static int[] parseInts(String csv, int[] defaults) {
         if (csv == null || csv.isBlank()) {
             return defaults;
@@ -664,6 +674,7 @@ public final class HttpServerBenchmark {
 
     // ==================== 入口 ====================
 
+    /** Main */
     public static void main(String[] args) {
         Map<String, String> kv = new HashMap<>();
         for (String arg : args) {
@@ -774,6 +785,7 @@ public final class HttpServerBenchmark {
         return toJson(value, 0);
     }
 
+    /** ToJson */
     private static String toJson(Object value, int indent) {
         String pad = "  ".repeat(indent);
         String childPad = "  ".repeat(indent + 1);
@@ -818,6 +830,7 @@ public final class HttpServerBenchmark {
         return String.valueOf(value);
     }
 
+    /** EscapeJson */
     private static String escapeJson(String s) {
         return s.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n");
     }

@@ -16,6 +16,7 @@ import com.chua.tui.support.widgets.MemoryWidget;
  * @since 4.0.0
  */
 public class TuiLauncher {
+    /** Main */
     public static void main(String[] args) throws Exception {
         SystemMonitorService monitorService = new SystemMonitorService();
         TuiDashboard dashboard = TuiDashboardBuilder.create()

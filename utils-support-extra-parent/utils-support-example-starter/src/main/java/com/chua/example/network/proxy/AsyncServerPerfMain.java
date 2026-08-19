@@ -28,6 +28,7 @@ import java.util.concurrent.atomic.LongAdder;
 @Slf4j
 public class AsyncServerPerfMain {
 
+    /** Main */
     public static void main(String[] args) throws Exception {
         String type = args.length > 0 ? args[0] : "vertx-http";
         int durSec = args.length > 1 ? Integer.parseInt(args[1]) : 10;
@@ -88,6 +89,17 @@ public class AsyncServerPerfMain {
         server.stop();
     }
 
+    /**
+     * 发送One
+     * @param client client
+     * @param opts opts
+     * @param inflight inflight
+     * @param ok ok
+     * @param errors errors
+     * @param deadline deadline
+     * @param stop stop
+     * @param allDone allDone
+     */
     private static void sendOne(HttpClient client, RequestOptions opts, Semaphore inflight,
                                 LongAdder ok, LongAdder errors, long deadline,
                                 AtomicBoolean stop, CountDownLatch allDone) {
@@ -113,6 +125,17 @@ public class AsyncServerPerfMain {
         });
     }
 
+    /**
+     * Next
+     * @param client client
+     * @param opts opts
+     * @param inflight inflight
+     * @param ok ok
+     * @param errors errors
+     * @param deadline deadline
+     * @param stop stop
+     * @param allDone allDone
+     */
     private static void next(HttpClient client, RequestOptions opts, Semaphore inflight,
                              LongAdder ok, LongAdder errors, long deadline,
                              AtomicBoolean stop, CountDownLatch allDone) {

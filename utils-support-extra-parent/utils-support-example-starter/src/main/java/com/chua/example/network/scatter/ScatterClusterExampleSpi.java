@@ -37,21 +37,25 @@ import java.util.concurrent.TimeUnit;
 public class ScatterClusterExampleSpi implements Example {
 
     @Override
+    /** Name */
     public String name() {
         return "scatter-cluster";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "scatter";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "Scatter 集群:TCP 双节点 seed 互发现 + gossip 合并 + 三协议往返 + UDP 广播 + 动态权重 + 分组隔离 + TCP 代理 + cluster addServer";
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         String mode = args.getOrDefault("mode", "all");
         log.info("===== scatter-cluster [mode={}] =====", mode);
@@ -511,6 +515,7 @@ public class ScatterClusterExampleSpi implements Example {
         SyncServer syncServer = nodeServer.getSyncServer();
         syncServer.addListener(new SyncServerListener() {
             @Override
+            /** OnMessage */
             public void onMessage(String clientId, String messageTopic, Object message) {
                 if (!"sync/request".equals(messageTopic) || message == null) {
                     return;
@@ -575,26 +580,31 @@ public class ScatterClusterExampleSpi implements Example {
         }
     }
 
+    /** Assert判断相等 */
     private static void assertEquals(Object expected, Object actual, String msg) {
         if (!java.util.Objects.equals(expected, actual)) {
             throw new AssertionError(msg + " 期望=" + expected + " 实际=" + actual);
         }
     }
 
+    /** AssertTrue */
     private static void assertTrue(boolean cond, String msg) {
         if (!cond) {
             throw new AssertionError(msg);
         }
     }
 
+    /** Pass */
     private static void pass() {
         log.info("    ✓ 通过");
     }
 
+    /** Fail */
     private static void fail(String msg) {
         log.error("    ✗ 失败: {}", msg);
     }
 
+    /** 关闭Quietly */
     private static void closeQuietly(AutoCloseable c) {
         if (c != null) {
             try {

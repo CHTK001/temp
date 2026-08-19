@@ -32,6 +32,7 @@ public class BgeEmbeddingExample {
      */
     private static final int EXIT_CODE_FAILURE = 1;
 
+    /** Main */
     public static void main(String[] args) {
         BgeEmbeddingExample example = new BgeEmbeddingExample();
         boolean passed = example.runSelfTest();

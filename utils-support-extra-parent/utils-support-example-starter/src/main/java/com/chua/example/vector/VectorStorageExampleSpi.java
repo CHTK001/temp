@@ -61,21 +61,25 @@ public class VectorStorageExampleSpi implements Example {
     private static final int TOP_K = 3;
 
     @Override
+    /** Name */
     public String name() {
         return "vector-storage";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "vector-storage";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "向量存储综合自检（memory / jvector / milvus 三实现 SPI 切换）";
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         String type = args.getOrDefault("type", "memory");
         JVectorStorageProperties.Mode mode = args.containsKey("mode")
@@ -103,6 +107,7 @@ public class VectorStorageExampleSpi implements Example {
 
     // ==================== memory 能力集 ====================
 
+    /** TestMemoryCapabilities */
     private boolean testMemoryCapabilities() {
         log.info("\n[memory] 基础能力矩阵");
         boolean passed = true;
@@ -115,6 +120,7 @@ public class VectorStorageExampleSpi implements Example {
         return passed;
     }
 
+    /** TestMemoryDefault构建 */
     private boolean testMemoryDefaultBuild() {
         log.info("  [TC-01] memory 默认构建 + 搜索");
         try {
@@ -129,6 +135,7 @@ public class VectorStorageExampleSpi implements Example {
         }
     }
 
+    /** TestMemoryAlgorithm构建 */
     private boolean testMemoryAlgorithmBuild() {
         log.info("  [TC-02] memory 指定算法(COSINE)构建 + 搜索");
         try {
@@ -144,6 +151,7 @@ public class VectorStorageExampleSpi implements Example {
         }
     }
 
+    /** TestMemory移除 */
     private boolean testMemoryRemove() {
         log.info("  [TC-03] memory remove(id)");
         VectorStorage s = null;
@@ -165,6 +173,7 @@ public class VectorStorageExampleSpi implements Example {
         }
     }
 
+    /** TestMemory更新 */
     private boolean testMemoryUpdate() {
         log.info("  [TC-04] memory update(id, vector)");
         VectorStorage s = null;
@@ -187,6 +196,7 @@ public class VectorStorageExampleSpi implements Example {
         }
     }
 
+    /** TestMemoryClear */
     private boolean testMemoryClear() {
         log.info("  [TC-05] memory clear()");
         try {
@@ -204,6 +214,7 @@ public class VectorStorageExampleSpi implements Example {
         }
     }
 
+    /** TestMemory获取大小 */
     private boolean testMemorySize() {
         log.info("  [TC-06] memory size()");
         try {
@@ -224,6 +235,7 @@ public class VectorStorageExampleSpi implements Example {
 
     // ==================== jvector 能力集 ====================
 
+    /** TestJVectorCapabilities */
     private boolean testJVectorCapabilities(JVectorStorageProperties.Mode mode) {
         log.info("\n[jvector] 模式={} 能力矩阵", mode);
         boolean passed = true;
@@ -239,6 +251,7 @@ public class VectorStorageExampleSpi implements Example {
         return passed;
     }
 
+    /** TestJVector添加搜索 */
     private boolean testJVectorAddSearch(JVectorStorageProperties.Mode mode) {
         log.info("  [TC-11] jvector {} add + search", mode);
         try {
@@ -253,6 +266,7 @@ public class VectorStorageExampleSpi implements Example {
         }
     }
 
+    /** TestJVector更新 */
     private boolean testJVectorUpdate(JVectorStorageProperties.Mode mode) {
         log.info("  [TC-12] jvector {} update", mode);
         VectorStorage s = null;
@@ -274,6 +288,7 @@ public class VectorStorageExampleSpi implements Example {
         }
     }
 
+    /** TestJVector移除 */
     private boolean testJVectorRemove(JVectorStorageProperties.Mode mode) {
         log.info("  [TC-13] jvector {} remove", mode);
         VectorStorage s = null;
@@ -294,6 +309,7 @@ public class VectorStorageExampleSpi implements Example {
         }
     }
 
+    /** TestJVectorClear */
     private boolean testJVectorClear(JVectorStorageProperties.Mode mode) {
         log.info("  [TC-14] jvector {} clear", mode);
         try {
@@ -311,6 +327,7 @@ public class VectorStorageExampleSpi implements Example {
         }
     }
 
+    /** TestJVector获取大小 */
     private boolean testJVectorSize(JVectorStorageProperties.Mode mode) {
         log.info("  [TC-15] jvector {} size", mode);
         try {
@@ -329,6 +346,7 @@ public class VectorStorageExampleSpi implements Example {
         }
     }
 
+    /** TestJVectorDiskFile */
     private boolean testJVectorDiskFile(JVectorStorageProperties.Mode mode) {
         log.info("  [TC-16] jvector ON_DISK 磁盘文件验证");
         try {
@@ -355,6 +373,7 @@ public class VectorStorageExampleSpi implements Example {
         }
     }
 
+    /** TestJVectorPersistence */
     private boolean testJVectorPersistence(JVectorStorageProperties.Mode mode) {
         log.info("  [TC-17] jvector {} 持久化往返", mode);
         try {
@@ -389,6 +408,7 @@ public class VectorStorageExampleSpi implements Example {
 
     // ==================== milvus 能力集 ====================
 
+    /** TestMilvusCapabilities */
     private boolean testMilvusCapabilities(String host, int port, String collection, String token) {
         log.info("\n[milvus] 基础能力矩阵 [host={}:{}, collection={}]", host, port, collection);
         boolean passed = true;
@@ -398,6 +418,7 @@ public class VectorStorageExampleSpi implements Example {
         return passed;
     }
 
+    /** TestMilvus构建And搜索 */
     private boolean testMilvusBuildAndSearch(String host, int port, String collection, String token) {
         log.info("  [TC-21] milvus 构建 + 搜索");
         MilvusVectorStorage s = null;
@@ -414,6 +435,7 @@ public class VectorStorageExampleSpi implements Example {
         }
     }
 
+    /** TestMilvus删除 */
     private boolean testMilvusDelete(String host, int port, String collection, String token) {
         log.info("  [TC-22] milvus 删除");
         MilvusVectorStorage s = null;
@@ -431,6 +453,7 @@ public class VectorStorageExampleSpi implements Example {
         }
     }
 
+    /** TestMilvusUpsert */
     private boolean testMilvusUpsert(String host, int port, String collection, String token) {
         log.info("  [TC-23] milvus upsert");
         MilvusVectorStorage s = null;
@@ -450,11 +473,13 @@ public class VectorStorageExampleSpi implements Example {
 
     // ==================== 辅助方法 ====================
 
+    /** 创建MemoryStorage */
     private VectorStorage createMemoryStorage() {
         return VectorStorageProvider.of("memory").dimension(DIM)
                 .algorithm(VectorCompareAlgorithm.cosine()).build();
     }
 
+    /** 创建JVectorStorage */
     private VectorStorage createJVectorStorage(JVectorStorageProperties.Mode mode) {
         var props = new JVectorStorageProperties();
         props.setMode(mode);
@@ -482,6 +507,7 @@ public class VectorStorageExampleSpi implements Example {
                 .algorithm(VectorCompareAlgorithm.cosine()).properties(props).build();
     }
 
+    /** SeedAnd搜索 */
     private void seedAndSearch(VectorStorage storage, String label) {
         var rnd = new Random(42);
         for (int i = 0; i < N; i++) {
@@ -492,6 +518,7 @@ public class VectorStorageExampleSpi implements Example {
         log.info("    搜索 Top-{} 结果: firstId={}", TOP_K, firstId);
     }
 
+    /** SeedJVector */
     private void seedJVector(VectorStorage storage, String label) {
         var rnd = new Random(42);
         for (int i = 0; i < N; i++) {
@@ -499,6 +526,7 @@ public class VectorStorageExampleSpi implements Example {
         }
     }
 
+    /** RandomVector */
     private static float[] randomVector(Random rnd, int dim) {
         float[] v = new float[dim];
         for (int i = 0; i < dim; i++) {
@@ -507,26 +535,31 @@ public class VectorStorageExampleSpi implements Example {
         return v;
     }
 
+    /** Assert判断相等 */
     private static void assertEquals(int expected, int actual, String msg) {
         if (expected != actual) {
             throw new AssertionError(msg + " — 期望 " + expected + "，实际 " + actual);
         }
     }
 
+    /** Assert判断相等 */
     private static void assertEquals(boolean expected, boolean actual, String msg) {
         if (expected != actual) {
             throw new AssertionError(msg + " — 期望 " + expected + "，实际 " + actual);
         }
     }
 
+    /** Pass */
     private static void pass() {
         log.info("  ✓ 通过");
     }
 
+    /** Fail */
     private static void fail(String msg) {
         log.info("  ✗ 失败: {}", msg);
     }
 
+    /** 关闭Quietly */
     private static void closeQuietly(VectorStorage s) {
         if (s != null) {
             try {

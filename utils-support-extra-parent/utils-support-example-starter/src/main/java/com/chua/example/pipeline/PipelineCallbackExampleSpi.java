@@ -15,21 +15,25 @@ import java.util.Map;
 public class PipelineCallbackExampleSpi implements Example {
 
     @Override
+    /** Name */
     public String name() {
         return "pipeline-callback";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "common";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "Pipeline 生命周期回调示例（onStart/onComplete/onNextStep/listener/logging）";
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         String type = args.getOrDefault("type", "all");
         log.info("PipelineCallbackExampleSpi --type={}", type);

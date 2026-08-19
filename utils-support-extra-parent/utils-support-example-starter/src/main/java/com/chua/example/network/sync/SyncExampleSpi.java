@@ -36,16 +36,19 @@ public class SyncExampleSpi implements Example {
     private static final List<String> PROTOCOLS = List.of("tcp", "udp", "kcp", "http", "websocket");
 
     @Override
+    /** Name */
     public String name() {
         return "sync";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "network";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "SyncServer/SyncClient 全子类对接自检：tcp/udp/kcp/http/websocket";
     }
@@ -68,6 +71,7 @@ public class SyncExampleSpi implements Example {
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         // --mode=throughput 时执行吞吐量测试，否则执行全子类对接自检
         if ("throughput".equalsIgnoreCase(args.getOrDefault("mode", ""))) {
@@ -125,6 +129,7 @@ public class SyncExampleSpi implements Example {
             final SyncServer srv = server;
             server.addListener(new SyncServerListener() {
                 @Override
+                /** OnMessage */
                 public void onMessage(String clientId, String topic, Object message) {
                     if ("perf/req".equals(topic)) {
                         srv.publish("perf/resp", message);
@@ -154,6 +159,7 @@ public class SyncExampleSpi implements Example {
                 // 客户端计数：收到响应
                 client.subscribe("perf/resp", new SyncMessageHandler() {
                     @Override
+                    /** 处理 */
                     public void handle(String topic, Object message) {
                         clientGot.countDown();
                     }
@@ -249,6 +255,7 @@ public class SyncExampleSpi implements Example {
             CountDownLatch serverGot = new CountDownLatch(messages);
             server.addListener(new SyncServerListener() {
                 @Override
+                /** OnMessage */
                 public void onMessage(String clientId, String topic, Object message) {
                     serverGot.countDown();
                 }
@@ -274,6 +281,7 @@ public class SyncExampleSpi implements Example {
             CountDownLatch clientGot = new CountDownLatch(messages);
             client.subscribe("perf/down", new SyncMessageHandler() {
                 @Override
+                /** 处理 */
                 public void handle(String topic, Object message) {
                     clientGot.countDown();
                 }
@@ -348,6 +356,7 @@ public class SyncExampleSpi implements Example {
             AtomicReference<String> serverMsg = new AtomicReference<>();
             server.addListener(new SyncServerListener() {
                 @Override
+                /** OnMessage */
                 public void onMessage(String clientId, String topic, Object message) {
                     if ("broadcast".equals(clientId)) {
                         return;
@@ -369,6 +378,7 @@ public class SyncExampleSpi implements Example {
             AtomicReference<String> clientMsg = new AtomicReference<>();
             client.subscribe("sync/ann", new SyncMessageHandler() {
                 @Override
+                /** 处理 */
                 public void handle(String topic, Object message) {
                     clientMsg.set(topic + ":" + message);
                     clientGot.countDown();

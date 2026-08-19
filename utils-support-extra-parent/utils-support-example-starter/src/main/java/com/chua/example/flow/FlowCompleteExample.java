@@ -26,6 +26,7 @@ import java.util.Map;
  */
 public class FlowCompleteExample {
 
+    /** Main */
     public static void main(String[] args) {
         System.out.println("========== 1. DSL 构建流程 ==========");
         // 构建：start -> check(condition) -> transform -> end
@@ -71,11 +72,13 @@ public class FlowCompleteExample {
         System.out.println("========== 6. WAIT / resume 挂起恢复 ==========");
         FlowNode pauseNode = new FlowNode() {
             @Override
+            /** Type */
             public String type() {
                 return "pause";
             }
 
             @Override
+            /** 执行 */
             public void execute(FlowContext context) {
                 context.waitForResume();
             }

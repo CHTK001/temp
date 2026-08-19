@@ -97,21 +97,25 @@ public class RpcExample implements Example {
     private static final long RETRY_DELAY_MS = 500L;
 
     @Override
+    /** Name */
     public String name() {
         return "rpc";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "rpc";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "RPC 四实现自检（native / json / dubbo / sofa）";
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         String type = args.getOrDefault("type", "all");
         log.info("===== rpc --test [type={}] =====", type);

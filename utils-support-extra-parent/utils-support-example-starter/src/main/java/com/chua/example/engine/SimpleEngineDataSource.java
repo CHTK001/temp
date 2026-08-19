@@ -22,10 +22,21 @@ public class SimpleEngineDataSource implements EngineDataSource<Object> {
     /** 来源 */
     private Object source;
 
+    /**
+     * 创建 SimpleEngineDataSource 实例
+     * @param url url
+     */
     public SimpleEngineDataSource(String url) {
         this("default", url, null, null);
     }
 
+    /**
+     * 创建 SimpleEngineDataSource 实例
+     * @param name name
+     * @param String String
+     * @param String String
+     * @param String String
+     */
     public SimpleEngineDataSource(String name, String url, String username, String password) {
         this.name = name;
         this.url = url;
@@ -35,43 +46,51 @@ public class SimpleEngineDataSource implements EngineDataSource<Object> {
     }
 
     @Override
+    /** Name */
     public String name() {
         return name;
     }
 
     @Override
+    /** Url */
     public String url() {
         return url;
     }
 
     @Override
+    /** Username */
     public String username() {
         return username;
     }
 
     @Override
+    /** Password */
     public String password() {
         return password;
     }
 
     @Override
+    /** 获取Source */
     public Object getSource() {
         return source;
     }
 
     @Override
     @SuppressWarnings("unchecked")
+    /** 设置Source */
     public EngineDataSource<Object> setSource(Object source) {
         this.source = source;
         return this;
     }
 
     @Override
+    /** 获取Dialect */
     public Dialect getDialect() {
         return null;
     }
 
     @Override
+    /** 设置Dialect */
     public EngineDataSource<Object> setDialect(Dialect dialect) {
         return this;
     }

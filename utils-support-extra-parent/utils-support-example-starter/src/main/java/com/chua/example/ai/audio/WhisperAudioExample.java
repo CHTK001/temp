@@ -81,6 +81,7 @@ public class WhisperAudioExample {
     private static final String DEFAULT_AUDIO_PATH =
             "C:/Users/Administrator/AppData/Local/Temp/whisper_long.wav";
 
+    /** Main */
     public static void main(String[] args) {
         CommandLine cli = CommandLine.parse(args)
                 .program("WhisperAudioExample")

@@ -15,21 +15,25 @@ import java.util.Map;
 public class PipelineDecisionExampleSpi implements Example {
 
     @Override
+    /** Name */
     public String name() {
         return "pipeline-decision";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "common";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "Pipeline 条件分支示例（decision/when/whenNot/多分支路由）";
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         String type = args.getOrDefault("type", "all");
         log.info("PipelineDecisionExampleSpi --type={}", type);

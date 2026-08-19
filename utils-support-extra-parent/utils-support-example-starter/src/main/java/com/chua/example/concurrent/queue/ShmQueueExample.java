@@ -73,6 +73,7 @@ public class ShmQueueExample {
      */
     private static final int EXIT_FAIL = 1;
 
+    /** Main */
     public static void main(String[] args) {
         Args parsed = Args.parse(args);
         if (parsed.help()) {
@@ -249,6 +250,7 @@ public class ShmQueueExample {
         return recvOk[0];
     }
 
+    /** MakePayload */
     private static byte[] makePayload(int i) {
         byte[] b = new byte[PAYLOAD_SIZE];
         for (int k = 0; k < PAYLOAD_SIZE; k++) {
@@ -257,6 +259,7 @@ public class ShmQueueExample {
         return b;
     }
 
+    /** 校验Payload */
     private static boolean checkPayload(byte[] b, int i) {
         if (b == null || b.length != PAYLOAD_SIZE) {
             return false;
@@ -269,10 +272,12 @@ public class ShmQueueExample {
         return true;
     }
 
+    /** PrintResult */
     private static void printResult(String name, boolean passed) {
         System.out.println((passed ? "[PASS] " : "[FAIL] ") + name);
     }
 
+    /** PrintHelp */
     private static void printHelp() {
         System.out.println("ShmQueueExample - 共享内存环形队列示例");
         System.out.println();
@@ -299,6 +304,7 @@ public class ShmQueueExample {
             this("all", false);
         }
 
+        /** 解析 */
         static Args parse(String[] args) {
             Args result = new Args();
             int i = 0;

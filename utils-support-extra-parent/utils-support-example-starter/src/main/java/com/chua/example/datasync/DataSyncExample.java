@@ -61,6 +61,7 @@ public class DataSyncExample {
      */
     private static final String DEFAULT_TYPE = "basic";
 
+    /** Main */
     public static void main(String[] args) {
         CommandLine cli = CommandLine.parse(args)
                 .program("DataSyncExample")
@@ -234,6 +235,7 @@ public class DataSyncExample {
         return true;
     }
 
+    /** PrintResult */
     private static void printResult(String name, boolean passed) {
         log.info("{}{}", (passed ? "[PASS]" : "[FAIL]"), name);
     }
@@ -333,6 +335,7 @@ public class DataSyncExample {
         }
 
         @Override
+        /** 关闭 */
         public void close() {
         }
     }
@@ -358,11 +361,13 @@ public class DataSyncExample {
         }
 
         @Override
+        /** SinkId */
         public String sinkId() {
             return id;
         }
 
         @Override
+        /** 写入 */
         public void write(Flux<Map<String, Object>> data) {
             data.doOnNext(row -> {
                 counter.incrementAndGet();
@@ -371,6 +376,7 @@ public class DataSyncExample {
         }
 
         @Override
+        /** 关闭 */
         public void close() {
         }
     }

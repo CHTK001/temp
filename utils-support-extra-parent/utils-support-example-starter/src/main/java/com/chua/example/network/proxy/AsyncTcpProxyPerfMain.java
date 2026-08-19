@@ -41,6 +41,7 @@ public class AsyncTcpProxyPerfMain {
         java.util.Arrays.fill(PAYLOAD, (byte) 'A');
     }
 
+    /** Main */
     public static void main(String[] args) throws Exception {
         int durSec = args.length > 0 ? Integer.parseInt(args[0]) : 10;
         int conc = args.length > 1 ? Integer.parseInt(args[1]) : 2000;

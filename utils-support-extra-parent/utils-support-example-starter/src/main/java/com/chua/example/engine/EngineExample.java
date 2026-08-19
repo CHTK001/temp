@@ -175,16 +175,19 @@ public class EngineExample {
             new User(5, "Eve", 22, "user")
     );
 
+    /** PrintStep */
     private static void printStep(String step) {
         System.out.println("\n========================================");
         System.out.println("  " + step);
         System.out.println("========================================");
     }
 
+    /** PrintResult */
     private static void printResult(String label, Object actual) {
         System.out.printf("  %-40s : %s%n", label, actual);
     }
 
+    /** AssertEq */
     private static void assertEq(String label, Object actual, Object expected) {
         boolean ok = Objects.equals(actual, expected);
         printResult(label + " => " + actual, ok ? "PASS" : "FAIL (expected " + expected + ")");
@@ -193,6 +196,7 @@ public class EngineExample {
         }
     }
 
+    /** AssertTrue */
     private static void assertTrue(String label, boolean condition) {
         printResult(label, condition ? "PASS" : "FAIL");
         if (!condition) {
@@ -200,6 +204,7 @@ public class EngineExample {
         }
     }
 
+    /** AssertContains */
     private static void assertContains(String label, List<?> list, Object expected) {
         boolean contains = list.stream().anyMatch(item -> {
             try {
@@ -215,6 +220,7 @@ public class EngineExample {
         }
     }
 
+    /** PrintList */
     private static <T> void printList(String label, List<T> list) {
         System.out.println("  " + label + " (" + list.size() + " rows):");
         for (T item : list) {
@@ -222,6 +228,7 @@ public class EngineExample {
         }
     }
 
+    /** SetupDataSource */
     private static Engine setupDataSource(String engineType) {
         switch (engineType) {
             case "neo4j":
@@ -257,6 +264,7 @@ public class EngineExample {
         }
     }
 
+    /** SetupNeoj */
     private static Engine setupNeo4j() {
         String uri = System.getProperty("neo4j.uri", DEFAULT_NEO4J_URI);
         String user = System.getProperty("neo4j.user", DEFAULT_NEO4J_USER);
@@ -268,12 +276,14 @@ public class EngineExample {
         return engine;
     }
 
+    /** SetupSqlite */
     private static Engine setupSqlite() {
         String dbFile = System.getProperty("sqlite.file", DEFAULT_SQLITE_FILE);
         System.out.println("[SETUP] SQLite file: " + dbFile);
         return new SqliteEngine().addDataSource("default", dbFile);
     }
 
+    /** SetupMySql */
     private static Engine setupMySql() {
         String host = System.getProperty("mysql.host", DEFAULT_MYSQL_HOST);
         int port = Integer.parseInt(System.getProperty("mysql.port", String.valueOf(DEFAULT_MYSQL_PORT)));
@@ -284,35 +294,41 @@ public class EngineExample {
         return new MysqlEngine().addDataSource("default", host, port, database, username, password);
     }
 
+    /** SetupLucene */
     private static Engine setupLucene() {
         String indexPath = System.getProperty("lucene.index", DEFAULT_LUCENE_INDEX);
         System.out.println("[SETUP] Lucene index: " + indexPath);
         return new LuceneEngine(Paths.get(indexPath));
     }
 
+    /** SetupFile */
     private static Engine setupFile() {
         String dataDir = System.getProperty("file.dir", DEFAULT_FILE_DIR);
         System.out.println("[SETUP] File store: " + dataDir);
         return new FileEngine();
     }
 
+    /** SetupInMemory */
     private static Engine setupInMemory() {
         System.out.println("[SETUP] InMemory engine");
         return new InMemoryEngine();
     }
 
+    /** SetupDuckDB */
     private static Engine setupDuckDB() {
         String dbFile = System.getProperty("duckdb.file", DEFAULT_DUCKDB_FILE);
         System.out.println("[SETUP] DuckDB: " + dbFile);
         return new DuckDBEngine();
     }
 
+    /** SetupHBase */
     private static Engine setupHBase() {
         String zkQuorum = System.getProperty("hbase.zk", DEFAULT_HBASE_ZK);
         System.out.println("[SETUP] HBase ZK: " + zkQuorum);
         return new HBaseEngine();
     }
 
+    /** SetupInfluxDb */
     private static Engine setupInfluxDb() {
         String url = System.getProperty("influxdb.url", DEFAULT_INFLUXDB_URL);
         String token = System.getProperty("influxdb.token", "");
@@ -320,18 +336,21 @@ public class EngineExample {
         return new InfluxDbEngine();
     }
 
+    /** SetupParquet */
     private static Engine setupParquet() {
         String filePath = System.getProperty("parquet.file", DEFAULT_PARQUET_FILE);
         System.out.println("[SETUP] Parquet: " + filePath);
         return new ParquetEngine();
     }
 
+    /** SetupElasticsearch */
     private static Engine setupElasticsearch() {
         String esUrl = System.getProperty("elasticsearch.url", DEFAULT_ELASTICSEARCH_URL);
         System.out.println("[SETUP] Elasticsearch engine: " + esUrl);
         return new ElasticsearchEngine().addDataSource("default", new SimpleEngineDataSource(esUrl));
     }
 
+    /** SetupTablesaw */
     private static Engine setupTablesaw() {
         String csvFile = System.getProperty("tablesaw.file", DEFAULT_TABLESAW_FILE);
         System.out.println("[SETUP] Tablesaw: " + csvFile);
@@ -353,22 +372,26 @@ public class EngineExample {
         return new TablesawEngine().load("test", csvFile);
     }
 
+    /** SetupSolr */
     private static Engine setupSolr() {
         String solrUrl = System.getProperty("solr.url", DEFAULT_SOLR_URL);
         System.out.println("[SETUP] Solr engine: " + solrUrl);
         return new SolrEngine().addDataSource("default", new SimpleEngineDataSource(solrUrl));
     }
 
+    /** SetupNitrite */
     private static Engine setupNitrite() {
         String filePath = System.getProperty("nitrite.file", DEFAULT_NITRITE_FILE);
         System.out.println("[SETUP] Nitrite file: " + filePath);
         return new NitriteEngine().addDataSource("default", filePath);
     }
 
+    /** StoreData */
     private static void storeData(String engineType, Engine engine) throws Exception {
         engine.store("User", TEST_USERS);
     }
 
+    /** 运行CommonCrudTests */
     private static void runCommonCrudTests(String engineType, Engine engine) throws Exception {
         printStep("STEP 1: list() - query all users");
         List<?> allUsers = engine.query(User.class).list();
@@ -456,6 +479,7 @@ public class EngineExample {
         System.out.println("========================================");
     }
 
+    /** Main */
     public static void main(String[] args) throws Exception {
         CommandLine cli = CommandLine.parse(args)
                 .program("EngineExample")

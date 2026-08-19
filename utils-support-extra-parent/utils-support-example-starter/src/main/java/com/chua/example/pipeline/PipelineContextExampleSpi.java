@@ -15,21 +15,25 @@ import java.util.Map;
 public class PipelineContextExampleSpi implements Example {
 
     @Override
+    /** Name */
     public String name() {
         return "pipeline-context";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "common";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "Pipeline 上下文操作示例（currentData/nodeLocalData/nodeOutputs/history）";
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         String type = args.getOrDefault("type", "all");
         log.info("PipelineContextExampleSpi --type={}", type);

@@ -34,6 +34,7 @@ public class HttpDatalakeQueryEngineExample {
      */
     private static final int EXIT_CODE_FAILURE = 1;
 
+    /** Main */
     public static void main(String[] args) {
         CommandLine cli = CommandLine.parse(args)
                 .program("HttpDatalakeQueryEngineExample")

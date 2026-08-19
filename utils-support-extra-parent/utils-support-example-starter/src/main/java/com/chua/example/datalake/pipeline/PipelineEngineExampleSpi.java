@@ -13,21 +13,25 @@ import java.util.Map;
 public class PipelineEngineExampleSpi implements Example {
 
     @Override
+    /** Name */
     public String name() {
         return "pipeline-engine";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "datalake";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "PipelineEngine 自检（basic / dsl 两种执行模式）";
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         boolean passed = true;
         passed &= PipelineEngineExample.testBasicExecute();

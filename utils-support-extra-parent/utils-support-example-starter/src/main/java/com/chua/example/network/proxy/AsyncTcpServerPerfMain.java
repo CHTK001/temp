@@ -39,6 +39,7 @@ public class AsyncTcpServerPerfMain {
         java.util.Arrays.fill(PAYLOAD, (byte) 'A');
     }
 
+    /** Main */
     public static void main(String[] args) throws Exception {
         String type = args.length > 0 ? args[0] : "vertx-tcp";
         int durSec = args.length > 1 ? Integer.parseInt(args[1]) : 5;
@@ -75,6 +76,7 @@ public class AsyncTcpServerPerfMain {
         // 递归发送：一个 echo 完成 → 若未到期限继续发下一个（连接由 Vert.x 池化复用）
         java.util.function.BiConsumer<NetSocket, Buffer> fire = new java.util.function.BiConsumer<>() {
             @Override
+            /** Accept */
             public void accept(NetSocket socket, Buffer buf) {
                 socket.write(buf).onComplete(ar -> {
                     if (ar.succeeded()) {
@@ -127,6 +129,7 @@ public class AsyncTcpServerPerfMain {
         server.stop();
     }
 
+    /** Next */
     private static void next(NetSocket socket, Buffer buf) {
         // 连接已关时 write 会 fail，由 exceptionHandler 兜底计数，此处直接写
         if (socket != null) {

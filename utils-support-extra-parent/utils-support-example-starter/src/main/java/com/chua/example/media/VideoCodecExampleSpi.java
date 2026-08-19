@@ -20,21 +20,25 @@ import java.util.Map;
 public class VideoCodecExampleSpi implements Example {
 
     @Override
+    /** Name */
     public String name() {
         return "video-codec";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "media";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "视频编解码器自检（javacv-ffmpeg / 屏幕捕获编码器）";
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         String encoderType = args.getOrDefault("type", "javacv-ffmpeg");
         int width = Integer.parseInt(args.getOrDefault("width", "640"));

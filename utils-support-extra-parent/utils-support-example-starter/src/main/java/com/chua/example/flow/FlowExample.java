@@ -58,6 +58,7 @@ public class FlowExample {
      */
     private static final int EXIT_CODE_FAILURE = 1;
 
+    /** Main */
     public static void main(String[] args) {
         String type = parseType(args);
         boolean passed = new FlowExample().runTest(type);
@@ -168,22 +169,26 @@ public class FlowExample {
         System.out.println("===== multitarget =====");
         FlowNode markT1 = new FlowNode() {
             @Override
+            /** Type */
             public String type() {
                 return "mark";
             }
 
             @Override
+            /** 执行 */
             public void execute(FlowContext context) {
                 context.setAttribute("ran.t1", "t1");
             }
         };
         FlowNode markT2 = new FlowNode() {
             @Override
+            /** Type */
             public String type() {
                 return "mark";
             }
 
             @Override
+            /** 执行 */
             public void execute(FlowContext context) {
                 context.setAttribute("ran.t2", "t2");
             }
@@ -288,11 +293,13 @@ public class FlowExample {
         System.out.println("===== loop =====");
         FlowNode loopNode = new FlowNode() {
             @Override
+            /** Type */
             public String type() {
                 return "loop";
             }
 
             @Override
+            /** 执行 */
             public void execute(FlowContext context) {
                 // 显式回边，循环执行自身
                 context.setNextNodeId("loop");
@@ -352,11 +359,13 @@ public class FlowExample {
         // wait/resume 模式验证上下文不重置
         FlowNode waitNode = new FlowNode() {
             @Override
+            /** Type */
             public String type() {
                 return "ctxWait";
             }
 
             @Override
+            /** 执行 */
             public void execute(FlowContext context) {
                 context.waitForResume();
             }
@@ -393,11 +402,13 @@ public class FlowExample {
         System.out.println("===== wait =====");
         FlowNode waitNode = new FlowNode() {
             @Override
+            /** Type */
             public String type() {
                 return "waitNode";
             }
 
             @Override
+            /** 执行 */
             public void execute(FlowContext context) {
                 context.waitForResume();
             }
@@ -497,11 +508,13 @@ public class FlowExample {
                 .addNode("end", new EndFlowNode());
         FlowNode subFlowNode = new FlowNode() {
             @Override
+            /** Type */
             public String type() {
                 return "subFlow";
             }
 
             @Override
+            /** 执行 */
             public void execute(FlowContext context) {
                 FlowInstance subInstance = subFlow.createGraph()
                         .start("start").next("transform").next("end").end()
@@ -591,9 +604,11 @@ public class FlowExample {
         // 50 次：正常完成
         FlowNode loop50 = new FlowNode() {
             @Override
+            /** Type */
             public String type() { return "loop50"; }
 
             @Override
+            /** 执行 */
             public void execute(FlowContext context) {
                 // recordExecution 在 execute 之后调用，所以当前计数比实际少 1
                 if (context.getExecuteCount("loop50") < 49) {
@@ -615,9 +630,11 @@ public class FlowExample {
         // 150 次：超过默认上限 100，被终止
         FlowNode loop150 = new FlowNode() {
             @Override
+            /** Type */
             public String type() { return "loop150"; }
 
             @Override
+            /** 执行 */
             public void execute(FlowContext context) {
                 if (context.getExecuteCount("loop150") < 149) {
                     context.setNextNodeId("loop150");

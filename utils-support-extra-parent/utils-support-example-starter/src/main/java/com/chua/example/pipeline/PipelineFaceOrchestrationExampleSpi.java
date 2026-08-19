@@ -15,21 +15,25 @@ import java.util.Map;
 public class PipelineFaceOrchestrationExampleSpi implements Example {
 
     @Override
+    /** Name */
     public String name() {
         return "pipeline-face";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "deeplearning";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "Pipeline AI 人脸编排示例（检测/识别/决策分支/并行/重试/子流程）";
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         String type = args.getOrDefault("type", "all");
         log.info("PipelineFaceOrchestrationExampleSpi --type={}", type);

@@ -390,6 +390,7 @@ public class PipelineFaceOrchestrationExample {
 
     // ==================== 测试入口 ====================
 
+    /** Main */
     public static void main(String[] args) {
         String type = parseType(args);
         boolean passed = runTest(type);

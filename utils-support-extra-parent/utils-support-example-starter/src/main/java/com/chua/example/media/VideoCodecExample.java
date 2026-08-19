@@ -260,6 +260,7 @@ public class VideoCodecExample {
         return true;
     }
 
+    /** Main */
     public static void main(String[] args) {
         CommandLine cli = CommandLine.parse(args)
                 .program("VideoCodecExample")

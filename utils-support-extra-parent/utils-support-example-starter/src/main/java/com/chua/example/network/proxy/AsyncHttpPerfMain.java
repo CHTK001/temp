@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.LongAdder;
 @Slf4j
 public class AsyncHttpPerfMain {
 
+    /** Main */
     public static void main(String[] args) throws Exception {
         int port = args.length > 0 ? Integer.parseInt(args[0]) : 0;
         int durSec = args.length > 1 ? Integer.parseInt(args[1]) : 10;
@@ -63,6 +64,7 @@ public class AsyncHttpPerfMain {
         // 递归发送：一个响应完成 → 若未到期限继续发下一个
         java.util.function.Consumer<Object> fire = new java.util.function.Consumer<>() {
             @Override
+            /** Accept */
             public void accept(Object o) {
                 sendOne(client, opts, inflight, ok, errors, deadline, stop, allDone);
             }
@@ -88,6 +90,17 @@ public class AsyncHttpPerfMain {
         vertx.close();
     }
 
+    /**
+     * 发送One
+     * @param client client
+     * @param opts opts
+     * @param inflight inflight
+     * @param ok ok
+     * @param errors errors
+     * @param deadline deadline
+     * @param stop stop
+     * @param allDone allDone
+     */
     private static void sendOne(HttpClient client, RequestOptions opts, Semaphore inflight,
                                 LongAdder ok, LongAdder errors, long deadline,
                                 AtomicBoolean stop, CountDownLatch allDone) {

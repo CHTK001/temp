@@ -42,21 +42,25 @@ import java.util.Map;
 public class ScatterDiscoveryExampleSpi implements Example {
 
     @Override
+    /** Name */
     public String name() {
         return "scatter-discovery";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "scatter-discovery";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "Scatter 服务发现:注册 + scatterId 业务隔离 + 协议过滤 + HTTP/TCP 代理路由";
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         String mode = args.getOrDefault("mode", "all");
         log.info("===== scatter-discovery [mode={}] =====", mode);
@@ -100,6 +104,7 @@ public class ScatterDiscoveryExampleSpi implements Example {
 
     // ==================== 功能 ====================
 
+    /** TestScatterIdIsolation */
     private boolean testScatterIdIsolation() {
         log.info("  [SCATTER-01] scatterId 业务隔离");
         ServiceDiscovery sd = null;
@@ -125,6 +130,7 @@ public class ScatterDiscoveryExampleSpi implements Example {
         }
     }
 
+    /** TestProtocol过滤 */
     private boolean testProtocolFilter() {
         log.info("  [SCATTER-02] 协议过滤(order + tcp)");
         ServiceDiscovery sd = null;
@@ -148,6 +154,7 @@ public class ScatterDiscoveryExampleSpi implements Example {
         }
     }
 
+    /** TestHttpProxyRoute */
     private boolean testHttpProxyRoute() {
         log.info("  [SCATTER-03] HTTP 代理按 scatterId 路由");
         ServiceDiscovery sd = null;
@@ -216,6 +223,7 @@ public class ScatterDiscoveryExampleSpi implements Example {
         }
     }
 
+    /** TestTcpProxyRoute */
     private boolean testTcpProxyRoute() {
         log.info("  [SCATTER-04] TCP 代理按 scatterId + 协议路由");
         ServiceDiscovery sd = null;
@@ -258,6 +266,7 @@ public class ScatterDiscoveryExampleSpi implements Example {
 
     // ==================== 工具 ====================
 
+    /** TcpRoundTrip */
     private static String tcpRoundTrip(String host, int port, String msg) throws Exception {
         try (java.net.Socket socket = new java.net.Socket(host, port)) {
             socket.setSoTimeout(5000);
@@ -276,32 +285,38 @@ public class ScatterDiscoveryExampleSpi implements Example {
         }
     }
 
+    /** Assert判断相等 */
     private static void assertEquals(Object expected, Object actual, String msg) {
         if (!java.util.Objects.equals(expected, actual)) {
             throw new AssertionError(msg + " 期望=" + expected + " 实际=" + actual);
         }
     }
 
+    /** Assert判断相等 */
     private static void assertEquals(int expected, int actual, String msg) {
         if (expected != actual) {
             throw new AssertionError(msg + " 期望=" + expected + " 实际=" + actual);
         }
     }
 
+    /** AssertTrue */
     private static void assertTrue(boolean cond, String msg) {
         if (!cond) {
             throw new AssertionError(msg);
         }
     }
 
+    /** Pass */
     private static void pass() {
         log.info("    ✓ 通过");
     }
 
+    /** Fail */
     private static void fail(String msg) {
         log.error("    ✗ 失败: {}", msg);
     }
 
+    /** 关闭Quietly */
     private static void closeQuietly(AutoCloseable c) {
         if (c != null) {
             try {

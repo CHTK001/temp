@@ -73,6 +73,7 @@ public class LockFreeQueueExample {
      */
     private static final int DEFAULT_CAPACITY = 1024;
 
+    /** Main */
     public static void main(String[] args) {
         Args parsed = parseArgs(args);
 

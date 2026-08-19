@@ -86,6 +86,7 @@ public class DatalakeIntegratedExample {
      */
     private static final int DEFAULT_DURATION_SECONDS = 5;
 
+    /** Main */
     public static void main(String[] args) {
         CommandLine cli = CommandLine.parse(args)
                 .program("DatalakeIntegratedExample")
@@ -188,6 +189,7 @@ public class DatalakeIntegratedExample {
         return ok;
     }
 
+    /** 构建PipelineDsl */
     private static String buildPipelineDsl() {
         // 手工构造 DSL JSON，避免依赖 Jackson 自定义模块
         return "{\"id\":\"metrics-pipeline\",\"stages\":{\"default\":{"
@@ -196,6 +198,7 @@ public class DatalakeIntegratedExample {
                 + "\"sink\":[{\"type\":\"log\"},{\"type\":\"realtime\"}]}}}";
     }
 
+    /** PrintResult */
     private static void printResult(String name, boolean passed) {
         log.info("{}{}", (passed ? "[PASS]" : "[FAIL]"), name);
     }
@@ -204,6 +207,10 @@ public class DatalakeIntegratedExample {
      * DataSyncAgent — 持有 Source 与 Sink。
      */
     public static class MetricsAgent extends AbstractDataSyncAgent {
+        /**
+         * 创建 MetricsAgent 实例
+         * @param agentId agentId
+         */
         public MetricsAgent(String agentId) {
             super(agentId);
         }
@@ -219,27 +226,36 @@ public class DatalakeIntegratedExample {
         /** 输入ID */
         private final String inputId;
 
+        /**
+         * 创建 SystemMetricsSource 实例
+         * @param sourceId sourceId
+         * @param String String
+         */
         public SystemMetricsSource(String sourceId, String inputId) {
             this.sourceId = sourceId;
             this.inputId = inputId;
         }
 
         @Override
+        /** SourceId */
         public String sourceId() {
             return sourceId;
         }
 
         @Override
+        /** InputId */
         public String inputId() {
             return inputId;
         }
 
         @Override
+        /** 读取 */
         public Flux<Map<String, Object>> read(Map<String, Object> params) {
             List<Map<String, Object>> snapshot = List.of(snapshotOnce());
             return Flux.fromIterable(snapshot);
         }
 
+        /** SnapshotOnce */
         private Map<String, Object> snapshotOnce() {
             Map<String, Object> row = new HashMap<>();
             try {
@@ -265,15 +281,18 @@ public class DatalakeIntegratedExample {
         }
 
         @Override
+        /** 读取Offset */
         public SyncDataOffset readOffset(Map<String, Object> params) {
             return null;
         }
 
         @Override
+        /** 写入Offset */
         public void writeOffset(SyncDataOffset offset) {
         }
 
         @Override
+        /** 关闭 */
         public void close() {
         }
     }
@@ -290,22 +309,30 @@ public class DatalakeIntegratedExample {
         /** 计数器 */
         private final AtomicInteger counter = new AtomicInteger();
 
+        /**
+         * 创建 MetricSinkAdapter 实例
+         * @param sinkId sinkId
+         * @param engine engine
+         */
         public MetricSinkAdapter(String sinkId,
                                  com.chua.datalake.support.spi.pipeline.PipelineEngine engine) {
             this.sinkId = sinkId;
             this.engine = engine;
         }
 
+        /** Received */
         public int received() {
             return counter.get();
         }
 
         @Override
+        /** SinkId */
         public String sinkId() {
             return sinkId;
         }
 
         @Override
+        /** 写入 */
         public void write(Flux<Map<String, Object>> data) {
             // datasync executor 的 callback 会调用这里
             // 实际上 DatalakeReactorExecutor 覆写了 subscribe/publish，
@@ -314,9 +341,11 @@ public class DatalakeIntegratedExample {
         }
 
         @Override
+        /** 关闭 */
         public void close() {
         }
 
+        /** OnPipelineDispatched */
         public void onPipelineDispatched(Map<String, Object> row) {
             counter.incrementAndGet();
             log.info("[pipeline] processed row: {}", row);
@@ -328,24 +357,29 @@ public class DatalakeIntegratedExample {
      */
     public static class MockAgentServerManager implements AgentServerManager {
         @Override
+        /** 注册 */
         public void register(com.chua.datasync.agent.support.DataSyncAgent agent) {
         }
 
         @Override
+        /** 注销 */
         public void unregister(String agentId) {
         }
 
         @Override
+        /** 获取Agent */
         public com.chua.datasync.agent.support.DataSyncAgent getAgent(String agentId) {
             return null;
         }
 
         @Override
+        /** 获取Agents */
         public java.util.List<com.chua.datasync.agent.support.DataSyncAgent> getAgents() {
             return Collections.emptyList();
         }
 
         @Override
+        /** 推送 */
         public void push(String agentId, String sinkId, java.util.List<java.util.Map<String, Object>> data) {
         }
     }
@@ -355,21 +389,29 @@ public class DatalakeIntegratedExample {
      */
     public record SimpleFieldMapping(String sourceField, String targetField, String converter)
             implements com.chua.starter.datasync.mapping.DataSyncFieldMapping {
+        /**
+         * 创建 SimpleFieldMapping 实例
+         * @param sourceField sourceField
+         * @param String String
+         */
         public SimpleFieldMapping(String sourceField, String targetField) {
             this(sourceField, targetField, "default");
         }
 
         @Override
+        /** SourceField */
         public String sourceField() {
             return sourceField;
         }
 
         @Override
+        /** TargetField */
         public String targetField() {
             return targetField;
         }
 
         @Override
+        /** Converter */
         public String converter() {
             return converter;
         }
@@ -389,21 +431,25 @@ public class DatalakeIntegratedExample {
             String cron) implements DataSyncMapping {
 
         @Override
+        /** Config */
         public com.chua.starter.datasync.config.DataSyncConfigDefinition config() {
             return null;
         }
 
         @Override
+        /** CronType */
         public String cronType() {
             return "cron";
         }
 
         @Override
+        /** Params */
         public java.util.Map<String, Object> params() {
             return new HashMap<>();
         }
 
         @Override
+        /** Trigger */
         public com.chua.common.support.task.scheduler.Trigger trigger() {
             // 每 1 秒触发一次
             return new com.chua.common.support.task.scheduler.SimpleTrigger(
@@ -418,14 +464,17 @@ public class DatalakeIntegratedExample {
         /** sinks */
         private final Map<String, DataSink> sinks = new HashMap<>();
 
+        /** 创建 PipelineManagerFacade 实例 */
         public PipelineManagerFacade() {
             // 默认注册 log 和 realtime
         }
 
+        /** SinkRegistry */
         public Map<String, DataSink> sinkRegistry() {
             return sinks;
         }
 
+        /** 注册 */
         public PipelineManagerFacade register(DataSink sink) {
             sinks.put(sink.type(), sink);
             return this;

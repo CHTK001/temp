@@ -47,6 +47,7 @@ public class PersistentLockFreeQueueExample {
      */
     private static final String DEFAULT_WAL_DIR = "./wal-example";
 
+    /** Main */
     public static void main(String[] args) throws Exception {
         String mode = "all";
         if (args.length > 1 && "--mode".equals(args[0])) {

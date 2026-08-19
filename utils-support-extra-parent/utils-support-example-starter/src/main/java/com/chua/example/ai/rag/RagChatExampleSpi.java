@@ -15,27 +15,32 @@ import java.util.Map;
 public class RagChatExampleSpi implements Example {
 
     @Override
+    /** Name */
     public String name() {
         return "rag-chat";
     }
 
     @Override
+    /** Module */
     public String module() {
         return "ai";
     }
 
     @Override
+    /** Description */
     public String description() {
         return "RAG 文档问答示例（CLI 模式：upload / query / search / list / delete / reindex）";
     }
 
     @Override
+    /** 运行 */
     public boolean run(Map<String, String> args) {
         String[] forwarded = buildArgs(args);
         RagChatExample.main(forwarded);
         return true;
     }
 
+    /** 构建Args */
     private static String[] buildArgs(Map<String, String> args) {
         String command = args.getOrDefault("command", "list");
         String[] base = new String[]{"--command", command};

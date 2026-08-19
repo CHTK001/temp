@@ -46,6 +46,7 @@ public class DataSinkExample {
      */
     private static final int EXIT_CODE_FAILURE = 1;
 
+    /** Main */
     public static void main(String[] args) {
         Args parsed = parseArgs(args);
         if (parsed.help()) {
@@ -138,10 +139,12 @@ public class DataSinkExample {
         return map;
     }
 
+    /** PrintResult */
     private static void printResult(String name, boolean passed) {
         log.info("{}{}", (passed ? "[PASS]" : "[FAIL]"), name);
     }
 
+    /** 解析Args */
     private static Args parseArgs(String[] args) {
         Args result = new Args();
         int index = 0;
@@ -160,6 +163,7 @@ public class DataSinkExample {
         return result;
     }
 
+    /** PrintHelp */
     private static void printHelp() {
         log.info("DataSink 综合示例 — 基于 DataSink/AccessSink SPI");
         log.info("");
@@ -178,10 +182,12 @@ public class DataSinkExample {
             this(null, false);
         }
 
+        /** WithType */
         public Args withType(String type) {
             return new Args(type, help);
         }
 
+        /** WithHelp */
         public Args withHelp(boolean help) {
             return new Args(type, help);
         }

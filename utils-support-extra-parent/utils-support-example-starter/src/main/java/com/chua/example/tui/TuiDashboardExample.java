@@ -238,6 +238,7 @@ public class TuiDashboardExample {
 
             TuiDashboardBuilder builderWithHandler = builder.registerHandler(new Object() {
                 @SuppressWarnings("unused")
+                /** 获取Data */
                 public String getData() {
                     return "42.0";
                 }
