@@ -42,8 +42,8 @@ public class AsyncHttpPerfMain {
         HttpClient client = vertx.createHttpClient(new HttpClientOptions()
                 .setTcpNoDelay(true)
                 .setKeepAlive(true)
+                .setKeepAliveTimeout(durSec + 10)
                 .setPipelining(false)
-                .setMaxPoolSize(conc)
                 .setConnectTimeout(5000));
 
         RequestOptions opts = new RequestOptions()
