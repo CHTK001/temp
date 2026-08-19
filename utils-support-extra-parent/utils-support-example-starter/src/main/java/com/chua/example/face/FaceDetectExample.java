@@ -14,9 +14,10 @@ import java.util.List;
 import java.util.stream.Stream;
 
 /**
- * 人脸检测诊断示例 — 对 D:/images 下所有图片检测人脸并输出标注图。
+ * 人脸检测诊断示例 — 对 D:/images 下所有图片检测人脸并标注效果图。
  *
- * <p>输出到 D:/images/output/face-detect/</p>
+ * <p>每张人脸框标注：live 活体分数 + feat 特征维数 + lm 关键点数。
+ * 输出到 D:/images/output/face-detect/</p>
  *
  * @author CH
  * @since 4.0.0.42
@@ -48,7 +49,9 @@ public class FaceDetectExample {
         Files.createDirectories(Path.of(OUTPUT_DIR));
         FacePipeline face = FacePipeline.builder()
                 .detector("faceplugin-face-detect-slim")
-                .feature("arc-face")
+                .feature("faceplugin-face-feature")
+                .liveness("face-liveness-flrgb")
+                .landmark("faceplugin-face-landmark")
                 .build();
 
         try (Stream<Path> files = Files.list(Path.of("D:\\images"))) {
@@ -62,26 +65,56 @@ public class FaceDetectExample {
                          long t0 = System.currentTimeMillis();
                          byte[] imageData = Files.readAllBytes(f);
 
+                         // 检测人脸
                          List<FaceDetectionHit> hits = face.detect(imageData);
+
+                         List<DetectionInfo> boxes = new ArrayList<>();
+                         List<String> labels = new ArrayList<>();
+                         int withFeat = 0;
                          for (int i = 0; i < hits.size(); i++) {
                              FaceDetectionHit hit = hits.get(i);
-                             PredictRectangle b = hit.box();
-                             System.out.printf("  框%d: x=%.1f y=%.1f w=%.1f h=%.1f conf=%.3f%n",
-                                     i, b.x(), b.y(), b.width(), b.height(), b.confidence());
+                             PredictRectangle box = hit.box();
+                             if (box == null) {
+                                 continue;
+                             }
+                             // 活体
+                             float live = 1.0f;
+                             try {
+                                 live = face.liveScore(hit.faceImage());
+                             } catch (Exception ignored) {
+                             }
+                             // 特征
+                             int featDim = 0;
+                             try {
+                                 float[] feat = face.extractFeature(hit.faceImage());
+                                 featDim = feat == null ? 0 : feat.length;
+                             } catch (Exception ignored) {
+                             }
+                             if (featDim > 0) {
+                                 withFeat++;
+                             }
+                             // 关键点
+                             int lmCount = 0;
+                             try {
+                                 float[] lm = face.landmark(hit.faceImage());
+                                 lmCount = lm == null ? 0 : lm.length;
+                             } catch (Exception ignored) {
+                             }
+
+                             boxes.add(new DetectionInfo(
+                                     "face", box.confidence(), box.x(), box.y(), box.width(), box.height()));
+                             labels.add(String.format("LV%.2f F%d P%d",
+                                     live, featDim, lmCount));
                          }
 
                          // 绘制标注图
-                         byte[] drawn = drawBoxes(imageData, hits);
+                         byte[] drawn = new DrawerPipeline(0.5f)
+                                 .target(imageData)
+                                 .boxes(boxes, labels)
+                                 .done();
                          Files.write(Path.of(OUTPUT_DIR + name), drawn);
 
-                         int withFeature = 0;
-                         for (FaceDetectionHit hit : hits) {
-                             float[] feat = face.extractFeature(hit.faceImage());
-                             if (feat != null && feat.length > 0) {
-                                 withFeature++;
-                             }
-                         }
-                         System.out.println("检测=" + hits.size() + " 特征=" + withFeature
+                         System.out.println("面孔=" + hits.size() + " 特征=" + withFeat
                                  + " " + (System.currentTimeMillis() - t0) + "ms");
                      } catch (Exception e) {
                          System.out.println("FAIL: " + e.getMessage());
@@ -89,28 +122,5 @@ public class FaceDetectExample {
                  });
         }
         return true;
-    }
-
-    /**
-     * 绘制人脸检测框到原图。
-     *
-     * @param imageData 原图
-     * @param hits      检测结果
-     * @return 标注图字节
-     */
-    private static byte[] drawBoxes(byte[] imageData, List<FaceDetectionHit> hits) {
-        DrawerPipeline drawer = new DrawerPipeline(0.5f);
-        List<DetectionInfo> boxes = new ArrayList<>();
-        List<String> labels = new ArrayList<>();
-        for (FaceDetectionHit hit : hits) {
-            PredictRectangle box = hit.box();
-            if (box == null) {
-                continue;
-            }
-            boxes.add(new DetectionInfo(
-                    "face", box.confidence(), box.x(), box.y(), box.width(), box.height()));
-            labels.add(String.format("face %.2f", box.confidence()));
-        }
-        return drawer.target(imageData).boxes(boxes, labels).done();
     }
 }
