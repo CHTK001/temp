@@ -93,11 +93,23 @@ public class ImageProcessorSpiExample {
     private boolean testSpiAll() {
         log.info("===== SPI 机制测试 =====");
         boolean passed = true;
-        passed &= testDiscover();
-        passed &= testSubclass();
-        passed &= testProxy();
-        passed &= testDegrade();
-        passed &= testAllFail();
+        long t0, dt;
+        
+        t0 = System.nanoTime(); passed &= testDiscover(); dt = (System.nanoTime() - t0) / 1_000_000;
+        log.info("[spi] discover 耗时: {}ms", dt);
+        
+        t0 = System.nanoTime(); passed &= testSubclass(); dt = (System.nanoTime() - t0) / 1_000_000;
+        log.info("[spi] subclass 耗时: {}ms", dt);
+        
+        t0 = System.nanoTime(); passed &= testProxy(); dt = (System.nanoTime() - t0) / 1_000_000;
+        log.info("[spi] proxy 耗时: {}ms", dt);
+        
+        t0 = System.nanoTime(); passed &= testDegrade(); dt = (System.nanoTime() - t0) / 1_000_000;
+        log.info("[spi] degrade 耗时: {}ms", dt);
+        
+        t0 = System.nanoTime(); passed &= testAllFail(); dt = (System.nanoTime() - t0) / 1_000_000;
+        log.info("[spi] all-fail 耗时: {}ms", dt);
+        
         log.info("===== SPI 机制测试 {} =====", passed ? "PASSED" : "FAILED");
         return passed;
     }
