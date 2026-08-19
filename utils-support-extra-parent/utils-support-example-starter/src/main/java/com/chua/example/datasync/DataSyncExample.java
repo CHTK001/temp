@@ -244,7 +244,6 @@ public class DataSyncExample {
      * @param sourceField 源字段
      * @param targetField 目标字段
      * @param converter   转换器
-     * @author CH
      * @since 4.0.0.42
      */
     private record SimpleField(String sourceField, String targetField, String converter)
@@ -263,7 +262,6 @@ public class DataSyncExample {
      * @param cronType  调度类型
      * @param cron      cron 表达式
      * @param params    额外参数
-     * @author CH
      * @since 4.0.0.42
      */
     private record SimpleConfig(

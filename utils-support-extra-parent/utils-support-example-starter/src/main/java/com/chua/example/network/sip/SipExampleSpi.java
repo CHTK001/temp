@@ -372,7 +372,6 @@ public class SipExampleSpi implements Example {
     /**
      * 简易 TCP Echo 服务（虚拟线程并发处理）。
      *
-     * @author CH
      * @since 4.0.0.42
      */
     private static final class EchoServer implements AutoCloseable {

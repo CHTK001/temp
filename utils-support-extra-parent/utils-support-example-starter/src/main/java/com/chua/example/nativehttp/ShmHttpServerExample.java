@@ -237,7 +237,6 @@ public class ShmHttpServerExample {
     /**
      * 命令行参数容器
      *
-     * @author CH
      * @since 4.0.0.42
      */
     private record Args(int port, String shm, boolean test, boolean help) {

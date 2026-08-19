@@ -45,7 +45,6 @@ import java.util.concurrent.atomic.AtomicLong;
  * 内部多虚拟用户并发请求 /echo 接口,统计 RPS / 成功率 / p50 / p95 / p99 / max,
  * 输出单份 HTML 报告,内含各子类横向对比的 CSS 柱状图。</p>
  *
- * @author CH
  * @since 2026/08/15
  */
 @Slf4j

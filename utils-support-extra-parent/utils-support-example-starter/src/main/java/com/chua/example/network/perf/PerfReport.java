@@ -22,7 +22,6 @@ import java.util.Locale;
  *
  * <p>所有 Server 子类（TCP / HTTP / HTTP 反向代理 / MQTT）的 Example 都通过本类输出结构化报告。</p>
  *
- * @author CH
  * @since 4.0.0.42
  */
 @Slf4j

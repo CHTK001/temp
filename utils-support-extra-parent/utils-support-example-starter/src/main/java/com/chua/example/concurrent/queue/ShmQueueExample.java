@@ -288,7 +288,6 @@ public class ShmQueueExample {
      *
      * @param mode 等待模式
      * @param help 是否打印帮助
-     * @author CH
      * @since 4.0.0.42
      */
     private record Args(String mode, boolean help) {

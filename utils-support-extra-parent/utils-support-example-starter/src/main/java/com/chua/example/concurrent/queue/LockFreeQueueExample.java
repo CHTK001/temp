@@ -444,7 +444,6 @@ public class LockFreeQueueExample {
      * @param type     队列类型标识（spsc/mpmc/unbounded），null 表示全部
      * @param capacity 有界队列容量
      * @param help     是否打印帮助
-     * @author CH
      * @since 4.0.0.42
      */
     private record Args(String type, int capacity, boolean help) {
