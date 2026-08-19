@@ -49,10 +49,15 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ImageProcessorSpiExample {
 
+    /** 成功退出码 */
     private static final int EXIT_CODE_SUCCESS = 0;
+    /** 失败退出码 */
     private static final int EXIT_CODE_FAILURE = 1;
+    /** 默认类型 */
     private static final String DEFAULT_TYPE = "all";
+    /** 默认输入路径 */
     private static final String DEFAULT_INPUT = "D:/images/test_1.jpg";
+    /** 默认输出路径 */
     private static final String DEFAULT_OUTPUT = "D:/images/utils";
 
     /** 期望的三个 SPI 实现，按优先级从高到低 */

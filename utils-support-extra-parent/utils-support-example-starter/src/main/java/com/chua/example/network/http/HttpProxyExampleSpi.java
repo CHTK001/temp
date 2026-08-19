@@ -366,6 +366,7 @@ public class HttpProxyExampleSpi implements Example {
         private final int backendPort;
         /** 超时秒 */
         private final int timeoutSeconds;
+        /** httpClient */
         private volatile HttpClient httpClient;
 
         SimpleForwardFilter(int backendPort, int timeoutSeconds) {

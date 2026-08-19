@@ -74,7 +74,6 @@ public class HttpServerExampleSpi implements Example {
     private static final int SWEEP_PAYLOAD = 128;
 
     /** 压测报告要求的并发等级 */
-    /** Bench_concurrency */
     private static final int[] BENCH_CONCURRENCY = {100, 500, 1000, 2000, 5000};
     /** Bench_requests_per_conn */
     private static final int BENCH_REQUESTS_PER_CONN = 500;
@@ -84,11 +83,9 @@ public class HttpServerExampleSpi implements Example {
     private static final int BENCH_PAYLOAD = 128;
 
     /** 压测报告输出路径 */
-    /** Bench_report_path */
     private static final String BENCH_REPORT_PATH = "target/http-server-benchmark.md";
 
     /** 真·并发压测：并发等级 = 同时连接数（每连接 1 次请求，flash 模式） */
-    /** Conc_concurrency */
     private static final int[] CONC_CONCURRENCY = {100, 500, 1000, 2000, 5000};
     /** Conc_requests_per_conn */
     private static final int CONC_REQUESTS_PER_CONN = 1;
@@ -96,20 +93,16 @@ public class HttpServerExampleSpi implements Example {
     private static final int CONC_PAYLOAD = 128;
 
     /** 真·并发压测报告输出路径 */
-    /** Conc_report_path */
     private static final String CONC_REPORT_PATH = "target/http-server-concurrent.md";
 
     /** 全子类压测：遍历所有 HttpServer SPI 实现（按 classpath 实际可用为准） */
-    /** All_server_types */
     private static final String[] ALL_SERVER_TYPES = {
             "jdk", "nio", "vertx-http", "http", "armeria-http", "jrebel", "kcp-http", "quarkus-http"
     };
     /** 全子类压测报告目录 */
-    /** All_report_dir */
     private static final String ALL_REPORT_DIR = "target/http-server-all";
 
     /** 当前测试使用的服务器类型（jdk / nio / vertx-http ...） */
-    /** 服务器类型 */
     private String serverType = "jdk";
 
     @Override

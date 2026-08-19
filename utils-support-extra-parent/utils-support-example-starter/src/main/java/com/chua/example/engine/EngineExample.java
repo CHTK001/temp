@@ -59,7 +59,7 @@ public class EngineExample {
      * @param name 姓名
      * @param age  年龄
      * @param role 角色
-     * @author CH
+ * @author CH
      * @since 4.0.0.42
      */
     public record User(Integer id, String name, Integer age, String role) {}

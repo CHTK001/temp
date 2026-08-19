@@ -440,6 +440,7 @@ public class TcpProxyExampleSpi implements Example {
         private final java.util.concurrent.ExecutorService handlerPool;
         /** Accept线程 */
         private final Thread acceptThread;
+        /** running */
         private volatile boolean running = true;
 
         private EchoServer(int port) throws IOException {

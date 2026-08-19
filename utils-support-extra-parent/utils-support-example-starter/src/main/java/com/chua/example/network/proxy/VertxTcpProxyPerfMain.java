@@ -37,6 +37,7 @@ public class VertxTcpProxyPerfMain {
         private final ServerSocket serverSocket;
         /** 池 */
         private final ExecutorService pool = Executors.newVirtualThreadPerTaskExecutor();
+        /** running */
         private volatile boolean running = true;
 
         EchoServer(int port) throws IOException {

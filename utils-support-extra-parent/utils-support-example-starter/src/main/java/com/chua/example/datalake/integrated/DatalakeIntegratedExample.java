@@ -415,6 +415,7 @@ public class DatalakeIntegratedExample {
      * PipelineManager 包装，注入 sinkRegistry 给 DatalakeServerBuilder。
      */
     public static class PipelineManagerFacade extends DefaultPipelineManager {
+        /** sinks */
         private final Map<String, DataSink> sinks = new HashMap<>();
 
         public PipelineManagerFacade() {

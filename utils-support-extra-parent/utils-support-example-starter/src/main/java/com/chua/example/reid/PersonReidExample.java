@@ -22,8 +22,11 @@ import java.util.stream.Stream;
  */
 public class PersonReidExample {
 
+    /** 成功退出码 */
     private static final int EXIT_CODE_SUCCESS = 0;
+    /** 失败退出码 */
     private static final int EXIT_CODE_FAILURE = 1;
+    /** Top-K 数量 */
     private static final int TOP_K = 5;
 
     public static void main(String[] args) throws Exception {

@@ -19,8 +19,11 @@ import java.util.stream.Stream;
 @Slf4j
 public class SegmentationExample {
 
+    /** 输出目录 */
     private static final String OUTPUT_DIR = "D:\\images\\output\\seg\\";
+    /** 成功退出码 */
     private static final int EXIT_CODE_SUCCESS = 0;
+    /** 失败退出码 */
     private static final int EXIT_CODE_FAILURE = 1;
 
     public static void main(String[] args) throws Exception {

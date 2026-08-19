@@ -90,9 +90,11 @@ public final class PerfReport {
         private final long startNanos;
         /** CPUPCT */
         private final List<Double> cpuPct = new ArrayList<>();
+        /** running */
         private volatile boolean running = true;
         /** Sampler */
         private final Thread sampler;
+        /** peakUsedMb */
         private volatile long peakUsedMb;
 
         private ResourceMonitor() {
