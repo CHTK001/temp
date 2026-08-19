@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
  * <ul>
  *   <li>discover 发现：发现全部实现并按优先级排序（rust/opencv/jdk）</li>
  *   <li>priority 优先级：验证 @SpiOrder 排序（rust 100 > opencv 50 > jdk -100）</li>
+ *   <li>getExtension 按名获取：按名称获取特定实现（getExtension("opencv")）</li>
  *   <li>proxy 代理：getExtensionFactory 返回自动降级代理</li>
  *   <li>degrade 降级：高优先级失败自动回退</li>
  *   <li>all-fail 全败：全部失败抛异常</li>
@@ -103,6 +104,9 @@ public class ImageProcessorSpiExample {
         t0 = System.nanoTime(); passed &= testPriority(); dt = (System.nanoTime() - t0) / 1_000_000;
         log.info("[spi] priority 耗时: {}ms", dt);
 
+        t0 = System.nanoTime(); passed &= testGetExtension(); dt = (System.nanoTime() - t0) / 1_000_000;
+        log.info("[spi] getExtension 耗时: {}ms", dt);
+
         t0 = System.nanoTime(); passed &= testProxy(); dt = (System.nanoTime() - t0) / 1_000_000;
         log.info("[spi] proxy 耗时: {}ms", dt);
 
@@ -164,6 +168,29 @@ public class ImageProcessorSpiExample {
         boolean rustFirst = "rust".equals(first);
         log.info("[priority] 最高优先级: {} (期望 rust) : {}", first, rustFirst ? "OK" : "WRONG");
         return passed && rustFirst;
+    }
+
+    /**
+     * 按名称获取特定实现：getExtension("opencv") 返回对应实例
+     */
+    public static boolean testGetExtension() {
+        ServiceProvider<ImageProcessor> provider = ServiceProvider.of(ImageProcessor.class);
+        boolean passed = true;
+        // 逐个验证按名称获取
+        for (String name : EXPECTED_IMPLS) {
+            ImageProcessor ext = provider.getExtension(name);
+            boolean found = ext != null;
+            boolean nameMatch = found && name.equals(ext.name());
+            log.info("[getExtension] getExtension(\"{}\") : found={}, nameMatch={} (class={})",
+                    name, found, nameMatch, found ? ext.getClass().getSimpleName() : "null");
+            passed &= found && nameMatch;
+        }
+        // 验证不存在的名称返回 null
+        ImageProcessor notFound = provider.getExtension("nonexistent_impl");
+        boolean isNull = notFound == null;
+        log.info("[getExtension] getExtension(\"nonexistent_impl\") : null={} : {}", isNull, isNull ? "OK" : "WRONG");
+        passed &= isNull;
+        return passed;
     }
 
     public static boolean testProxy() {
