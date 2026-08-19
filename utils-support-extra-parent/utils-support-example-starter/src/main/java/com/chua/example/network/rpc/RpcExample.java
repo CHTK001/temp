@@ -187,12 +187,27 @@ public class RpcExample implements Example {
 
             // 自动调优配置：协议（服务端线程池/缓冲区）+ 消费者（超时/连接数）
             RpcProtocolConfig protocol = RpcProtocolConfig.auto(protocolName, port);
+            // 手动覆盖：--workers 调服务端 worker 线程数，--connections 调客户端连接池
+            int workers = parseInt(args.get("workers"), -1);
+            if (workers > 0) {
+                protocol = new RpcProtocolConfig(protocol.name(), protocol.host(), protocol.port(),
+                        protocol.payload(), protocol.buffer(), workers, protocol.accepts(),
+                        protocol.ioThreads(), protocol.alive(), protocol.queues(),
+                        protocol.serialization(), protocol.codec(), protocol.transporter(),
+                        protocol.dispatcher(), protocol.threadpool(), protocol.heartbeat(),
+                        protocol.ssl(), protocol.register(), protocol.charset(),
+                        protocol.keepAlive(), workers, workers, protocol.idleTimeout());
+            }
             server = RpcServer.createService(protocolName, List.of(registry), protocol, APP_NAME);
             server.afterPropertiesSet();
             server.register(RpcEchoService.class.getName(), new RpcEchoServiceImpl());
 
             RpcConsumerConfig consumer = RpcConsumerConfig.auto();
             consumer.setCheck(false);
+            int conns = parseInt(args.get("connections"), -1);
+            if (conns > 0) {
+                consumer.setConnections(conns);
+            }
             // 同 JVM 直调：跳过网络与序列化，仅用于压测无序列化方案的极限吞吐
             boolean inline = "true".equalsIgnoreCase(args.getOrDefault("inline", "false"));
             consumer.setInline(inline);
