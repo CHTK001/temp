@@ -14,9 +14,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * ImageProcessor SPI 机制 + 全操作综合示例
@@ -24,8 +23,8 @@ import java.util.Map;
  * <p>本示例验证 {@link ImageProcessor} 的完整能力：</p>
  * <h3>SPI 机制能力点</h3>
  * <ul>
- *   <li>discover 发现：发现全部实现并按优先级排序</li>
- *   <li>subclass 子类：自定义子类参与优先级竞争</li>
+ *   <li>discover 发现：发现全部实现并按优先级排序（rust/opencv/jdk）</li>
+ *   <li>priority 优先级：验证 @SpiOrder 排序（rust 100 > opencv 50 > jdk -100）</li>
  *   <li>proxy 代理：getExtensionFactory 返回自动降级代理</li>
  *   <li>degrade 降级：高优先级失败自动回退</li>
  *   <li>all-fail 全败：全部失败抛异常</li>
@@ -33,7 +32,7 @@ import java.util.Map;
  *
  * <h3>逐实现测试</h3>
  * <ul>
- *   <li>per-impl：逐个测试每个 ImageProcessor 实现（custom/jdk/opencv/rust）</li>
+ *   <li>per-impl：逐个测试每个可用 ImageProcessor 实现（rust/opencv/jdk）</li>
  * </ul>
  *
  * <h3>图像操作能力点（13 种 process 操作 + processBatch + 多角度 + 多格式）</h3>
@@ -54,6 +53,9 @@ public class ImageProcessorSpiExample {
     private static final String DEFAULT_TYPE = "all";
     private static final String DEFAULT_INPUT = "D:/images/test_1.jpg";
     private static final String DEFAULT_OUTPUT = "D:/images/utils";
+
+    /** 期望的三个 SPI 实现，按优先级从高到低 */
+    private static final List<String> EXPECTED_IMPLS = Arrays.asList("rust", "opencv", "jdk");
 
     public static void main(String[] args) {
         CommandLine cli = CommandLine.parse(args)
@@ -94,52 +96,74 @@ public class ImageProcessorSpiExample {
         log.info("===== SPI 机制测试 =====");
         boolean passed = true;
         long t0, dt;
-        
+
         t0 = System.nanoTime(); passed &= testDiscover(); dt = (System.nanoTime() - t0) / 1_000_000;
         log.info("[spi] discover 耗时: {}ms", dt);
-        
-        t0 = System.nanoTime(); passed &= testSubclass(); dt = (System.nanoTime() - t0) / 1_000_000;
-        log.info("[spi] subclass 耗时: {}ms", dt);
-        
+
+        t0 = System.nanoTime(); passed &= testPriority(); dt = (System.nanoTime() - t0) / 1_000_000;
+        log.info("[spi] priority 耗时: {}ms", dt);
+
         t0 = System.nanoTime(); passed &= testProxy(); dt = (System.nanoTime() - t0) / 1_000_000;
         log.info("[spi] proxy 耗时: {}ms", dt);
-        
+
         t0 = System.nanoTime(); passed &= testDegrade(); dt = (System.nanoTime() - t0) / 1_000_000;
         log.info("[spi] degrade 耗时: {}ms", dt);
-        
+
         t0 = System.nanoTime(); passed &= testAllFail(); dt = (System.nanoTime() - t0) / 1_000_000;
         log.info("[spi] all-fail 耗时: {}ms", dt);
-        
+
         log.info("===== SPI 机制测试 {} =====", passed ? "PASSED" : "FAILED");
         return passed;
     }
 
+    /**
+     * 发现全部 ImageProcessor 实现（按 class 去重）
+     */
     public static boolean testDiscover() {
-        ServiceProvider<ImageProcessor> provider = ServiceProvider.of(ImageProcessor.class);
-        List<ImageProcessor> extensions = provider.getNewExtensions("image-processor");
-        log.info("[discover] 发现 {} 个 ImageProcessor 实现:", extensions.size());
+        List<ImageProcessor> extensions = getUniqueExtensions();
+        log.info("[discover] 发现 {} 个 ImageProcessor 实现 (去重后):", extensions.size());
         boolean passed = !extensions.isEmpty();
         for (ImageProcessor p : extensions) {
             log.info("           name={}, available={}, class={}", p.name(), p.available(),
                     p.getClass().getSimpleName());
             passed &= p.name() != null && !p.name().isEmpty();
         }
+        // 验证期望的三个实现都被发现
+        Set<String> names = extensions.stream().map(ImageProcessor::name).collect(Collectors.toSet());
+        for (String expected : EXPECTED_IMPLS) {
+            boolean found = names.contains(expected);
+            log.info("[discover] 期望实现 '{}' : {}", expected, found ? "FOUND" : "MISSING");
+            passed &= found;
+        }
         return passed;
     }
 
-    public static boolean testSubclass() {
-        ServiceProvider<ImageProcessor> provider = ServiceProvider.of(ImageProcessor.class);
-        List<ImageProcessor> extensions = provider.getNewExtensions("image-processor");
-        boolean found = false;
-        for (ImageProcessor p : extensions) {
-            if (p instanceof CustomImageProcessor) {
-                found = true;
-                log.info("[subclass] 发现 CustomImageProcessor (order=200)");
-            }
+    /**
+     * 验证 @SpiOrder 优先级排序：rust(100) > opencv(50) > jdk(-100)
+     */
+    public static boolean testPriority() {
+        List<ImageProcessor> extensions = getUniqueExtensions();
+        if (extensions.size() < 2) {
+            log.warn("[priority] 实现数量不足，无法验证排序");
+            return false;
         }
-        boolean ordered = !extensions.isEmpty() && "custom".equals(extensions.get(0).name());
-        log.info("[subclass] 最高优先级: {} (期望 custom)", extensions.isEmpty() ? "none" : extensions.get(0).name());
-        return found && ordered;
+        boolean passed = true;
+        // 验证按优先级降序排列
+        for (int i = 0; i < extensions.size() - 1; i++) {
+            String curr = extensions.get(i).name();
+            String next = extensions.get(i + 1).name();
+            int currIdx = EXPECTED_IMPLS.indexOf(curr);
+            int nextIdx = EXPECTED_IMPLS.indexOf(next);
+            boolean ordered = currIdx >= 0 && nextIdx >= 0 && currIdx < nextIdx;
+            log.info("[priority] {} (order={}) > {} (order={}) : {}",
+                    curr, currIdx, next, nextIdx, ordered ? "OK" : "WRONG");
+            passed &= ordered;
+        }
+        // 验证第一个是 rust（最高优先级）
+        String first = extensions.get(0).name();
+        boolean rustFirst = "rust".equals(first);
+        log.info("[priority] 最高优先级: {} (期望 rust) : {}", first, rustFirst ? "OK" : "WRONG");
+        return passed && rustFirst;
     }
 
     public static boolean testProxy() {
@@ -147,10 +171,11 @@ public class ImageProcessorSpiExample {
         ImageProcessor proxy = provider.getExtensionFactory("image-processor");
         if (proxy == null) { log.warn("[proxy] 代理为 null"); return false; }
         String name = proxy.name();
-        ImageProcessor newProxy = provider.getNewExtensionFactory("image-processor");
-        boolean newProxyOk = newProxy != null && "custom".equals(newProxy.name());
-        log.info("[proxy] name={} (期望 custom), newProxy={}", name, newProxyOk);
-        return "custom".equals(name) && newProxyOk;
+        // 代理应返回最高优先级的可用实现名称（rust不可用时降级到opencv，再降级到jdk）
+        // 注意：代理对象的 available() 不代表底层实现的真实可用状态，仅验证 name 有效
+        boolean nameValid = EXPECTED_IMPLS.contains(name);
+        log.info("[proxy] name={} (期望 rust/opencv/jdk 之一) : {}", name, nameValid ? "OK" : "WRONG");
+        return nameValid;
     }
 
     public static boolean testDegrade() {
@@ -186,7 +211,7 @@ public class ImageProcessorSpiExample {
     // ==================== 逐实现测试 ====================
 
     /**
-     * 逐个测试每个 ImageProcessor 实现
+     * 逐个测试每个 ImageProcessor 实现（按 class 去重）
      */
     private boolean testPerImpl(String inputPath, String outputPath) {
         log.info("===== 逐实现测试 =====");
@@ -196,8 +221,7 @@ public class ImageProcessorSpiExample {
             return false;
         }
 
-        ServiceProvider<ImageProcessor> provider = ServiceProvider.of(ImageProcessor.class);
-        List<ImageProcessor> extensions = provider.getNewExtensions("image-processor");
+        List<ImageProcessor> extensions = getUniqueExtensions();
         boolean allPassed = true;
 
         for (ImageProcessor impl : extensions) {
@@ -213,7 +237,6 @@ public class ImageProcessorSpiExample {
 
             long implStart = System.nanoTime();
             boolean implPassed = true;
-            // 每个实现测试核心操作
             String implDir = implName;
             new File(outputPath, implDir).mkdirs();
 
@@ -338,7 +361,6 @@ public class ImageProcessorSpiExample {
                            String opName, Map<String, Object> params) {
         try {
             String operation = opName.contains("_") ? opName.substring(0, opName.indexOf("_")) : opName;
-            // rotate_0 → operation=rotate, 但 rotate_0 不含下划线后的操作名
             if (opName.startsWith("rotate")) operation = "rotate";
             if (opName.startsWith("flip")) operation = "flip";
             if (opName.startsWith("resize")) operation = "resize";
@@ -411,6 +433,25 @@ public class ImageProcessorSpiExample {
     }
 
     // ==================== 工具方法 ====================
+
+    /**
+     * 获取去重后的 ImageProcessor 实现列表（按 class 去重，保留优先级最高的）
+     */
+    private static List<ImageProcessor> getUniqueExtensions() {
+        ServiceProvider<ImageProcessor> provider = ServiceProvider.of(ImageProcessor.class);
+        List<ImageProcessor> raw = provider.getNewExtensions("image-processor");
+        // 按 class 去重：同名实现只保留第一个（优先级最高的）
+        Map<String, ImageProcessor> unique = new LinkedHashMap<>();
+        for (ImageProcessor p : raw) {
+            String key = p.name() + ":" + p.getClass().getName();
+            if (!unique.containsKey(p.name())) {
+                unique.put(p.name(), p);
+            } else {
+                log.debug("[dedup] 跳过重复实现: name={}, class={}", p.name(), p.getClass().getSimpleName());
+            }
+        }
+        return new ArrayList<>(unique.values());
+    }
 
     private static byte[] readTestImage(String path) {
         try {

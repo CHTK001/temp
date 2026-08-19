@@ -26,7 +26,7 @@ public class ImageProcessorSpiExampleSpi implements Example {
 
     @Override
     public String description() {
-        return "ImageProcessor SPI 发现/优先级/自动降级/子类注册 + 13种图像操作能力自检";
+        return "ImageProcessor SPI 发现/优先级/自动降级 (rust/opencv/jdk) + 13种图像操作能力自检";
     }
 
     @Override
