@@ -167,6 +167,12 @@
             <artifactId>utils-support-deeplearning-onnx-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- OpenCV ImageProcessor SPI provider（@SpiOrder(50)，rust>opencv>jdk 优先级链） -->
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-deeplearning-opencv-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <!--
         <dependency>
             <groupId>com.chua</groupId>
