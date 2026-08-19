@@ -1,0 +1,4 @@
+[
+  ["com.chua.common.support.ai.chat.pricing.ModelPricingProvider"],
+  ["com.chua.common.sync.agent.DataSyncAgent"]
+]
