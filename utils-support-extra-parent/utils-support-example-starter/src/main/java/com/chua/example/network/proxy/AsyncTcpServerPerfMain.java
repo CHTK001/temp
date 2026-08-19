@@ -28,6 +28,7 @@ import java.util.concurrent.atomic.LongAdder;
  */
 public class AsyncTcpServerPerfMain {
 
+    /** log */
     private static final org.slf4j.Logger log =
             org.slf4j.LoggerFactory.getLogger(AsyncTcpServerPerfMain.class);
 
