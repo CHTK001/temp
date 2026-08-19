@@ -161,9 +161,11 @@ public class ImageProcessorSpiExample {
         if (image == null) { log.warn("[degrade] 无法读取测试图片"); return false; }
         Map<String, Object> params = new HashMap<>();
         params.put("width", 100); params.put("height", 80);
+        long t0 = System.nanoTime();
         byte[] result = proxy.process(image, "resize", params);
+        long dt = (System.nanoTime() - t0) / 1_000_000;
         boolean passed = result != null && result.length > 0;
-        log.info("[degrade] resize result={} bytes, passed={}", result == null ? 0 : result.length, passed);
+        log.info("[degrade] resize result={} bytes, 耗时={}ms, passed={}", result == null ? 0 : result.length, dt, passed);
         return passed;
     }
 
@@ -209,6 +211,7 @@ public class ImageProcessorSpiExample {
                 continue;
             }
 
+            long implStart = System.nanoTime();
             boolean implPassed = true;
             // 每个实现测试核心操作
             String implDir = implName;
@@ -235,7 +238,8 @@ public class ImageProcessorSpiExample {
             implPassed &= testImplOp(impl, imageData, outputPath, implDir, "flip_v",
                     params("axis", "v"));
 
-            log.info("[per-impl] {} {}", implName, implPassed ? "PASSED" : "FAILED");
+            long implDt = (System.nanoTime() - implStart) / 1_000_000;
+            log.info("[per-impl] {} {} (总耗时: {}ms)", implName, implPassed ? "PASSED" : "FAILED", implDt);
             allPassed &= implPassed;
         }
 
@@ -246,24 +250,24 @@ public class ImageProcessorSpiExample {
     private boolean testImplOp(ImageProcessor impl, byte[] imageData, String outputPath,
                                String implDir, String opName, Map<String, Object> params) {
         try {
-            // 对于非resize/grayscale/rotate/crop/blur/flip/brightness/contrast/border操作，
-            // 某些实现可能不支持，跳过不支持的
             String operation = opName.contains("_") ? opName.substring(0, opName.indexOf("_")) : opName;
+            long t0 = System.nanoTime();
             byte[] result = impl.process(imageData, operation, params);
+            long dt = (System.nanoTime() - t0) / 1_000_000;
             if (result == null || result.length == 0) {
-                log.warn("[per-impl] {}/{} 结果为空", implDir, opName);
+                log.warn("[per-impl] {}/{} 结果为空 (耗时: {}ms)", implDir, opName, dt);
                 return false;
             }
             BufferedImage img = ImageIO.read(new ByteArrayInputStream(result));
             if (img == null) {
-                log.warn("[per-impl] {}/{} 不是有效图像", implDir, opName);
+                log.warn("[per-impl] {}/{} 不是有效图像 (耗时: {}ms)", implDir, opName, dt);
                 return false;
             }
             Path outFile = Paths.get(outputPath, implDir,
                     opName + "_" + img.getWidth() + "x" + img.getHeight() + ".png");
             Files.write(outFile, result);
-            log.info("[per-impl] {}/{} OK — {}x{} ({} bytes)", implDir, opName,
-                    img.getWidth(), img.getHeight(), result.length);
+            log.info("[per-impl] {}/{} OK — {}x{} ({} bytes, 耗时: {}ms)", implDir, opName,
+                    img.getWidth(), img.getHeight(), result.length, dt);
             return true;
         } catch (Exception e) {
             log.warn("[per-impl] {}/{} FAILED: {}", implDir, opName, e.getMessage());
@@ -286,6 +290,7 @@ public class ImageProcessorSpiExample {
         log.info("[operations] 使用处理器: {} (available={})", processor.name(), processor.available());
 
         boolean allPassed = true;
+        long opsStart = System.nanoTime();
 
         // 1. resize
         allPassed &= testOp(processor, imageData, outputPath, "resize", params("width", 200, "height", 150));
@@ -324,7 +329,8 @@ public class ImageProcessorSpiExample {
         allPassed &= testOp(processor, imageData, outputPath, "resize_jpeg",
                 params("width", 100, "height", 80, "format", "jpeg"));
 
-        log.info("===== 图像操作测试 {} =====", allPassed ? "PASSED" : "FAILED");
+        long opsDt = (System.nanoTime() - opsStart) / 1_000_000;
+        log.info("===== 图像操作测试 {} (总耗时: {}ms) =====", allPassed ? "PASSED" : "FAILED", opsDt);
         return allPassed;
     }
 
@@ -337,21 +343,23 @@ public class ImageProcessorSpiExample {
             if (opName.startsWith("flip")) operation = "flip";
             if (opName.startsWith("resize")) operation = "resize";
 
+            long t0 = System.nanoTime();
             byte[] result = processor.process(imageData, operation, params);
+            long dt = (System.nanoTime() - t0) / 1_000_000;
             if (result == null || result.length == 0) {
-                log.warn("[{}] 结果为空", opName);
+                log.warn("[{}] 结果为空 (耗时: {}ms)", opName, dt);
                 return false;
             }
             BufferedImage img = ImageIO.read(new ByteArrayInputStream(result));
             if (img == null) {
-                log.warn("[{}] 不是有效图像 ({} bytes)", opName, result.length);
+                log.warn("[{}] 不是有效图像 ({} bytes, 耗时: {}ms)", opName, result.length, dt);
                 return false;
             }
             String filename = opName + "_" + img.getWidth() + "x" + img.getHeight() + ".png";
             Path outFile = Paths.get(outputPath, filename);
             Files.write(outFile, result);
-            log.info("[{}] OK — {}x{} ({} bytes) -> {}", opName, img.getWidth(), img.getHeight(),
-                    result.length, outFile.getFileName());
+            log.info("[{}] OK — {}x{} ({} bytes, 耗时: {}ms) -> {}", opName, img.getWidth(), img.getHeight(),
+                    result.length, dt, outFile.getFileName());
             return true;
         } catch (Exception e) {
             log.error("[{}] FAILED: {} - {}", opName, e.getClass().getSimpleName(), e.getMessage());
@@ -368,9 +376,12 @@ public class ImageProcessorSpiExample {
             byte[][] images = new byte[][]{imageData, imageData, imageData};
             Map<String, Object> batchParams = params("width", 100, "height", 80);
 
+            long t0 = System.nanoTime();
             byte[][] results = processor.processBatch(images, "resize", batchParams);
+            long dt = (System.nanoTime() - t0) / 1_000_000;
+
             if (results == null || results.length != 3) {
-                log.warn("[batch] 结果数量不匹配: expected=3, actual={}", results == null ? 0 : results.length);
+                log.warn("[batch] 结果数量不匹配: expected=3, actual={} (耗时: {}ms)", results == null ? 0 : results.length, dt);
                 return false;
             }
 
@@ -391,7 +402,7 @@ public class ImageProcessorSpiExample {
                 Files.write(outFile, results[i]);
                 log.info("[batch] 第{}张 OK — {}x{} -> {}", i, img.getWidth(), img.getHeight(), outFile.getFileName());
             }
-            log.info("[batch] {}", passed ? "PASSED" : "FAILED");
+            log.info("[batch] {} (耗时: {}ms)", passed ? "PASSED" : "FAILED", dt);
             return passed;
         } catch (Exception e) {
             log.error("[batch] FAILED: {} - {}", e.getClass().getSimpleName(), e.getMessage());
