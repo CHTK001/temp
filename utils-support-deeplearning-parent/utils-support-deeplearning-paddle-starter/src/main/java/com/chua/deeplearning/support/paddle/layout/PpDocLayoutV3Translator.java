@@ -1,4 +1,4 @@
-package com.chua.deeplearning.support.onnx.ocr.layout;
+package com.chua.deeplearning.support.paddle.layout;
 
 import ai.djl.modality.cv.Image;
 import ai.djl.modality.cv.output.BoundingBox;
@@ -6,7 +6,6 @@ import ai.djl.modality.cv.output.DetectedObjects;
 import ai.djl.modality.cv.output.Rectangle;
 import ai.djl.ndarray.NDArray;
 import ai.djl.ndarray.NDList;
-import ai.djl.ndarray.types.DataType;
 import ai.djl.ndarray.types.Shape;
 import ai.djl.translate.Batchifier;
 import ai.djl.translate.Translator;
@@ -23,22 +22,31 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-
 /**
- * PP-DocLayoutV2/V3        ONNX Translator
+ * PP-DocLayoutV3 布局分析 Translator（Paddle 模块）。
+ *
+ * <p>复用共享 ONNX 模型资源（utils-support-models-onnx-ppdoclayoutv3），
+ * 输出为 DETR 解码格式 {@code [num, 7]}（class_id, score, x1, y1, x2, y2, ...）
+ * 与数量 {@code count}。与 onnx 模块的 {@code PpDocLayoutTranslator} 解码逻辑一致。</p>
+ *
+ * <pre>{@code
+ * 布局管线使用示例：
+ * LayoutPipeline.builder().model("paddle-pp-doc-layout").build()
+ * }</pre>
  *
  * @author CH
+ * @since 4.0.0.42
  */
 @Slf4j
-public class PpDocLayoutTranslator implements Translator<Image, DetectedObjects> {
+public class PpDocLayoutV3Translator implements Translator<Image, DetectedObjects> {
 
     /**
-     *              
+     * 输入尺寸（宽高一致）。
      */
     private static final int INPUT_SIZE = 800;
 
     /**
-     *                                      
+     * 版面区域标签（PP-DocLayoutV3 25 类）。
      */
     private static final List<String> LABELS = List.of(
             "abstract",
@@ -69,22 +77,22 @@ public class PpDocLayoutTranslator implements Translator<Image, DetectedObjects>
     );
 
     /**
-     *                          
+     * 配置的置信度阈值（可空，未配置用默认）。
      */
     private final Float configuredScoreThreshold;
 
     /**
-     *              
+     * 置信度阈值。
      */
     private float scoreThreshold;
 
     /**
-     *                              
+     * 输入图像宽。
      */
     private int width;
 
     /**
-     *                              
+     * 输入图像高。
      */
     private int height;
 
@@ -94,33 +102,33 @@ public class PpDocLayoutTranslator implements Translator<Image, DetectedObjects>
     private int scale;
 
     /**
-     *                              
+     * 是否低信息量输入。
      */
     private boolean lowInformationInput;
 
     /**
-     *              
+     * 默认构造。
      */
-    public PpDocLayoutTranslator() {
+    public PpDocLayoutV3Translator() {
         this(Collections.emptyMap());
     }
 
     /**
-     *              
+     * 带参数构造。
      *
-     * @param arguments                     
+     * @param arguments 参数（threshold / scoreThreshold 可选）
      */
-    public PpDocLayoutTranslator(Map<String, ?> arguments) {
+    public PpDocLayoutV3Translator(Map<String, ?> arguments) {
         this.configuredScoreThreshold = extractThreshold(arguments);
         this.scoreThreshold = 0.5f;
     }
 
     /**
-     *                                                   {@link NDList}   
+     * 预处理：AWT 缩放至 800×800，输出 CHW 归一化数组与 scale_factor。
      *
-     * @param ctx TranslatorContext          
-     * @param input                       
-     * @return NDList               
+     * @param ctx   TranslatorContext
+     * @param input DJL Image
+     * @return NDList（im_shape, image, scale_factor）
      */
     @Override
     @Nonnull
@@ -156,19 +164,16 @@ public class PpDocLayoutTranslator implements Translator<Image, DetectedObjects>
     }
 
     /**
-     *                                                  {@link DetectedObjects}   
+     * 后处理：DETR 解码输出 {@code [num, 7]} + count → DetectedObjects。
      *
-     * @param ctx TranslatorContext          
-     * @param list NDList              
-     * @return DetectedObjects          
+     * @param ctx  TranslatorContext
+     * @param list NDList
+     * @return DetectedObjects
      */
     @Override
     @Nonnull
     public DetectedObjects processOutput(@Nonnull TranslatorContext ctx, @Nonnull NDList list) {
-        if (lowInformationInput) {
-            return new DetectedObjects(Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
-        }
-        if (list.isEmpty()) {
+        if (lowInformationInput || list.isEmpty()) {
             return new DetectedObjects(Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
         }
 
@@ -226,9 +231,9 @@ public class PpDocLayoutTranslator implements Translator<Image, DetectedObjects>
     }
 
     /**
-     *                           
+     * 无 Batchifier（分批策略）。
      *
-     * @return Batchifier          
+     * @return null
      */
     @Override
     @Nullable
@@ -236,12 +241,18 @@ public class PpDocLayoutTranslator implements Translator<Image, DetectedObjects>
         return null;
     }
 
+    /**
+     * 从 NDList 推断有效检测数量。
+     *
+     * @param list NDList
+     * @param rows 检测行
+     * @return 数量
+     */
     private int determineCount(NDList list, NDArray rows) {
         int maxCount = (int) rows.getShape().get(0);
         if (list.size() < 2 || list.get(1) == null || list.get(1).isEmpty()) {
             return maxCount;
         }
-
         NDArray countArray = list.get(1);
         try {
             long[] values = countArray.toLongArray();
@@ -260,6 +271,12 @@ public class PpDocLayoutTranslator implements Translator<Image, DetectedObjects>
         return maxCount;
     }
 
+    /**
+     * 提取置信度阈值参数。
+     *
+     * @param arguments 参数
+     * @return 阈值，无则 null
+     */
     private Float extractThreshold(Map<String, ?> arguments) {
         if (arguments == null || arguments.isEmpty()) {
             return null;
@@ -277,6 +294,12 @@ public class PpDocLayoutTranslator implements Translator<Image, DetectedObjects>
         return null;
     }
 
+    /**
+     * 按模型路径推断默认阈值。
+     *
+     * @param modelPath 模型路径
+     * @return 阈值
+     */
     private float resolveDefaultThreshold(Path modelPath) {
         String path = modelPath == null ? "" : modelPath.toString().replace('\\', '/').toLowerCase();
         if (path.contains("pp-doclayoutv3")) {
@@ -285,6 +308,12 @@ public class PpDocLayoutTranslator implements Translator<Image, DetectedObjects>
         return 0.5f;
     }
 
+    /**
+     * 判断输入图像是否为低信息量（纯色/模糊）。
+     *
+     * @param buf BufferedImage
+     * @return true 低信息量
+     */
     private boolean isLowInformationBuffered(java.awt.image.BufferedImage buf) {
         int w = buf.getWidth();
         int h = buf.getHeight();
@@ -335,6 +364,14 @@ public class PpDocLayoutTranslator implements Translator<Image, DetectedObjects>
         return chw;
     }
 
+    /**
+     * 裁剪数值到区间。
+     *
+     * @param value 数值
+     * @param min   最小值
+     * @param max   最大值
+     * @return 裁剪后值
+     */
     private float clip(float value, float min, float max) {
         return Math.max(min, Math.min(max, value));
     }
