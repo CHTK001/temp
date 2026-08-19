@@ -185,14 +185,12 @@
             <artifactId>utils-support-native-shm-queue</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- 共享内存 + Rust hyper HTTP bridge 示例（ShmHttpServerExample） — 临时排除，编译问题待修复 -->
-        <!--
+        <!-- 共享内存 + Rust hyper HTTP bridge 示例（ShmHttpServerExample） -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-native-shm-queue-http</artifactId>
             <version>${project.version}</version>
         </dependency>
-        -->
         <!--
         <dependency>
             <groupId>com.chua</groupId>
