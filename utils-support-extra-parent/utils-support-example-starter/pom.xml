@@ -648,6 +648,8 @@
                           <include>**/segmentation/*.java</include>
                           <!-- 行人重识别示例（PersonReidExample） -->
                           <include>**/reid/*.java</include>
+                          <!-- 人脸示例（FaceCoreExample/FaceDetectExample） -->
+                          <include>**/face/*.java</include>
                           <!-- 零样本分类示例（ZeroShotClassificationExample） -->
                           <include>**/classification/*.java</include>
                           <!-- 版面分析管线示例（LayoutPipelineExample） -->
