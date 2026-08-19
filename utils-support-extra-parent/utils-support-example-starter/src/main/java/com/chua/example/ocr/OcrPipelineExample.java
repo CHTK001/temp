@@ -2,11 +2,8 @@ package com.chua.example.ocr;
 
 import com.chua.deeplearning.support.ocr.OcrPipeline;
 import com.chua.deeplearning.support.ocr.DrawerPipeline;
-import com.chua.deeplearning.support.model.DetectionInfo;
-import com.chua.deeplearning.support.ocr.OcrResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.stream.Stream;
 
 /**
@@ -57,36 +54,22 @@ public class OcrPipelineExample {
                      try {
                          String name = f.getFileName().toString();
                          System.out.print(name + " ... ");
-                         byte[] imageData = Files.readAllBytes(f);
                          long t0 = System.currentTimeMillis();
 
-                         // 使用 DrawerPipeline 逐框标注
-                         byte[] corrected = ocr.correct(imageData);
-                         List<DetectionInfo> boxes = ocr.detector().detect(corrected);
-                         List<OcrResult> results = ocr.recognizeDetail(imageData);
+                         // 一键出图：toDrawer 自动完成检测+识别+匹配+标注
+                         byte[] drawn = ocr.toDrawer(Files.readAllBytes(f));
 
-                         DrawerPipeline drawer = ocr.withInitDrawer().target(corrected);
-                         for (DetectionInfo b : boxes) {
-                             String bestText = "";
-                             float bestConf = 0;
-                             double bestDist = Double.MAX_VALUE;
-                             double bx = b.x() + b.width() / 2.0, by = b.y() + b.height() / 2.0;
-                             for (OcrResult r : results) {
-                                 var rb = r.boundingBox();
-                                 double rx = rb.x() + rb.width() / 2.0, ry = rb.y() + rb.height() / 2.0;
-                                 double dist = Math.abs(bx - rx) + Math.abs(by - ry);
-                                 if (dist < bestDist) {
-                                     bestDist = dist;
-                                     bestText = r.text();
-                                     bestConf = r.confidence();
-                                 }
-                             }
-                             double maxDist = (b.width() + b.height()) * 0.5;
-                             if (bestDist <= maxDist) {
-                                 drawer.onProcess(b, bestText, bestConf);
-                             }
-                         }
-                         byte[] drawn = drawer.done();
+                         // 或自定义 DrawerPipeline 带进度回调：
+                         // byte[] corrected = ocr.correct(imageData);
+                         // var boxes = ocr.detector().detect(corrected);
+                         // var results = ocr.recognizeDetail(imageData);
+                         // byte[] drawn = ocr.withInitDrawer()
+                         //        .target(corrected)
+                         //        .boxes(boxes, results)
+                         //        .onProcess((box, text, conf, idx, total) ->
+                         //            System.out.println("  " + idx + "/" + total + ": " + text))
+                         //        .done();
+
                          Files.write(Path.of(OUTPUT_DIR + name), drawn);
                          System.out.println((System.currentTimeMillis() - t0) + "ms");
                      } catch (Exception e) {
