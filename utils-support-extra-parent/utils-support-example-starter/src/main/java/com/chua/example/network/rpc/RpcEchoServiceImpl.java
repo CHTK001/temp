@@ -77,4 +77,37 @@ public class RpcEchoServiceImpl implements RpcEchoService {
     public String fail(String message) {
         throw new RuntimeException(message);
     }
+
+    /**
+     * null 往返：原样返回输入值（含 {@code null}）。
+     *
+     * @param value 任意值，可为 {@code null}
+     * @return 原样返回
+     */
+    @Override
+    public String echoNullable(String value) {
+        return value;
+    }
+
+    /**
+     * 大对象往返：原样返回超大字符串。
+     *
+     * @param large 大字符串
+     * @return 原样返回
+     */
+    @Override
+    public String echoLarge(String large) {
+        return large;
+    }
+
+    /**
+     * 深层嵌套对象往返：原样返回深层嵌套 payload。
+     *
+     * @param payload 深层嵌套 payload
+     * @return 原样返回
+     */
+    @Override
+    public RpcPayload echoNested(RpcPayload payload) {
+        return payload;
+    }
 }

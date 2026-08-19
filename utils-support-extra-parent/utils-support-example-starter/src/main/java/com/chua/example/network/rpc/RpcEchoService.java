@@ -59,13 +59,46 @@ public interface RpcEchoService {
      */
     List<String> batch(List<String> messages);
 
-    /**
-     * 异常传播：抛出一个消息为 {@code <message>} 的 {@link RuntimeException}。
+/**
+     * 异常传播测试：抛出一个消息为 {@code <message>} 的 {@link RuntimeException}。
      *
-     * <p>用于验证远程异常能否原样传播回客户端（消息与类型经序列化还原）。</p>
+     * <p>用于验证远程异常能否原样传播回客户端，消息会经过序列化与反序列化原样返回。</p>
      *
      * @param message 异常消息
-     * @return 永不返回（总是抛出异常）
+     * @return 正常返回；抛异常时返回空
      */
     String fail(String message);
+
+    /**
+     * null 往返测试：参数为 {@code null} 时原样返回 {@code null}。
+     *
+     * <p>验证序列化框架对 null 值（无类型信息、无字节内容）的处理，防止 NPE 或
+     * null 被误写成空串/默认对象。</p>
+     *
+     * @param value 任意值，可为 {@code null}
+     * @return 原样返回
+     */
+    String echoNullable(String value);
+
+    /**
+     * 大对象往返测试：超大字符串原样返回。
+     *
+     * <p>验证传输层长度帧与序列化对超过常规缓冲区的数据支持（约 1MB），
+     * 防止长度头溢出或缓冲区截断。</p>
+     *
+     * @param large 大字符串
+     * @return 原样返回
+     */
+    String echoLarge(String large);
+
+    /**
+     * 深层嵌套对象往返测试：多层嵌套对象原样返回。
+     *
+     * <p>验证序列化框架对深层对象图（多级引用）的支持，防止循环引用或
+     * 递归深度超过框架限制。</p>
+     *
+     * @param payload 深层嵌套 payload
+     * @return 原样返回
+     */
+    RpcPayload echoNested(RpcPayload payload);
 }

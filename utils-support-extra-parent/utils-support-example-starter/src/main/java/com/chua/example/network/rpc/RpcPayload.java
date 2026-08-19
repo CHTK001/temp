@@ -34,6 +34,11 @@ public class RpcPayload implements Serializable {
     private int value;
 
     /**
+     * 嵌套子对象字段（验证深层对象图序列化往返）
+     */
+    private RpcPayload nested;
+
+    /**
      * 无参构造器（json 反序列化必需）。
      */
     public RpcPayload() {
@@ -48,6 +53,37 @@ public class RpcPayload implements Serializable {
     public RpcPayload(String name, int value) {
         this.name = name;
         this.value = value;
+    }
+
+    /**
+     * 全参构造器（含嵌套子对象）。
+     *
+     * @param name   名称
+     * @param value  数值
+     * @param nested 嵌套子对象，可为 {@code null}
+     */
+    public RpcPayload(String name, int value, RpcPayload nested) {
+        this.name = name;
+        this.value = value;
+        this.nested = nested;
+    }
+
+    /**
+     * 获取嵌套子对象。
+     *
+     * @return 嵌套子对象
+     */
+    public RpcPayload getNested() {
+        return nested;
+    }
+
+    /**
+     * 设置嵌套子对象。
+     *
+     * @param nested 嵌套子对象
+     */
+    public void setNested(RpcPayload nested) {
+        this.nested = nested;
     }
 
     /**
@@ -101,7 +137,7 @@ public class RpcPayload implements Serializable {
             return false;
         }
         RpcPayload that = (RpcPayload) o;
-        return value == that.value && Objects.equals(name, that.name);
+        return value == that.value && Objects.equals(name, that.name) && Objects.equals(nested, that.nested);
     }
 
     /**
@@ -111,7 +147,7 @@ public class RpcPayload implements Serializable {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(name, value);
+        return Objects.hash(name, value, nested);
     }
 
     /**

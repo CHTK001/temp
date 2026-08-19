@@ -525,6 +525,7 @@ public class RpcExample implements Example {
                 assertEquals("echo:hello", echo.echo("hello"), label + " echo 返回值");
                 assertEquals(5, echo.add(2, 3), label + " add 返回值");
                 assertComplexRoundTrip(echo, label);
+                assertDeepScenarios(echo, label);
                 log.info("    echo(\"hello\") = {}, add(2,3) = {}, payload/batch 往返 OK", "echo:hello", 5);
                 return;
             } catch (Throwable t) {
@@ -565,6 +566,44 @@ public class RpcExample implements Example {
                 || !batch.get(2).equals("echo:ccc")) {
             throw new AssertionError(label + " batch 集合往返不一致: " + batch);
         }
+    }
+
+    /**
+     * 深度场景断言：null 往返、大对象往返、深层嵌套对象往返。
+     *
+     * <p>覆盖序列化/传输链路的边界条件：</p>
+     * <ul>
+     *   <li>{@link RpcEchoService#echoNullable(String)} — null 值往返（无类型信息、无字节内容）</li>
+     *   <li>{@link RpcEchoService#echoLarge(String)} — 约 1MB 大对象往返（长度帧 + 缓冲区边界）</li>
+     *   <li>{@link RpcEchoService#echoNested(RpcPayload)} — 三层嵌套对象图往返</li>
+     * </ul>
+     *
+     * @param echo  远程代理对象
+     * @param label 实现标识（用于日志与异常消息）
+     */
+    private static void assertDeepScenarios(RpcEchoService echo, String label) {
+        // null 往返：null 参数应原样返回 null（不 NPE、不误写为空串）
+        if (echo.echoNullable(null) != null) {
+            throw new AssertionError(label + " echoNullable(null) 未返回 null");
+        }
+        // null 显式字符串往返
+        if (!"null-msg".equals(echo.echoNullable("null-msg"))) {
+            throw new AssertionError(label + " echoNullable 显式字符串往返失败");
+        }
+        // 大对象：约 1MB 字符串往返
+        String large = "L".repeat(1024 * 1024);
+        if (!large.equals(echo.echoLarge(large))) {
+            throw new AssertionError(label + " echoLarge 1MB 往返不一致");
+        }
+        // 深层嵌套：三层 RpcPayload 对象图往返
+        RpcPayload leaf = new RpcPayload("leaf", 1);
+        RpcPayload mid = new RpcPayload("mid", 2, leaf);
+        RpcPayload root = new RpcPayload("root", 3, mid);
+        RpcPayload back = echo.echoNested(root);
+        if (!root.equals(back)) {
+            throw new AssertionError(label + " echoNested 三层嵌套往返不一致: " + back);
+        }
+        log.info("    [深度] null/1MB大对象/三层嵌套对象 往返 OK");
     }
 
     /**
