@@ -26,12 +26,14 @@ public class ImageProcessorSpiExampleSpi implements Example {
 
     @Override
     public String description() {
-        return "ImageProcessor SPI 发现/优先级/自动降级/子类注册 能力自检";
+        return "ImageProcessor SPI 发现/优先级/自动降级/子类注册 + 13种图像操作能力自检";
     }
 
     @Override
     public boolean run(Map<String, String> args) {
         String type = args.getOrDefault("type", "all");
-        return new ImageProcessorSpiExample().runTest(type);
+        String input = args.getOrDefault("input", "D:/images/test_1.jpg");
+        String output = args.getOrDefault("output", "D:/images/utils");
+        return new ImageProcessorSpiExample().runTest(type, input, output);
     }
 }
