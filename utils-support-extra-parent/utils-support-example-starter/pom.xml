@@ -646,6 +646,8 @@
                           <include>**/ocr/*.java</include>
                           <!-- 分割/抠图示例（SegmentationExample） -->
                           <include>**/segmentation/*.java</include>
+                          <!-- 行人重识别示例（PersonReidExample） -->
+                          <include>**/reid/*.java</include>
                           <!-- 零样本分类示例（ZeroShotClassificationExample） -->
                           <include>**/classification/*.java</include>
                           <!-- 版面分析管线示例（LayoutPipelineExample） -->
