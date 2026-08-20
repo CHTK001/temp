@@ -14,10 +14,9 @@ import java.util.List;
 import java.util.stream.Stream;
 
 /**
- * 人脸检测诊断示例 — 对 D:/images 下所有图片检测人脸并标注效果图。
+ * 人脸检测诊断示例 — 仅用 faceplugin-face-detect-slim 检测人脸并标注。
  *
- * <p>每张人脸框标注：live 活体分数 + feat 特征维数 + lm 关键点数。
- * 输出到 D:/images/output/face-detect/</p>
+ * <p>每张人脸框标注检测置信度。输出到 D:/images/output/faceplugin-face-detect-slim/</p>
  *
  * @author CH
  * @since 4.0.0.42
@@ -47,11 +46,9 @@ public class FaceDetectExample {
 
     public static boolean runTest() throws Exception {
         Files.createDirectories(Path.of(OUTPUT_DIR));
+        // 仅人脸检测模型，不注入其他能力
         FacePipeline face = FacePipeline.builder()
                 .detector("faceplugin-face-detect-slim")
-                .feature("faceplugin-face-feature")
-                .liveness("face-liveness-flrgb")
-                .landmark("faceplugin-face-landmark")
                 .build();
 
         try (Stream<Path> files = Files.list(Path.of("D:\\images"))) {
@@ -70,41 +67,14 @@ public class FaceDetectExample {
 
                          List<DetectionInfo> boxes = new ArrayList<>();
                          List<String> labels = new ArrayList<>();
-                         int withFeat = 0;
-                         for (int i = 0; i < hits.size(); i++) {
-                             FaceDetectionHit hit = hits.get(i);
+                         for (FaceDetectionHit hit : hits) {
                              PredictRectangle box = hit.box();
                              if (box == null) {
                                  continue;
                              }
-                             // 活体
-                             float live = 1.0f;
-                             try {
-                                 live = face.liveScore(hit.faceImage());
-                             } catch (Exception ignored) {
-                             }
-                             // 特征
-                             int featDim = 0;
-                             try {
-                                 float[] feat = face.extractFeature(hit.faceImage());
-                                 featDim = feat == null ? 0 : feat.length;
-                             } catch (Exception ignored) {
-                             }
-                             if (featDim > 0) {
-                                 withFeat++;
-                             }
-                             // 关键点
-                             int lmCount = 0;
-                             try {
-                                 float[] lm = face.landmark(hit.faceImage());
-                                 lmCount = lm == null ? 0 : lm.length;
-                             } catch (Exception ignored) {
-                             }
-
                              boxes.add(new DetectionInfo(
                                      "face", box.confidence(), box.x(), box.y(), box.width(), box.height()));
-                             labels.add(String.format("LV%.2f F%d P%d C%.2f",
-                                     live, featDim, lmCount, box.confidence()));
+                             labels.add(String.format("face C%.2f", box.confidence()));
                          }
 
                          // 绘制标注图
@@ -114,7 +84,7 @@ public class FaceDetectExample {
                                  .done();
                          Files.write(Path.of(OUTPUT_DIR + name), drawn);
 
-                         System.out.println("面孔=" + hits.size() + " 特征=" + withFeat
+                         System.out.println("面孔=" + hits.size()
                                  + " " + (System.currentTimeMillis() - t0) + "ms");
                      } catch (Exception e) {
                          System.out.println("FAIL: " + e.getMessage());
