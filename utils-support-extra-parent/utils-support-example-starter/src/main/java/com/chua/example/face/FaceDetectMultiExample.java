@@ -36,7 +36,9 @@ public class FaceDetectMultiExample {
             "faceplugin-face-detect-slim",
             "scrfd-face-detector",
             "ultra-face",
-            "yolo-face-detector"
+            "yolo-face-detector",
+            "retinaface-r34",
+            "tinaface"
     };
 
     /**
