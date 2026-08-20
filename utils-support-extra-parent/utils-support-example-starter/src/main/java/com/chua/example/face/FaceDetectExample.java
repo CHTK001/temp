@@ -103,8 +103,8 @@ public class FaceDetectExample {
 
                              boxes.add(new DetectionInfo(
                                      "face", box.confidence(), box.x(), box.y(), box.width(), box.height()));
-                             labels.add(String.format("LV%.2f F%d P%d",
-                                     live, featDim, lmCount));
+                             labels.add(String.format("LV%.2f F%d P%d C%.2f",
+                                     live, featDim, lmCount, box.confidence()));
                          }
 
                          // 绘制标注图
