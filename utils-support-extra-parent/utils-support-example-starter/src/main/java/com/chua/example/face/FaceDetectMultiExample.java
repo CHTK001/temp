@@ -30,11 +30,13 @@ public class FaceDetectMultiExample {
     private static final String OUTPUT_ROOT = "D:\\images\\output\\";
 
     /**
-     * 待测试的人脸检测模型
+     * 待测试的人脸检测模型（真人检测）
      */
     private static final String[] MODELS = {
             "faceplugin-face-detect-slim",
-            "anime-face-detector"
+            "scrfd-face-detector",
+            "ultra-face",
+            "yolo-face-detector"
     };
 
     /**

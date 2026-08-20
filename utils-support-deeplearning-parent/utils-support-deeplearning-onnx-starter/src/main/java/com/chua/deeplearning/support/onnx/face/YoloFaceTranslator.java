@@ -1,4 +1,4 @@
-package com.chua.deeplearning.support.onnx.anime.detection;
+package com.chua.deeplearning.support.onnx.face;
 
 import ai.djl.modality.cv.Image;
 import ai.djl.modality.cv.output.BoundingBox;
@@ -6,7 +6,6 @@ import ai.djl.modality.cv.output.DetectedObjects;
 import ai.djl.modality.cv.output.Rectangle;
 import ai.djl.ndarray.NDArray;
 import ai.djl.ndarray.NDList;
-import ai.djl.ndarray.types.DataType;
 import ai.djl.ndarray.types.Shape;
 import ai.djl.translate.Batchifier;
 import ai.djl.translate.Translator;
@@ -18,23 +17,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Anime Face YOLOv8 ONNX Translator（嵌入式，纯 Java 预处理，兼容 onnxruntime engine）。
+ * YOLOv11n Face ONNX Translator（嵌入 jar，纯 Java 预处理，兼容 onnxruntime engine）。
  *
- * <p>动漫人脸检测：YOLOv8 v1.4_n（deepghs/anime_face_detection）。
- * 输入 640×640 RGB 归一化 [0,1]，输出 [1,5,8400]（cx,cy,w,h,face_conf）。</p>
+ * <p>真人/动物卡通人脸检测：YOLOv11n-face（AdamCodd）。输入 640×640 RGB 归一化 [0,1]，
+ * 输出 [1,5,8400]（cx,cy,w,h,face_conf）。</p>
  *
- * <p>onnxruntime engine 不支持 NDArray resize/set 等运算，故 letterbox 与 NMS 均用纯 Java 实现。</p>
+ * <p>onnxruntime engine 不支持 NDArray resize/squeeze/transpose，letterbox 与 NMS 均纯 Java。</p>
  *
  * @author CH
  * @since 4.0.0.42
  */
 @Slf4j
-public class AnimeFaceDetectorTranslator implements Translator<Image, DetectedObjects> {
+public class YoloFaceTranslator implements Translator<Image, DetectedObjects> {
 
     /**
      * 标签名。
      */
-    private static final String FACE_LABEL = "anime_face";
+    private static final String FACE_LABEL = "face";
 
     /**
      * 输入尺寸。
@@ -57,7 +56,7 @@ public class AnimeFaceDetectorTranslator implements Translator<Image, DetectedOb
     private static final int TOP_K = 300;
 
     /**
-     * letterbox 缩放比例与填充。
+     * letterbox 缩放比例。
      */
     private float scaleR = 1f;
 
@@ -101,7 +100,6 @@ public class AnimeFaceDetectorTranslator implements Translator<Image, DetectedOb
 
         int[] pixels = scaled.getRGB(0, 0, newW, newH, null, 0, newW);
         float[] data = new float[3 * INPUT_SIZE * INPUT_SIZE];
-        // 灰边填充 114（归一化后 ~0.447）
         java.util.Arrays.fill(data, 114f / 255f);
         for (int y = 0; y < newH; y++) {
             for (int x = 0; x < newW; x++) {
@@ -121,102 +119,69 @@ public class AnimeFaceDetectorTranslator implements Translator<Image, DetectedOb
     public DetectedObjects processOutput(TranslatorContext ctx, NDList list) {
         NDArray output = list.get(0);
         long[] shape = output.getShape().getShape();
-        // 直接读 flat float 数组，避免 ORT 引擎不支持的 squeeze/transpose（会递归 StackOverflow）
+        // 兼容 [1,C,N] / [1,N,C]，直读 flat 避免 ORT 不支持的 squeeze/transpose
         float[] data = output.toFloatArray();
-
-        // 兼容 [1,5,8400] / [5,8400] / [1,8400,5] 布局，统一为 [numDets, numChannels]
         int dim = shape.length;
-        if (dim == 3) {
-            // [B,C,N]：C 小（类别维 5）；或 [B,N,C]：C 大（检测框维）
-            if (!(shape[1] == 5 || shape[1] == 6 || shape[1] < shape[2])) {
-                // [B,N,C]（C 大）→ 需转置，改用 NCH 步长直接读
-                return processNch(dim, shape, data);
-            }
-            // [B,C,N] → 步长 C * (N stride)
-        }
         int numDets;
         int numChannels;
+        boolean transpose = false;
         if (dim == 3) {
-            // [1,C,N] 或 [B,C,N]，B 可>=1
-            numChannels = (int) shape[1];
-            numDets = (int) shape[2];
+            if (shape[1] == 5 || shape[1] == 6 || shape[1] < shape[2]) {
+                // [B,C,N]
+                numChannels = (int) shape[1];
+                numDets = (int) shape[2];
+            } else {
+                // [B,N,C] → 需转置
+                numDets = (int) shape[1];
+                numChannels = (int) shape[2];
+                transpose = true;
+            }
         } else if (dim == 2) {
-            // [N,C] 或 [C,N]
             if (shape[1] == 5 || shape[1] == 6 || shape[1] < shape[0]) {
-                // [N,C]
                 numDets = (int) shape[0];
                 numChannels = (int) shape[1];
             } else {
-                // [C,N] → 步长遍历
-                return processNch(dim, shape, data);
+                numDets = (int) shape[1];
+                numChannels = (int) shape[0];
+                transpose = true;
             }
         } else {
-            throw new IllegalStateException("AnimeFace 输出维度异常: " + java.util.Arrays.toString(shape));
+            throw new IllegalStateException("YoloFace 输出维度异常: " + java.util.Arrays.toString(shape));
         }
-        return processNcm(data, numDets, numChannels);
-    }
-
-    /**
-     * 处理 [C,N] / [B,N,C] 布局（NCH 步长直读，避免转置）。
-     *
-     * @param dim       维度数
-     * @param shape     形状
-     * @param data      flat 数据
-     * @return 检测结果
-     */
-    private DetectedObjects processNch(int dim, long[] shape, float[] data) {
-        int c = (int) shape[dim - 2];
-        int n = (int) shape[dim - 1];
-        // [C,N]：按列读；若为 [B,N,C] 取 batch0 的 [N,C] 视作 [C,N]？不合理，
-        // 这里按 [C,N] 步长 C 大在前处理
-        float[] boxes = new float[n * c];
-        for (int i = 0; i < n; i++) {
-            for (int ch = 0; ch < c; ch++) {
-                boxes[i * c + ch] = data[ch * n + i];
-            }
-        }
-        return assemble(boxes, n, c);
-    }
-
-    /**
-     * 处理 [N,C] / [B,C,N] 布局（NCM 步长直读）。
-     *
-     * @param data      flat 数据
-     * @param numDets   检测数
-     * @param numChannels 通道数
-     * @return 检测结果
-     */
-    private DetectedObjects processNcm(float[] data, int numDets, int numChannels) {
-        return assemble(data, numDets, numChannels);
-    }
-
-    /**
-     * 从 [numDets, numChannels] 扁平数组组装检测框。
-     *
-     * @param data     扁平数据
-     * @param numDets  检测数
-     * @param numChannels 通道数（须 >=5：cx,cy,w,h,conf...）
-     * @return 检测结果
-     */
-    private DetectedObjects assemble(float[] data, int numDets, int numChannels) {
         if (numChannels < 5) {
-            throw new IllegalStateException("AnimeFace 输出通道异常: " + numChannels);
+            throw new IllegalStateException("YoloFace 输出通道异常: " + numChannels);
         }
-        // 收集候选框（letterbox 坐标系）
+
+        // 收集候选框
         List<float[]> boxes = new ArrayList<>();
         List<Float> scores = new ArrayList<>();
         for (int i = 0; i < numDets; i++) {
-            int offset = i * numChannels;
-            if (offset + 4 >= data.length) {
-                break;
+            float cx, cy, w, h;
+            if (transpose) {
+                // [N,C] / [1,N,C]：按行读
+                int base = i * numChannels;
+                if (base + 4 >= data.length) {
+                    break;
+                }
+                cx = data[base];
+                cy = data[base + 1];
+                w = data[base + 2];
+                h = data[base + 3];
+            } else {
+                // [C,N]：按列读
+                int base = i;
+                cx = data[0 * numDets + base];
+                cy = data[1 * numDets + base];
+                w = data[2 * numDets + base];
+                h = data[3 * numDets + base];
             }
-            float cx = data[offset];
-            float cy = data[offset + 1];
-            float w = data[offset + 2];
-            float h = data[offset + 3];
             float conf = 0f;
-            for (int cc = 4; cc < numChannels && offset + cc < data.length; cc++) {
-                conf = Math.max(conf, data[offset + cc]);
+            for (int c0 = 4; c0 < numChannels; c0++) {
+                int idx = transpose ? i * numChannels + c0 : c0 * numDets + i;
+                if (idx >= data.length) {
+                    break;
+                }
+                conf = Math.max(conf, data[idx]);
             }
             if (conf < CONF_THRESHOLD) {
                 continue;
@@ -229,16 +194,14 @@ public class AnimeFaceDetectorTranslator implements Translator<Image, DetectedOb
             return new DetectedObjects(List.of(), List.of(), List.of());
         }
 
-        // NMS（纯 Java）
         int[] keep = nms(boxes, scores);
-
         List<String> names = new ArrayList<>();
         List<Double> probs = new ArrayList<>();
         List<BoundingBox> rects = new ArrayList<>();
         int topK = Math.min(keep.length, TOP_K);
         for (int i = 0; i < topK; i++) {
             float[] b = boxes.get(keep[i]);
-            // letterbox 坐标还原到原图
+            // letterbox 坐标还原
             float x1 = Math.max(0, (b[0] - padLeft) / scaleR);
             float y1 = Math.max(0, (b[1] - padTop) / scaleR);
             float x2 = Math.min(imageWidth, (b[2] - padLeft) / scaleR);
@@ -255,11 +218,11 @@ public class AnimeFaceDetectorTranslator implements Translator<Image, DetectedOb
     }
 
     /**
-     * 纯 Java NMS（按分数降序，抑制 IOU 重叠框）。
+     * 纯 Java NMS（分数降序，抑制 IOU 重叠框）。
      *
-     * @param boxes  候选框 [x1,y1,x2,y2] 列表
-     * @param scores 对应分数
-     * @return 保留框索引（分数降序）
+     * @param boxes  候选框 [x1,y1,x2,y2]
+     * @param scores 分数
+     * @return 保留框索引
      */
     private static int[] nms(List<float[]> boxes, List<Float> scores) {
         int n = boxes.size();
@@ -277,25 +240,23 @@ public class AnimeFaceDetectorTranslator implements Translator<Image, DetectedOb
             }
             keep.add(i);
             float[] bi = boxes.get(i);
-            float ix1 = bi[0], iy1 = bi[1], ix2 = bi[2], iy2 = bi[3];
-            float iArea = Math.max(0, ix2 - ix1) * Math.max(0, iy2 - iy1);
+            float iArea = Math.max(0, bi[2] - bi[0]) * Math.max(0, bi[3] - bi[1]);
             for (int jj = ii + 1; jj < n; jj++) {
                 int j = idx[jj];
                 if (removed[j]) {
                     continue;
                 }
                 float[] bj = boxes.get(j);
-                float xx1 = Math.max(ix1, bj[0]);
-                float yy1 = Math.max(iy1, bj[1]);
-                float xx2 = Math.min(ix2, bj[2]);
-                float yy2 = Math.min(iy2, bj[3]);
+                float xx1 = Math.max(bi[0], bj[0]);
+                float yy1 = Math.max(bi[1], bj[1]);
+                float xx2 = Math.min(bi[2], bj[2]);
+                float yy2 = Math.min(bi[3], bj[3]);
                 if (xx2 <= xx1 || yy2 <= yy1) {
                     continue;
                 }
                 float inter = (xx2 - xx1) * (yy2 - yy1);
                 float jArea = Math.max(0, bj[2] - bj[0]) * Math.max(0, bj[3] - bj[1]);
-                float iou = inter / (iArea + jArea - inter);
-                if (iou > IOU_THRESHOLD) {
+                if (inter / (iArea + jArea - inter) > IOU_THRESHOLD) {
                     removed[j] = true;
                 }
             }
