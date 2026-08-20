@@ -113,14 +113,7 @@ public class SyncExampleSpi implements Example {
         try {
             ServerSetting setting = ServerSetting.builder()
                     .host("127.0.0.1").port(port).protocol(protocol).build();
-            if ("ionet".equals(protocol)) {
-                server = com.chua.ionet.support.server.IonetSyncServer.builder()
-                        .port(port)
-                        .scanActionPackage(com.chua.example.ionet.IonetExampleSpi.DemoAction.class)
-                        .build();
-            } else {
-                server = ServiceProvider.of(SyncServer.class).getNewExtension(protocol, setting);
-            }
+            server = ServiceProvider.of(SyncServer.class).getNewExtension(protocol, setting);
             if (server == null) {
                 log.warn("  [{}] SyncServer 未注册，无法测请求-响应", protocol);
                 return false;
@@ -142,16 +135,7 @@ public class SyncExampleSpi implements Example {
             // 创建 N 个独立客户端连接
             CountDownLatch clientGot = new CountDownLatch(messages);
             for (int c = 0; c < clients; c++) {
-                SyncClient client;
-                if ("ionet".equals(protocol)) {
-                    client = com.chua.ionet.support.client.IonetSyncClient.builder()
-                            .host("127.0.0.1")
-                            .port(port)
-                            .addRegion(new com.chua.example.ionet.IonetExampleSpi.DemoRegion())
-                            .build();
-                } else {
-                    client = ServiceProvider.of(SyncClient.class).getNewExtension(protocol, serverUrl);
-                }
+                SyncClient client = ServiceProvider.of(SyncClient.class).getNewExtension(protocol, serverUrl);
                 if (client == null) {
                     log.warn("  [{}] SyncClient 未注册，无法测请求-响应", protocol);
                     return false;
@@ -238,15 +222,7 @@ public class SyncExampleSpi implements Example {
         try {
             ServerSetting setting = ServerSetting.builder()
                     .host("127.0.0.1").port(port).protocol(protocol).build();
-            if ("ionet".equals(protocol)) {
-                // ionet 无 SPI 反射构造（缺 scanActionClass/region），特判走 Builder
-                server = com.chua.ionet.support.server.IonetSyncServer.builder()
-                        .port(port)
-                        .scanActionPackage(com.chua.example.ionet.IonetExampleSpi.DemoAction.class)
-                        .build();
-            } else {
-                server = ServiceProvider.of(SyncServer.class).getNewExtension(protocol, setting);
-            }
+            server = ServiceProvider.of(SyncServer.class).getNewExtension(protocol, setting);
             if (server == null) {
                 log.warn("  [{}] SyncServer 未注册，无法测吞吐", protocol);
                 return false;
@@ -263,16 +239,7 @@ public class SyncExampleSpi implements Example {
             server.start();
 
             String serverUrl = protocol + "://127.0.0.1:" + port;
-            if ("ionet".equals(protocol)) {
-                // ionet 客户端同样无 SPI 反射构造（缺 region），特判走 Builder
-                client = com.chua.ionet.support.client.IonetSyncClient.builder()
-                        .host("127.0.0.1")
-                        .port(port)
-                        .addRegion(new com.chua.example.ionet.IonetExampleSpi.DemoRegion())
-                        .build();
-            } else {
-                client = ServiceProvider.of(SyncClient.class).getNewExtension(protocol, serverUrl);
-            }
+            client = ServiceProvider.of(SyncClient.class).getNewExtension(protocol, serverUrl);
             if (client == null) {
                 log.warn("  [{}] SyncClient 未注册，无法测吞吐", protocol);
                 return false;

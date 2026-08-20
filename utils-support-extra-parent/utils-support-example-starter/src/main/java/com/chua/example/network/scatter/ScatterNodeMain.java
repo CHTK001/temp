@@ -24,22 +24,27 @@ public class ScatterNodeMain {
 
     public static void main(String[] args) throws Exception {
         if (args.length < 3) {
-            System.err.println("用法: ScatterNodeMain <nodeId> <host> <port> [seed1:port ...]");
+            System.err.println("用法: ScatterNodeMain <nodeId> <host> <port> [announceHost] [seed1:port ...]");
+            System.err.println("  host 为监听地址(0.0.0.0=全部)，announceHost 为对外注册地址(公网 IP，'-' 或空=回落 host)");
             System.exit(2);
         }
         String nodeId = args[0];
         String host = args[1];
         int port = Integer.parseInt(args[2]);
-        List<String> seeds = args.length > 3
-                ? Arrays.asList(Arrays.copyOfRange(args, 3, args.length))
+        // announceHost：监听 0.0.0.0 时对端无法路由，必须显式指定公网注册地址
+        String announceHost = args.length > 3 && !"-".equals(args[3]) ? args[3] : host;
+        int seedStart = args.length > 3 && !"-".equals(args[3]) ? 4 : 3;
+        List<String> seeds = args.length > seedStart
+                ? Arrays.asList(Arrays.copyOfRange(args, seedStart, args.length))
                 : List.of();
 
         System.out.println("[ScatterNodeMain] 启动节点 " + nodeId + " @ " + host + ":" + port
-                + " seeds=" + seeds);
+                + " announce=" + announceHost + " seeds=" + seeds);
 
         TcpScatterBuilder builder = new TcpScatterBuilder()
                 .nodeId(nodeId)
                 .host(host)
+                .announceHost(announceHost)
                 .port(port)
                 .groupId("order")
                 .servicePath("/scatter")

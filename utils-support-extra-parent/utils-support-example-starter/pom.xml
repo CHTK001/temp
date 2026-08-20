@@ -80,12 +80,6 @@
             <artifactId>utils-support-protobuf-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- Ionet 分布式网络通信自检（IonetExampleSpi） -->
-        <dependency>
-            <groupId>com.chua</groupId>
-            <artifactId>utils-support-ionet-starter</artifactId>
-            <version>${project.version}</version>
-        </dependency>
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-fastjson-starter</artifactId>
@@ -636,8 +630,6 @@
                          <include>**/network/sync/*.java</include>
                          <!-- SIP 信令服务器/客户端示例（SipExampleSpi / SipServerMain） -->
                          <include>**/network/sip/*.java</include>
-                        <!-- ionet 分布式网络通信示例（IonetExampleSpi） -->
-                        <include>**/ionet/*.java</include>
 <!-- Pipeline 流水线示例（PipelineBasicExample/Spi 等 11 组） -->
                          <include>**/pipeline/*.java</include>
 <!-- ImageProcessor SPI 机制示例（ImageProcessorSpiExample / CustomImageProcessor / ImageProcessorSpiExampleSpi） -->

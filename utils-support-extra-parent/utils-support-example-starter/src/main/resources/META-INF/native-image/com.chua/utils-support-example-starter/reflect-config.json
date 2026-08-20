@@ -63,15 +63,6 @@
     "allPublicFields": true
   },
   {
-    "name": "com.chua.example.ionet.IonetExampleSpi",
-    "allDeclaredConstructors": true,
-    "allPublicConstructors": true,
-    "allDeclaredMethods": true,
-    "allPublicMethods": true,
-    "allDeclaredFields": true,
-    "allPublicFields": true
-  },
-  {
     "name": "com.chua.example.lang.document.DocumentExampleSpi",
     "allDeclaredConstructors": true,
     "allPublicConstructors": true,
