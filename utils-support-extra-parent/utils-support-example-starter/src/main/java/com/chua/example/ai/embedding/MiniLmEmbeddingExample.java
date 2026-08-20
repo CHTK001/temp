@@ -8,7 +8,8 @@ import lombok.extern.slf4j.Slf4j;
  * MiniLM 文本嵌入示例 — 本地离线（all-MiniLM-L6-v2）句向量。
  *
  * <p>基于 {@code EmbeddingClient} SPI（provider="minilm"），模型从 jar
- * {@code utils-support-models-onnx-minilm-l6v2} 解压加载，完全离线。</p>
+ * {@code utils-support-models-onnx-minilm-int8}（int8 量化版，~22MB）或
+ * {@code utils-support-models-onnx-minilm-fp32}（fp32 未量化版，~90MB）解压加载，完全离线。</p>
  *
  * <h2>用法</h2>
  * <pre>

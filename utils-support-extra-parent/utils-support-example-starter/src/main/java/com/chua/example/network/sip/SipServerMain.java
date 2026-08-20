@@ -2,7 +2,8 @@ package com.chua.example.network.sip;
 
 import com.chua.common.support.network.sip.SipConfig;
 import com.chua.common.support.network.sip.SipServer;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,19 +12,23 @@ import java.util.concurrent.CountDownLatch;
 /**
  * SIP 信令服务器常驻入口（供 docker / 独立部署使用）。
  *
- * <p>启动后长期监听 TCP({@code --tcp-port}，默认 19460) 与 KCP({@code --kcp-port}，默认 19461)
- * 双传输，作为内网穿透的中心节点：各节点客户端连接注册后，即可通过隧道互相访问服务。</p>
+ * <p>单端口模式：信令与数据平面共用同一监听端口（默认 19460），
+ * 作为内网穿透的中心节点：各节点客户端认证注册后，即可通过隧道互相访问服务。</p>
  *
  * <h2>用法</h2>
  * <pre>{@code
- * java ... SipServerMain --host=0.0.0.0 --tcp-port=19460 --kcp-port=19461
+ * java ... SipServerMain --host=0.0.0.0 --port=19460 --token=chua-sip-default-token
  * }</pre>
  *
  * @author CH
  * @since 4.0.0.42
  */
-@Slf4j
 public class SipServerMain {
+
+    /**
+     * 日志对象
+     */
+    private static final Logger log = LoggerFactory.getLogger(SipServerMain.class);
 
     /**
      * 常驻锁存器，阻止主线程退出。
@@ -33,7 +38,7 @@ public class SipServerMain {
     /**
      * 常驻入口。
      *
-     * @param args 命令行参数（--host / --tcp-port / --kcp-port / --tcp-enabled / --kcp-enabled）
+     * @param args 命令行参数（--host / --port / --token）
      */
     public static void main(String[] args) {
         Map<String, String> kv = new HashMap<>();
@@ -47,10 +52,8 @@ public class SipServerMain {
 
         SipConfig config = SipConfig.builder()
                 .host(kv.getOrDefault("host", "0.0.0.0"))
-                .tcpPort(Integer.parseInt(kv.getOrDefault("tcp-port", String.valueOf(SipConfig.DEFAULT_TCP_PORT))))
-                .kcpPort(Integer.parseInt(kv.getOrDefault("kcp-port", String.valueOf(SipConfig.DEFAULT_KCP_PORT))))
-                .tcpEnabled(Boolean.parseBoolean(kv.getOrDefault("tcp-enabled", "true")))
-                .kcpEnabled(Boolean.parseBoolean(kv.getOrDefault("kcp-enabled", "true")))
+                .port(Integer.parseInt(kv.getOrDefault("port", String.valueOf(SipConfig.DEFAULT_PORT))))
+                .token(kv.getOrDefault("token", SipConfig.defaults().getToken()))
                 .build();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -58,9 +61,10 @@ public class SipServerMain {
             STOP_LATCH.countDown();
         }));
 
-        SipServer server = new SipServer(config).start();
-        log.info("SIP 服务器常驻运行中: host={}, tcp={}, kcp={}",
-                config.getHost(), server.getConfig().getTcpPort(), server.getConfig().getKcpPort());
+        SipServer server = new SipServer(config);
+        server.start();
+        log.info("SIP 服务器常驻运行中: host={}, port={}",
+                config.getHost(), server.getConfig().getPort());
         try {
             STOP_LATCH.await();
         } catch (InterruptedException e) {
