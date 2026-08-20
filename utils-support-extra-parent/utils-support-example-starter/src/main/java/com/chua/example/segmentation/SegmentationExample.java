@@ -19,8 +19,8 @@ import java.util.stream.Stream;
 @Slf4j
 public class SegmentationExample {
 
-    /** 输出目录 */
-    private static final String OUTPUT_DIR = "D:\\images\\output\\seg\\";
+    /** 输出根目录 */
+    private static final String OUTPUT_ROOT = "D:\\images\\output\\";
     /** 成功退出码 */
     private static final int EXIT_CODE_SUCCESS = 0;
     /** 失败退出码 */
@@ -34,10 +34,11 @@ public class SegmentationExample {
 
     /** 运行Test */
     public static boolean runTest() throws Exception {
-        Files.createDirectories(Path.of(OUTPUT_DIR));
 
         String[] models = {"modnet", "rmbg14"};
         for (String modelName : models) {
+            String outputDir = OUTPUT_ROOT + modelName + "\\";
+            Files.createDirectories(Path.of(outputDir));
             System.out.println("===== 测试: " + modelName + " =====");
             ImageEnhancer enhancer = ServiceProvider.of(ImageEnhancer.class).getNewExtension("onnx", "");
             if (enhancer == null) {
@@ -59,7 +60,7 @@ public class SegmentationExample {
                              byte[] imageData = Files.readAllBytes(f);
                              byte[] result = enhancer.enhance(imageData);
                              String outName = name.replaceAll("\\.(jpg|jpeg|webp)$", ".png");
-                             Files.write(Path.of(OUTPUT_DIR + modelName + "_" + outName), result);
+                             Files.write(Path.of(outputDir + outName), result);
                              System.out.println((System.currentTimeMillis() - t0) + "ms, " + (result.length / 1024) + "KB");
                          } catch (Exception e) {
                              System.out.println("FAIL: " + e.getMessage());

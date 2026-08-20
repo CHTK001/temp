@@ -26,9 +26,9 @@ import java.util.stream.Stream;
 public class FaceDetectExample {
 
     /**
-     * 输出目录
+     * 输出目录（按模型名）
      */
-    private static final String OUTPUT_DIR = "D:\\images\\output\\face-detect\\";
+    private static final String OUTPUT_DIR = "D:\\images\\output\\faceplugin-face-detect-slim\\";
 
     /**
      * 程序退出码：成功

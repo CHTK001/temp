@@ -25,9 +25,9 @@ import java.util.stream.Stream;
 public class LayoutPipelineExample {
 
     /**
-     * 输出目录
+     * 输出目录（按模型名）
      */
-    private static final String OUTPUT_DIR = "D:\\images\\output\\layout\\";
+    private static final String OUTPUT_DIR = "D:\\images\\output\\pp-doc-layout\\";
 
     /**
      * 待测试图片目录
