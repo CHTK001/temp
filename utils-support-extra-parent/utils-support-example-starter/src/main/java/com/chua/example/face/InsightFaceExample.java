@@ -1,0 +1,107 @@
+package com.chua.example.face;
+
+import com.chua.deeplearning.support.draw.DrawerPipeline;
+import com.chua.deeplearning.support.face.FaceDetectionHit;
+import com.chua.deeplearning.support.face.FacePipeline;
+import com.chua.deeplearning.support.feature.FeatureExtractor;
+import com.chua.deeplearning.support.model.DetectionInfo;
+import com.chua.deeplearning.support.model.PredictRectangle;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * InsightFace buffalo_l 人脸全链路测试 — scrfd 检测 + AdaFace 特征 + 2d106 关键点 + genderage 属性。
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
+public class InsightFaceExample {
+
+    /** 输出根目录 */
+    private static final String OUTPUT_ROOT = "D:\\images\\output\\";
+
+    public static void main(String[] args) throws Exception {
+        String[] files = {"1people.png", "1people2.png", "3peoplebeauty.jpg", "test_1.jpg", "anime.jpg"};
+        String outputDir = OUTPUT_ROOT + "insightface\\";
+        Files.createDirectories(Path.of(outputDir));
+
+        FeatureExtractor adaface = FeatureExtractor.create("insightface-adaface");
+        FeatureExtractor landmark = FeatureExtractor.create("insightface-landmark-2d106");
+        FeatureExtractor genderage = FeatureExtractor.create("insightface-genderage");
+
+        FacePipeline face = FacePipeline.builder()
+                .detector("insightface-scrfd")
+                .build();
+
+        for (String file : files) {
+            Path f = Path.of("D:\\images", file);
+            if (!Files.exists(f)) {
+                continue;
+            }
+            System.out.println("\n===== " + file + " =====");
+            byte[] imageData = Files.readAllBytes(f);
+            BufferedImage src = ImageIO.read(new ByteArrayInputStream(imageData));
+
+            List<FaceDetectionHit> hits = face.detect(imageData);
+            List<DetectionInfo> boxes = new ArrayList<>();
+            List<String> labels = new ArrayList<>();
+
+            for (FaceDetectionHit hit : hits) {
+                PredictRectangle box = hit.box();
+                if (box == null) {
+                    continue;
+                }
+                byte[] crop = crop(src, box);
+                if (crop == null) {
+                    continue;
+                }
+                try {
+                    float[] feat = adaface.extract(crop);
+                    float[] lm = landmark.extract(crop);
+                    float[] ga = genderage.extract(crop);
+                    String gender = ga.length >= 2 && ga[1] > ga[0] ? "男" : "女";
+                    int age = ga.length >= 3 ? Math.max(0, Math.min(100, (int) (ga[2] * 100))) : -1;
+                    labels.add(String.format("face C%.2f %s%d lm=%d", box.confidence(), gender, age, lm.length / 2));
+                    System.out.printf("  box=(%.0f,%.0f %.0fx%.0f) C=%.2f | feat=%d维 | landmark=%d点 | %s %d岁%n",
+                            box.x(), box.y(), box.width(), box.height(), box.confidence(),
+                            feat.length, lm.length / 2, gender, age);
+                } catch (Exception e) {
+                    System.out.println("  下游模型 FAIL: " + e.getMessage());
+                }
+            }
+
+            if (!boxes.isEmpty()) {
+                byte[] drawn = new DrawerPipeline(0.5f)
+                        .target(imageData).boxes(boxes, labels).done();
+                Files.write(Path.of(outputDir + file), drawn);
+                System.out.println("  输出: " + outputDir + file);
+            }
+        }
+    }
+
+    /** 从原图裁剪人脸区域（外扩 20%）。 */
+    private static byte[] crop(BufferedImage src, PredictRectangle box) {
+        int x = (int) Math.max(0, box.x());
+        int y = (int) Math.max(0, box.y());
+        int w = (int) Math.min(src.getWidth() - x, box.width());
+        int h = (int) Math.min(src.getHeight() - y, box.height());
+        if (w <= 0 || h <= 0) {
+            return null;
+        }
+        BufferedImage faceImg = src.getSubimage(x, y, w, h);
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            ImageIO.write(faceImg, "png", out);
+            return out.toByteArray();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+}
