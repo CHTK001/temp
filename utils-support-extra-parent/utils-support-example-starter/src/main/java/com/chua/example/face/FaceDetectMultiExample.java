@@ -38,7 +38,8 @@ public class FaceDetectMultiExample {
             "ultra-face",
             "yolo-face-detector",
             "retinaface-r34",
-            "tinaface"
+            "tinaface",
+            "insightface-scrfd"
     };
 
     /**
