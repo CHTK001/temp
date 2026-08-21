@@ -68,6 +68,7 @@ public class InsightFaceExample {
                     float[] ga = genderage.extract(crop);
                     String gender = ga.length >= 2 && ga[1] > ga[0] ? "男" : "女";
                     int age = ga.length >= 3 ? Math.max(0, Math.min(100, (int) (ga[2] * 100))) : -1;
+                    boxes.add(new DetectionInfo("face", box.confidence(), box.x(), box.y(), box.width(), box.height()));
                     labels.add(String.format("face C%.2f %s%d lm=%d", box.confidence(), gender, age, lm.length / 2));
                     System.out.printf("  box=(%.0f,%.0f %.0fx%.0f) C=%.2f | feat=%d维 | landmark=%d点 | %s %d岁%n",
                             box.x(), box.y(), box.width(), box.height(), box.confidence(),
