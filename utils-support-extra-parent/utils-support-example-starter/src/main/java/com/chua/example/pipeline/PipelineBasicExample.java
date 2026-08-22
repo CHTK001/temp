@@ -4,6 +4,7 @@ import com.chua.common.support.task.pipeline.builder.PipelineBuilder;
 import com.chua.common.support.task.pipeline.core.Pipeline;
 import com.chua.common.support.task.pipeline.core.PipelineContext;
 import lombok.extern.slf4j.Slf4j;
+import com.chua.example.spi.Example;
 
 /**
  * Pipeline 基本能力示例 — 顺序任务、taskStart/onStep/step、exit/start。
@@ -22,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
  * @since 4.0.0.42
  */
 @Slf4j
-public class PipelineBasicExample {
+public class `PipelineBasicExample implements Example {
 
     /**
      * 退出码：成功

@@ -4,6 +4,7 @@ import com.chua.common.support.task.pipeline.builder.PipelineBuilder;
 import com.chua.common.support.task.pipeline.core.Pipeline;
 import com.chua.common.support.task.pipeline.core.PipelineContext;
 import lombok.extern.slf4j.Slf4j;
+import com.chua.example.spi.Example;
 
 /**
  * Pipeline 条件分支示例 — decision 节点、when/whenNot 分支路由。
@@ -20,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
  * @since 4.0.0.42
  */
 @Slf4j
-public class PipelineDecisionExample {
+public class `PipelineDecisionExample implements Example {
 
     /** Main */
     public static void main(String[] args) {

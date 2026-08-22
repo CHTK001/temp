@@ -5,9 +5,11 @@ import com.chua.common.support.task.pipeline.callback.PipelineListener;
 import com.chua.common.support.task.pipeline.core.Pipeline;
 import com.chua.common.support.task.pipeline.core.PipelineContext;
 import lombok.extern.slf4j.Slf4j;
+import com.chua.example.spi.Example;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Pipeline 生命周期回调示例 — onStart/onComplete/onNextStep/logging/addListener。
@@ -27,7 +29,7 @@ import java.util.List;
  * @since 4.0.0.42
  */
 @Slf4j
-public class PipelineCallbackExample {
+public class `PipelineCallbackExample implements Example {
 
     /** Main */
     public static void main(String[] args) {

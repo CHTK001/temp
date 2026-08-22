@@ -4,6 +4,7 @@ import com.chua.common.support.task.pipeline.builder.PipelineBuilder;
 import com.chua.common.support.task.pipeline.core.Pipeline;
 import com.chua.common.support.task.pipeline.core.PipelineContext;
 import lombok.extern.slf4j.Slf4j;
+import com.chua.example.spi.Example;
 
 /**
  * Pipeline 上下文数据示例 — currentData/attributes/nodeOutputs/getData/nodeLocalData。
@@ -23,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
  * @since 4.0.0.42
  */
 @Slf4j
-public class PipelineContextExample {
+public class `PipelineContextExample implements Example {
 
     /** Main */
     public static void main(String[] args) {

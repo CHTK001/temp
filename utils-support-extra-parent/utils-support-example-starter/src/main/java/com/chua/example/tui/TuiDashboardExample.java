@@ -13,6 +13,7 @@ import com.chua.tui.support.widgets.DiskWidget;
 import com.chua.tui.support.widgets.HtopWidget;
 import com.chua.tui.support.widgets.MemoryWidget;
 import lombok.extern.slf4j.Slf4j;
+import com.chua.example.spi.Example;
 
 /**
  * TUI 仪表盘综合示例 — 覆盖布局、组件、构建器、Mordant 渲染、处理器绑定、colspan 区域布局。
@@ -63,7 +64,7 @@ import lombok.extern.slf4j.Slf4j;
  * @since 4.0.0.42
  */
 @Slf4j
-public class TuiDashboardExample {
+public class `TuiDashboardExample implements Example {
 
     /**
      * 程序退出码：成功

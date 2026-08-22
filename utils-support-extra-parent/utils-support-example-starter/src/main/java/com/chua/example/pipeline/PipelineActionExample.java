@@ -5,6 +5,7 @@ import com.chua.common.support.task.pipeline.core.Action;
 import com.chua.common.support.task.pipeline.core.Pipeline;
 import com.chua.common.support.task.pipeline.core.PipelineContext;
 import lombok.extern.slf4j.Slf4j;
+import com.chua.example.spi.Example;
 
 /**
  * Pipeline 动作控制示例 — Action 枚举控制流程走向。
@@ -23,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
  * @since 4.0.0.42
  */
 @Slf4j
-public class PipelineActionExample {
+public class `PipelineActionExample implements Example {
 
     /** Main */
     public static void main(String[] args) {

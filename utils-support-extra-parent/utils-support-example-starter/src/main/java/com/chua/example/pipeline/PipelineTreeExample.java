@@ -4,6 +4,7 @@ import com.chua.common.support.task.pipeline.builder.PipelineBuilder;
 import com.chua.common.support.task.pipeline.core.Pipeline;
 import com.chua.common.support.task.pipeline.core.PipelineContext;
 import lombok.extern.slf4j.Slf4j;
+import com.chua.example.spi.Example;
 
 /**
  * Pipeline 树打印与 JSON 构建示例 — printTree/fromJson。
@@ -20,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
  * @since 4.0.0.42
  */
 @Slf4j
-public class PipelineTreeExample {
+public class `PipelineTreeExample implements Example {
 
     /** Main */
     public static void main(String[] args) {

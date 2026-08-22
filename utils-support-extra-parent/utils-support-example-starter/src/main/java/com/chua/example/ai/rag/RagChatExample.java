@@ -20,6 +20,7 @@ import com.chua.jvector.support.configuration.JVectorStorageProperties;
 import com.chua.openai.support.OpenAiChatClient;
 import com.chua.openai.support.OpenAiEmbeddingClient;
 import lombok.extern.slf4j.Slf4j;
+import com.chua.example.spi.Example;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -57,7 +58,7 @@ import java.util.Map;
  * @since 4.0.0.42
  */
 @Slf4j
-public class RagChatExample {
+public class `RagChatExample implements Example {
 
     /**
      * 默认工作目录：./

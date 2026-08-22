@@ -4,6 +4,7 @@ import com.chua.common.support.task.pipeline.builder.PipelineBuilder;
 import com.chua.common.support.task.pipeline.core.Pipeline;
 import com.chua.common.support.task.pipeline.core.PipelineContext;
 import lombok.extern.slf4j.Slf4j;
+import com.chua.example.spi.Example;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,7 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 4.0.0.42
  */
 @Slf4j
-public class PipelineWalExample {
+public class `PipelineWalExample implements Example {
 
     /** Exit_code_success */
     private static final int EXIT_CODE_SUCCESS = 0;

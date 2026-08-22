@@ -5,6 +5,7 @@ import com.chua.common.support.task.pipeline.core.Pipeline;
 import com.chua.common.support.task.pipeline.core.PipelineContext;
 import com.chua.common.support.task.retry.RetryConfig;
 import lombok.extern.slf4j.Slf4j;
+import com.chua.example.spi.Example;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -25,7 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 4.0.0.42
  */
 @Slf4j
-public class PipelineRetryExample {
+public class `PipelineRetryExample implements Example {
 
     /** Main */
     public static void main(String[] args) {

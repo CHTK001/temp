@@ -13,6 +13,7 @@ import com.chua.starter.datasync.mapping.DataSyncFieldMapping;
 import com.chua.starter.datasync.mapping.DefaultDataSyncMapping;
 import com.chua.starter.datasync.model.DataSyncMapping;
 import lombok.extern.slf4j.Slf4j;
+import com.chua.example.spi.Example;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
@@ -39,7 +40,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 4.0.0.42
  */
 @Slf4j
-public class DataSyncExample {
+public class `DataSyncExample implements Example {
 
     /**
      * 退出码：成功

@@ -8,6 +8,7 @@ import com.chua.common.support.task.pipeline.core.PipelineContext;
 import com.chua.common.support.task.pipeline.core.RouteStrategy;
 import com.chua.common.support.task.retry.RetryConfig;
 import lombok.extern.slf4j.Slf4j;
+import com.chua.example.spi.Example;
 
 import java.util.*;
 
@@ -51,7 +52,7 @@ import java.util.*;
  * @since 4.0.0.42
  */
 @Slf4j
-public class PipelineFaceOrchestrationExample {
+public class `PipelineFaceOrchestrationExample implements Example {
 
     /** Exit_code_success */
     private static final int EXIT_CODE_SUCCESS = 0;

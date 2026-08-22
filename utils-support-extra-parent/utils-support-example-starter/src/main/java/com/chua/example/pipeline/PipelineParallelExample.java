@@ -5,6 +5,7 @@ import com.chua.common.support.task.pipeline.core.AsyncResult;
 import com.chua.common.support.task.pipeline.core.Pipeline;
 import com.chua.common.support.task.pipeline.core.PipelineContext;
 import lombok.extern.slf4j.Slf4j;
+import com.chua.example.spi.Example;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -24,7 +25,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @since 4.0.0.42
  */
 @Slf4j
-public class PipelineParallelExample {
+public class `PipelineParallelExample implements Example {
 
     /** Main */
     public static void main(String[] args) {
