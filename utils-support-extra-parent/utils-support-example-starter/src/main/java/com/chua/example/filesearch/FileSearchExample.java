@@ -85,7 +85,7 @@ public class FileSearchExample {
         log.info("动态库版本: " + RustFileSearchBridge.getVersion());
         log.info("扫描目录: " + rootDir);
         log.info("最大结果数: " + (maxResults == 0 ? "无限制" : maxResults));
-        log.info();
+        log.info("");
 
         long start = System.currentTimeMillis();
 
@@ -107,9 +107,9 @@ public class FileSearchExample {
         System.out.printf("扫描完成: %d 文件, %d 目录, 用时 %d ms\n\n", fileCount, dirCount, elapsed);
 
         printWizTreeTable(results, topN);
-        log.info();
+        log.info("");
         printTreeIndented(results, treeDepth);
-        log.info();
+        log.info("");
         printSimpleList(results, topN);
     }
 

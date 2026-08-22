@@ -1,4 +1,4 @@
-﻿package com.chua.example.pipeline;
+package com.chua.example.pipeline;
 
 import com.chua.common.support.task.pipeline.builder.PipelineBuilder;
 import com.chua.common.support.task.pipeline.core.Action;

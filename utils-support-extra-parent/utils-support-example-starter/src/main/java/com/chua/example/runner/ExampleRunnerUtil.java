@@ -224,15 +224,15 @@ public class ExampleRunnerUtil {
      */
     private static void printHelp() {
         log.info("ExampleRunner — 统一 SPI 示例入口");
-        log.info();
+        log.info("");
         log.info("用法: java ExampleRunner [选项]");
-        log.info();
+        log.info("");
         log.info("选项:");
         log.info("  --example, -e <name>  指定要运行的示例名称");
         log.info("  --list,    -l         列出全部已注册示例");
         log.info("  --help,    -h         显示此帮助");
         log.info("  --<key> <value>       透传给示例实现的额外参数");
-        log.info();
+        log.info("");
         log.info("已注册示例 (" + REGISTRY.size() + "):");
         if (REGISTRY.isEmpty()) {
             log.info("  <none>");

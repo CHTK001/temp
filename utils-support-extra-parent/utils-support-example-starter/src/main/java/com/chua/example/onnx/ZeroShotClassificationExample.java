@@ -62,7 +62,7 @@ public final class ZeroShotClassificationExample extends ExampleBase {
         }
         byte[] imageData = Files.readAllBytes(imageFile);
         log.info("[INFO] 测试图片: " + imagePath + " (" + imageData.length + " bytes)");
-        log.info();
+        log.info("");
 
         if (model != null) {
             // 测试指定模型

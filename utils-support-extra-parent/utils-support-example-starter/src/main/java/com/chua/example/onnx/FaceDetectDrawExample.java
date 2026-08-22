@@ -84,7 +84,7 @@ public final class FaceDetectDrawExample extends ExampleBase {
             String base = name.substring(0, name.lastIndexOf('.'));
             log.info("===== " + name + " (仅检测) =====");
             detectAndDraw(pipeline, base, img);
-            log.info();
+            log.info("");
         }
 
         // 完整链路：检测 → 裁剪(对齐) → 修复 → 超分
@@ -145,7 +145,7 @@ public final class FaceDetectDrawExample extends ExampleBase {
             } else {
                 log.info("[超分] 无结果 耗时=" + tSuper + "ms");
             }
-            log.info();
+            log.info("");
         }
         printResult("face-ops", "onnx", "scrfd+codeformer+gfpgan", 0);
     }

@@ -111,7 +111,7 @@ public final class OcrBatchExample {
             }
         }
 
-        log.info();
+        log.info("");
         System.out.printf("[ocr-batch] 总计=%d  识别成功=%d  失败/跳过=%d  输出目录=%s%n", total, pass, fail, outDir);
     }
 

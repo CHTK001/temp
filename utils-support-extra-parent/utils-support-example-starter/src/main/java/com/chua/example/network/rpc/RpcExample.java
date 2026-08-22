@@ -1,4 +1,4 @@
-﻿package com.chua.example.network.rpc;
+package com.chua.example.network.rpc;
 
 import com.chua.common.support.network.rpc.RpcClient;
 import com.chua.common.support.network.rpc.RpcConsumerConfig;

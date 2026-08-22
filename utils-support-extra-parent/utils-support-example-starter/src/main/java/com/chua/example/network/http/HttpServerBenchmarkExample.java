@@ -1,4 +1,4 @@
-﻿package com.chua.example.network.http;
+package com.chua.example.network.http;
 
 import com.chua.common.support.network.server.Server;
 import com.chua.common.support.network.server.ServerBuilder;

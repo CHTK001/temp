@@ -13,6 +13,7 @@ import com.chua.common.support.ai.embedding.EmbeddingClientSetting;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class BgeLargeZhEmbeddingExample {
 
     /** 程序退出码：成功 */

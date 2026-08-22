@@ -430,9 +430,9 @@ public class LockFreeQueueExample {
      */
     private static void printHelp() {
         log.info("无锁队列综合示例 — SPSC / MPMC / Unbounded");
-        log.info();
+        log.info("");
         log.info("用法: java LockFreeQueueExample [选项]");
-        log.info();
+        log.info("");
         log.info("选项:");
         log.info("  --type,     -t <key>    队列类型（spsc/mpmc/unbounded，默认全部）");
         log.info("  --capacity, -c <n>      有界队列容量（默认: " + DEFAULT_CAPACITY + "）");

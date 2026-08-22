@@ -73,7 +73,7 @@ public final class OcrAngleExample {
                 if (n++ >= 3) break;
                 System.out.printf("    text='%s' conf=%.2f%n", r.text(), r.confidence());
             }
-            log.info();
+            log.info("");
         }
     }
 

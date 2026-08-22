@@ -280,9 +280,9 @@ public class ShmQueueExample {
     /** PrintHelp */
     private static void printHelp() {
         log.info("ShmQueueExample - 共享内存环形队列示例");
-        log.info();
+        log.info("");
         log.info("用法: java ShmQueueExample [--mode <key>] [--help]");
-        log.info();
+        log.info("");
         log.info("选项:");
         log.info("  --mode <spin|block|hybrid|all>   等待模式（默认 all）");
         log.info("  --help, -h                       显示此帮助");

@@ -62,7 +62,7 @@ public class FaceCoreExample {
                              if (feat != null && feat.length > 0) {
                                  System.out.print(" 置信=" + String.format("%.3f", hit.box().confidence()));
                              }
-                             log.info();
+                             log.info("");
                          }
                          log.info("  总耗时: " + (System.currentTimeMillis() - t0) + "ms");
                      } catch (Exception e) {

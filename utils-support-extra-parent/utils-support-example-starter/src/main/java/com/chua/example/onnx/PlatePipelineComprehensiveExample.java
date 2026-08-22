@@ -37,7 +37,7 @@ public final class PlatePipelineComprehensiveExample {
         log.info("检测模型: " + DETECTOR_MODEL);
         log.info("识别模型: " + RECOGNIZER_MODEL);
         log.info("测试图片: " + TEST_IMAGES.length + " 张");
-        log.info();
+        log.info("");
 
         int totalTests = 0;
         int passed = 0;
@@ -68,7 +68,7 @@ public final class PlatePipelineComprehensiveExample {
             if (ok) { passed++; }
         }
         log.info("  测试1 通过: " + passed + "/" + totalTests);
-        log.info();
+        log.info("");
 
         // 测试2: 仅检测 (PlateDetector)
         log.info("--- 测试2: PlateDetector 仅检测 ---");
@@ -86,7 +86,7 @@ public final class PlatePipelineComprehensiveExample {
             if (ok) { detPassed++; }
         }
         log.info("  测试2 通过: " + detPassed + "/" + detTotal);
-        log.info();
+        log.info("");
 
         // 测试3: 仅识别 (LicensePlateRecognizer) - 需要先检测再裁切
         log.info("--- 测试3: LicensePlateRecognizer 仅识别 ---");
@@ -113,7 +113,7 @@ public final class PlatePipelineComprehensiveExample {
             }
         }
         log.info("  测试3 通过: " + recPassed + "/" + recTotal);
-        log.info();
+        log.info("");
 
         // 测试4: PlatePipeline 端到端 (新版管线)
         log.info("--- 测试4: PlatePipeline 端到端 ---");
@@ -140,7 +140,7 @@ public final class PlatePipelineComprehensiveExample {
             if (ok) { ppPassed++; }
         }
         log.info("  测试4 通过: " + ppPassed + "/" + ppTotal);
-        log.info();
+        log.info("");
 
         // 汇总
         log.info("==========================================");
