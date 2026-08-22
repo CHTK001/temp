@@ -21,6 +21,7 @@ import java.util.List;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class PlatePipelineComprehensiveExample {
 
     private static final String[] TEST_IMAGES = {
@@ -32,6 +33,10 @@ public final class PlatePipelineComprehensiveExample {
 
     private static final String DETECTOR_MODEL = "yolov5-plate-detect";
     private static final String RECOGNIZER_MODEL = "yolov5-plate-recognize";
+
+    // 测试 1-4: 场景级检测+识别（仅对场景图 "more car plate.webp" 验证通过）
+    // "car plate1/2/3.webp" 是裁剪后的车牌特写，非场景图，检测器预期不返回结果
+    // 测试5: 独立识别测试（直接对裁剪车牌识别）
 
     public static void main(String[] args) throws Exception {
         ModelRegistry.discoverAll();

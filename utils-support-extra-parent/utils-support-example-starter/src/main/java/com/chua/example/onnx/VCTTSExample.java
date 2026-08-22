@@ -7,12 +7,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Enumeration;
 
-public final class VCTTS {
+/**`n * TTS->STT Pipeline Example`n *`n * @author CH`n * @since 4.0.0.42`n */`npublic final class VCTTSExample {
     private VCTTS() {}
 
     public static void main(String[] args) throws Exception {
         String text = args.length > 0 ? args[0] : "Hello world";
-        log.info("===== TTS->STT Pipeline =====");
+        log.info("===== TTS to STT Pipeline =====");
         log.info(String.valueOf("[pipeline] text: " + text));
         log.info("[tts] synthesizing...");
         byte[] audio = synthesizeTts(text);
@@ -52,7 +52,8 @@ public final class VCTTS {
 
     static Path extractWhisperModel() throws Exception {
         Path modelDir = Files.createTempDirectory("whisper-model-");
-        Enumeration<java.net.URL> resources = WhisperTranslator.class.getClassLoader().getResources("audio/asr/whisper-tiny");
+        Enumeration<java.net.URL> resources =
+                WhisperTranslator.class.getClassLoader().getResources("audio/asr/whisper-tiny");
         int extracted = 0;
         while (resources.hasMoreElements()) {
             java.net.URL url = resources.nextElement();
@@ -62,9 +63,15 @@ public final class VCTTS {
                     stream.forEach(p -> {
                         try {
                             Path target = modelDir.resolve(src.relativize(p).toString());
-                            if (Files.isDirectory(p)) Files.createDirectories(target);
-                            else { Files.createDirectories(target.getParent()); Files.copy(p, target, java.nio.file.StandardCopyOption.REPLACE_EXISTING); }
-                        } catch (Exception e) { throw new RuntimeException(e); }
+                            if (Files.isDirectory(p)) {
+                                Files.createDirectories(target);
+                            } else {
+                                Files.createDirectories(target.getParent());
+                                Files.copy(p, target, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                            }
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
                     });
                 }
                 extracted++;
@@ -72,7 +79,8 @@ public final class VCTTS {
                 String urlPath = url.getPath();
                 String jarPath = urlPath.substring(5, urlPath.indexOf("!"));
                 String entryPrefix = urlPath.substring(urlPath.indexOf("!") + 2);
-                try (java.util.jar.JarFile jar = new java.util.jar.JarFile(java.net.URLDecoder.decode(jarPath, "UTF-8"))) {
+                try (java.util.jar.JarFile jar = new java.util.jar.JarFile(
+                        java.net.URLDecoder.decode(jarPath, "UTF-8"))) {
                     java.util.Enumeration<java.util.jar.JarEntry> entries = jar.entries();
                     while (entries.hasMoreElements()) {
                         java.util.jar.JarEntry entry = entries.nextElement();
@@ -82,8 +90,9 @@ public final class VCTTS {
                         if (rel.startsWith("/")) rel = rel.substring(1);
                         if (rel.isEmpty()) continue;
                         Path dest = modelDir.resolve(rel);
-                        if (entry.isDirectory()) Files.createDirectories(dest);
-                        else {
+                        if (entry.isDirectory()) {
+                            Files.createDirectories(dest);
+                        } else {
                             Files.createDirectories(dest.getParent());
                             try (var in = jar.getInputStream(entry)) {
                                 Files.copy(in, dest, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
@@ -98,3 +107,4 @@ public final class VCTTS {
         return modelDir;
     }
 }
+

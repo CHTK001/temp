@@ -30,7 +30,7 @@ public class CustomImageProcessorExample extends JdkImageProcessor implements Im
 
     public static void main(String[] args) {
         CustomImageProcessorExample processor = new CustomImageProcessorExample();
-        System.out.println("custom processor name=" + processor.name() + ", available=" + processor.available());
+        log.info("custom processor name={}, available={}", processor.name(), processor.available());
     }
 
 }

@@ -16,6 +16,7 @@ import java.util.List;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class PlatePipelineVerifyExample {
     public static void main(String[] args) throws Exception {
         ModelRegistry.discoverAll();

@@ -649,9 +649,11 @@
                           <include>**/face/*.java</include>
                           <!-- 零样本分类示例（ZeroShotClassificationExample） -->
                           <include>**/classification/*.java</include>
-                          <!-- 版面分析管线示例（LayoutPipelineExample） -->
-                          <include>**/layout/*.java</include>
-                                              </includes>
+<!-- 版面分析管线示例（LayoutPipelineExample） -->
+                           <include>**/layout/*.java</include>
+                           <!-- 车牌管线示例（PlatePipelineVerifyExample / PlatePipelineComprehensiveExample） -->
+                           <include>**/onnx/*Plate*.java</include>
+                                               </includes>
                 </configuration>
             </plugin>
         </plugins>

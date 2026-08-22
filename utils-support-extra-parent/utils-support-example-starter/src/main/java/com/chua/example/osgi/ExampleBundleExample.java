@@ -50,4 +50,12 @@ public class ExampleBundleExample implements BundleApplication {
             return "Hello from OSGi example: " + input;
         }
     }
+
+    /**
+     * 独立入口：演示 OSGi Bundle 注册。
+     */
+    public static void main(String[] args) {
+        log.info("[ExampleBundleExample] OSGi bundle example (requires OSGi runtime)");
+        log.info("Usage: java ExampleBundleExample");
+    }
 }
