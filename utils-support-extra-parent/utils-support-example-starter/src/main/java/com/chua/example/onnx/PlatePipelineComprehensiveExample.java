@@ -22,10 +22,13 @@ public final class PlatePipelineComprehensiveExample {
         "D:/images/more car plate.webp"
     };
 
+    private static final String DETECTOR = "yolov5-plate-detect";
+    private static final String RECOGNIZER = "yolov5-plate-recognize";
+
     public static void main(String[] args) throws Exception {
         ModelRegistry.discoverAll();
         ImageUtils.load();
-        Path outDir = Path.of("D:\\ch\\output\\plate\\");
+        Path outDir = Path.of("D:/images/output/" + DETECTOR + "/");
         Files.createDirectories(outDir);
 
         int passed = 0;
@@ -34,8 +37,8 @@ public final class PlatePipelineComprehensiveExample {
             byte[] img = Files.readAllBytes(Path.of(imgPath));
 
             PlatePipeline pipeline = PlatePipeline.builder()
-                .detector("yolov5-plate-detect")
-                .recognizer("yolov5-plate-recognize")
+                .detector(DETECTOR)
+                .recognizer(RECOGNIZER)
                 .build();
             List<PlateDetectHit> hits = pipeline.detect(img);
 
