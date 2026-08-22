@@ -59,7 +59,7 @@ public class SipServerExample {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             log.info("SIP 服务器收到退出信号，开始停止");
             STOP_LATCH.countDown();
-        }));
+        }, "sip-shutdown-hook"));
 
         SipServer server = new SipServer(config);
         server.start();

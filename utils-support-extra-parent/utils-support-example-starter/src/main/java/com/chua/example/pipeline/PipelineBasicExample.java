@@ -225,4 +225,20 @@ public class PipelineBasicExample implements Example {
     public boolean run(java.util.Map<String, String> args) {
         main(new String[0]);
         return true;
-    }}
+    }
+
+    @Override
+    public String name() {
+        return "pipeline-basic";
+    }
+
+    @Override
+    public String module() {
+        return "pipeline";
+    }
+
+    @Override
+    public String description() {
+        return "Pipeline 基本能力示例 — 顺序任务、taskStart/onStep/step、exit/start。";
+    }
+}

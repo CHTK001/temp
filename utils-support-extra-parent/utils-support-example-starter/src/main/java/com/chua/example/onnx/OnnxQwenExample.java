@@ -4,6 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.engine.ModelRegistry;
 import com.chua.deeplearning.support.translator.ITranslator;
 
+/**
+ * Example: OnnxQwenExample
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
 public final class OnnxQwenExample {
 
     private OnnxQwenVerify() {

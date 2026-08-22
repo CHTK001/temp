@@ -345,7 +345,7 @@ public class LazyExpiringListExample implements Example {
                     } finally {
                         doneLatch.countDown();
                     }
-                }).start();
+                }, "lazy-expiring-list").start();
             }
 
             startLatch.countDown();

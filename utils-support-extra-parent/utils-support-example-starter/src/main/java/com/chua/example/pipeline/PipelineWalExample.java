@@ -293,4 +293,20 @@ public class PipelineWalExample implements Example {
     public boolean run(java.util.Map<String, String> args) {
         main(new String[0]);
         return true;
-    }}
+    }
+
+    @Override
+    public String name() {
+        return "pipeline-wal";
+    }
+
+    @Override
+    public String module() {
+        return "pipeline";
+    }
+
+    @Override
+    public String description() {
+        return "Pipeline WAL 持久化示例 — 崩溃恢复、resume 从断点继续、stop 销毁。";
+    }
+}

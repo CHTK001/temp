@@ -207,4 +207,20 @@ public class PipelineActionExample implements Example {
     public boolean run(java.util.Map<String, String> args) {
         main(new String[0]);
         return true;
-    }}
+    }
+
+    @Override
+    public String name() {
+        return "pipeline-action";
+    }
+
+    @Override
+    public String module() {
+        return "pipeline";
+    }
+
+    @Override
+    public String description() {
+        return "Pipeline 动作控制示例 — Action 枚举控制流程走向。";
+    }
+}

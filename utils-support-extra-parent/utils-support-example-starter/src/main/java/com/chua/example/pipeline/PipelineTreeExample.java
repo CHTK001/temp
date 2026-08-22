@@ -171,4 +171,20 @@ public class PipelineTreeExample implements Example {
     public boolean run(java.util.Map<String, String> args) {
         main(new String[0]);
         return true;
-    }}
+    }
+
+    @Override
+    public String name() {
+        return "pipeline-tree";
+    }
+
+    @Override
+    public String module() {
+        return "pipeline";
+    }
+
+    @Override
+    public String description() {
+        return "Pipeline 树打印与 JSON 构建示例 — printTree/fromJson。";
+    }
+}

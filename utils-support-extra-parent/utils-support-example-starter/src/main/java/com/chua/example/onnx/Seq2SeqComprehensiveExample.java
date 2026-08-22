@@ -8,6 +8,12 @@ import com.chua.deeplearning.support.translator.ITranslator;
 
 import java.util.List;
 
+/**
+ * Example: Seq2SeqComprehensiveExample
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
 class Seq2SeqComprehensiveExample {
 
     // // // @Test (removed) (removed - use assert instead)

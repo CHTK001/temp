@@ -1,6 +1,7 @@
 package com.chua.example.image;
 
 import com.chua.common.support.image.ImageProcessor;
+import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.image.processor.JdkImageProcessor;
 
 /**
@@ -12,6 +13,7 @@ import com.chua.common.support.image.processor.JdkImageProcessor;
  * @author CH
  * @since 4.0.0.43
  */
+@Slf4j
 public class CustomImageProcessorExample extends JdkImageProcessor implements ImageProcessor {
 
     @Override
@@ -27,7 +29,8 @@ public class CustomImageProcessorExample extends JdkImageProcessor implements Im
     }
 
     public static void main(String[] args) {
-        new CustomImageProcessorExample().run(java.util.Arrays.stream(args).collect(java.util.stream.Collectors.toMap(a -> a.split("=")[0], a -> a.split("=")[1])));
+        CustomImageProcessorExample processor = new CustomImageProcessorExample();
+        System.out.println("custom processor name=" + processor.name() + ", available=" + processor.available());
     }
 
 }

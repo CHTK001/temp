@@ -3,6 +3,12 @@ package com.chua.example.llama;
 import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.ai.chat.ChatClient;
 
+/**
+ * Example: Qwen2ExtraExample
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
 public final class Qwen2ExtraExample {
 
     private Qwen2ExtraVerify() {

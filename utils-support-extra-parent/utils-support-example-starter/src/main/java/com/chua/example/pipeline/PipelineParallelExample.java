@@ -252,4 +252,20 @@ public class PipelineParallelExample implements Example {
     public boolean run(java.util.Map<String, String> args) {
         main(new String[0]);
         return true;
-    }}
+    }
+
+    @Override
+    public String name() {
+        return "pipeline-parallel";
+    }
+
+    @Override
+    public String module() {
+        return "pipeline";
+    }
+
+    @Override
+    public String description() {
+        return "Pipeline 并行子流水线示例 — parallel 节点（非阻塞并行执行）。";
+    }
+}

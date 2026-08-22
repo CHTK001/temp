@@ -10,6 +10,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+/**
+ * Example: PlatePipelineVerifyExample
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
 public final class PlatePipelineVerifyExample {
     public static void main(String[] args) throws Exception {
         ModelRegistry.discoverAll();

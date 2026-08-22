@@ -233,4 +233,20 @@ public class PipelineUnitExample implements Example {
     public boolean run(java.util.Map<String, String> args) {
         main(new String[0]);
         return true;
-    }}
+    }
+
+    @Override
+    public String name() {
+        return "pipeline-unit";
+    }
+
+    @Override
+    public String module() {
+        return "pipeline";
+    }
+
+    @Override
+    public String description() {
+        return "Pipeline unit 数据依赖示例 — 声明式数据依赖与自动注入。";
+    }
+}

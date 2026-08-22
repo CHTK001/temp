@@ -604,4 +604,31 @@ public class SerializationBenchmarkExample implements Example {
             this.amount = amount;
         }
     }
+
+    /**
+     * 独立入口：支持 --impl=xxx --warmup-ms=N --measure-ms=N --rounds=N --list-size=N 参数。
+     */
+    public static void main(String[] args) {
+        Map<String, String> parsed = parseArgs(args);
+        boolean passed = new SerializationBenchmarkExample().run(parsed);
+        log.info("[SerializationBenchmarkExample] impl={}, passed={}",
+                parsed.getOrDefault("impl", "all"), passed);
+        System.exit(passed ? 0 : 1);
+    }
+
+    static Map<String, String> parseArgs(String[] args) {
+        Map<String, String> result = new java.util.HashMap<>();
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+            if (arg.startsWith("--")) {
+                int eq = arg.indexOf('=');
+                if (eq > 0) {
+                    result.put(arg.substring(2, eq), arg.substring(eq + 1));
+                } else if (i + 1 < args.length && !args[i + 1].startsWith("--")) {
+                    result.put(arg.substring(2), args[++i]);
+                }
+            }
+        }
+        return result;
+    }
 }

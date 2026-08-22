@@ -162,4 +162,20 @@ public class PipelineDecisionExample implements Example {
     public boolean run(java.util.Map<String, String> args) {
         main(new String[0]);
         return true;
-    }}
+    }
+
+    @Override
+    public String name() {
+        return "pipeline-decision";
+    }
+
+    @Override
+    public String module() {
+        return "pipeline";
+    }
+
+    @Override
+    public String description() {
+        return "Pipeline 条件分支示例 — decision 节点、when/whenNot 分支路由。";
+    }
+}

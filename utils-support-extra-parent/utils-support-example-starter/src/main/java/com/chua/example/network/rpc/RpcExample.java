@@ -13,10 +13,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
@@ -770,5 +772,31 @@ public class RpcExample implements Example {
             } catch (Exception ignored) {
             }
         }
+    }
+
+    /**
+     * 独立入口：支持 --type=native|json|dubbo|sofa|bench 参数。
+     */
+    public static void main(String[] args) {
+        Map<String, String> parsed = parseArgs(args);
+        boolean passed = new RpcExample().run(parsed);
+        log.info("[RpcExample] type={}, passed={}", parsed.get("type"), passed);
+        System.exit(passed ? 0 : 1);
+    }
+
+    static Map<String, String> parseArgs(String[] args) {
+        Map<String, String> result = new java.util.HashMap<>();
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+            if (arg.startsWith("--")) {
+                int eq = arg.indexOf('=');
+                if (eq > 0) {
+                    result.put(arg.substring(2, eq), arg.substring(eq + 1));
+                } else if (i + 1 < args.length && !args[i + 1].startsWith("--")) {
+                    result.put(arg.substring(2), args[++i]);
+                }
+            }
+        }
+        return result;
     }
 }

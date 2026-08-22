@@ -304,4 +304,20 @@ public class PipelineCallbackExample implements Example {
     public boolean run(java.util.Map<String, String> args) {
         main(new String[0]);
         return true;
-    }}
+    }
+
+    @Override
+    public String name() {
+        return "pipeline-callback";
+    }
+
+    @Override
+    public String module() {
+        return "pipeline";
+    }
+
+    @Override
+    public String description() {
+        return "Pipeline 生命周期回调示例 — onStart/onComplete/onNextStep/logging/addListener。";
+    }
+}

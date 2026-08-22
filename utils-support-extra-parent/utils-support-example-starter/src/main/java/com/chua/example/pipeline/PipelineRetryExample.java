@@ -296,4 +296,20 @@ public class PipelineRetryExample implements Example {
     public boolean run(java.util.Map<String, String> args) {
         main(new String[0]);
         return true;
-    }}
+    }
+
+    @Override
+    public String name() {
+        return "pipeline-retry";
+    }
+
+    @Override
+    public String module() {
+        return "pipeline";
+    }
+
+    @Override
+    public String description() {
+        return "Pipeline 重试策略示例 — RetryConfig 配置（FIXED/EXPONENTIAL/FIBONACCI）。";
+    }
+}

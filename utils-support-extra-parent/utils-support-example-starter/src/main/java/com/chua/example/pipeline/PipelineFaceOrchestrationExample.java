@@ -955,4 +955,20 @@ public class PipelineFaceOrchestrationExample implements Example {
     public boolean run(java.util.Map<String, String> args) {
         main(new String[0]);
         return true;
-    }}
+    }
+
+    @Override
+    public String name() {
+        return "pipeline-face-orchestration";
+    }
+
+    @Override
+    public String module() {
+        return "pipeline";
+    }
+
+    @Override
+    public String description() {
+        return "Pipeline AI 编排示例 — 以人脸识别全流程为例，演示 Pipeline 框架编排 AI 推理管线。";
+    }
+}

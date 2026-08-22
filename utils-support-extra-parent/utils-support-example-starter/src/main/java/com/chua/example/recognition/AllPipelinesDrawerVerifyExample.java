@@ -37,29 +37,29 @@ public class AllPipelinesDrawerVerify {
 
     public static void main(String[] args) throws Exception {
         byte[] testImage = testImageBytes();
-        System.out.println("=== 1) verify withInitDrawer declared ===");
+        log.info("=== 1) verify withInitDrawer declared ===");
         int ok = 0;
         for (String cls : PIPELINES) {
             try {
                 Class<?> c = Class.forName(cls);
                 Method m = c.getMethod("withInitDrawer");
                 Class<?> rt = m.getReturnType();
-                System.out.println("[OK] " + cls + " -> " + rt.getSimpleName());
+                log.info(String.valueOf("[OK] " + cls + " -> " + rt.getSimpleName()));
                 if (rt == DrawerPipeline.class || rt.getSimpleName().equals("DrawerPipeline")) ok++;
             } catch (Exception e) {
-                System.out.println("[FAIL] " + cls + ": " + e.getMessage());
+                log.info("[FAIL] {}: {}", cls, e.getMessage());
             }
         }
-        System.out.println("withInitDrawer pipelines: " + ok + "/" + PIPELINES.size());
+        log.info(String.valueOf("withInitDrawer pipelines: " + ok + "/" + PIPELINES.size()));
 
-        System.out.println("=== 2) DrawerPipeline one-click draw ===");
+        log.info("=== 2) DrawerPipeline one-click draw ===");
         AtomicInteger calls = new AtomicInteger();
         DrawerPipeline drawer = new DrawerPipeline(0.5f);
         byte[] out = drawer.target(testImage).onProcess((i, t) -> calls.incrementAndGet()).done();
-        System.out.println("done() output: " + out.length + " B, progress calls: " + calls.get());
-        System.out.println("hasTarget: " + drawer.hasTarget());
+        log.info(String.valueOf("done()) output: " + out.length + " B, progress calls: " + calls.get());
+        log.info(String.valueOf("hasTarget: " + drawer.hasTarget()));
         if (out.length > 0) {
-            System.out.println("ALL PASS");
+            log.info("ALL PASS");
         }
     }
 

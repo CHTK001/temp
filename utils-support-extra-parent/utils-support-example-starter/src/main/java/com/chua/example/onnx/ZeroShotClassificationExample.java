@@ -98,6 +98,6 @@ public final class ZeroShotClassificationExample extends ExampleBase {
         } catch (Exception e) {
             log.info("  ❌ 失败: " + e.getMessage());
         }
-        System.out.println();
+        log.info("");
     }
 }

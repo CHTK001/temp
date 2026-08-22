@@ -7,6 +7,12 @@ import com.chua.deeplearning.support.image.ImageDetector;
 import com.chua.deeplearning.support.image.ImageSegmenter;
 
 @Slf4j
+/**
+ * Example: ZeroShotDebugExample
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
 public class ZeroShotDebugExample {
     public static void main(String[] args) throws Exception {
         log.info("=== Debug: Loading OnnxModelRegistrar ===");

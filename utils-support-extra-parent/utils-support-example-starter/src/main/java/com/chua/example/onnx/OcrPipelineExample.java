@@ -53,6 +53,6 @@ public final class OcrPipelineExample extends ExampleBase {
                     r.boundingBox().x(), r.boundingBox().y(),
                     r.boundingBox().width(), r.boundingBox().height())));
         }
-        System.out.println();
+        log.info("");
     }
 }

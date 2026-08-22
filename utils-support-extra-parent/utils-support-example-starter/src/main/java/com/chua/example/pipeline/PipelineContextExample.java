@@ -235,4 +235,20 @@ public class PipelineContextExample implements Example {
     public boolean run(java.util.Map<String, String> args) {
         main(new String[0]);
         return true;
-    }}
+    }
+
+    @Override
+    public String name() {
+        return "pipeline-context";
+    }
+
+    @Override
+    public String module() {
+        return "pipeline";
+    }
+
+    @Override
+    public String description() {
+        return "Pipeline 上下文数据示例 — currentData/attributes/nodeOutputs/getData/nodeLocalData。";
+    }
+}

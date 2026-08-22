@@ -4,6 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.ai.chat.ChatClient;
 import com.chua.deeplearning.support.engine.ModelRegistry;
 
+/**
+ * Example: Qwen2_05bExample
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
 public final class Qwen2_05bExample {
 
     private Qwen2_05bVerify() {

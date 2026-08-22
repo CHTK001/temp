@@ -7,6 +7,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * Example: Qwen2PathExample
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
 public final class Qwen2PathExample {
 
     private Qwen2PathDiag() {

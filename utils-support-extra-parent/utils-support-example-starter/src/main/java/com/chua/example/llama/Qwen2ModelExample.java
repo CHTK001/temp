@@ -4,6 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.engine.ModelRegistry;
 import com.chua.deeplearning.support.llama.translator.Qwen2ChatTranslator;
 
+/**
+ * Example: Qwen2ModelExample
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
 public final class Qwen2ModelExample {
 
     private Qwen2ModelVerify() {

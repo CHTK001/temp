@@ -5,6 +5,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import com.chua.common.support.image.ImagePipeline;
 
 /**
  * ImagePipeline 手动验证（main 方式）。
@@ -30,31 +31,31 @@ public final class ImagePipelineVerifyExample {
         log.info("[ImagePipeline] 测试图 64x64: 左黑/中灰/右白");
 
         // 1) 默认全关闭
-        byte[] out0 = ImagePipeline.builder().build().process(in);
+        byte[] out0 = com.chua.common.support.image.ImagePipeline.builder().build().process(in);
         log.info("[all-off] 尺寸保持: " + size(out0) + " (原 " + size(in) + ")");
 
         // 2) 灰度化
-        byte[] out1 = ImagePipeline.builder().grayscale(true).build().process(in);
+        byte[] out1 = com.chua.common.support.image.ImagePipeline.builder().grayscale(true).build().process(in);
         log.info("[grayscale] 灰度化完成: " + size(out1) + ", 中部像素 RGB 应相等");
 
         // 3) 二值化
-        byte[] out2 = ImagePipeline.builder().binarize(true, 128).build().process(in);
+        byte[] out2 = com.chua.common.support.image.ImagePipeline.builder().binarize(true, 128).build().process(in);
         log.info("[binarize] 二值化完成: " + size(out2) + ", 应为黑白两值");
 
         // 4) 降噪
-        byte[] out3 = ImagePipeline.builder().denoise(true, 1).build().process(in);
+        byte[] out3 = com.chua.common.support.image.ImagePipeline.builder().denoise(true, 1).build().process(in);
         log.info("[denoise] 降噪完成: " + size(out3));
 
         // 5) 腐蚀
-        byte[] out4 = ImagePipeline.builder().erode(true, 3).build().process(in);
+        byte[] out4 = com.chua.common.support.image.ImagePipeline.builder().erode(true, 3).build().process(in);
         log.info("[erode] 腐蚀完成: " + size(out4));
 
         // 6) 膨胀
-        byte[] out5 = ImagePipeline.builder().dilate(true, 3).build().process(in);
+        byte[] out5 = com.chua.common.support.image.ImagePipeline.builder().dilate(true, 3).build().process(in);
         log.info("[dilate] 膨胀完成: " + size(out5));
 
         // 7) 全链路
-        byte[] out6 = ImagePipeline.builder()
+        byte[] out6 = com.chua.common.support.image.ImagePipeline.builder()
                 .grayscale(true).binarize(true, 128)
                 .denoise(true, 1).erode(true, 3).dilate(true, 3)
                 .build().process(in);
