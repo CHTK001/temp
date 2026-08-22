@@ -1,4 +1,4 @@
-﻿package com.chua.example.network.rpc;
+package com.chua.example.network.rpc;
 
 import java.util.ArrayList;
 import java.util.List;

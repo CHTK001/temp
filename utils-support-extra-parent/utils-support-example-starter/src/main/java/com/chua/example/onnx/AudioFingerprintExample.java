@@ -27,9 +27,10 @@ import java.util.List;
  *   // 计算两段音频相似度
  *   AudioFingerprintExample onnx wav2vec2-zh-fingerprint audio1.wav audio2.wav
  * }</pre>
- *@author CH`n *
+ * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class AudioFingerprintExample extends ExampleBase {
 
     /** 创建 AudioFingerprintExample 实例 */
@@ -39,9 +40,9 @@ public final class AudioFingerprintExample extends ExampleBase {
     /** Main */
     public static void main(String[] args) throws Exception {
         if (args.length == 0) {
-            printModels("audio-fingerprint", "onnx",
+            printModelIds("audio-fingerprint", "onnx",
                     AudioFingerprinter.create("onnx", "").listModels());
-            printModels("audio-fingerprint", "pytorch",
+            printModelIds("audio-fingerprint", "pytorch",
                     AudioFingerprinter.create("pytorch", "").listModels());
             return;
         }

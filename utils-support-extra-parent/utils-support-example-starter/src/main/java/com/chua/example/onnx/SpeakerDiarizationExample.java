@@ -30,9 +30,10 @@ import java.util.List;
  *   // 仅列出可用模型
  *   SpeakerDiarizationExample list
  * }</pre>
- *@author CH`n *
+ * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class SpeakerDiarizationExample extends ExampleBase {
 
     /** 默认说话人嵌入模型（wespeaker-resnet34 为嵌入式，随依赖内置） */
@@ -57,9 +58,9 @@ public final class SpeakerDiarizationExample extends ExampleBase {
 
         // 列出可用模型
         if ("list".equals(mode)) {
-            printModels("speaker-diarization", "onnx",
+            printModelIds("speaker-diarization", "onnx",
                     SpeakerDiarizer.listModels());
-            printModels("audio-fingerprint", "onnx",
+            printModelIds("audio-fingerprint", "onnx",
                     AudioFingerprinter.listModels());
             return;
         }

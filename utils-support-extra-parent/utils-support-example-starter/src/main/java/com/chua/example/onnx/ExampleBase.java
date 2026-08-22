@@ -1,7 +1,7 @@
 package com.chua.example.onnx;
 
-import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.ai.chat.ModelDefinition;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
@@ -9,13 +9,15 @@ import java.util.List;
  * 本地 AI 能力示例公共基类。
  *
  * <p>提供模型列表打印与计时工具，各能力 Example 复用。</p>
- *@author CH`n *
+ *
+ * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public abstract class ExampleBase {
 
     /**
-     * 打印模型列表。
+     * 打印模型列表（含描述）。
      *
      * @param capability 能力名
      * @param provider   提供商
@@ -30,7 +32,26 @@ public abstract class ExampleBase {
         for (ModelDefinition m : models) {
             log.info("  - " + m.getId() + (m.getDescription() != null ? " | " + m.getDescription() : ""));
         }
-        log.info();
+        log.info("");
+    }
+
+    /**
+     * 打印模型 ID 列表（仅 ID，不含描述）。
+     *
+     * @param capability 能力名
+     * @param provider   提供商
+     * @param ids        模型 ID 列表
+     */
+    protected static void printModelIds(String capability, String provider, List<String> ids) {
+        log.info("===== [" + capability + "] provider=" + provider + " =====");
+        if (ids == null || ids.isEmpty()) {
+            log.info("  (无可用模型)");
+            return;
+        }
+        for (String id : ids) {
+            log.info("  - " + id);
+        }
+        log.info("");
     }
 
     /**
@@ -44,6 +65,6 @@ public abstract class ExampleBase {
     protected static void printResult(String capability, String provider, String model, long startMs) {
         long elapsed = System.currentTimeMillis() - startMs;
         log.info("[完成] " + capability + " provider=" + provider + " model=" + model + " 耗时=" + elapsed + "ms");
-        System.out.println();
+        log.info("");
     }
 }
