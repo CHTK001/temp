@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.face.FaceDetector;
 import com.chua.deeplearning.support.liveness.LivenessDetector;
 import com.chua.deeplearning.support.model.PredictRectangle;
@@ -15,7 +16,7 @@ import java.util.List;
  *   FaceExtraExample anime-face-detector G:\images\anime_test.jpg
  *   FaceExtraExample face-liveness-flrgb G:\images\黑白人物.jpg
  * }</pre>
- *
+ *@author CH`n *
  * @since 4.0.0.42
  */
 public final class FaceExtraExample extends ExampleBase {
@@ -35,8 +36,8 @@ public final class FaceExtraExample extends ExampleBase {
             LivenessDetector detector = LivenessDetector.create(livenessModel);
             long t0 = System.currentTimeMillis();
             float score = detector.liveScore(img);
-            System.out.println("[liveness] 模型=" + livenessModel + " 图片=" + imagePath);
-            System.out.println("       活体分数=" + String.format("%.3f", score)
+            log.info("[liveness] 模型=" + livenessModel + " 图片=" + imagePath);
+            log.info("       活体分数=" + String.format("%.3f", score)
                     + " (" + (score >= 0.5 ? "活体" : "疑似假体") + ")");
             printResult("liveness", "onnx", livenessModel, t0);
             return;
@@ -45,10 +46,10 @@ public final class FaceExtraExample extends ExampleBase {
         FaceDetector detector = FaceDetector.create(model);
         long t0 = System.currentTimeMillis();
         List<PredictRectangle> boxes = detector.detect(img);
-        System.out.println("[anime-face] 模型=" + model + " 图片=" + imagePath);
-        System.out.println("       动漫人脸数: " + boxes.size());
+        log.info("[anime-face] 模型=" + model + " 图片=" + imagePath);
+        log.info("       动漫人脸数: " + boxes.size());
         for (PredictRectangle b : boxes) {
-            System.out.println(String.format("       box: (%.0f,%.0f) %.0fx%.0f conf=%.2f",
+            log.info(String.format("       box: (%.0f,%.0f) %.0fx%.0f conf=%.2f",
                     b.x(), b.y(), b.width(), b.height(), b.confidence()));
         }
         printResult("anime-face", "onnx", model, t0);

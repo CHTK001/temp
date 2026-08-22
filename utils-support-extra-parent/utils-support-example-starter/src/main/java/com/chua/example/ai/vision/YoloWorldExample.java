@@ -64,8 +64,8 @@ public class YoloWorldExample {
      * @throws IOException 读取文件异常
      */
     public static boolean runTest(String imagePath, String candidates) throws IOException {
-        System.out.println("===== YOLO-World 零样本检测 =====");
-        System.out.println("候选类别: " + candidates);
+        log.info("===== YOLO-World 零样本检测 =====");
+        log.info("候选类别: " + candidates);
 
         ImageDetector detector = ImageDetector.create("yolov8s-world", "");
         if (detector == null) {
@@ -110,7 +110,7 @@ public class YoloWorldExample {
                         info.x(), info.y(), info.width(), info.height());
             }
         } catch (Exception e) {
-            System.out.println("[FAIL] " + file.getFileName() + ": " + e.getMessage());
+            log.info("[FAIL] " + file.getFileName() + ": " + e.getMessage());
         }
     }
 }

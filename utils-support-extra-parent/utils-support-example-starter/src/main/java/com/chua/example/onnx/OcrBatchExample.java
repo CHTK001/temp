@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.model.DetectionInfo;
 import com.chua.deeplearning.support.model.PredictRectangle;
 import com.chua.deeplearning.support.ocr.OcrPipeline;
@@ -22,7 +23,7 @@ import java.util.Set;
  * <pre>{@code
  *   OcrBatchTest G:\images
  * }</pre>
- *
+ *@author CH`n *
  * @since 4.0.0.42
  */
 public final class OcrBatchExample {
@@ -67,7 +68,7 @@ public final class OcrBatchExample {
         for (String name : OCR_NAMES) {
             File f = new File(folder, name);
             if (!f.exists()) {
-                System.out.println("[ocr] SKIP " + name + " (文件不存在)");
+                log.info("[ocr] SKIP " + name + " (文件不存在)");
                 continue;
             }
             total++;
@@ -110,7 +111,7 @@ public final class OcrBatchExample {
             }
         }
 
-        System.out.println();
+        log.info();
         System.out.printf("[ocr-batch] 总计=%d  识别成功=%d  失败/跳过=%d  输出目录=%s%n", total, pass, fail, outDir);
     }
 

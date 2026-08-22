@@ -25,4 +25,9 @@ public class CustomImageProcessorExample extends JdkImageProcessor implements Im
     public boolean available() {
         return true;
     }
+
+    public static void main(String[] args) {
+        new CustomImageProcessorExample().run(java.util.Arrays.stream(args).collect(java.util.stream.Collectors.toMap(a -> a.split("=")[0], a -> a.split("=")[1])));
+    }
+
 }

@@ -8,7 +8,7 @@ import com.chua.common.support.network.server.nio.NioHttpServer;
 import com.chua.common.support.network.server.request.ServerRequest;
 import com.chua.common.support.network.server.response.ServerResponse;
 import com.chua.common.support.spi.ServiceProvider;
-import com.chua.example.network.perf.PerfReport;
+import com.chua.example.network.perf.PerfReportExample;
 import com.chua.example.spi.Example;
 import lombok.extern.slf4j.Slf4j;
 
@@ -928,7 +928,7 @@ public class HttpServerExampleSpi implements Example {
 
     /** 运行Perf */
     private boolean runPerf(int concurrency, int connections, int requestsPerConn, int payloadSize) {
-        PerfReport.printEnvironment("HttpServer [" + serverType + "]", serverType, "SPI");
+        PerfReportExample.printEnvironment("HttpServer [" + serverType + "]", serverType, "SPI");
         Server server = null;
         try {
             byte[] payload = new byte[payloadSize];
@@ -939,14 +939,14 @@ public class HttpServerExampleSpi implements Example {
                     (req, resp) -> resp.setResult(body)));
             int port = server.getPort();
 
-            PerfReport.printServerConfig(server.getSetting());
-            PerfReport.ResourceMonitor monitor = PerfReport.ResourceMonitor.start();
-            PerfReport.SweepRow row = runPerfInner(concurrency, connections, requestsPerConn, port);
+            PerfReportExample.printServerConfig(server.getSetting());
+            PerfReportExample.ResourceMonitor monitor = PerfReportExample.ResourceMonitor.start();
+            PerfReportExample.SweepRow row = runPerfInner(concurrency, connections, requestsPerConn, port);
             monitor.stop();
             if (row == null) {
                 return false;
             }
-            PerfReport.printResult("http-server [" + serverType + "] GET /echo", row.concurrency,
+            PerfReportExample.printResult("http-server [" + serverType + "] GET /echo", row.concurrency,
                     row.connections, row.requestsPerConn, payloadSize,
                     row.total, row.errors, row.elapsedMs, row.sortedLatencyNs, 0L);
             monitor.printSummary("perf 并发=" + row.concurrency + " 最大并发数=" + server.getSetting().getMaxConcurrency());
@@ -962,7 +962,7 @@ public class HttpServerExampleSpi implements Example {
 
     /** 运行Sweep */
     private boolean runSweep(int payloadSize) {
-        PerfReport.printEnvironment("HttpServer [" + serverType + "] [sweep]", serverType, "SPI");
+        PerfReportExample.printEnvironment("HttpServer [" + serverType + "] [sweep]", serverType, "SPI");
         Server server = null;
         try {
             byte[] payload = new byte[payloadSize];
@@ -973,19 +973,19 @@ public class HttpServerExampleSpi implements Example {
                     (req, resp) -> resp.setResult(body)));
             int port = server.getPort();
 
-            PerfReport.printServerConfig(server.getSetting());
-            PerfReport.ResourceMonitor monitor = PerfReport.ResourceMonitor.start();
-            List<PerfReport.SweepRow> rows = new ArrayList<>();
+            PerfReportExample.printServerConfig(server.getSetting());
+            PerfReportExample.ResourceMonitor monitor = PerfReportExample.ResourceMonitor.start();
+            List<PerfReportExample.SweepRow> rows = new ArrayList<>();
             for (int cc : SWEEP_CONCURRENCY) {
                 int conn = Math.min(SWEEP_CONNECTIONS, Math.max(1, cc / 8));
                 int req = SWEEP_REQUESTS_PER_CONN;
-                PerfReport.SweepRow row = runPerfInner(cc, conn, req, port);
+                PerfReportExample.SweepRow row = runPerfInner(cc, conn, req, port);
                 if (row != null) {
                     rows.add(row);
                 }
             }
             monitor.stop();
-            PerfReport.printSweepResult("http-server [" + serverType + "] GET /echo 扫档", payloadSize, rows);
+            PerfReportExample.printSweepResult("http-server [" + serverType + "] GET /echo 扫档", payloadSize, rows);
             monitor.printSummary("sweep 最大并发数=" + server.getSetting().getMaxConcurrency());
             return !rows.isEmpty();
         } catch (Exception e) {
@@ -1013,17 +1013,17 @@ public class HttpServerExampleSpi implements Example {
                     (req, resp) -> resp.setResult(body)));
             int port = server.getPort();
 
-            PerfReport.printEnvironment("HttpServer [" + serverType + "] [bench]", serverType, "SPI");
-            PerfReport.printServerConfig(server.getSetting());
-            PerfReport.ResourceMonitor monitor = PerfReport.ResourceMonitor.start();
-            List<PerfReport.SweepRow> rows = new ArrayList<>();
+            PerfReportExample.printEnvironment("HttpServer [" + serverType + "] [bench]", serverType, "SPI");
+            PerfReportExample.printServerConfig(server.getSetting());
+            PerfReportExample.ResourceMonitor monitor = PerfReportExample.ResourceMonitor.start();
+            List<PerfReportExample.SweepRow> rows = new ArrayList<>();
             for (int cc : BENCH_CONCURRENCY) {
                 int conn = Math.min(BENCH_CONNECTIONS, Math.max(1, cc / 8));
                 log.info("  ┌─ 压测场景: 并发 {} ─┐", cc);
-                PerfReport.SweepRow row = runPerfInner(cc, conn, BENCH_REQUESTS_PER_CONN, port);
+                PerfReportExample.SweepRow row = runPerfInner(cc, conn, BENCH_REQUESTS_PER_CONN, port);
                 if (row != null) {
                     rows.add(row);
-                    PerfReport.printResult("http-server [" + serverType + "] GET /echo @并发" + cc,
+                    PerfReportExample.printResult("http-server [" + serverType + "] GET /echo @并发" + cc,
                             row.concurrency, row.connections, row.requestsPerConn, payloadSize,
                             row.total, row.errors, row.elapsedMs, row.sortedLatencyNs, 0L);
                 }
@@ -1041,10 +1041,10 @@ public class HttpServerExampleSpi implements Example {
                     Runtime.getRuntime().maxMemory() / 1024 / 1024,
                     server.getSetting().getMaxConcurrency());
             String title = "HTTP Server 压测报告 [" + serverType + "]";
-            String report = PerfReport.writeBenchmarkReport(reportPath, title, env, rows);
+            String report = PerfReportExample.writeBenchmarkReport(reportPath, title, env, rows);
             log.info("压测报告预览:\n{}", report);
             if (htmlPath != null) {
-                PerfReport.writeHtmlReport(htmlPath, title, env, rows);
+                PerfReportExample.writeHtmlReport(htmlPath, title, env, rows);
             }
             pass();
             return true;
@@ -1072,17 +1072,17 @@ public class HttpServerExampleSpi implements Example {
                     (req, resp) -> resp.setResult(body)));
             int port = server.getPort();
 
-            PerfReport.printEnvironment("HttpServer [" + serverType + "] [conc]", serverType, "SPI");
-            PerfReport.printServerConfig(server.getSetting());
-            PerfReport.ResourceMonitor monitor = PerfReport.ResourceMonitor.start();
-            List<PerfReport.SweepRow> rows = new ArrayList<>();
+            PerfReportExample.printEnvironment("HttpServer [" + serverType + "] [conc]", serverType, "SPI");
+            PerfReportExample.printServerConfig(server.getSetting());
+            PerfReportExample.ResourceMonitor monitor = PerfReportExample.ResourceMonitor.start();
+            List<PerfReportExample.SweepRow> rows = new ArrayList<>();
             for (int cc : CONC_CONCURRENCY) {
                 log.info("  ┌─ 真并发场景: 同时 {} 连接 × {} 请求 ─┐", cc, CONC_REQUESTS_PER_CONN);
                 // 连接数 = 并发数，每连接 1 次请求
-                PerfReport.SweepRow row = runPerfInner(cc, cc, CONC_REQUESTS_PER_CONN, port);
+                PerfReportExample.SweepRow row = runPerfInner(cc, cc, CONC_REQUESTS_PER_CONN, port);
                 if (row != null) {
                     rows.add(row);
-                    PerfReport.printResult("http-server [" + serverType + "] GET /echo @同时" + cc + "连接",
+                    PerfReportExample.printResult("http-server [" + serverType + "] GET /echo @同时" + cc + "连接",
                             row.concurrency, row.connections, row.requestsPerConn, payloadSize,
                             row.total, row.errors, row.elapsedMs, row.sortedLatencyNs, 0L);
                 }
@@ -1099,7 +1099,7 @@ public class HttpServerExampleSpi implements Example {
                     Runtime.getRuntime().availableProcessors(),
                     Runtime.getRuntime().maxMemory() / 1024 / 1024,
                     server.getSetting().getMaxConcurrency());
-            String report = PerfReport.writeBenchmarkReport(
+            String report = PerfReportExample.writeBenchmarkReport(
                     reportPath, "HTTP Server 真并发压测报告 [" + serverType + "]", env, rows);
             log.info("压测报告预览:\n{}", report);
             pass();
@@ -1113,7 +1113,7 @@ public class HttpServerExampleSpi implements Example {
     }
 
     /** 运行PerfInner */
-    private PerfReport.SweepRow runPerfInner(int concurrency, int connections, int requestsPerConn, int port) {
+    private PerfReportExample.SweepRow runPerfInner(int concurrency, int connections, int requestsPerConn, int port) {
         ExecutorService pool = null;
         try {
             HttpClient c = HttpClient.newBuilder()
@@ -1168,11 +1168,11 @@ public class HttpServerExampleSpi implements Example {
             }
             long elapsedNs = System.nanoTime() - startWall;
 
-            long[] all = PerfReport.mergeLatencies(latencies);
+            long[] all = PerfReportExample.mergeLatencies(latencies);
             Arrays.sort(all);
             long total = (long) connections * requestsPerConn;
             long elapsedMs = elapsedNs / 1_000_000L;
-            return new PerfReport.SweepRow(concurrency, connections, requestsPerConn, total, errors.sum(), elapsedMs, all);
+            return new PerfReportExample.SweepRow(concurrency, connections, requestsPerConn, total, errors.sum(), elapsedMs, all);
         } catch (Exception e) {
             log.warn("  │ 并发={} 异常: {}", concurrency, e.getMessage());
             return null;

@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.ai.feature.FeatureClient;
 import com.chua.deeplearning.support.face.FaceDetector;
 import com.chua.deeplearning.support.model.PredictRectangle;
@@ -17,7 +18,7 @@ import java.util.List;
  * <pre>{@code
  *   FacePluginExample G:\images\三个人.jpg
  * }</pre>
- *
+ *@author CH`n *
  * @since 4.0.0.42
  */
 public final class FacePluginExample extends ExampleBase {
@@ -40,10 +41,10 @@ public final class FacePluginExample extends ExampleBase {
         long t0 = System.currentTimeMillis();
         List<PredictRectangle> boxes = detector.detect(img);
         long tDetect = System.currentTimeMillis() - t0;
-        System.out.println("[faceplugin-detect] 模型=faceplugin-face-detect-slim 图片=" + imagePath);
-        System.out.println("       人脸数: " + boxes.size() + " 首次耗时(含加载)=" + tDetect + "ms");
+        log.info("[faceplugin-detect] 模型=faceplugin-face-detect-slim 图片=" + imagePath);
+        log.info("       人脸数: " + boxes.size() + " 首次耗时(含加载)=" + tDetect + "ms");
         for (PredictRectangle b : boxes) {
-            System.out.println(String.format("       box: (%.0f,%.0f) %.0fx%.0f conf=%.2f",
+            log.info(String.format("       box: (%.0f,%.0f) %.0fx%.0f conf=%.2f",
                     b.x(), b.y(), b.width(), b.height(), b.confidence()));
         }
         // 纯推理耗时（warmup 后连续 5 次，取平均）
@@ -54,9 +55,9 @@ public final class FacePluginExample extends ExampleBase {
             detector.detect(img);
             sum += System.currentTimeMillis() - s;
         }
-        System.out.println("       纯推理平均耗时=" + (sum / 5) + "ms (warmup 后 5 次)");
+        log.info("       纯推理平均耗时=" + (sum / 5) + "ms (warmup 后 5 次)");
         if (boxes.isEmpty()) {
-            System.out.println("[faceplugin] 未检测到人脸，终止");
+            log.info("[faceplugin] 未检测到人脸，终止");
             return;
         }
         printResult("faceplugin-detect", "onnx", "faceplugin-face-detect-slim", t0);
@@ -64,9 +65,9 @@ public final class FacePluginExample extends ExampleBase {
         // 2. 68 关键点（FacePlugin MobileFaceNet @ 64x64 灰度）
         try (FeatureClient landmark = FeatureClient.create("onnx", "")) {
             float[] lm = landmark.model("faceplugin-face-landmark").extractImage(img);
-            System.out.println("[faceplugin-landmark] 模型=faceplugin-face-landmark");
-            System.out.println("       输出维度: " + lm.length + " (期望 136 = 68x2)");
-            System.out.println("       前 6 个值: "
+            log.info("[faceplugin-landmark] 模型=faceplugin-face-landmark");
+            log.info("       输出维度: " + lm.length + " (期望 136 = 68x2)");
+            log.info("       前 6 个值: "
                     + String.format("%.3f %.3f %.3f %.3f %.3f %.3f",
                     lm[0], lm[1], lm[2], lm[3], lm[4], lm[5]));
             printResult("faceplugin-landmark", "onnx", "faceplugin-face-landmark", 0);
@@ -75,14 +76,14 @@ public final class FacePluginExample extends ExampleBase {
         // 3. 256 维人脸特征（FacePlugin IRN50 @ 128x128）
         try (FeatureClient feature = FeatureClient.create("onnx", "")) {
             float[] vec = feature.model("faceplugin-face-feature").extractImage(img);
-            System.out.println("[faceplugin-feature] 模型=faceplugin-face-feature");
-            System.out.println("       输出维度: " + vec.length + " (期望 256)");
+            log.info("[faceplugin-feature] 模型=faceplugin-face-feature");
+            log.info("       输出维度: " + vec.length + " (期望 256)");
             float norm = 0f;
             for (float v : vec) {
                 norm += v * v;
             }
             norm = (float) Math.sqrt(norm);
-            System.out.println(String.format("       向量模长(L2): %.3f (应≈1.0, translator 内已归一化)", norm));
+            log.info(String.format("       向量模长(L2): %.3f (应≈1.0, translator 内已归一化)", norm));
             printResult("faceplugin-feature", "onnx", "faceplugin-face-feature", 0);
         }
     }

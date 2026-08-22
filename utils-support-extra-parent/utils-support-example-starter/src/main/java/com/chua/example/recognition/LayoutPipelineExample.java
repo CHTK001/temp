@@ -1,5 +1,6 @@
 package com.chua.example.recognition;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.image.ImagePipeline;
 import com.chua.deeplearning.support.engine.ModelRegistry;
 import com.chua.deeplearning.support.model.PredictRectangle;
@@ -35,22 +36,22 @@ public final class LayoutPipelineExample {
         for (PredictRectangle box : boxes) {
             if ("title".equals(box.labelName())) {
                 titles++;
-            } else if ("plain_text".equals(box.labelName())) {
+            } else if ("plainText".equals(box.labelName())) {
                 texts++;
             }
         }
-        System.out.println("[LayoutPipeline] image=" + imagePath);
-        System.out.println("[LayoutPipeline] 检出=" + boxes.size() + "  title=" + titles
-                + "  plain_text=" + texts + "  耗时=" + cost + "ms");
+        log.info("[LayoutPipeline] image=" + imagePath);
+        log.info("[LayoutPipeline] 检出=" + boxes.size() + "  title=" + titles
+                + "  plainText=" + texts + "  耗时=" + cost + "ms");
         for (PredictRectangle box : boxes) {
             System.out.printf("  %-12s conf=%.2f [%.0f,%.0f,%.0f,%.0f]%n",
                     box.labelName(), box.confidence(), box.x(), box.y(), box.width(), box.height());
         }
 
         if (titles >= 4 && texts >= 20) {
-            System.out.println("[LayoutPipelineVerify] ALL PASS");
+            log.info("[LayoutPipelineVerify] ALL PASS");
         } else {
-            System.out.println("[LayoutPipelineVerify] FAIL (title=" + titles + ", plain_text=" + texts + ")");
+            log.info("[LayoutPipelineVerify] FAIL (title=" + titles + ", plainText=" + texts + ")");
             System.exit(1);
         }
     }

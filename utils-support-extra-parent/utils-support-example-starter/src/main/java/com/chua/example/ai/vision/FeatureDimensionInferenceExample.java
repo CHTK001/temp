@@ -39,11 +39,11 @@ public class FeatureDimensionInferenceExample {
 
     public static void main(String[] args) throws Exception {
         byte[] image = syntheticImage();
-        System.out.println("===== 嵌入式图片特征 维度实测 =====");
+        log.info("===== 嵌入式图片特征 维度实测 =====");
         testImageFeature("dino-v2-small-embedding", 384, image);
         testImageFeature("mobileclip-s0-vision", 512, image);
 
-        System.out.println("\n===== 嵌入式文本嵌入 维度实测 =====");
+        log.info("\n===== 嵌入式文本嵌入 维度实测 =====");
         testTextEmbedding("minilm-embedding", 384, "你好世界");
         testTextEmbedding("bge-small-en-embedding", 384, "Hello world");
         testTextEmbedding("bge-small-zh-embedding", 512, "你好世界");

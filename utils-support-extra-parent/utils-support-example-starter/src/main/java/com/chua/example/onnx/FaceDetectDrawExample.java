@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.face.FaceDetectionHit;
 import com.chua.deeplearning.support.face.FacePipeline;
 import com.chua.deeplearning.support.utils.ImageUtils;
@@ -26,7 +27,7 @@ import java.util.List;
  * <pre>{@code
  *   FaceDetectDrawExample
  * }</pre>
- *
+ *@author CH`n *
  * @since 4.0.0.42
  */
 public final class FaceDetectDrawExample extends ExampleBase {
@@ -81,21 +82,21 @@ public final class FaceDetectDrawExample extends ExampleBase {
             }
             byte[] img = Files.readAllBytes(in);
             String base = name.substring(0, name.lastIndexOf('.'));
-            System.out.println("===== " + name + " (仅检测) =====");
+            log.info("===== " + name + " (仅检测) =====");
             detectAndDraw(pipeline, base, img);
-            System.out.println();
+            log.info();
         }
 
         // 完整链路：检测 → 裁剪(对齐) → 修复 → 超分
         for (String name : TEST_IMAGES) {
             Path in = Path.of(INPUT_DIR, name);
             if (!Files.exists(in)) {
-                System.out.println("[face-ops] 跳过（不存在）: " + name);
+                log.info("[face-ops] 跳过（不存在）: " + name);
                 continue;
             }
             byte[] img = Files.readAllBytes(in);
             String base = name.substring(0, name.lastIndexOf('.'));
-            System.out.println("===== " + name + " =====");
+            log.info("===== " + name + " =====");
 
             // 1. 检测 + 画框
             List<FaceDetectionHit> hits = detectAndDraw(pipeline, base, img);
@@ -109,17 +110,17 @@ public final class FaceDetectDrawExample extends ExampleBase {
                     })
                     .orElse(null);
             if (largest == null || largest.box().keypoints() == null || largest.box().keypoints().isEmpty()) {
-                System.out.println("[对齐] 无最大人脸或关键点");
+                log.info("[对齐] 无最大人脸或关键点");
                 continue;
             }
             byte[] face = alignCrop(img, largest);
             if (face == null) {
-                System.out.println("[对齐] 对齐失败");
+                log.info("[对齐] 对齐失败");
                 continue;
             }
             Path alignOut = Path.of(OUTPUT_DIR, base + "_align.png");
             Files.write(alignOut, face);
-            System.out.println("[对齐] 已输出: " + alignOut + " (" + face.length + "B, 子图外扩+5点对齐512)");
+            log.info("[对齐] 已输出: " + alignOut + " (" + face.length + "B, 子图外扩+5点对齐512)");
 
             // 3. 修复（对裁剪人脸，非整图）
             long t2 = System.currentTimeMillis();
@@ -128,9 +129,9 @@ public final class FaceDetectDrawExample extends ExampleBase {
             if (restored != null && restored.length > 0) {
                 Path restoreOut = Path.of(OUTPUT_DIR, base + "_restore.png");
                 Files.write(restoreOut, restored);
-                System.out.println("[修复] 已输出: " + restoreOut + " (" + restored.length + "B) 耗时=" + tRestore + "ms");
+                log.info("[修复] 已输出: " + restoreOut + " (" + restored.length + "B) 耗时=" + tRestore + "ms");
             } else {
-                System.out.println("[修复] 无结果 耗时=" + tRestore + "ms");
+                log.info("[修复] 无结果 耗时=" + tRestore + "ms");
             }
 
             // 4. 超分（对裁剪人脸，非整图）
@@ -140,11 +141,11 @@ public final class FaceDetectDrawExample extends ExampleBase {
             if (upscaled != null && upscaled.length > 0) {
                 Path superOut = Path.of(OUTPUT_DIR, base + "_super.png");
                 Files.write(superOut, upscaled);
-                System.out.println("[超分] 已输出: " + superOut + " (" + upscaled.length + "B) 耗时=" + tSuper + "ms");
+                log.info("[超分] 已输出: " + superOut + " (" + upscaled.length + "B) 耗时=" + tSuper + "ms");
             } else {
-                System.out.println("[超分] 无结果 耗时=" + tSuper + "ms");
+                log.info("[超分] 无结果 耗时=" + tSuper + "ms");
             }
-            System.out.println();
+            log.info();
         }
         printResult("face-ops", "onnx", "scrfd+codeformer+gfpgan", 0);
     }
@@ -161,10 +162,10 @@ public final class FaceDetectDrawExample extends ExampleBase {
         long t0 = System.currentTimeMillis();
         List<FaceDetectionHit> hits = pipeline.detectPipeline(img);
         long tDetect = System.currentTimeMillis() - t0;
-        System.out.println("[检测] 人脸数=" + hits.size() + " 耗时=" + tDetect + "ms");
+        log.info("[检测] 人脸数=" + hits.size() + " 耗时=" + tDetect + "ms");
         for (int i = 0; i < hits.size(); i++) {
             var box = hits.get(i).box();
-            System.out.println(String.format("[检测]   #%d box=(%.0f,%.0f) %.0fx%.0f conf=%.2f",
+            log.info(String.format("[检测]   #%d box=(%.0f,%.0f) %.0fx%.0f conf=%.2f",
                     i, box.x(), box.y(), box.width(), box.height(), box.confidence()));
             var kps = box.keypoints();
             if (kps != null && !kps.isEmpty()) {
@@ -172,7 +173,7 @@ public final class FaceDetectDrawExample extends ExampleBase {
                 for (float[] p : kps) {
                     sb.append(String.format("(%.0f,%.0f) ", p[0], p[1]));
                 }
-                System.out.println(sb.toString().trim());
+                log.info(sb.toString().trim());
             }
         }
         Mat src = ImageUtils.decode(img);
@@ -192,7 +193,7 @@ public final class FaceDetectDrawExample extends ExampleBase {
             Files.write(detectOut, mob.toArray());
             src.release();
             mob.release();
-            System.out.println("[检测] 已输出: " + detectOut);
+            log.info("[检测] 已输出: " + detectOut);
         }
         return hits;
     }
@@ -239,7 +240,7 @@ public final class FaceDetectDrawExample extends ExampleBase {
             aligned.release();
             return out;
         } catch (Exception e) {
-            System.out.println("[对齐] 异常: " + e.getMessage());
+            log.info("[对齐] 异常: " + e.getMessage());
             return null;
         }
     }

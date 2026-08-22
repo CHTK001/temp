@@ -900,4 +900,9 @@ public class LazyExpiringListExample implements Example {
     private static void printResult(String name, boolean passed) {
         log.info("{} {}", passed ? "[PASS]" : "[FAIL]", name);
     }
+
+    public static void main(String[] args) {
+        new LazyExpiringListExample().run(java.util.Arrays.stream(args).collect(java.util.stream.Collectors.toMap(a -> a.split("=")[0], a -> a.split("=")[1])));
+    }
+
 }

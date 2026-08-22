@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.image.filter.ImageFilter;
 import com.chua.common.support.spi.ServiceProvider;
 import com.chua.deeplearning.support.engine.ModelRegistry;
@@ -11,11 +12,12 @@ import java.nio.file.Path;
 import java.util.stream.Stream;
 
 /**
- * Depth-Anything 黑盒测试：通过 ImageFilter SPI 接口批量处理 D:/images 所有图片。
+ @author CH
+ * 黑盒测试：通过 ImageFilter SPI 接口批量处理 D:/images 所有图片。
  */
 public final class DepthAnythingOrtExample {
 
-    private DepthAnythingOrtVerify() {
+    private DepthAnythingOrtExample() {
     }
 
     public static void main(String[] args) throws Exception {
@@ -23,7 +25,7 @@ public final class DepthAnythingOrtExample {
 
         // 通过 SPI 获取 ImageFilter 实现（黑盒）
         ImageFilter filter = ServiceProvider.of(ImageFilter.class).getExtension("depth-anything");
-        System.out.println("[depth-anything] ImageFilter SPI: " + (filter != null ? "OK" : "FAIL"));
+        log.info("[depth-anything] ImageFilter SPI: " + (filter != null ? "OK" : "FAIL"));
         if (filter == null) { System.exit(1); }
 
         Path inputDir = Path.of("D:/images");
@@ -36,7 +38,7 @@ public final class DepthAnythingOrtExample {
                 String n = f.getFileName().toString().toLowerCase();
                 return n.endsWith(".png") || n.endsWith(".jpg") || n.endsWith(".jpeg") || n.endsWith(".webp");
             }).toList();
-            System.out.println("[depth-anything] 输入目录: " + inputDir + " 共 " + list.size() + " 张图");
+            log.info("[depth-anything] 输入目录: " + inputDir + " 共 " + list.size() + " 张图");
             for (Path imgPath : list) {
                 total++;
                 String name = imgPath.getFileName().toString();
@@ -47,14 +49,14 @@ public final class DepthAnythingOrtExample {
                     BufferedImage depth = filter.converter(src);
                     long cost = System.currentTimeMillis() - t0;
                     ImageIO.write(depth, "PNG", outDir.resolve(outName).toFile());
-                    System.out.println("  [" + total + "/" + list.size() + "] " + name + " -> " + outName + "  " + cost + "ms");
+                    log.info("  [" + total + "/" + list.size() + "] " + name + " -> " + outName + "  " + cost + "ms");
                     passed++;
                 } catch (Exception e) {
-                    System.out.println("  [" + total + "/" + list.size() + "] " + name + " FAIL: " + e.getMessage());
+                    log.info("  [" + total + "/" + list.size() + "] " + name + " FAIL: " + e.getMessage());
                 }
             }
         }
-        System.out.println("[depth-anything] 完成: " + passed + "/" + total + " 通过  输出目录: " + outDir);
+        log.info("[depth-anything] 完成: " + passed + "/" + total + " 通过  输出目录: " + outDir);
         if (passed == 0) { System.exit(1); }
     }
 }

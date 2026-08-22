@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.ai.audio.AudioClient;
 import com.chua.common.support.ai.audio.TextToAudioClient;
 
@@ -7,7 +8,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
- * 最小化验证脚本：TTS生成 → STT回读，绕过 ExampleBase 依赖。
+ @author CH
+ *脚本：TTS生成 → STT回读，绕过 ExampleBase 依赖。
  */
 public final class VoiceCloneExample {
 
@@ -15,32 +17,32 @@ public final class VoiceCloneExample {
 
     public static void main(String[] args) throws Exception {
         if (args.length < 1) {
-            System.out.println("用法: VoiceCloneExample <text> [refWav]");
+            log.info("用法: VoiceCloneExample <text> [refWav]");
             System.exit(0);
         }
         String text = args[0];
         String refWav = args.length > 1 ? args[1] : null;
 
-        System.out.println("===== TTS→STT 验证管线 =====");
-        System.out.println("[pipeline] 文本: " + text);
+        log.info("===== TTS→STT 验证管线 =====");
+        log.info("[pipeline] 文本: " + text);
 
         // Step 1: TTS 生成音频
-        System.out.println("[tts] 合成中...");
+        log.info("[tts] 合成中...");
         Path wavPath = generateTts(text);
-        System.out.println("[tts] 音频: " + wavPath.toFile().length() + " bytes → " + wavPath);
-        System.out.println("[tts] 播放提示: explorer \"" + wavPath + "\"");
+        log.info("[tts] 音频: " + wavPath.toFile().length() + " bytes → " + wavPath);
+        log.info("[tts] 播放提示: explorer \"" + wavPath + "\"");
 
         // Step 2: STT 回读
-        System.out.println("[stt] 回读中...");
+        log.info("[stt] 回读中...");
         String transcript = transcribe(wavPath.toString());
-        System.out.println("[stt] 转写结果: " + transcript);
+        log.info("[stt] 转写结果: " + transcript);
 
         // Step 3: 匹配验证
         String cleaned = text.trim().toLowerCase();
         String matched = transcript != null ? transcript.trim().toLowerCase() : "";
-        System.out.println("[verify] 原始: " + cleaned);
-        System.out.println("[verify] 转写: " + matched);
-        System.out.println("[verify] 匹配: " + (cleaned.equals(matched) ? "YES" : "部分匹配/不匹配"));
+        log.info("[verify] 原始: " + cleaned);
+        log.info("[verify] 转写: " + matched);
+        log.info("[verify] 匹配: " + (cleaned.equals(matched) ? "YES" : "部分匹配/不匹配"));
     }
 
     static Path generateTts(String text) throws Exception {

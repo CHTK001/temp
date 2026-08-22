@@ -39,7 +39,7 @@ public class SegmentationExample {
         for (String modelName : models) {
             String outputDir = OUTPUT_ROOT + modelName + "\\";
             Files.createDirectories(Path.of(outputDir));
-            System.out.println("===== 测试: " + modelName + " =====");
+            log.info("===== 测试: " + modelName + " =====");
             ImageEnhancer enhancer = ServiceProvider.of(ImageEnhancer.class).getNewExtension("onnx", "");
             if (enhancer == null) {
                 System.err.println("[FAIL] ImageEnhancer SPI 未加载");
@@ -61,9 +61,9 @@ public class SegmentationExample {
                              byte[] result = enhancer.enhance(imageData);
                              String outName = name.replaceAll("\\.(jpg|jpeg|webp)$", ".png");
                              Files.write(Path.of(outputDir + outName), result);
-                             System.out.println((System.currentTimeMillis() - t0) + "ms, " + (result.length / 1024) + "KB");
+                             log.info((System.currentTimeMillis() - t0) + "ms, " + (result.length / 1024) + "KB");
                          } catch (Exception e) {
-                             System.out.println("FAIL: " + e.getMessage());
+                             log.info("FAIL: " + e.getMessage());
                          }
                      });
             }

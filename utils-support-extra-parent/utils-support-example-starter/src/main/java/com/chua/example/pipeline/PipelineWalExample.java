@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 4.0.0.42
  */
 @Slf4j
-public class `PipelineWalExample implements Example {
+public class PipelineWalExample implements Example {
 
     /** Exit_code_success */
     private static final int EXIT_CODE_SUCCESS = 0;
@@ -37,7 +37,7 @@ public class `PipelineWalExample implements Example {
     public static void main(String[] args) {
         String type = PipelineBasicExample.parseType(args);
         boolean passed = runTest(type);
-        System.out.println("[PipelineWalExample] type=" + type + ", passed=" + passed);
+        log.info("[PipelineWalExample] type=" + type + ", passed=" + passed);
         System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
     }
 
@@ -275,7 +275,7 @@ public class `PipelineWalExample implements Example {
 
     /** PrintResult */
     private static void printResult(String testName, boolean ok) {
-        System.out.println((ok ? "[PASS] " : "[FAIL] ") + testName);
+        log.info((ok ? "[PASS] " : "[FAIL] ") + testName);
     }
 
     /** CleanupDir */

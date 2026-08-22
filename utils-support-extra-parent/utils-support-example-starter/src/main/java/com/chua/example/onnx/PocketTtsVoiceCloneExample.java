@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.ai.audio.AudioClient;
 import com.chua.common.support.ai.audio.TextToAudioClient;
 
@@ -25,7 +26,7 @@ import java.nio.file.Path;
  *   # 完整管线：TTS 生成 → STT 回读
  *   PocketTtsVoiceCloneExample pipeline "你好世界"
  * }</pre>
- *
+ *@author CH`n *
  * @since 4.0.0.42
  */
 public final class PocketTtsVoiceCloneExample extends ExampleBase {
@@ -69,7 +70,7 @@ public final class PocketTtsVoiceCloneExample extends ExampleBase {
             case "transcribe" -> {
                 String audioPath = args.length > 1 ? args[1] : null;
                 if (audioPath == null) {
-                    System.out.println("用法: transcribe <音频路径>");
+                    log.info("用法: transcribe <音频路径>");
                     return;
                 }
                 transcribe(audioPath);
@@ -79,7 +80,7 @@ public final class PocketTtsVoiceCloneExample extends ExampleBase {
                 String text = args.length > 1 ? args[1] : "Hello world";
                 boolean isZh = isChinese(text);
                 String model = isZh ? VITS_ZH : POCKET_TTS;
-                System.out.println("===== TTS→STT 验证管线 =====");
+                log.info("===== TTS→STT 验证管线 =====");
                 System.out.printf("[pipeline] 文本: %s%n", text);
                 System.out.printf("[pipeline] TTS模型: %s%n", model);
 
@@ -92,10 +93,10 @@ public final class PocketTtsVoiceCloneExample extends ExampleBase {
                         wav.length, wav.length / 48000, wavPath);
 
                 // Step 2: STT 回读
-                System.out.println("[pipeline] STT 回读中...");
+                log.info("[pipeline] STT 回读中...");
                 transcribe(wavPath.toString(), model);
             }
-            default -> System.out.println("用法：\n  synthesize <文本>   # 默认音色\n  zh <文本>           # 中文专用\n  clone [参考音频] <文本>  # 声音克隆\n  transcribe <音频>    # STT识别\n  pipeline <文本>      # TTS→STT验证");
+            default -> log.info("用法：\n  synthesize <文本>   # 默认音色\n  zh <文本>           # 中文专用\n  clone [参考音频] <文本>  # 声音克隆\n  transcribe <音频>    # STT识别\n  pipeline <文本>      # TTS→STT验证");
         }
     }
 
@@ -157,7 +158,7 @@ public final class PocketTtsVoiceCloneExample extends ExampleBase {
 
     /** 自动生成默认音色参考音频 */
     private static byte[] autoRef() throws Exception {
-        System.out.println("[clone] 自动生成参考音频...");
+        log.info("[clone] 自动生成参考音频...");
         try (TextToAudioClient c = TextToAudioClient.create(TTS_PROVIDER, "")) {
             c.model(POCKET_TTS);
             return c.synthesize("This is a reference voice sample.");

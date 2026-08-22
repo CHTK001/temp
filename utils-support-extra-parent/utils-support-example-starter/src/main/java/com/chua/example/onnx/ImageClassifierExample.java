@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.engine.ModelRegistry;
 import com.chua.deeplearning.support.image.ImageClassifier;
 
@@ -15,7 +16,7 @@ import java.nio.file.Path;
  *   ImageClassifierExample list
  *   ImageClassifierExample efficient-net-lite0-classification cat.jpg
  * }</pre>
- *
+ *@author CH`n *
  * @since 4.0.0.42
  */
 public final class ImageClassifierExample extends ExampleBase {
@@ -37,15 +38,15 @@ public final class ImageClassifierExample extends ExampleBase {
             return;
         }
         if (imagePath == null) {
-            System.out.println("[classify] 需要图片路径");
+            log.info("[classify] 需要图片路径");
             return;
         }
         byte[] img = Files.readAllBytes(Path.of(imagePath));
         ImageClassifier classifier = ImageClassifier.create(model);
         long t0 = System.currentTimeMillis();
         String label = classifier.classify(img);
-        System.out.println("[classify] model: " + model + " 图片: " + imagePath);
-        System.out.println("       label: " + label);
+        log.info("[classify] model: " + model + " 图片: " + imagePath);
+        log.info("       label: " + label);
         printResult("classify", "onnx", model, t0);
     }
 }

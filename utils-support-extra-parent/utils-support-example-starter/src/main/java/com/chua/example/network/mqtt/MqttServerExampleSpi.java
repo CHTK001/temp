@@ -3,7 +3,7 @@ package com.chua.example.network.mqtt;
 import com.chua.common.support.network.server.ServerSetting;
 import com.chua.mqtt.support.client.MqttClientWrapper;
 import com.chua.mqtt.support.server.MqttServer;
-import com.chua.example.network.perf.PerfReport;
+import com.chua.example.network.perf.PerfReportExample;
 import com.chua.example.spi.Example;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,6 +17,10 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.LongAdder;
 
 /**
@@ -145,17 +149,17 @@ public class MqttServerExampleSpi implements Example {
 
     /** 运行Perf */
     private boolean runPerf(int concurrency, int connections, int requestsPerConn, int payloadSize) {
-        PerfReport.printEnvironment("MqttServer", "mqtt", "无 (本地直连)");
+        PerfReportExample.printEnvironment("MqttServer", "mqtt", "无 (本地直连)");
         log.info("  │ 代理路径 : MqttClientWrapper (Paho) -> MqttServer (原生 ServerSocket + fixed worker pool)");
         MqttServer server = null;
         try {
             server = newMqttServer(connections);
             int port = server.getPort();
-            PerfReport.SweepRow row = runPerfInner(concurrency, connections, requestsPerConn, payloadSize, port, server);
+            PerfReportExample.SweepRow row = runPerfInner(concurrency, connections, requestsPerConn, payloadSize, port, server);
             if (row == null) {
                 return false;
             }
-            PerfReport.printResult("mqtt-server PUBLISH bench/topic 压力", row.concurrency, row.connections, row.requestsPerConn,
+            PerfReportExample.printResult("mqtt-server PUBLISH bench/topic 压力", row.concurrency, row.connections, row.requestsPerConn,
                     payloadSize, row.total, row.errors, row.elapsedMs, row.sortedLatencyNs, 0L);
             pass();
             return true;
@@ -169,7 +173,7 @@ public class MqttServerExampleSpi implements Example {
 
     /** 运行Sweep */
     private boolean runSweep(int payloadSize) {
-        PerfReport.printEnvironment("MqttServer [sweep]", "mqtt", "无 (本地直连)");
+        PerfReportExample.printEnvironment("MqttServer [sweep]", "mqtt", "无 (本地直连)");
         log.info("  │ 代理路径 : MqttClientWrapper (Paho) -> MqttServer (原生 ServerSocket + fixed worker pool)");
         MqttServer server = null;
         try {
@@ -177,16 +181,16 @@ public class MqttServerExampleSpi implements Example {
             server = newMqttServer(maxConn);
             int port = server.getPort();
 
-            List<PerfReport.SweepRow> rows = new ArrayList<>();
+            List<PerfReportExample.SweepRow> rows = new ArrayList<>();
             for (int cc : SWEEP_CONCURRENCY) {
                 int conn = Math.min(SWEEP_CONNECTIONS, Math.max(1, cc / 8));
                 int req = SWEEP_REQUESTS_PER_CONN;
-                PerfReport.SweepRow row = runPerfInner(cc, conn, req, payloadSize, port, server);
+                PerfReportExample.SweepRow row = runPerfInner(cc, conn, req, payloadSize, port, server);
                 if (row != null) {
                     rows.add(row);
                 }
             }
-            PerfReport.printSweepResult("mqtt-server PUBLISH 扫档 (按并发分配连接 / 500 请求每连接 / 并发扫描)", payloadSize, rows);
+            PerfReportExample.printSweepResult("mqtt-server PUBLISH 扫档 (按并发分配连接 / 500 请求每连接 / 并发扫描)", payloadSize, rows);
             return !rows.isEmpty();
         } catch (Exception e) {
             log.error("SWEEP 异常: {}", e.getMessage(), e);
@@ -217,7 +221,7 @@ public class MqttServerExampleSpi implements Example {
      * @param port port
      * @param server server
      */
-    private PerfReport.SweepRow runPerfInner(int concurrency, int connections, int requestsPerConn, int payloadSize,
+    private PerfReportExample.SweepRow runPerfInner(int concurrency, int connections, int requestsPerConn, int payloadSize,
                                               int port, MqttServer server) {
         ExecutorService pool = null;
         List<MqttClientWrapper> clients = Collections.synchronizedList(new ArrayList<>(connections));
@@ -229,7 +233,7 @@ public class MqttServerExampleSpi implements Example {
             CountDownLatch receivedAll = new CountDownLatch(connections * requestsPerConn);
             server.onSubscribe("bench/topic", (topic, payloadStr) -> receivedAll.countDown());
 
-            pool = Executors.newFixedThreadPool(concurrency);
+            pool = new ThreadPoolExecutor(concurrency, concurrency, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(256), new ThreadFactory() { private final AtomicInteger n = new AtomicInteger(1); public Thread newThread(Runnable r) { Thread t = new Thread(r, "mqtt-bench-" + n.getAndIncrement()); t.setDaemon(true); return t; } });
             CountDownLatch ready = new CountDownLatch(connections);
             CountDownLatch start = new CountDownLatch(1);
             CountDownLatch done = new CountDownLatch(connections);
@@ -284,11 +288,11 @@ public class MqttServerExampleSpi implements Example {
                 return null;
             }
 
-            long[] all = PerfReport.mergeLatencies(latencies);
+            long[] all = PerfReportExample.mergeLatencies(latencies);
             Arrays.sort(all);
             long total = (long) connections * requestsPerConn;
             long elapsedMs = elapsedNs / 1_000_000L;
-            return new PerfReport.SweepRow(concurrency, connections, requestsPerConn, total, errors.sum(), elapsedMs, all);
+            return new PerfReportExample.SweepRow(concurrency, connections, requestsPerConn, total, errors.sum(), elapsedMs, all);
         } catch (Exception e) {
             log.warn("  │ 并发={} 异常: {}", concurrency, e.getMessage());
             return null;

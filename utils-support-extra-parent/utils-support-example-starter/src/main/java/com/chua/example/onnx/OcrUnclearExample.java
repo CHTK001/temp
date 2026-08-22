@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.reflection.ReflectUtils;
 import com.chua.deeplearning.support.ocr.OcrPipeline;
 import com.chua.deeplearning.support.ocr.OcrResult;
@@ -13,7 +14,7 @@ import java.util.List;
 
 /**
  * 诊断三张"很不清楚的文字图片"：方向模型分类 → correct 是否旋转 → 识别。
- *
+ *@author CH`n *
  * @since 4.0.0.42
  */
 public final class OcrUnclearExample {
@@ -42,24 +43,24 @@ public final class OcrUnclearExample {
 
         for (String name : files) {
             byte[] img = Files.readAllBytes(Path.of("G:\\images", name));
-            System.out.println("===== " + name + " =====");
+            log.info("===== " + name + " =====");
             Mat m0 = ImageUtils.decode(img);
-            System.out.println("  原图尺寸=" + m0.cols() + "x" + m0.rows());
+            log.info("  原图尺寸=" + m0.cols() + "x" + m0.rows());
 
             Object dr = dirT.translate(img);
             String cls = String.valueOf(ReflectUtils.invoke(dr, "getName", Object.class));
             double prob = (double) ReflectUtils.invoke(dr, "getProbability", double.class);
-            System.out.println("  方向分类=" + cls + " prob=" + String.format("%.3f", prob));
+            log.info("  方向分类=" + cls + " prob=" + String.format("%.3f", prob));
 
             byte[] corrected = ocr.correct(img);
             boolean rotated = !java.util.Arrays.equals(img, corrected);
             Mat m1 = ImageUtils.decode(corrected);
-            System.out.println("  矫正后=" + (rotated ? "已旋转" : "未旋转") + " 尺寸=" + m1.cols() + "x" + m1.rows());
+            log.info("  矫正后=" + (rotated ? "已旋转" : "未旋转") + " 尺寸=" + m1.cols() + "x" + m1.rows());
             m0.release();
             m1.release();
 
             List<OcrResult> results = ocr.recognizeDetail(img);
-            System.out.println("  识别块数=" + results.size());
+            log.info("  识别块数=" + results.size());
             for (OcrResult r : results) {
                 System.out.printf("    [%.2f] '%s'%n", r.confidence(), r.text());
             }

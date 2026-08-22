@@ -26,13 +26,13 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 4.0.0.42
  */
 @Slf4j
-public class `PipelineRetryExample implements Example {
+public class PipelineRetryExample implements Example {
 
     /** Main */
     public static void main(String[] args) {
         String type = PipelineBasicExample.parseType(args);
         boolean passed = runTest(type);
-        System.out.println("[PipelineRetryExample] type=" + type + ", passed=" + passed);
+        log.info("[PipelineRetryExample] type=" + type + ", passed=" + passed);
         System.exit(passed ? 0 : 1);
     }
 
@@ -289,6 +289,6 @@ public class `PipelineRetryExample implements Example {
      * @param passed 是否通过
      */
     private static void printResult(String name, boolean passed) {
-        System.out.println((passed ? "[PASS] " : "[FAIL] ") + name);
+        log.info((passed ? "[PASS] " : "[FAIL] ") + name);
     }
 }

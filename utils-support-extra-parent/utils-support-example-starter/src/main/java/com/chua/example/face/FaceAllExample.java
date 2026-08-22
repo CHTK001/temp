@@ -16,7 +16,7 @@ import java.util.List;
  * @since 4.0.0.42
  */
 @Slf4j
-public class FaceAllTestExample {
+public class FaceAllExample {
 
     /**
      * 程序退出码：成功
@@ -44,7 +44,7 @@ public class FaceAllTestExample {
                 .emotion("emotion-ferplus")
                 .build();
 
-        System.out.println("===== 人脸全能力测试 =====");
+        log.info("===== 人脸全能力测试 =====");
         List<String> images = List.of(
                 "1people.png", "1people2.png", "man.png", "mask2.jpeg", "mask6.jpeg",
                 "lineart.png", "car plate1.webp", "fire.webp");
@@ -55,13 +55,13 @@ public class FaceAllTestExample {
                 if (!Files.exists(path)) {
                     continue;
                 }
-                System.out.println("\n=== " + name + " ===");
+                log.info("\n=== " + name + " ===");
                 long t0 = System.currentTimeMillis();
                 byte[] imageData = Files.readAllBytes(path);
 
                 // 1. 检测
                 var hits = face.detect(imageData);
-                System.out.println("  检测: " + hits.size() + " 张脸 (" + (System.currentTimeMillis() - t0) + "ms)");
+                log.info("  检测: " + hits.size() + " 张脸 (" + (System.currentTimeMillis() - t0) + "ms)");
                 if (hits.isEmpty()) {
                     continue;
                 }
@@ -70,51 +70,51 @@ public class FaceAllTestExample {
                 byte[] faceCrop = hits.get(0).faceImage();
                 try {
                     float[] feat = face.extractFeature(faceCrop);
-                    System.out.println("  特征: " + (feat == null ? 0 : feat.length) + " 维");
+                    log.info("  特征: " + (feat == null ? 0 : feat.length) + " 维");
                 } catch (Exception e) {
-                    System.out.println("  特征: FAIL " + shortMsg(e));
+                    log.info("  特征: FAIL " + shortMsg(e));
                 }
                 try {
                     String attrs = face.attributes(faceCrop);
-                    System.out.println("  属性: " + (attrs == null || attrs.isBlank() ? "null" : attrs));
+                    log.info("  属性: " + (attrs == null || attrs.isBlank() ? "null" : attrs));
                 } catch (Exception e) {
-                    System.out.println("  属性: FAIL " + shortMsg(e));
+                    log.info("  属性: FAIL " + shortMsg(e));
                 }
                 try {
                     String emo = face.emotion(faceCrop);
-                    System.out.println("  表情: " + (emo == null || emo.isBlank() ? "null" : emo));
+                    log.info("  表情: " + (emo == null || emo.isBlank() ? "null" : emo));
                 } catch (Exception e) {
-                    System.out.println("  表情: FAIL " + shortMsg(e));
+                    log.info("  表情: FAIL " + shortMsg(e));
                 }
                 try {
                     float[] lm = face.landmark(faceCrop);
-                    System.out.println("  关键点: " + (lm == null ? 0 : lm.length) + " 点");
+                    log.info("  关键点: " + (lm == null ? 0 : lm.length) + " 点");
                 } catch (Exception e) {
-                    System.out.println("  关键点: FAIL " + shortMsg(e));
+                    log.info("  关键点: FAIL " + shortMsg(e));
                 }
                 for (int i = 0; i < hits.size(); i++) {
                     try {
                         float live = face.liveScore(hits.get(i).faceImage());
-                        System.out.println("  活体[脸" + (i + 1) + "]: " + String.format("%.3f", live));
+                        log.info("  活体[脸" + (i + 1) + "]: " + String.format("%.3f", live));
                     } catch (Exception e) {
-                        System.out.println("  活体[脸" + (i + 1) + "]: FAIL " + shortMsg(e));
+                        log.info("  活体[脸" + (i + 1) + "]: FAIL " + shortMsg(e));
                     }
                 }
-                System.out.println("  总耗时: " + (System.currentTimeMillis() - t0) + "ms");
+                log.info("  总耗时: " + (System.currentTimeMillis() - t0) + "ms");
             } catch (Exception e) {
-                System.out.println("  FAIL: " + shortMsg(e));
+                log.info("  FAIL: " + shortMsg(e));
             }
         }
 
         // 1:1 比对
-        System.out.println("\n===== 1:1 比对 =====");
+        log.info("\n===== 1:1 比对 =====");
         try {
             byte[] img1 = Files.readAllBytes(Path.of("D:\\images\\1people.png"));
             byte[] img2 = Files.readAllBytes(Path.of("D:\\images\\man.png"));
             var r = face.compareWithMeta(img1, img2);
-            System.out.println(" 1people vs man: " + r);
+            log.info(" 1people vs man: " + r);
         } catch (Exception e) {
-            System.out.println("  FAIL: " + shortMsg(e));
+            log.info("  FAIL: " + shortMsg(e));
         }
         return true;
     }

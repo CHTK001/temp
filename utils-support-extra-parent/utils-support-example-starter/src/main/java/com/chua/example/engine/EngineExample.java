@@ -177,9 +177,9 @@ public class EngineExample {
 
     /** PrintStep */
     private static void printStep(String step) {
-        System.out.println("\n========================================");
-        System.out.println("  " + step);
-        System.out.println("========================================");
+        log.info("\n========================================");
+        log.info("  " + step);
+        log.info("========================================");
     }
 
     /** PrintResult */
@@ -222,9 +222,9 @@ public class EngineExample {
 
     /** PrintList */
     private static <T> void printList(String label, List<T> list) {
-        System.out.println("  " + label + " (" + list.size() + " rows):");
+        log.info("  " + label + " (" + list.size() + " rows):");
         for (T item : list) {
-            System.out.println("    " + item);
+            log.info("    " + item);
         }
     }
 
@@ -272,14 +272,14 @@ public class EngineExample {
         System.setProperty("ENABLE_NEO4J_BOOTSTRAP_FACTORY_CLASS", "deprecated");
         Neo4jEngine engine = new Neo4jEngine();
         engine.connect(uri, user, password);
-        System.out.println("[SETUP] Neo4j engine connected: " + uri);
+        log.info("[SETUP] Neo4j engine connected: " + uri);
         return engine;
     }
 
     /** SetupSqlite */
     private static Engine setupSqlite() {
         String dbFile = System.getProperty("sqlite.file", DEFAULT_SQLITE_FILE);
-        System.out.println("[SETUP] SQLite file: " + dbFile);
+        log.info("[SETUP] SQLite file: " + dbFile);
         return new SqliteEngine().addDataSource("default", dbFile);
     }
 
@@ -290,41 +290,41 @@ public class EngineExample {
         String database = System.getProperty("mysql.database", DEFAULT_MYSQL_DATABASE);
         String username = System.getProperty("mysql.user", DEFAULT_MYSQL_USER);
         String password = System.getProperty("mysql.password", DEFAULT_MYSQL_PASSWORD);
-        System.out.println("[SETUP] MySQL: jdbc:mysql://" + host + ":" + port + "/" + database);
+        log.info("[SETUP] MySQL: jdbc:mysql://" + host + ":" + port + "/" + database);
         return new MysqlEngine().addDataSource("default", host, port, database, username, password);
     }
 
     /** SetupLucene */
     private static Engine setupLucene() {
         String indexPath = System.getProperty("lucene.index", DEFAULT_LUCENE_INDEX);
-        System.out.println("[SETUP] Lucene index: " + indexPath);
+        log.info("[SETUP] Lucene index: " + indexPath);
         return new LuceneEngine(Paths.get(indexPath));
     }
 
     /** SetupFile */
     private static Engine setupFile() {
         String dataDir = System.getProperty("file.dir", DEFAULT_FILE_DIR);
-        System.out.println("[SETUP] File store: " + dataDir);
+        log.info("[SETUP] File store: " + dataDir);
         return new FileEngine();
     }
 
     /** SetupInMemory */
     private static Engine setupInMemory() {
-        System.out.println("[SETUP] InMemory engine");
+        log.info("[SETUP] InMemory engine");
         return new InMemoryEngine();
     }
 
     /** SetupDuckDB */
     private static Engine setupDuckDB() {
         String dbFile = System.getProperty("duckdb.file", DEFAULT_DUCKDB_FILE);
-        System.out.println("[SETUP] DuckDB: " + dbFile);
+        log.info("[SETUP] DuckDB: " + dbFile);
         return new DuckDBEngine();
     }
 
     /** SetupHBase */
     private static Engine setupHBase() {
         String zkQuorum = System.getProperty("hbase.zk", DEFAULT_HBASE_ZK);
-        System.out.println("[SETUP] HBase ZK: " + zkQuorum);
+        log.info("[SETUP] HBase ZK: " + zkQuorum);
         return new HBaseEngine();
     }
 
@@ -332,28 +332,28 @@ public class EngineExample {
     private static Engine setupInfluxDb() {
         String url = System.getProperty("influxdb.url", DEFAULT_INFLUXDB_URL);
         String token = System.getProperty("influxdb.token", "");
-        System.out.println("[SETUP] InfluxDB: " + url);
+        log.info("[SETUP] InfluxDB: " + url);
         return new InfluxDbEngine();
     }
 
     /** SetupParquet */
     private static Engine setupParquet() {
         String filePath = System.getProperty("parquet.file", DEFAULT_PARQUET_FILE);
-        System.out.println("[SETUP] Parquet: " + filePath);
+        log.info("[SETUP] Parquet: " + filePath);
         return new ParquetEngine();
     }
 
     /** SetupElasticsearch */
     private static Engine setupElasticsearch() {
         String esUrl = System.getProperty("elasticsearch.url", DEFAULT_ELASTICSEARCH_URL);
-        System.out.println("[SETUP] Elasticsearch engine: " + esUrl);
-        return new ElasticsearchEngine().addDataSource("default", new SimpleEngineDataSource(esUrl));
+        log.info("[SETUP] Elasticsearch engine: " + esUrl);
+        return new ElasticsearchEngine().addDataSource("default", new SimpleEngineDataSourceExample(esUrl));
     }
 
     /** SetupTablesaw */
     private static Engine setupTablesaw() {
         String csvFile = System.getProperty("tablesaw.file", DEFAULT_TABLESAW_FILE);
-        System.out.println("[SETUP] Tablesaw: " + csvFile);
+        log.info("[SETUP] Tablesaw: " + csvFile);
         try {
             Path p = Paths.get(csvFile);
             if (Files.notExists(p)) {
@@ -367,7 +367,7 @@ public class EngineExample {
                 }
             }
         } catch (Exception e) {
-            System.out.println("[WARN] Tablesaw CSV 创建失败: " + e.getMessage());
+            log.info("[WARN] Tablesaw CSV 创建失败: " + e.getMessage());
         }
         return new TablesawEngine().load("test", csvFile);
     }
@@ -375,14 +375,14 @@ public class EngineExample {
     /** SetupSolr */
     private static Engine setupSolr() {
         String solrUrl = System.getProperty("solr.url", DEFAULT_SOLR_URL);
-        System.out.println("[SETUP] Solr engine: " + solrUrl);
-        return new SolrEngine().addDataSource("default", new SimpleEngineDataSource(solrUrl));
+        log.info("[SETUP] Solr engine: " + solrUrl);
+        return new SolrEngine().addDataSource("default", new SimpleEngineDataSourceExample(solrUrl));
     }
 
     /** SetupNitrite */
     private static Engine setupNitrite() {
         String filePath = System.getProperty("nitrite.file", DEFAULT_NITRITE_FILE);
-        System.out.println("[SETUP] Nitrite file: " + filePath);
+        log.info("[SETUP] Nitrite file: " + filePath);
         return new NitriteEngine().addDataSource("default", filePath);
     }
 
@@ -440,7 +440,7 @@ public class EngineExample {
 
         printStep("STEP 10: one() - find single user by id=1");
         Object oneUser = engine.query(User.class).eq(User::id, 1).one();
-        System.out.println("  one() result: " + oneUser);
+        log.info("  one() result: " + oneUser);
         assertTrue("one() not null", oneUser != null);
 
         printStep("STEP 11: page() - page 1 size 2");
@@ -454,29 +454,29 @@ public class EngineExample {
                 .set(User::age, 31)
                 .eq(User::name, "Alice")
                 .update();
-        System.out.println("  update affected rows: " + updated);
+        log.info("  update affected rows: " + updated);
         assertTrue("update affected > 0", updated > 0);
 
         printStep("STEP 13: verify update");
         List<?> afterUpdate = engine.query(User.class).eq(User::name, "Alice").list();
-        System.out.println("  after update Alice: " + afterUpdate);
+        log.info("  after update Alice: " + afterUpdate);
         assertTrue("Alice still found", !afterUpdate.isEmpty());
 
         printStep("STEP 14: delete() - remove where name=Bob");
         int deleted = engine.delete(User.class)
                 .eq(User::name, "Bob")
                 .remove();
-        System.out.println("  delete affected rows: " + deleted);
+        log.info("  delete affected rows: " + deleted);
         assertTrue("delete affected > 0", deleted > 0);
 
         printStep("STEP 15: verify delete");
         List<?> afterDelete = engine.query(User.class).eq(User::name, "Bob").list();
-        System.out.println("  after delete Bob: " + afterDelete);
+        log.info("  after delete Bob: " + afterDelete);
         assertEq("Bob not found", afterDelete.size(), 0);
 
-        System.out.println("\n========================================");
-        System.out.println("  ALL TESTS PASSED");
-        System.out.println("========================================");
+        log.info("\n========================================");
+        log.info("  ALL TESTS PASSED");
+        log.info("========================================");
     }
 
     /** Main */
@@ -492,7 +492,7 @@ public class EngineExample {
         }
 
         String engineType = cli.get("type", DEFAULT_ENGINE_TYPE);
-        System.out.println("[MAIN] Engine type: " + engineType);
+        log.info("[MAIN] Engine type: " + engineType);
 
         Engine engine = null;
         try {
@@ -507,7 +507,7 @@ public class EngineExample {
             if (engine != null) {
                 try {
                     engine.close();
-                    System.out.println("[MAIN] Engine closed.");
+                    log.info("[MAIN] Engine closed.");
                 } catch (Exception e) {
                     System.err.println("[WARN] Error closing engine: " + e.getMessage());
                 }

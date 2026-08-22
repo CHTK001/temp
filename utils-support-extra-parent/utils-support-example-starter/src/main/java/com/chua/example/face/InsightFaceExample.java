@@ -1,5 +1,6 @@
 package com.chua.example.face;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.draw.DrawerPipeline;
 import com.chua.deeplearning.support.face.FaceDetectionHit;
 import com.chua.deeplearning.support.face.FacePipeline;
@@ -22,6 +23,7 @@ import java.util.List;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public class InsightFaceExample {
 
     /** 输出根目录 */
@@ -45,7 +47,7 @@ public class InsightFaceExample {
             if (!Files.exists(f)) {
                 continue;
             }
-            System.out.println("\n===== " + file + " =====");
+            log.info("\n===== " + file + " =====");
             byte[] imageData = Files.readAllBytes(f);
             BufferedImage src = ImageIO.read(new ByteArrayInputStream(imageData));
 
@@ -74,7 +76,7 @@ public class InsightFaceExample {
                             box.x(), box.y(), box.width(), box.height(), box.confidence(),
                             feat.length, lm.length / 2, gender, age);
                 } catch (Exception e) {
-                    System.out.println("  下游模型 FAIL: " + e.getMessage());
+                    log.info("  下游模型 FAIL: " + e.getMessage());
                 }
             }
 
@@ -82,12 +84,12 @@ public class InsightFaceExample {
                 byte[] drawn = new DrawerPipeline(0.5f)
                         .target(imageData).boxes(boxes, labels).done();
                 Files.write(Path.of(outputDir + file), drawn);
-                System.out.println("  输出: " + outputDir + file);
+                log.info("  输出: " + outputDir + file);
             }
         }
 
         // AdaFace 特征比对验证：同人图相似度应显著高于异人图
-        System.out.println("\n===== AdaFace 特征比对 =====");
+        log.info("\n===== AdaFace 特征比对 =====");
         try {
             float[] f1 = largestFeature(face, adaface, "1people.png");
             float[] f2 = largestFeature(face, adaface, "1people2.png");
@@ -100,7 +102,7 @@ public class InsightFaceExample {
             System.out.printf("  cos(1people, anime)    = %.3f %s%n",
                     cosine(f1, f4), f1 != null && f4 != null && cosine(f1, f4) > 0.5 ? "(同人?)" : "(异人?)");
         } catch (Exception e) {
-            System.out.println("  特征比对 FAIL: " + e.getMessage());
+            log.info("  特征比对 FAIL: " + e.getMessage());
         }
     }
 

@@ -51,7 +51,7 @@ public class ImageClarityDetectorExample {
      * @throws IOException 读取文件异常
      */
     public static boolean runTest(String imagePath) throws IOException {
-        System.out.println("===== 图片清晰度检测 (OpenCV 嵌入式) =====");
+        log.info("===== 图片清晰度检测 (OpenCV 嵌入式) =====");
         ImageClarityDetector imageDetector = ImageClarityDetector.create("opencv", "");
         if (imageDetector == null) {
             System.err.println("[FAIL] OpenCV 图片清晰度 SPI 未加载");
@@ -100,7 +100,7 @@ public class ImageClarityDetectorExample {
             System.out.printf("[人脸] %-40s faces=%d -> %s%n",
                     name, faceInfo.faceCount(), faceInfo.message());
         } catch (Exception e) {
-            System.out.println("[FAIL] " + file.getFileName() + ": " + e.getMessage());
+            log.info("[FAIL] " + file.getFileName() + ": " + e.getMessage());
         }
     }
 }

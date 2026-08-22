@@ -21,13 +21,13 @@ import com.chua.example.spi.Example;
  * @since 4.0.0.42
  */
 @Slf4j
-public class `PipelineTreeExample implements Example {
+public class PipelineTreeExample implements Example {
 
     /** Main */
     public static void main(String[] args) {
         String type = PipelineBasicExample.parseType(args);
         boolean passed = runTest(type);
-        System.out.println("[PipelineTreeExample] type=" + type + ", passed=" + passed);
+        log.info("[PipelineTreeExample] type=" + type + ", passed=" + passed);
         System.exit(passed ? 0 : 1);
     }
 
@@ -164,6 +164,6 @@ public class `PipelineTreeExample implements Example {
      * @param passed 是否通过
      */
     private static void printResult(String name, boolean passed) {
-        System.out.println((passed ? "[PASS] " : "[FAIL] ") + name);
+        log.info((passed ? "[PASS] " : "[FAIL] ") + name);
     }
 }

@@ -38,7 +38,7 @@ public class OcrOutputExample {
      */
     public static void main(String[] args) throws Exception {
         if (args.length < 1) {
-            System.out.println("用法: OcrOutputExample <图片路径> [输出目录]");
+            log.info("用法: OcrOutputExample <图片路径> [输出目录]");
             return;
         }
         String imgPath = args[0];

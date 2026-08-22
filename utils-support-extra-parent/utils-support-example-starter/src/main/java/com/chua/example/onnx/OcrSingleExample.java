@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.image.ImageDetector;
 import com.chua.deeplearning.support.model.DetectionInfo;
 import com.chua.deeplearning.support.model.PredictRectangle;
@@ -12,7 +13,7 @@ import java.util.List;
 
 /**
  * 单图 OCR 诊断：输出检测框明细 + 每块识别文本/置信度 + 裁剪图，定位识别失败环节。
- *
+ *@author CH`n *
  * @since 4.0.0.42
  */
 public final class OcrSingleExample {
@@ -24,7 +25,7 @@ public final class OcrSingleExample {
     /** Main */
     public static void main(String[] args) throws Exception {
         String path = args.length > 0 ? args[0] : "G:\\images\\气象文字.png";
-        System.out.println("[diag] 图片=" + path);
+        log.info("[diag] 图片=" + path);
 
         OcrPipeline ocr = OcrPipeline.builder()
                 .detector("paddleocrv6-medium-det")
@@ -37,13 +38,13 @@ public final class OcrSingleExample {
 
         byte[] corrected = rr.image();
         var cimg = com.chua.deeplearning.support.utils.ImageUtils.decode(corrected);
-        System.out.println("[diag] 矫正后尺寸=" + cimg.cols() + "x" + cimg.rows());
+        log.info("[diag] 矫正后尺寸=" + cimg.cols() + "x" + cimg.rows());
         cimg.release();
 
         // 检测明细
         ImageDetector det = ocr.detector();
         List<DetectionInfo> boxes = det.detect(corrected);
-        System.out.println("[diag] 检测框数=" + boxes.size());
+        log.info("[diag] 检测框数=" + boxes.size());
         int i = 0;
         for (DetectionInfo b : boxes) {
             System.out.printf("  det[%02d] (%.0f,%.0f) %.0fx%.0f angle=%.1f conf=%.2f%n",
@@ -52,7 +53,7 @@ public final class OcrSingleExample {
 
         // 识别明细
         List<OcrResult> results = rr.results();
-        System.out.println("[diag] 识别块数=" + results.size());
+        log.info("[diag] 识别块数=" + results.size());
         i = 0;
         for (OcrResult r : results) {
             PredictRectangle b = r.boundingBox();

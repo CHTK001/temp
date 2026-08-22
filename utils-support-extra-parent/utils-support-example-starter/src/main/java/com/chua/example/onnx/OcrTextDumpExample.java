@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.ocr.OcrPipeline;
 import com.chua.deeplearning.support.ocr.OcrResult;
 
@@ -9,7 +10,7 @@ import java.util.List;
 
 /**
  * 全量识别文本统计：列出每张图全部识别文本，核对是否有明显错字/乱码。
- *
+ *@author CH`n *
  * @since 4.0.0.42
  */
 public final class OcrTextDumpExample {
@@ -34,12 +35,12 @@ public final class OcrTextDumpExample {
                 try {
                     byte[] img = Files.readAllBytes(p);
                     List<OcrResult> results = ocr.recognizeDetail(img);
-                    System.out.println("===== " + p.getFileName() + " (" + results.size() + "块) =====");
+                    log.info("===== " + p.getFileName() + " (" + results.size() + "块) =====");
                     for (OcrResult r : results) {
                         System.out.printf("  [%.2f] %s%n", r.confidence(), r.text());
                     }
                 } catch (Exception e) {
-                    System.out.println("===== " + p.getFileName() + " 异常: " + e.getMessage());
+                    log.info("===== " + p.getFileName() + " 异常: " + e.getMessage());
                 }
             });
         }

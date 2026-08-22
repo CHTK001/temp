@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.ai.feature.FeatureClient;
 
 /**
@@ -13,7 +14,7 @@ import com.chua.common.support.ai.feature.FeatureClient;
  *   FeatureClientExample onnx clip-text-feature "a cat"
  *   FeatureClientExample onnx clip-image-feature <图片路径>
  * }</pre>
- *
+ *@author CH`n *
  * @since 4.0.0.42
  */
 public final class FeatureClientExample extends ExampleBase {
@@ -48,8 +49,8 @@ public final class FeatureClientExample extends ExampleBase {
         } else {
             vec = client.extract(input);
         }
-        System.out.println("[feature] input: " + input);
-        System.out.println("       dim: " + vec.length);
+        log.info("[feature] input: " + input);
+        log.info("       dim: " + vec.length);
         printResult("feature", provider, model, t0);
         client.close();
     }

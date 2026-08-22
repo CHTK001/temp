@@ -17,6 +17,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * RPC 四实现综合自检（SPI 形式）— 覆盖 {@code native / json / dubbo / sofa}。
@@ -31,9 +35,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  *   <li><b>sofa</b> — 蚂蚁 SOFA-RPC（注册中心：local，免外部服务）</li>
  * </ul>
  *
- * <p>除 echo/add 基础回环外，每种实现还断言<b>异常传播</b>（{@link RpcEchoService#fail(String)}
- * 抛出的远程异常原样传回客户端）、<b>复杂对象传输</b>（{@link RpcPayload} 序列化往返）、
- * <b>集合传输</b>（{@link RpcEchoService#batch(List)} 列表往返）；native 额外覆盖
+ * <p>除 echo/add 基础回环外，每种实现还断言<b>异常传播</b>（{@link RpcEchoServiceExample#fail(String)}
+ * 抛出的远程异常原样传回客户端）、<b>复杂对象传输</b>（{@link RpcPayloadExample} 序列化往返）、
+ * <b>集合传输</b>（{@link RpcEchoServiceExample#batch(List)} 列表往返）；native 额外覆盖
  * <b>并发调用</b>（多线程共享同一代理）。</p>
  *
  * <h2>用法</h2>
@@ -204,7 +208,7 @@ public class RpcExample implements Example {
             }
             server = RpcServer.createService(protocolName, List.of(registry), protocol, APP_NAME);
             server.afterPropertiesSet();
-            server.register(RpcEchoService.class.getName(), new RpcEchoServiceImpl());
+            server.register(RpcEchoServiceExample.class.getName(), new RpcEchoServiceExampleImpl());
 
             RpcConsumerConfig consumer = RpcConsumerConfig.auto();
             consumer.setCheck(false);
@@ -226,7 +230,7 @@ public class RpcExample implements Example {
                     protocol.ioThreads(), protocol.queues(), protocol.buffer());
 
             client = RpcClient.createClient(protocolName, List.of(registry), consumer, APP_NAME);
-            RpcEchoService echo = client.get(RpcEchoService.class);
+            RpcEchoServiceExample echo = client.get(RpcEchoServiceExample.class);
 
             // 预热：串行 200 次，建立连接与 JIT 热点
             log.info("  [warmup] 预热中...");
@@ -235,7 +239,7 @@ public class RpcExample implements Example {
             }
 
             // 并发压测
-            ExecutorService pool = Executors.newFixedThreadPool(threads);
+            ThreadPoolExecutor pool = new ThreadPoolExecutor(threads, threads, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(256), new ThreadFactory() { private final AtomicInteger n = new AtomicInteger(1); public Thread newThread(Runnable r) { Thread t = new Thread(r, "rpc-bench-" + n.getAndIncrement()); t.setDaemon(true); return t; } });
             CountDownLatch ready = new CountDownLatch(threads);
             CountDownLatch start = new CountDownLatch(1);
             CountDownLatch done = new CountDownLatch(threads);
@@ -357,13 +361,13 @@ public class RpcExample implements Example {
             server = RpcServer.createService("native",
                     List.of(registry), protocol("native", NATIVE_PORT), APP_NAME);
             server.afterPropertiesSet();
-            server.register(RpcEchoService.class.getName(), new RpcEchoServiceImpl());
+            server.register(RpcEchoServiceExample.class.getName(), new RpcEchoServiceExampleImpl());
 
             RpcConsumerConfig consumer = new RpcConsumerConfig();
             consumer.setTimeout(5000);
             client = RpcClient.createClient("native", List.of(registry), consumer, APP_NAME);
 
-            RpcEchoService echo = client.get(RpcEchoService.class);
+            RpcEchoServiceExample echo = client.get(RpcEchoServiceExample.class);
             assertEcho(echo, "native");
             assertRemoteFail(echo, "native");
             assertConcurrent(echo, "native");
@@ -396,14 +400,14 @@ public class RpcExample implements Example {
             server = RpcServer.createService("json",
                     List.of(registry), protocol("json", JSON_PORT), APP_NAME);
             server.afterPropertiesSet();
-            server.register(RpcEchoService.class.getName(), new RpcEchoServiceImpl());
+            server.register(RpcEchoServiceExample.class.getName(), new RpcEchoServiceExampleImpl());
 
             RpcConsumerConfig consumer = new RpcConsumerConfig();
             consumer.setTimeout(5000);
             consumer.setRetries(1);
             client = RpcClient.createClient("json", List.of(registry), consumer, APP_NAME);
 
-            RpcEchoService echo = client.get(RpcEchoService.class);
+            RpcEchoServiceExample echo = client.get(RpcEchoServiceExample.class);
             assertEcho(echo, "json");
             assertRemoteFail(echo, "json");
             pass();
@@ -436,7 +440,7 @@ public class RpcExample implements Example {
             server = RpcServer.createService("dubbo",
                     List.of(registry), protocol("dubbo", DUBBO_PORT), APP_NAME);
             server.afterPropertiesSet();
-            server.register(RpcEchoService.class.getName(), new RpcEchoServiceImpl());
+            server.register(RpcEchoServiceExample.class.getName(), new RpcEchoServiceExampleImpl());
 
             RpcConsumerConfig consumer = new RpcConsumerConfig();
             consumer.setTimeout(5000);
@@ -444,7 +448,7 @@ public class RpcExample implements Example {
             consumer.setCheck(false);
             client = RpcClient.createClient("dubbo", List.of(registry), consumer, APP_NAME);
 
-            RpcEchoService echo = client.get(RpcEchoService.class);
+            RpcEchoServiceExample echo = client.get(RpcEchoServiceExample.class);
             assertEcho(echo, "dubbo");
             assertRemoteFail(echo, "dubbo");
             pass();
@@ -477,14 +481,14 @@ public class RpcExample implements Example {
             server = RpcServer.createService("sofa",
                     List.of(registry), protocol("bolt", SOFA_PORT), APP_NAME);
             server.afterPropertiesSet();
-            server.register(RpcEchoService.class.getName(), new RpcEchoServiceImpl());
+            server.register(RpcEchoServiceExample.class.getName(), new RpcEchoServiceExampleImpl());
 
             RpcConsumerConfig consumer = new RpcConsumerConfig();
             consumer.setTimeout(5000);
             consumer.setCheck(true);
             client = RpcClient.createClient("sofa", List.of(registry), consumer, APP_NAME);
 
-            RpcEchoService echo = client.get(RpcEchoService.class);
+            RpcEchoServiceExample echo = client.get(RpcEchoServiceExample.class);
             assertEcho(echo, "sofa");
             assertRemoteFail(echo, "sofa");
             pass();
@@ -522,7 +526,7 @@ public class RpcExample implements Example {
      * @param label 实现标识（用于日志）
      * @throws Exception 断言失败或重试耗尽时抛出
      */
-    private static void assertEcho(RpcEchoService echo, String label) throws Exception {
+    private static void assertEcho(RpcEchoServiceExample echo, String label) throws Exception {
         Throwable last = null;
         for (int i = 0; i < MAX_RETRY; i++) {
             try {
@@ -549,16 +553,16 @@ public class RpcExample implements Example {
      *
      * <p>覆盖比 {@code echo/add} 更深的序列化链路：</p>
      * <ul>
-     *   <li>{@link RpcEchoService#echoPayload(RpcPayload)} — 嵌套字段复杂对象原样往返</li>
-     *   <li>{@link RpcEchoService#batch(List)} — 集合参数、集合返回值、泛型擦除后的元素还原</li>
+     *   <li>{@link RpcEchoServiceExample#echoPayload(RpcPayloadExample)} — 嵌套字段复杂对象原样往返</li>
+     *   <li>{@link RpcEchoServiceExample#batch(List)} — 集合参数、集合返回值、泛型擦除后的元素还原</li>
      * </ul>
      *
      * @param echo  远程代理对象
      * @param label 实现标识（用于日志与异常消息）
      */
-    private static void assertComplexRoundTrip(RpcEchoService echo, String label) {
-        RpcPayload sent = new RpcPayload("订单-2026-0818", 42);
-        RpcPayload back = echo.echoPayload(sent);
+    private static void assertComplexRoundTrip(RpcEchoServiceExample echo, String label) {
+        RpcPayloadExample sent = new RpcPayloadExample("订单-2026-0818", 42);
+        RpcPayloadExample back = echo.echoPayload(sent);
         if (!sent.equals(back)) {
             throw new AssertionError(label + " echoPayload 对象往返不一致: 期望 " + sent + "，实际 " + back);
         }
@@ -577,15 +581,15 @@ public class RpcExample implements Example {
      *
      * <p>覆盖序列化/传输链路的边界条件：</p>
      * <ul>
-     *   <li>{@link RpcEchoService#echoNullable(String)} — null 值往返（无类型信息、无字节内容）</li>
-     *   <li>{@link RpcEchoService#echoLarge(String)} — 约 1MB 大对象往返（长度帧 + 缓冲区边界）</li>
-     *   <li>{@link RpcEchoService#echoNested(RpcPayload)} — 三层嵌套对象图往返</li>
+     *   <li>{@link RpcEchoServiceExample#echoNullable(String)} — null 值往返（无类型信息、无字节内容）</li>
+     *   <li>{@link RpcEchoServiceExample#echoLarge(String)} — 约 1MB 大对象往返（长度帧 + 缓冲区边界）</li>
+     *   <li>{@link RpcEchoServiceExample#echoNested(RpcPayloadExample)} — 三层嵌套对象图往返</li>
      * </ul>
      *
      * @param echo  远程代理对象
      * @param label 实现标识（用于日志与异常消息）
      */
-    private static void assertDeepScenarios(RpcEchoService echo, String label) {
+    private static void assertDeepScenarios(RpcEchoServiceExample echo, String label) {
         // null 往返：null 参数应原样返回 null（不 NPE、不误写为空串）
         if (echo.echoNullable(null) != null) {
             throw new AssertionError(label + " echoNullable(null) 未返回 null");
@@ -599,11 +603,11 @@ public class RpcExample implements Example {
         if (!large.equals(echo.echoLarge(large))) {
             throw new AssertionError(label + " echoLarge 1MB 往返不一致");
         }
-        // 深层嵌套：三层 RpcPayload 对象图往返
-        RpcPayload leaf = new RpcPayload("leaf", 1);
-        RpcPayload mid = new RpcPayload("mid", 2, leaf);
-        RpcPayload root = new RpcPayload("root", 3, mid);
-        RpcPayload back = echo.echoNested(root);
+        // 深层嵌套：三层 RpcPayloadExample 对象图往返
+        RpcPayloadExample leaf = new RpcPayloadExample("leaf", 1);
+        RpcPayloadExample mid = new RpcPayloadExample("mid", 2, leaf);
+        RpcPayloadExample root = new RpcPayloadExample("root", 3, mid);
+        RpcPayloadExample back = echo.echoNested(root);
         if (!root.equals(back)) {
             throw new AssertionError(label + " echoNested 三层嵌套往返不一致: " + back);
         }
@@ -620,10 +624,10 @@ public class RpcExample implements Example {
      * @param label 实现标识（用于日志与异常消息）
      * @throws Exception 并发断言失败或线程中断时抛出
      */
-    private static void assertConcurrent(RpcEchoService echo, String label) throws Exception {
+    private static void assertConcurrent(RpcEchoServiceExample echo, String label) throws Exception {
         int threads = 8;
         int perThread = 50;
-        ExecutorService pool = Executors.newFixedThreadPool(threads);
+        ThreadPoolExecutor pool = new ThreadPoolExecutor(threads, threads, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(256), new ThreadFactory() { private final AtomicInteger n = new AtomicInteger(1); public Thread newThread(Runnable r) { Thread t = new Thread(r, "rpc-bench-" + n.getAndIncrement()); t.setDaemon(true); return t; } });
         CountDownLatch ready = new CountDownLatch(threads);
         CountDownLatch start = new CountDownLatch(1);
         AtomicInteger success = new AtomicInteger();
@@ -683,7 +687,7 @@ public class RpcExample implements Example {
      * @param echo  远程代理对象
      * @param label 实现标识（用于日志与异常消息）
      */
-    private static void assertRemoteFail(RpcEchoService echo, String label) {
+    private static void assertRemoteFail(RpcEchoServiceExample echo, String label) {
         try {
             echo.fail("boom-" + label);
             throw new AssertionError(label + " fail 应抛出异常但未抛");

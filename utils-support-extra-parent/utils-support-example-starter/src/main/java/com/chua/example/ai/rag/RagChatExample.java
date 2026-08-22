@@ -58,7 +58,7 @@ import java.util.Map;
  * @since 4.0.0.42
  */
 @Slf4j
-public class `RagChatExample implements Example {
+public $1class RagChatExample implements Example {
 
     /**
      * 默认工作目录：./

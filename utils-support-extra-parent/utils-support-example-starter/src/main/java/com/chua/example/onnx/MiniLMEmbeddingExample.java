@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.ai.embedding.EmbeddingClient;
 
 /**
@@ -14,7 +15,7 @@ import com.chua.common.support.ai.embedding.EmbeddingClient;
  *
  * <p>用法：{@code mvn -o exec:java -Dexec.classpathScope=test
  * -Dexec.mainClass=com.chua.deeplearning.support.onnx.example.MiniLMEmbeddingVerify}</p>
- *
+ *@author CH`n *
  * @since 4.0.0.42
  */
 public final class MiniLMEmbeddingExample {
@@ -29,9 +30,9 @@ public final class MiniLMEmbeddingExample {
         pass &= check("fp32", "minilm", "minilm-fp32");
         pass &= similarityCheck();
         if (pass) {
-            System.out.println("[MiniLMEmbeddingVerify] ALL PASS");
+            log.info("[MiniLMEmbeddingVerify] ALL PASS");
         } else {
-            System.out.println("[MiniLMEmbeddingVerify] FAIL");
+            log.info("[MiniLMEmbeddingVerify] FAIL");
             System.exit(1);
         }
     }
@@ -49,7 +50,7 @@ public final class MiniLMEmbeddingExample {
                     label, model, v1 == null ? 0 : v1.length, norm, ok && near(v1, v2));
             return ok && near(v1, v2);
         } catch (Exception e) {
-            System.out.println("[" + label + "] FAIL: " + e.getMessage());
+            log.info("[" + label + "] FAIL: " + e.getMessage());
             return false;
         }
     }
@@ -74,7 +75,7 @@ public final class MiniLMEmbeddingExample {
                     String.format("%.4f", cross));
             return ok;
         } catch (Exception e) {
-            System.out.println("[similarity] FAIL: " + e.getMessage());
+            log.info("[similarity] FAIL: " + e.getMessage());
             return false;
         }
     }

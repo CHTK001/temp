@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.engine.ModelRegistry;
 import com.chua.deeplearning.support.model.PredictRectangle;
 import com.chua.deeplearning.support.utils.ImageUtils;
@@ -42,14 +43,14 @@ public final class DocLayoutYoloExample {
                     box.labelName(), box.confidence(), box.x(), box.y(), box.width(), box.height());
         }
 
-        System.out.println("[doc-layout-yolo] image=" + imagePath);
-        System.out.println("[doc-layout-yolo] 检出数=" + boxes.size() + "  耗时=" + cost + "ms");
-        System.out.println("[doc-layout-yolo] title=" + titleCount);
+        log.info("[doc-layout-yolo] image=" + imagePath);
+        log.info("[doc-layout-yolo] 检出数=" + boxes.size() + "  耗时=" + cost + "ms");
+        log.info("[doc-layout-yolo] title=" + titleCount);
 
         if (titleCount >= 1) {
-            System.out.println("[DocLayoutYoloVerify] ALL PASS");
+            log.info("[DocLayoutYoloVerify] ALL PASS");
         } else {
-            System.out.println("[DocLayoutYoloVerify] FAIL (无 title 检出)");
+            log.info("[DocLayoutYoloVerify] FAIL (无 title 检出)");
             System.exit(1);
         }
     }

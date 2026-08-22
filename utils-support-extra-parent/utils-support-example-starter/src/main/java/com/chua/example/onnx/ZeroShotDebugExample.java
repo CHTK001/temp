@@ -1,33 +1,35 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.engine.ModelRegistry;
 import com.chua.deeplearning.support.image.ImageClassifier;
 import com.chua.deeplearning.support.image.ImageDetector;
 import com.chua.deeplearning.support.image.ImageSegmenter;
 
+@Slf4j
 public class ZeroShotDebugExample {
     public static void main(String[] args) throws Exception {
-        System.out.println("=== Debug: Loading OnnxModelRegistrar ===");
+        log.info("=== Debug: Loading OnnxModelRegistrar ===");
         Class.forName("com.chua.deeplearning.support.onnx.OnnxModelRegistrar");
-        System.out.println("=== Debug: OnnxModelRegistrar loaded ===");
+        log.info("=== Debug: OnnxModelRegistrar loaded ===");
         
-        System.out.println("\n=== All registered models ===");
+        log.info("\n=== All registered models ===");
         var all = ModelRegistry.getAll();
-        System.out.println("Total: " + all.size());
+        log.info("Total: " + all.size());
         
-        System.out.println("\n=== ImageClassifier models ===");
+        log.info("\n=== ImageClassifier models ===");
         var classifiers = ImageClassifier.listModels();
-        System.out.println("Count: " + classifiers.size());
-        classifiers.forEach(id -> System.out.println("  - " + id));
+        log.info("Count: " + classifiers.size());
+        classifiers.forEach(id -> log.info("  - " + id));
         
-        System.out.println("\n=== ImageDetector models ===");
+        log.info("\n=== ImageDetector models ===");
         var detectors = ImageDetector.listModels();
-        System.out.println("Count: " + detectors.size());
-        detectors.forEach(id -> System.out.println("  - " + id));
+        log.info("Count: " + detectors.size());
+        detectors.forEach(id -> log.info("  - " + id));
         
-        System.out.println("\n=== ImageSegmenter models ===");
+        log.info("\n=== ImageSegmenter models ===");
         var segmenters = ImageSegmenter.listModels();
-        System.out.println("Count: " + segmenters.size());
-        segmenters.forEach(id -> System.out.println("  - " + id));
+        log.info("Count: " + segmenters.size());
+        segmenters.forEach(id -> log.info("  - " + id));
     }
 }

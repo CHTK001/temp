@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import ai.onnxruntime.OnnxTensor;
 import ai.onnxruntime.OrtEnvironment;
 import ai.onnxruntime.OrtSession;
@@ -17,7 +18,7 @@ import java.util.Map;
 
 /**
  * OCR 检测诊断：打印概率图统计（对照 Python 验证 Java 端预处理一致性）。
- *
+ *@author CH`n *
  * @since 4.0.0.42
  */
 public final class OcrDetExample {
@@ -36,14 +37,14 @@ public final class OcrDetExample {
         //     com.chua.deeplearning.support.image.ImageDetector detector =
         //             com.chua.deeplearning.support.image.ImageDetector.create("paddleocrv6-medium-det");
         //     java.util.List<com.chua.deeplearning.support.model.DetectionInfo> boxes = detector.detect(data);
-        //     System.out.println("[ImageDetector] 目标数: " + boxes.size());
+        //     log.info("[ImageDetector] 目标数: " + boxes.size());
         // } catch (Exception e) {
-        //     System.out.println("[ImageDetector] 异常: " + e.getMessage());
+        //     log.info("[ImageDetector] 异常: " + e.getMessage());
         // }
 
         nu.pattern.OpenCV.loadLocally();
         Mat src = Imgcodecs.imdecode(new MatOfByte(data), Imgcodecs.IMREAD_COLOR);
-        System.out.println("src: " + src.cols() + "x" + src.rows());
+        log.info("src: " + src.cols() + "x" + src.rows());
 
         int srcW = src.cols();
         int srcH = src.rows();
@@ -55,11 +56,11 @@ public final class OcrDetExample {
         }
         w = Math.max(32, (w / 32) * 32);
         h = Math.max(32, (h / 32) * 32);
-        System.out.println("resized: " + w + "x" + h);
+        log.info("resized: " + w + "x" + h);
 
         Mat resized = new Mat();
         Imgproc.resize(src, resized, new Size(w, h), 0, 0, Imgproc.INTER_LINEAR);
-        System.out.println("resized type: " + resized.type() + " (CV_8UC3=" + org.opencv.core.CvType.CV_8UC3 + ")");
+        log.info("resized type: " + resized.type() + " (CV_8UC3=" + org.opencv.core.CvType.CV_8UC3 + ")");
 
         float[] mean = {0.485f, 0.456f, 0.406f};
         float[] std = {0.229f, 0.224f, 0.225f};
@@ -83,13 +84,13 @@ public final class OcrDetExample {
             try (OnnxTensor tensor = OnnxTensor.createTensor(env, FloatBuffer.wrap(pixels), shape)) {
                 try (OrtSession.Result result = session.run(Map.of("x", tensor))) {
                     Object out = result.get(0).getValue();
-                    System.out.println("output class: " + out.getClass().getName());
+                    log.info("output class: " + out.getClass().getName());
                     float pmax = 0;
                     int over03 = 0;
                     int total = 0;
                     if (out instanceof float[][][][] d4) {
                         float[][][] pm = d4[0];
-                        System.out.println("d4 dims: " + pm.length + "x" + pm[0].length + "x" + pm[0][0].length);
+                        log.info("d4 dims: " + pm.length + "x" + pm[0].length + "x" + pm[0][0].length);
                         for (float[][] c : pm) {
                             for (float[] row : c) {
                                 for (float v : row) {
@@ -108,7 +109,7 @@ public final class OcrDetExample {
                             }
                         }
                     }
-                    System.out.println("probMax=" + pmax + " pct>0.3=" + (total > 0 ? (float) over03 / total : 0));
+                    log.info("probMax=" + pmax + " pct>0.3=" + (total > 0 ? (float) over03 / total : 0));
 
                     // 复现 boxesFromProbMap 逻辑
                     float[][] probs;
@@ -126,7 +127,7 @@ public final class OcrDetExample {
                             if (v > 0.3f) over03b++;
                         }
                     }
-                    System.out.println("probs dims=" + probs.length + "x" + probs[0].length
+                    log.info("probs dims=" + probs.length + "x" + probs[0].length
                             + " max=" + pMax2 + " >0.3=" + over03b + " total=" + (probs.length * probs[0].length));
                     int mapH = probs.length;
                     int mapW = probs[0].length;
@@ -142,14 +143,14 @@ public final class OcrDetExample {
                         }
                     }
                     binary.put(0, 0, binData);
-                    System.out.println("binary white pixels: " + white + " of " + (mapH * mapW));
+                    log.info("binary white pixels: " + white + " of " + (mapH * mapW));
                     Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(2, 2));
                     Mat dilated = new Mat();
                     Imgproc.dilate(binary, dilated, kernel);
                     java.util.List<MatOfPoint> contours = new java.util.ArrayList<>();
                     Mat hierarchy = new Mat();
                     Imgproc.findContours(dilated, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
-                    System.out.println("contours found: " + contours.size());
+                    log.info("contours found: " + contours.size());
                     int kept = 0;
                     for (MatOfPoint c : contours) {
                         org.opencv.core.Rect r = Imgproc.boundingRect(c);
@@ -157,7 +158,7 @@ public final class OcrDetExample {
                             kept++;
                         }
                     }
-                    System.out.println("contours kept: " + kept);
+                    log.info("contours kept: " + kept);
                 }
             }
         }

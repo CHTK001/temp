@@ -40,4 +40,9 @@ public class ImageProcessorRustExample implements Example {
         String output = args.getOrDefault("output", "D:/images/utils");
         return new ImageProcessorSpiExample().runTest(type, input, output);
     }
+
+    public static void main(String[] args) {
+        new ImageProcessorRustExample().run(java.util.Arrays.stream(args).collect(java.util.stream.Collectors.toMap(a -> a.split("=")[0], a -> a.split("=")[1])));
+    }
+
 }

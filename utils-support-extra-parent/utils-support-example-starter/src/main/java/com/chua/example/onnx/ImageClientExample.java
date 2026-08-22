@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.ai.image.ImageClient;
 
 import javax.imageio.ImageIO;
@@ -16,7 +17,7 @@ import java.nio.file.Path;
  *   ImageClientExample list
  *   ImageClientExample onnx small-stable-diffusion-combined "一只柴犬在樱花树下" out.png
  * }</pre>
- *
+ *@author CH`n *
  * @since 4.0.0.42
  */
 public final class ImageClientExample extends ExampleBase {
@@ -46,11 +47,11 @@ public final class ImageClientExample extends ExampleBase {
         client.model(model);
         long t0 = System.currentTimeMillis();
         BufferedImage image = client.generate(prompt);
-        System.out.println("[image] prompt: " + prompt);
-        System.out.println("       size: " + image.getWidth() + "x" + image.getHeight());
+        log.info("[image] prompt: " + prompt);
+        log.info("       size: " + image.getWidth() + "x" + image.getHeight());
         if (outPath != null) {
             ImageIO.write(image, "png", Path.of(outPath).toFile());
-            System.out.println("       saved: " + outPath);
+            log.info("       saved: " + outPath);
         }
         printResult("image", provider, model, t0);
         client.close();

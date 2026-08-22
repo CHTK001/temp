@@ -62,17 +62,17 @@ public class FaceCoreExample {
                              if (feat != null && feat.length > 0) {
                                  System.out.print(" 置信=" + String.format("%.3f", hit.box().confidence()));
                              }
-                             System.out.println();
+                             log.info();
                          }
-                         System.out.println("  总耗时: " + (System.currentTimeMillis() - t0) + "ms");
+                         log.info("  总耗时: " + (System.currentTimeMillis() - t0) + "ms");
                      } catch (Exception e) {
-                         System.out.println("FAIL: " + e.getMessage());
+                         log.info("FAIL: " + e.getMessage());
                      }
                  });
         }
 
         // 3. 1:1 比对：同一张图两次提取特征应高度相似
-        System.out.println("\n===== 1:1 比对测试 =====");
+        log.info("\n===== 1:1 比对测试 =====");
         Path p1 = Path.of("D:\\images\\1people.png");
         Path p2 = Path.of("D:\\images\\1people2.png");
         byte[] img1 = Files.readAllBytes(p1);
@@ -82,8 +82,8 @@ public class FaceCoreExample {
         float[] feat2 = face.extractFeature(img2);
         float[] feat3 = face.extractFeature(img1); // 同图重提
 
-        System.out.println("  1people vs 1people(重提): " + String.format("%.4f", cosine(feat1, feat3)));
-        System.out.println("  1people vs 1people2:      " + String.format("%.4f", cosine(feat1, feat2)));
+        log.info("  1people vs 1people(重提): " + String.format("%.4f", cosine(feat1, feat3)));
+        log.info("  1people vs 1people2:      " + String.format("%.4f", cosine(feat1, feat2)));
         return true;
     }
 

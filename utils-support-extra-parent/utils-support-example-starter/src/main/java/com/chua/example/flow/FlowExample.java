@@ -1,5 +1,6 @@
 package com.chua.example.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.task.flow.ConditionNode;
 import com.chua.common.support.task.flow.Flow;
 import com.chua.common.support.task.flow.FlowContext;
@@ -46,6 +47,7 @@ import java.util.Map;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public class FlowExample {
 
     /**
@@ -62,7 +64,7 @@ public class FlowExample {
     public static void main(String[] args) {
         String type = parseType(args);
         boolean passed = new FlowExample().runTest(type);
-        System.out.println("[FlowExample] self-test type=" + type + ", passed=" + passed);
+        log.info("[FlowExample] self-test type=" + type + ", passed=" + passed);
         System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
     }
 
@@ -120,7 +122,7 @@ public class FlowExample {
                         && testWaitResume() && testCustomNode() && testSpiderNode()
                         && testSubFlow() && testNestedBranches() && testDeepLoop();
             default:
-                System.out.println("[FlowExample] 未知 type: " + type);
+                log.info("[FlowExample] 未知 type: " + type);
                 return false;
         }
     }
@@ -134,7 +136,7 @@ public class FlowExample {
      * @return 是否通过
      */
     public static boolean testDsl() {
-        System.out.println("===== dsl =====");
+        log.info("===== dsl =====");
         Flow flow = FlowEngine.createFlow("demo")
                 .addNode("start", new StartFlowNode())
                 .addNode("check", new ConditionFlowNode(), Map.of("key", "bizId"))
@@ -166,7 +168,7 @@ public class FlowExample {
      * @return 是否通过
      */
     public static boolean testMultiTarget() {
-        System.out.println("===== multitarget =====");
+        log.info("===== multitarget =====");
         FlowNode markT1 = new FlowNode() {
             @Override
             /** Type */
@@ -226,7 +228,7 @@ public class FlowExample {
      * @return 是否通过
      */
     public static boolean testJsonRoundTrip() {
-        System.out.println("===== json =====");
+        log.info("===== json =====");
         Flow flow = FlowEngine.createFlow("roundtrip")
                 .addNode("start", new StartFlowNode())
                 .addNode("echo", new LogFlowNode(), Map.of("message", "roundtrip", "level", "info"))
@@ -252,10 +254,10 @@ public class FlowExample {
      * @return 是否通过
      */
     public static boolean testTrace() {
-        System.out.println("===== trace =====");
+        log.info("===== trace =====");
         Flow flow = FlowEngine.createFlow("trace")
                 .addNode("start", new StartFlowNode())
-                .addNode("echo", new FlowEchoNode(), Map.of("message", "trace-value"))
+                .addNode("echo", new FlowEchoNodeExample(), Map.of("message", "trace-value"))
                 .addNode("end", new EndFlowNode());
 
         FlowInstance instance = flow.createGraph()
@@ -290,7 +292,7 @@ public class FlowExample {
      * @return 是否通过
      */
     public static boolean testLoopGuard() {
-        System.out.println("===== loop =====");
+        log.info("===== loop =====");
         FlowNode loopNode = new FlowNode() {
             @Override
             /** Type */
@@ -337,7 +339,7 @@ public class FlowExample {
      * @return 是否通过
      */
     public static boolean testContextReuse() {
-        System.out.println("===== ctx =====");
+        log.info("===== ctx =====");
         // 每个 flow 创建独立实例，验证上下文不共享
         boolean allOk = true;
 
@@ -399,7 +401,7 @@ public class FlowExample {
      * @return 是否通过
      */
     public static boolean testWaitResume() {
-        System.out.println("===== wait =====");
+        log.info("===== wait =====");
         FlowNode waitNode = new FlowNode() {
             @Override
             /** Type */
@@ -434,17 +436,17 @@ public class FlowExample {
     /**
      * 自检项 7：自定义节点注册。
      *
-     * <p>通过 {@link FlowNodeRegistry} 注册 echo 节点（见 {@link FlowEchoNode}），
+     * <p>通过 {@link FlowNodeRegistry} 注册 echo 节点（见 {@link FlowEchoNodeExample}），
      * 流程中使用该类型并验证属性读取。</p>
      *
      * @return 是否通过
      */
     public static boolean testCustomNode() {
-        System.out.println("===== spi =====");
-        FlowNodeRegistry.register("echo", new FlowEchoNode(), "回显节点");
+        log.info("===== spi =====");
+        FlowNodeRegistry.register("echo", new FlowEchoNodeExample(), "回显节点");
         Flow flow = FlowEngine.createFlow("spi")
                 .addNode("start", new StartFlowNode())
-                .addNode("echo", new FlowEchoNode(), Map.of("message", "hello-flow"))
+                .addNode("echo", new FlowEchoNodeExample(), Map.of("message", "hello-flow"))
                 .addNode("end", new EndFlowNode());
 
         FlowInstance instance = flow.createGraph()
@@ -465,7 +467,7 @@ public class FlowExample {
      * @return 是否通过
      */
     public static boolean testSpiderNode() {
-        System.out.println("===== spider =====");
+        log.info("===== spider =====");
         try {
             Flow flow = FlowEngine.createFlow("spider-demo")
                     .addNode("start", new StartFlowNode())
@@ -486,7 +488,7 @@ public class FlowExample {
             printResult("spider 节点抓取完成", ok);
             return ok;
         } catch (Exception e) {
-            System.out.println("[WARN] spider 自检需要联网，已跳过: " + e.getMessage());
+            log.info("[WARN] spider 自检需要联网，已跳过: " + e.getMessage());
             return true;
         }
     }
@@ -500,7 +502,7 @@ public class FlowExample {
      * @return 是否通过
      */
     public static boolean testSubFlow() {
-        System.out.println("===== subflow =====");
+        log.info("===== subflow =====");
         // 定义子流程：transform bizId 并写入 sub.result
         Flow subFlow = FlowEngine.createFlow("sub")
                 .addNode("start", new StartFlowNode())
@@ -551,7 +553,7 @@ public class FlowExample {
      * @return 是否通过
      */
     public static boolean testNestedBranches() {
-        System.out.println("===== nested =====");
+        log.info("===== nested =====");
         // check1: key1 非空 -> true 走 check2, false 走 end
         // check2: key2 非空 -> true 走 transform, false 走 end
         Flow flow = FlowEngine.createFlow("nested")
@@ -600,7 +602,7 @@ public class FlowExample {
      * @return 是否通过
      */
     public static boolean testDeepLoop() {
-        System.out.println("===== deeploop =====");
+        log.info("===== deeploop =====");
         // 50 次：正常完成
         FlowNode loop50 = new FlowNode() {
             @Override
@@ -668,6 +670,6 @@ public class FlowExample {
      * @param passed 是否通过
      */
     private static void printResult(String name, boolean passed) {
-        System.out.println((passed ? "[PASS] " : "[FAIL] ") + name);
+        log.info((passed ? "[PASS] " : "[FAIL] ") + name);
     }
 }

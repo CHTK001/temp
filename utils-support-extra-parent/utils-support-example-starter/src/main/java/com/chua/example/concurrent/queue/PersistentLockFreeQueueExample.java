@@ -62,11 +62,11 @@ public class PersistentLockFreeQueueExample {
         allPassed &= testMmapAsync();
         allPassed &= testFileChannelSync();
 
-        System.out.println("-----");
+        log.info("-----");
         if (allPassed) {
-            System.out.println("[PASS] 全部场景自检通过");
+            log.info("[PASS] 全部场景自检通过");
         } else {
-            System.out.println("[FAIL] 存在失败的测试项");
+            log.info("[FAIL] 存在失败的测试项");
             System.exit(1);
         }
     }
@@ -282,6 +282,6 @@ public class PersistentLockFreeQueueExample {
      * @param passed 是否通过
      */
     private static void printResult(String name, boolean passed) {
-        System.out.println((passed ? "[PASS] " : "[FAIL] ") + name);
+        log.info((passed ? "[PASS] " : "[FAIL] ") + name);
     }
 }

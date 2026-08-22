@@ -67,10 +67,10 @@ public class LayoutPipelineExample {
                 .model(LAYOUT_MODEL)
                 .build();
 
-        System.out.println("===== 可用版面模型 =====");
+        log.info("===== 可用版面模型 =====");
         Map<String, List<String>> models = layout.listModels();
         for (Map.Entry<String, List<String>> entry : models.entrySet()) {
-            System.out.println("[" + entry.getKey() + "] " + entry.getValue());
+            log.info("[" + entry.getKey() + "] " + entry.getValue());
         }
 
         try (Stream<Path> files = Files.list(Path.of(INPUT_DIR))) {
@@ -91,9 +91,9 @@ public class LayoutPipelineExample {
 
                             byte[] drawn = toAnnotated(layout, imageData, result);
                             Files.write(Path.of(OUTPUT_DIR + name), drawn);
-                            System.out.println("OK");
+                            log.info("OK");
                         } catch (Exception e) {
-                            System.out.println("FAIL: " + e.getMessage());
+                            log.info("FAIL: " + e.getMessage());
                         }
                     });
         }

@@ -1,5 +1,6 @@
 package com.chua.example.ocr;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.ocr.OcrPipeline;
 import com.chua.deeplearning.support.ocr.DrawerPipeline;
 import java.nio.file.Files;
@@ -14,6 +15,7 @@ import java.util.stream.Stream;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public class OcrPipelineExample {
 
     /**
@@ -69,13 +71,13 @@ public class OcrPipelineExample {
                          //        .target(corrected)
                          //        .boxes(boxes, results)
                          //        .onProcess((box, text, conf, idx, total) ->
-                         //            System.out.println("  " + idx + "/" + total + ": " + text))
+                         //            log.info("  " + idx + "/" + total + ": " + text))
                          //        .done();
 
                          Files.write(Path.of(OUTPUT_DIR + name), drawn);
-                         System.out.println((System.currentTimeMillis() - t0) + "ms");
+                         log.info((System.currentTimeMillis() - t0) + "ms");
                      } catch (Exception e) {
-                         System.out.println("FAIL: " + e.getMessage());
+                         log.info("FAIL: " + e.getMessage());
                      }
                  });
         }

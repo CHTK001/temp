@@ -130,6 +130,6 @@ public class PrometheusExample {
      * @param passed 是否通过
      */
     private void printResult(String name, boolean passed) {
-        System.out.println((passed ? "[PASS]" : "[FAIL]") + " " + name);
+        log.info((passed ? "[PASS]" : "[FAIL]") + " " + name);
     }
 }

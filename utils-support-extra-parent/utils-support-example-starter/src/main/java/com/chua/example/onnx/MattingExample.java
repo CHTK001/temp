@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.image.MattingService;
 
 import java.nio.file.Files;
@@ -14,7 +15,7 @@ import java.nio.file.Path;
  * <pre>{@code
  *   MattingExample modnet person.jpg out.png
  * }</pre>
- *
+ *@author CH`n *
  * @since 4.0.0.42
  */
 public final class MattingExample extends ExampleBase {
@@ -29,18 +30,18 @@ public final class MattingExample extends ExampleBase {
         String imagePath = args.length > 1 ? args[1] : null;
         String outPath = args.length > 2 ? args[2] : null;
         if (imagePath == null) {
-            System.out.println("[matting] 需要图片路径");
+            log.info("[matting] 需要图片路径");
             return;
         }
         byte[] img = Files.readAllBytes(Path.of(imagePath));
         MattingService service = MattingService.create(model);
         long t0 = System.currentTimeMillis();
         byte[] result = service.matte(img);
-        System.out.println("[matting] model: " + model + " 图片: " + imagePath);
-        System.out.println("       输出 PNG: " + result.length + " bytes");
+        log.info("[matting] model: " + model + " 图片: " + imagePath);
+        log.info("       输出 PNG: " + result.length + " bytes");
         if (outPath != null) {
             Files.write(Path.of(outPath), result);
-            System.out.println("       已保存: " + outPath);
+            log.info("       已保存: " + outPath);
         }
         printResult("matting", "onnx", model, t0);
     }

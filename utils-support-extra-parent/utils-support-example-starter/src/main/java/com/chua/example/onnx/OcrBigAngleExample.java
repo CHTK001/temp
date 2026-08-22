@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.image.ImageDetector;
 import com.chua.deeplearning.support.model.DetectionInfo;
 import com.chua.deeplearning.support.ocr.OcrPipeline;
@@ -18,7 +19,7 @@ import java.util.List;
 /**
  * 大角度矫正验证：用原图旋转 35° 生成倾斜图，对比"轴对齐裁剪直接 rec"与
  * "旋转矩形扶正裁剪 cropRotated" 的识别效果。
- *
+ *@author CH`n *
  * @since 4.0.0.42
  */
 public final class OcrBigAngleExample {
@@ -50,7 +51,7 @@ public final class OcrBigAngleExample {
         byte[] bigImg = ImageUtils.encode(finalMat);
         String bigPath = "G:\\images\\output\\big_angle_35.png";
         Files.write(Path.of(bigPath), bigImg);
-        System.out.println("[diag] 已生成 35° 倾斜图: " + bigPath);
+        log.info("[diag] 已生成 35° 倾斜图: " + bigPath);
 
         // 方案 A：直接 rec（轴对齐裁剪）
         OcrPipeline rawOcr = OcrPipeline.builder()
@@ -58,7 +59,7 @@ public final class OcrBigAngleExample {
                 .recognizer("paddleocrv6-medium-rec")
                 .cropRotateThreshold(-1f)
                 .build();
-        System.out.println("[A] 禁用大角度矫正: ");
+        log.info("[A] 禁用大角度矫正: ");
         for (OcrResult r : rawOcr.recognizeDetail(bigImg)) {
             System.out.printf("      [%.2f] angle=%.1f '%s'%n", r.confidence(), r.angle(), r.text());
         }
@@ -69,7 +70,7 @@ public final class OcrBigAngleExample {
                 .recognizer("paddleocrv6-medium-rec")
                 .cropRotateThreshold(25f)
                 .build();
-        System.out.println("[B] 大角度矫正(25°): ");
+        log.info("[B] 大角度矫正(25°): ");
         for (OcrResult r : rotOcr.recognizeDetail(bigImg)) {
             System.out.printf("      [%.2f] angle=%.1f '%s'%n", r.confidence(), r.angle(), r.text());
         }
@@ -77,7 +78,7 @@ public final class OcrBigAngleExample {
         // 打印检测框角度，确认确实 >25°
         ImageDetector det = rawOcr.detector();
         List<DetectionInfo> boxes = det.detect(ImageUtils.decode(bigImg) == null ? bigImg : bigImg);
-        System.out.println("[diag] 检测框角度: ");
+        log.info("[diag] 检测框角度: ");
         for (DetectionInfo b : boxes) {
             System.out.printf("      angle=%.1f rw=%.0f rh=%.0f%n", b.angle(), b.rw(), b.rh());
         }

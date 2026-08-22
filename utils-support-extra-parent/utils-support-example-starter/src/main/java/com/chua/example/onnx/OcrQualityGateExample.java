@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.ocr.OcrPipeline;
 import com.chua.deeplearning.support.ocr.OcrResult;
 import com.chua.deeplearning.support.utils.ImageUtils;
@@ -10,7 +11,7 @@ import java.util.List;
 
 /**
  * 质量门控对比：三张"不清楚"图，对比门控关 vs 门控开 + text-bsr 修复。
- *
+ *@author CH`n *
  * @since 4.0.0.42
  */
 public final class OcrQualityGateExample {
@@ -41,20 +42,20 @@ public final class OcrQualityGateExample {
 
         for (String name : files) {
             byte[] img = Files.readAllBytes(Path.of("G:\\images", name));
-            System.out.println("===== " + name + "  blurScore=" + String.format("%.1f", ImageUtils.blurScore(img)) + " =====");
+            log.info("===== " + name + "  blurScore=" + String.format("%.1f", ImageUtils.blurScore(img)) + " =====");
             List<OcrResult> rOff = off.recognizeDetail(img);
             OcrPipeline.OcrRecognizeResult rOn = on.recognizeDetailWithImage(img);
-            System.out.println("  [门控关] 块数=" + rOff.size());
+            log.info("  [门控关] 块数=" + rOff.size());
             for (OcrResult r : rOff) {
                 System.out.printf("      [%.2f] '%s'%n", r.confidence(), r.text());
             }
-            System.out.println("  [门控开] 块数=" + rOn.results().size());
+            log.info("  [门控开] 块数=" + rOn.results().size());
             for (OcrResult r : rOn.results()) {
                 System.out.printf("      [%.2f] '%s'%n", r.confidence(), r.text());
             }
             String outName = "G:\\images\\output\\gated_" + name.replace('.', '_') + ".png";
             Files.write(Path.of(outName), draw(rOn));
-            System.out.println("  已输出=" + outName);
+            log.info("  已输出=" + outName);
         }
     }
 

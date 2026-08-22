@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.ai.audio.AudioClient;
 import com.chua.common.support.ai.audio.TextToAudioClient;
 
@@ -24,7 +25,7 @@ import java.nio.file.Path;
  *   // 仅 TTS（使用上一步输出的文本）
  *   SttTtsPipelineExample null vits-icefall-zh null SSB0005 "你好世界"
  * }</pre>
- *
+ *@author CH`n *
  * @since 4.0.0.42
  */
 public final class SttTtsPipelineExample extends ExampleBase {
@@ -55,9 +56,9 @@ public final class SttTtsPipelineExample extends ExampleBase {
                 }
                 long t0 = System.currentTimeMillis();
                 transcript = sttClient.transcribe(Path.of(audioPath));
-                System.out.println("[STT]  音频: " + audioPath);
-                System.out.println("      耗时: " + (System.currentTimeMillis() - t0) + "ms");
-                System.out.println("      文本: " + transcript);
+                log.info("[STT]  音频: " + audioPath);
+                log.info("      耗时: " + (System.currentTimeMillis() - t0) + "ms");
+                log.info("      文本: " + transcript);
             }
         }
 
@@ -75,10 +76,10 @@ public final class SttTtsPipelineExample extends ExampleBase {
                 byte[] wav = ttsClient.synthesize(textToSynthesize);
                 Path out = Files.createTempFile("stt-tts-pipeline-", ".wav");
                 Files.write(out, wav);
-                System.out.println("[TTS]  模型: " + ttsModel);
-                System.out.println("      说话人: " + voice);
-                System.out.println("      耗时: " + (System.currentTimeMillis() - t0) + "ms");
-                System.out.println("      WAV:  " + wav.length + " bytes -> " + out);
+                log.info("[TTS]  模型: " + ttsModel);
+                log.info("      说话人: " + voice);
+                log.info("      耗时: " + (System.currentTimeMillis() - t0) + "ms");
+                log.info("      WAV:  " + wav.length + " bytes -> " + out);
                 printResult("tts", "onnx", ttsModel, t0);
             }
         }

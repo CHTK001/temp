@@ -1,5 +1,6 @@
 package com.chua.example.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.task.flow.Flow;
 import com.chua.common.support.task.flow.FlowContext;
 import com.chua.common.support.task.flow.FlowInstance;
@@ -24,11 +25,12 @@ import java.util.Map;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public class FlowCompleteExample {
 
     /** Main */
     public static void main(String[] args) {
-        System.out.println("========== 1. DSL 构建流程 ==========");
+        log.info("========== 1. DSL 构建流程 ==========");
         // 构建：start -> check(condition) -> transform -> end
         // 入参 bizId 非空走 transform，为空直接结束
         Flow flow = FlowEngine.createFlow("my-flow")
@@ -37,7 +39,7 @@ public class FlowCompleteExample {
                 .addNode("transform", new TransformFlowNode(), Map.of("source", "attribute:bizId"))
                 .addNode("end", new EndFlowNode());
 
-        System.out.println("========== 2. 创建实例并运行 ==========");
+        log.info("========== 2. 创建实例并运行 ==========");
         FlowInstance instance = flow.createGraph()
                 .start("start").next("check")
                 .when("check", true, "transform")
@@ -49,27 +51,27 @@ public class FlowCompleteExample {
         params.put("bizId", "CH-1001");
         instance.run(params);
 
-        System.out.println("执行完成: " + instance.isCompleted());
-        System.out.println("透传数据: " + instance.getContext().getData());
+        log.info("执行完成: " + instance.isCompleted());
+        log.info("透传数据: " + instance.getContext().getData());
 
-        System.out.println("========== 3. JSON 导出 ==========");
+        log.info("========== 3. JSON 导出 ==========");
         String json = flow.exportJson();
-        System.out.println(json.substring(0, Math.min(json.length(), 200)) + "...");
+        log.info(json.substring(0, Math.min(json.length(), 200)) + "...");
 
-        System.out.println("========== 4. JSON 导入运行 ==========");
+        log.info("========== 4. JSON 导入运行 ==========");
         Flow imported = FlowEngine.parseJson(json);
         FlowInstance instance2 = imported.createGraph().createInstance();
         instance2.run(Map.of("bizId", "CH-2002"));
-        System.out.println("导入后执行完成: " + instance2.isCompleted());
-        System.out.println("导入后透传数据: " + instance2.getContext().getData());
+        log.info("导入后执行完成: " + instance2.isCompleted());
+        log.info("导入后透传数据: " + instance2.getContext().getData());
 
-        System.out.println("========== 5. 条件分支：bizId 为空走 false 分支 ==========");
+        log.info("========== 5. 条件分支：bizId 为空走 false 分支 ==========");
         FlowInstance instance3 = flow.createGraph().createInstance();
         instance3.run(Map.of());
-        System.out.println("空入参执行完成: " + instance3.isCompleted());
-        System.out.println("空入参当前数据: " + instance3.getContext().getData());
+        log.info("空入参执行完成: " + instance3.isCompleted());
+        log.info("空入参当前数据: " + instance3.getContext().getData());
 
-        System.out.println("========== 6. WAIT / resume 挂起恢复 ==========");
+        log.info("========== 6. WAIT / resume 挂起恢复 ==========");
         FlowNode pauseNode = new FlowNode() {
             @Override
             /** Type */
@@ -92,14 +94,14 @@ public class FlowCompleteExample {
                 .start("start").next("pause").next("end").end()
                 .createInstance();
         waitInstance.run();
-        System.out.println("执行后状态: " + waitInstance.getStatus());
+        log.info("执行后状态: " + waitInstance.getStatus());
         waitInstance.resume();
-        System.out.println("恢复后完成: " + waitInstance.isCompleted());
+        log.info("恢复后完成: " + waitInstance.isCompleted());
 
-        System.out.println("========== 7. 图形化输出 (Mermaid) ==========");
+        log.info("========== 7. 图形化输出 (Mermaid) ==========");
         printMermaid(flow);
 
-        System.out.println("========== 全部示例完成 ==========");
+        log.info("========== 全部示例完成 ==========");
     }
 
     /**
@@ -111,14 +113,14 @@ public class FlowCompleteExample {
         // 简单实现：获取所有节点及其 next 信息
         // 注：前置条件的 when 也需要显示，这里只示意性地输出基本连接
         // 实际可以从 Flow 获取所有边信息，但目前接口不暴露所有细节，这里手动构建示例结构
-        System.out.println("```mermaid");
-        System.out.println("graph TD");
+        log.info("`mermaid");
+        log.info("graph TD");
         // 手动写出连接（基于上面构建的流程）
-        System.out.println("    start --> check");
-        System.out.println("    check -->|true| transform");
-        System.out.println("    check -->|false| end");
-        System.out.println("    transform --> end");
-        System.out.println("```");
-        System.out.println("\u6ce8\uff1a此为示意图，实际可使用 Flow.exportJson() 生成完整图数据。");
+        log.info("    start --> check");
+        log.info("    check -->|true| transform");
+        log.info("    check -->|false| end");
+        log.info("    transform --> end");
+        log.info("`");
+        log.info("\u6ce8\uff1a此为示意图，实际可使用 Flow.exportJson() 生成完整图数据。");
     }
 }

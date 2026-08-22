@@ -5,7 +5,7 @@ import com.chua.common.support.network.server.ServerBuilder;
 import com.chua.common.support.network.server.http.ConfigServer;
 import com.chua.common.support.network.server.request.ServerRequest;
 import com.chua.common.support.network.server.response.ServerResponse;
-import com.chua.example.network.perf.PerfReport;
+import com.chua.example.network.perf.PerfReportExample;
 import com.chua.example.spi.Example;
 import lombok.extern.slf4j.Slf4j;
 
@@ -692,7 +692,7 @@ public class NioHttpServerExampleSpi implements Example {
 
     /** 运行Perf */
     private boolean runPerf(int concurrency, int connections, int requestsPerConn, int payloadSize) {
-        PerfReport.printEnvironment("NioHttpServer", SERVER_TYPE, "SPI");
+        PerfReportExample.printEnvironment("NioHttpServer", SERVER_TYPE, "SPI");
         log.info("  │ 代理路径 : HttpClient -> NioHttpServer (JDK NIO + virtual-thread 业务)");
         Server server = null;
         try {
@@ -704,11 +704,11 @@ public class NioHttpServerExampleSpi implements Example {
                     (req, resp) -> resp.setResult(body)));
             int port = server.getPort();
 
-            PerfReport.SweepRow row = runPerfInner(concurrency, connections, requestsPerConn, port);
+            PerfReportExample.SweepRow row = runPerfInner(concurrency, connections, requestsPerConn, port);
             if (row == null) {
                 return false;
             }
-            PerfReport.printResult("nio-http GET /echo 压力", row.concurrency,
+            PerfReportExample.printResult("nio-http GET /echo 压力", row.concurrency,
                     row.connections, row.requestsPerConn, payloadSize,
                     row.total, row.errors, row.elapsedMs, row.sortedLatencyNs, 0L);
             pass();
@@ -723,7 +723,7 @@ public class NioHttpServerExampleSpi implements Example {
 
     /** 运行Sweep */
     private boolean runSweep(int payloadSize) {
-        PerfReport.printEnvironment("NioHttpServer [sweep]", SERVER_TYPE, "SPI");
+        PerfReportExample.printEnvironment("NioHttpServer [sweep]", SERVER_TYPE, "SPI");
         log.info("  │ 代理路径 : HttpClient -> NioHttpServer (JDK NIO + virtual-thread 业务)");
         Server server = null;
         try {
@@ -735,16 +735,16 @@ public class NioHttpServerExampleSpi implements Example {
                     (req, resp) -> resp.setResult(body)));
             int port = server.getPort();
 
-            List<PerfReport.SweepRow> rows = new ArrayList<>();
+            List<PerfReportExample.SweepRow> rows = new ArrayList<>();
             for (int cc : SWEEP_CONCURRENCY) {
                 int conn = Math.min(SWEEP_CONNECTIONS, Math.max(1, cc / 8));
                 int req = SWEEP_REQUESTS_PER_CONN;
-                PerfReport.SweepRow row = runPerfInner(cc, conn, req, port);
+                PerfReportExample.SweepRow row = runPerfInner(cc, conn, req, port);
                 if (row != null) {
                     rows.add(row);
                 }
             }
-            PerfReport.printSweepResult("nio-http GET /echo 扫档", payloadSize, rows);
+            PerfReportExample.printSweepResult("nio-http GET /echo 扫档", payloadSize, rows);
             return !rows.isEmpty();
         } catch (Exception e) {
             fail("SWEEP 异常: " + e.getMessage());
@@ -755,7 +755,7 @@ public class NioHttpServerExampleSpi implements Example {
     }
 
     /** 运行PerfInner */
-    private PerfReport.SweepRow runPerfInner(int concurrency, int connections, int requestsPerConn, int port) {
+    private PerfReportExample.SweepRow runPerfInner(int concurrency, int connections, int requestsPerConn, int port) {
         ExecutorService pool = null;
         try {
             HttpClient c = HttpClient.newBuilder()
@@ -810,11 +810,11 @@ public class NioHttpServerExampleSpi implements Example {
             }
             long elapsedNs = System.nanoTime() - startWall;
 
-            long[] all = PerfReport.mergeLatencies(latencies);
+            long[] all = PerfReportExample.mergeLatencies(latencies);
             Arrays.sort(all);
             long total = (long) connections * requestsPerConn;
             long elapsedMs = elapsedNs / 1_000_000L;
-            return new PerfReport.SweepRow(concurrency, connections, requestsPerConn, total, errors.sum(), elapsedMs, all);
+            return new PerfReportExample.SweepRow(concurrency, connections, requestsPerConn, total, errors.sum(), elapsedMs, all);
         } catch (Exception e) {
             log.warn("  │ 并发={} 异常: {}", concurrency, e.getMessage());
             return null;

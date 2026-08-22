@@ -40,7 +40,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 4.0.0.42
  */
 @Slf4j
-public class `DataSyncExample implements Example {
+public $1class DataSyncExample implements Example {
 
     /**
      * 退出码：成功

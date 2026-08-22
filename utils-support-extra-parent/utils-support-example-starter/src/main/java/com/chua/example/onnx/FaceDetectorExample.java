@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.engine.ModelRegistry;
 import com.chua.deeplearning.support.face.FaceDetector;
 import com.chua.deeplearning.support.model.PredictRectangle;
@@ -17,7 +18,7 @@ import java.util.List;
  *   FaceDetectorExample list
  *   FaceDetectorExample scrfd-face-detector face.jpg
  * }</pre>
- *
+ *@author CH`n *
  * @since 4.0.0.42
  */
 public final class FaceDetectorExample extends ExampleBase {
@@ -39,17 +40,17 @@ public final class FaceDetectorExample extends ExampleBase {
             return;
         }
         if (imagePath == null) {
-            System.out.println("[face-detect] 需要图片路径");
+            log.info("[face-detect] 需要图片路径");
             return;
         }
         byte[] img = Files.readAllBytes(Path.of(imagePath));
         FaceDetector detector = FaceDetector.create(model);
         long t0 = System.currentTimeMillis();
         List<PredictRectangle> boxes = detector.detect(img);
-        System.out.println("[face-detect] model: " + model + " 图片: " + imagePath);
-        System.out.println("       人脸数: " + boxes.size());
+        log.info("[face-detect] model: " + model + " 图片: " + imagePath);
+        log.info("       人脸数: " + boxes.size());
         for (PredictRectangle b : boxes) {
-            System.out.println(String.format("       box: (%.0f,%.0f) %.0fx%.0f conf=%.2f",
+            log.info(String.format("       box: (%.0f,%.0f) %.0fx%.0f conf=%.2f",
                     b.x(), b.y(), b.width(), b.height(), b.confidence()));
         }
         printResult("face-detect", "onnx", model, t0);

@@ -41,15 +41,15 @@ public class FeatureDimensionExample {
     public static void main(String[] args) {
         ModelRegistry.discoverAll();
         boolean pass = true;
-        System.out.println("===== 文本嵌入模型维度检查 =====");
+        log.info("===== 文本嵌入模型维度检查 =====");
         for (String[] m : TEXT_MODELS) {
             pass &= check(m[0], m[1]);
         }
-        System.out.println("\n===== 图片特征模型维度检查 =====");
+        log.info("\n===== 图片特征模型维度检查 =====");
         for (String[] m : IMAGE_MODELS) {
             pass &= check(m[0], m[1]);
         }
-        System.out.println(pass ? "\n[PASS] 全部模型注册通过" : "\n[FAIL] 存在未注册模型");
+        log.info(pass ? "\n[PASS] 全部模型注册通过" : "\n[FAIL] 存在未注册模型");
     }
 
     private static boolean check(String modelId, String expectedDim) {

@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.engine.ModelRegistry;
 import com.chua.deeplearning.support.translator.ITranslator;
 import com.chua.deeplearning.support.utils.ImageUtils;
@@ -26,17 +27,17 @@ public final class LivenessExample {
         Files.createDirectories(outDir);
 
         for (String modelId : models) {
-            System.out.println("=== " + modelId + " ===");
+            log.info("=== " + modelId + " ===");
             var entry = ModelRegistry.get(modelId);
             if (entry == null) {
-                System.out.println("  注册: FAIL");
+                log.info("  注册: FAIL");
                 continue;
             }
-            System.out.println("  注册: OK");
+            log.info("  注册: OK");
             var path = ModelRegistry.resolveModelPath(modelId);
-            System.out.println("  路径: " + (path != null ? path : "null"));
+            log.info("  路径: " + (path != null ? path : "null"));
             if (path == null || !path.toFile().exists()) {
-                System.out.println("  模型文件不存在");
+                log.info("  模型文件不存在");
                 continue;
             }
 
@@ -45,12 +46,12 @@ public final class LivenessExample {
             long t0 = System.currentTimeMillis();
             Object result = translator.translate(imageBytes);
             long cost = System.currentTimeMillis() - t0;
-            System.out.println("  耗时: " + cost + "ms");
-            System.out.println("  结果: " + result);
+            log.info("  耗时: " + cost + "ms");
+            log.info("  结果: " + result);
             if (translator instanceof AutoCloseable ac) {
                 try { ac.close(); } catch (Exception ignore) {}
             }
         }
-        System.out.println("[LivenessVerify] DONE");
+        log.info("[LivenessVerify] DONE");
     }
 }

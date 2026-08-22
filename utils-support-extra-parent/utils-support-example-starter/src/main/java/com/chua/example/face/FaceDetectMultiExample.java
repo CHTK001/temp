@@ -60,7 +60,7 @@ public class FaceDetectMultiExample {
         for (String model : MODELS) {
             String outputDir = OUTPUT_ROOT + model + "\\";
             Files.createDirectories(Path.of(outputDir));
-            System.out.println("\n===== 模型: " + model + " =====");
+            log.info("\n===== 模型: " + model + " =====");
 
             FacePipeline face = FacePipeline.builder()
                     .detector(model)
@@ -95,10 +95,10 @@ public class FaceDetectMultiExample {
                                      .target(imageData).boxes(boxes, labels).done();
                              Files.write(Path.of(outputDir + name), drawn);
 
-                             System.out.println("面孔=" + hits.size()
+                             log.info("面孔=" + hits.size()
                                      + " " + (System.currentTimeMillis() - t0) + "ms");
                          } catch (Exception e) {
-                             System.out.println("FAIL: " + e.getMessage());
+                             log.info("FAIL: " + e.getMessage());
                          }
                      });
             }

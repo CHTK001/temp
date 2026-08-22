@@ -23,7 +23,7 @@ import com.chua.example.spi.Example;
  * @since 4.0.0.42
  */
 @Slf4j
-public class `PipelineBasicExample implements Example {
+public class PipelineBasicExample implements Example {
 
     /**
      * 退出码：成功
@@ -39,7 +39,7 @@ public class `PipelineBasicExample implements Example {
     public static void main(String[] args) {
         String type = parseType(args);
         boolean passed = runTest(type);
-        System.out.println("[PipelineBasicExample] type=" + type + ", passed=" + passed);
+        log.info("[PipelineBasicExample] type=" + type + ", passed=" + passed);
         System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
     }
 
@@ -218,6 +218,6 @@ public class `PipelineBasicExample implements Example {
      * @param passed 是否通过
      */
     private static void printResult(String name, boolean passed) {
-        System.out.println((passed ? "[PASS] " : "[FAIL] ") + name);
+        log.info((passed ? "[PASS] " : "[FAIL] ") + name);
     }
 }

@@ -1,5 +1,6 @@
 package com.chua.example.ai.embedding;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.ai.embedding.EmbeddingClient;
 import com.chua.common.support.ai.embedding.EmbeddingClientSetting;
 
@@ -45,11 +46,11 @@ public final class BgeLargeZhEmbeddingExample {
             float cos02 = cosine(vectors[0], vectors[2]);
             float cos03 = cosine(vectors[0], vectors[3]);
 
-            System.out.println(String.format("[%s] BGE-large-zh 自检 → 耗时 %dms, %d 句 × %d 维",
+            log.info(String.format("[%s] BGE-large-zh 自检 → 耗时 %dms, %d 句 × %d 维",
                     passed ? "PASS" : "FAIL", elapsed, docs.length, dim));
-            System.out.println(String.format("      cos(今天天气很好, 今天阳光明媚，适合出门散步) = %.3f", cos01));
-            System.out.println(String.format("      cos(今天天气很好, 人工智能正在改变世界) = %.3f", cos02));
-            System.out.println(String.format("      cos(今天天气很好, The weather is nice today) = %.3f", cos03));
+            log.info(String.format("      cos(今天天气很好, 今天阳光明媚，适合出门散步) = %.3f", cos01));
+            log.info(String.format("      cos(今天天气很好, 人工智能正在改变世界) = %.3f", cos02));
+            log.info(String.format("      cos(今天天气很好, The weather is nice today) = %.3f", cos03));
             java.nio.file.Files.writeString(java.nio.file.Path.of(System.getProperty("java.io.tmpdir"), "bge_large_zh_cos.txt"),
                     String.format("%.3f %.3f %.3f dim=%d", cos01, cos02, cos03, dim));
             return passed;

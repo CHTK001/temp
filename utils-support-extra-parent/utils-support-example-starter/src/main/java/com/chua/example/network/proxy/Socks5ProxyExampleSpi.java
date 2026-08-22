@@ -4,7 +4,7 @@ import com.chua.common.support.network.server.Server;
 import com.chua.common.support.network.server.ServerBuilder;
 import com.chua.common.support.network.server.ServerSetting;
 import com.chua.common.support.network.server.proxy.Socks5ProxyServer;
-import com.chua.example.network.perf.PerfReport;
+import com.chua.example.network.perf.PerfReportExample;
 import com.chua.example.spi.Example;
 import lombok.extern.slf4j.Slf4j;
 
@@ -282,7 +282,7 @@ public class Socks5ProxyExampleSpi implements Example {
 
     /** 运行Perf */
     private boolean runPerf(int concurrency, int connections, int requestsPerConn, int payloadSize) {
-        PerfReport.printEnvironment("Socks5ProxyServer", "socks5-proxy", "static-resolver (固定后端)");
+        PerfReportExample.printEnvironment("Socks5ProxyServer", "socks5-proxy", "static-resolver (固定后端)");
         log.info("  │ 代理路径 : client -> Socks5ProxyServer(virtual-thread) -> EchoServer");
         EchoServer backend = null;
         Socks5ProxyServer proxy = null;
@@ -291,11 +291,11 @@ public class Socks5ProxyExampleSpi implements Example {
             backend = EchoServer.start(0);
             proxy = new Socks5ProxyServer(ServerSetting.defaults());
             proxy.start();
-            PerfReport.SweepRow row = runPerfInner(concurrency, connections, requestsPerConn, payloadSize, proxy, backend.getPort());
+            PerfReportExample.SweepRow row = runPerfInner(concurrency, connections, requestsPerConn, payloadSize, proxy, backend.getPort());
             if (row == null) {
                 return false;
             }
-            PerfReport.printResult("socks5-proxy 64B echo 压力", row.concurrency, row.connections, row.requestsPerConn,
+            PerfReportExample.printResult("socks5-proxy 64B echo 压力", row.concurrency, row.connections, row.requestsPerConn,
                     payloadSize, row.total, row.errors, row.elapsedMs, row.sortedLatencyNs, 0L);
             pass();
             return true;
@@ -313,7 +313,7 @@ public class Socks5ProxyExampleSpi implements Example {
 
     /** 运行Sweep */
     private boolean runSweep(int payloadSize) {
-        PerfReport.printEnvironment("Socks5ProxyServer [sweep]", "socks5-proxy", "static-resolver (固定后端)");
+        PerfReportExample.printEnvironment("Socks5ProxyServer [sweep]", "socks5-proxy", "static-resolver (固定后端)");
         log.info("  │ 代理路径 : client -> Socks5ProxyServer(virtual-thread) -> EchoServer");
         EchoServer backend = null;
         Socks5ProxyServer proxy = null;
@@ -324,16 +324,16 @@ public class Socks5ProxyExampleSpi implements Example {
             proxy = new Socks5ProxyServer(setting);
             proxy.start();
 
-            List<PerfReport.SweepRow> rows = new ArrayList<>();
+            List<PerfReportExample.SweepRow> rows = new ArrayList<>();
             for (int cc : SWEEP_CONCURRENCY) {
                 int conn = Math.min(SWEEP_CONNECTIONS, Math.max(1, cc / 8));
                 int req = SWEEP_REQUESTS_PER_CONN;
-                PerfReport.SweepRow row = runPerfInner(cc, conn, req, payloadSize, proxy, backend.getPort());
+                PerfReportExample.SweepRow row = runPerfInner(cc, conn, req, payloadSize, proxy, backend.getPort());
                 if (row != null) {
                     rows.add(row);
                 }
             }
-            PerfReport.printSweepResult("socks5-proxy 64B echo 扫档 (按并发比例分配连接 / 500 请求每连接 / 并发扫描)", payloadSize, rows);
+            PerfReportExample.printSweepResult("socks5-proxy 64B echo 扫档 (按并发比例分配连接 / 500 请求每连接 / 并发扫描)", payloadSize, rows);
             return !rows.isEmpty();
         } catch (Exception e) {
             log.error("SWEEP 异常: {}", e.getMessage(), e);
@@ -354,7 +354,7 @@ public class Socks5ProxyExampleSpi implements Example {
      * @param proxy proxy
      * @param backendPort backendPort
      */
-    private PerfReport.SweepRow runPerfInner(int concurrency, int connections, int requestsPerConn, int payloadSize,
+    private PerfReportExample.SweepRow runPerfInner(int concurrency, int connections, int requestsPerConn, int payloadSize,
                                               Socks5ProxyServer proxy, int backendPort) {
         ExecutorService pool = null;
         try {
@@ -434,11 +434,11 @@ public class Socks5ProxyExampleSpi implements Example {
             }
             long elapsedNs = System.nanoTime() - startWall;
 
-            long[] all = PerfReport.mergeLatencies(latencies);
+            long[] all = PerfReportExample.mergeLatencies(latencies);
             Arrays.sort(all);
             long total = (long) connections * requestsPerConn;
             long elapsedMs = elapsedNs / 1_000_000L;
-            return new PerfReport.SweepRow(concurrency, connections, requestsPerConn, total, errors.sum(), elapsedMs, all);
+            return new PerfReportExample.SweepRow(concurrency, connections, requestsPerConn, total, errors.sum(), elapsedMs, all);
         } catch (Exception e) {
             log.warn("  │ 并发={} 异常: {}", concurrency, e.getMessage());
             return null;

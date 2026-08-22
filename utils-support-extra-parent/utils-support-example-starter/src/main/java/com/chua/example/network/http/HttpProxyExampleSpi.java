@@ -9,7 +9,7 @@ import com.chua.common.support.network.server.filter.ServerFilterChain;
 import com.chua.common.support.network.server.filter.ServerFilterConfig;
 import com.chua.common.support.network.server.request.ServerRequest;
 import com.chua.common.support.network.server.response.ServerResponse;
-import com.chua.example.network.perf.PerfReport;
+import com.chua.example.network.perf.PerfReportExample;
 import com.chua.example.spi.Example;
 import com.sun.net.httpserver.HttpServer;
 import lombok.extern.slf4j.Slf4j;
@@ -156,7 +156,7 @@ public class HttpProxyExampleSpi implements Example {
 
     /** 运行Perf */
     private boolean runPerf(int concurrency, int connections, int requestsPerConn, int payloadSize) {
-        PerfReport.printEnvironment("HTTP ReverseProxy", "jdk + SimpleForwardFilter (JDK HttpClient sync)",
+        PerfReportExample.printEnvironment("HTTP ReverseProxy", "jdk + SimpleForwardFilter (JDK HttpClient sync)",
                 "fixed (后端固定地址)");
         log.info("  │ 代理路径 : HttpClient -> JdkHttpServer -> SimpleForwardFilter (JDK HttpClient sync) -> Backend HttpServer");
         HttpServer backend = null;
@@ -170,11 +170,11 @@ public class HttpProxyExampleSpi implements Example {
             proxy.start();
             int proxyPort = proxy.getPort();
 
-            PerfReport.SweepRow row = runPerfInner(concurrency, connections, requestsPerConn, proxyPort);
+            PerfReportExample.SweepRow row = runPerfInner(concurrency, connections, requestsPerConn, proxyPort);
             if (row == null) {
                 return false;
             }
-            PerfReport.printResult("http-proxy GET /echo 压力", row.concurrency, row.connections, row.requestsPerConn,
+            PerfReportExample.printResult("http-proxy GET /echo 压力", row.concurrency, row.connections, row.requestsPerConn,
                     payloadSize, row.total, row.errors, row.elapsedMs, row.sortedLatencyNs, 0L);
             pass();
             return true;
@@ -191,7 +191,7 @@ public class HttpProxyExampleSpi implements Example {
 
     /** 运行Sweep */
     private boolean runSweep(int payloadSize) {
-        PerfReport.printEnvironment("HTTP ReverseProxy [sweep]", "jdk + SimpleForwardFilter (JDK HttpClient sync)",
+        PerfReportExample.printEnvironment("HTTP ReverseProxy [sweep]", "jdk + SimpleForwardFilter (JDK HttpClient sync)",
                 "fixed (后端固定地址)");
         log.info("  │ 代理路径 : HttpClient -> JdkHttpServer -> SimpleForwardFilter (JDK HttpClient sync) -> Backend HttpServer");
         HttpServer backend = null;
@@ -205,16 +205,16 @@ public class HttpProxyExampleSpi implements Example {
             proxy.start();
             int proxyPort = proxy.getPort();
 
-            List<PerfReport.SweepRow> rows = new ArrayList<>();
+            List<PerfReportExample.SweepRow> rows = new ArrayList<>();
             for (int cc : SWEEP_CONCURRENCY) {
                 int conn = Math.min(SWEEP_CONNECTIONS, Math.max(1, cc / 8));
                 int req = SWEEP_REQUESTS_PER_CONN;
-                PerfReport.SweepRow row = runPerfInner(cc, conn, req, proxyPort);
+                PerfReportExample.SweepRow row = runPerfInner(cc, conn, req, proxyPort);
                 if (row != null) {
                     rows.add(row);
                 }
             }
-            PerfReport.printSweepResult("http-proxy GET /echo 扫档 (按并发比例分配连接 / 500 请求每连接 / 并发扫描)", payloadSize, rows);
+            PerfReportExample.printSweepResult("http-proxy GET /echo 扫档 (按并发比例分配连接 / 500 请求每连接 / 并发扫描)", payloadSize, rows);
             return !rows.isEmpty();
         } catch (Exception e) {
             fail("SWEEP 异常: " + e.getMessage());
@@ -228,7 +228,7 @@ public class HttpProxyExampleSpi implements Example {
     }
 
     /** 运行PerfInner */
-    private PerfReport.SweepRow runPerfInner(int concurrency, int connections, int requestsPerConn, int proxyPort) {
+    private PerfReportExample.SweepRow runPerfInner(int concurrency, int connections, int requestsPerConn, int proxyPort) {
         ExecutorService pool = null;
         try {
             HttpClient client = HttpClient.newBuilder()
@@ -286,11 +286,11 @@ public class HttpProxyExampleSpi implements Example {
             }
             long elapsedNs = System.nanoTime() - startWall;
 
-            long[] all = PerfReport.mergeLatencies(latencies);
+            long[] all = PerfReportExample.mergeLatencies(latencies);
             Arrays.sort(all);
             long total = (long) connections * requestsPerConn;
             long elapsedMs = elapsedNs / 1_000_000L;
-            return new PerfReport.SweepRow(concurrency, connections, requestsPerConn, total, errors.sum(), elapsedMs, all);
+            return new PerfReportExample.SweepRow(concurrency, connections, requestsPerConn, total, errors.sum(), elapsedMs, all);
         } catch (Exception e) {
             log.warn("  │ 并发={} 异常: {}", concurrency, e.getMessage());
             return null;

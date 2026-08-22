@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.engine.ModelRegistry;
 import com.chua.deeplearning.support.nlp.TextTranslator;
 import com.chua.deeplearning.support.onnx.seq2seq.T5Seq2SeqOrtTranslator;
@@ -30,7 +31,7 @@ import java.util.List;
  *   Seq2SeqExample t5 <文本>                                          # T5 文本生成（无任务前缀）
  *   Seq2SeqExample mt5 summarize 30 <中文多句文本>                    # 中文 多句→一句，最多 30 token
  * }</pre>
- *
+ *@author CH`n *
  * @since 4.0.0.42
  */
 public final class Seq2SeqExample extends ExampleBase {
@@ -81,7 +82,7 @@ public final class Seq2SeqExample extends ExampleBase {
             runSeq2Seq("mt5-seq2seq", "mt5", args, text);
             return;
         }
-        System.out.println("未知模型: " + model);
+        log.info("未知模型: " + model);
     }
 
     /**
@@ -91,14 +92,14 @@ public final class Seq2SeqExample extends ExampleBase {
      */
     private static void runOpus(String text) {
         if (text == null) {
-            System.out.println("[opus] 需要翻译文本");
+            log.info("[opus] 需要翻译文本");
             return;
         }
         long t0 = System.currentTimeMillis();
         TextTranslator translator = TextTranslator.create("opus-mt-zh-en");
         String translated = translator.translate(text);
-        System.out.println("[opus] 原文: " + text);
-        System.out.println("      译文: " + translated);
+        log.info("[opus] 原文: " + text);
+        log.info("      译文: " + translated);
         printResult("opus-mt-zh-en", "onnx", "embedded", t0);
     }
 
@@ -115,7 +116,7 @@ public final class Seq2SeqExample extends ExampleBase {
      */
     private static void runSeq2Seq(String modelId, String label, String[] args, String text) {
         if (text == null) {
-            System.out.println("[" + label + "] 需要生成文本");
+            log.info("[" + label + "] 需要生成文本");
             return;
         }
         String task = args[1];
@@ -153,10 +154,10 @@ public final class Seq2SeqExample extends ExampleBase {
             }
         }
         String output = tr.translate(input);
-        System.out.println("[" + label + "] task=" + (prefix.isEmpty() ? "generate" : prefix.trim())
+        log.info("[" + label + "] task=" + (prefix.isEmpty() ? "generate" : prefix.trim())
                 + " maxTokens=" + (maxTokens > 0 ? maxTokens : 128));
-        System.out.println("      输入: " + input);
-        System.out.println("      输出: " + output);
+        log.info("      输入: " + input);
+        log.info("      输出: " + output);
         printResult(modelId, "onnx", modelId, t0);
     }
 

@@ -1,5 +1,6 @@
 package com.chua.example.face;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.engine.AbstractIdentificationEngine;
 import com.chua.deeplearning.support.liveness.LivenessDetector;
 
@@ -12,6 +13,7 @@ import java.nio.file.Path;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public class LivenessPipelineExample {
 
     public static void main(String[] args) throws Exception {
@@ -20,20 +22,20 @@ public class LivenessPipelineExample {
             byte[] img = Files.readAllBytes(Path.of("D:\\images\\1people.png"));
             try {
                 float score = liveness.liveScore(img);
-                System.out.println("FLRGB liveScore = " + score);
+                log.info("FLRGB liveScore = " + score);
             } catch (Exception e) {
-                System.out.println("liveScore FAIL:");
+                log.info("liveScore FAIL:");
                 e.printStackTrace();
             }
             try {
                 boolean live = liveness.isLive(img);
-                System.out.println("FLRGB isLive = " + live);
+                log.info("FLRGB isLive = " + live);
             } catch (Exception e) {
-                System.out.println("isLive FAIL:");
+                log.info("isLive FAIL:");
                 e.printStackTrace();
             }
         } catch (Throwable t) {
-            System.out.println("create FAIL:");
+            log.info("create FAIL:");
             t.printStackTrace();
         }
         System.exit(0);

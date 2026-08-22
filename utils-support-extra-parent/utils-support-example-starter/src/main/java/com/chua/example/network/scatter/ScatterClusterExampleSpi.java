@@ -1,5 +1,6 @@
 package com.chua.example.network.scatter;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.network.discovery.Discovery;
 import com.chua.common.support.scatter.Scatter;
 import com.chua.common.support.scatter.TcpScatterBuilder;
@@ -18,12 +19,9 @@ import java.util.concurrent.TimeUnit;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public class ScatterClusterExampleSpi implements Example {
-
-    private static final org.slf4j.Logger log =
-            org.slf4j.LoggerFactory.getLogger(ScatterClusterExampleSpi.class);
-
-    @Override
+@Override
     public String name() {
         return "scatter-cluster";
     }

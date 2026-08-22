@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.ai.audio.AudioClient;
 
 import java.nio.file.Path;
@@ -15,7 +16,7 @@ import java.nio.file.Path;
  *   AudioClientExample whisper whisper-tiny audio.wav
  *   AudioClientExample onnx whisper-tiny audio.wav
  * }</pre>
- *
+ *@author CH`n *
  * @since 4.0.0.42
  */
 public final class AudioClientExample extends ExampleBase {
@@ -43,14 +44,14 @@ public final class AudioClientExample extends ExampleBase {
         }
         client.model(model);
         if (audioPath == null) {
-            System.out.println("[audio] 需要音频文件路径");
+            log.info("[audio] 需要音频文件路径");
             client.close();
             return;
         }
         long t0 = System.currentTimeMillis();
         String text = client.transcribe(Path.of(audioPath));
-        System.out.println("[audio] file: " + audioPath);
-        System.out.println("       text: " + text);
+        log.info("[audio] file: " + audioPath);
+        log.info("       text: " + text);
         printResult("audio", provider, model, t0);
         client.close();
     }

@@ -1,14 +1,16 @@
 package com.chua.example.filesearch;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.utils.CommandLine;
 import com.chua.filesearch.support.bridge.RustFileSearchBridge;
 import com.chua.filesearch.support.model.FileInfo;
 import com.chua.filesearch.support.model.FileSearchCriteria;
 import com.chua.filesearch.support.service.FileSearchService;
 
-import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -37,6 +39,7 @@ import java.util.stream.Collectors;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public class FileSearchExample {
 
     /** 默认扫描根目录 */
@@ -51,8 +54,8 @@ public class FileSearchExample {
     /** 默认目录树显示深度 */
     private static final int DEFAULT_TREE_DEPTH = 5;
 
-    /** 时间格式化 */
-    private static final SimpleDateFormat DATE_FMT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    /** 时间格式化（线程安全） */
+    private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault());
 
     /** 创建 FileSearchExample 实例 */
     private FileSearchExample() {
@@ -78,11 +81,11 @@ public class FileSearchExample {
         int topN = cli.getInt("top", DEFAULT_TOP_N);
         int treeDepth = cli.getInt("depth", DEFAULT_TREE_DEPTH);
 
-        System.out.println("=== Rust 文件搜索示例 ===\n");
-        System.out.println("动态库版本: " + RustFileSearchBridge.getVersion());
-        System.out.println("扫描目录: " + rootDir);
-        System.out.println("最大结果数: " + (maxResults == 0 ? "无限制" : maxResults));
-        System.out.println();
+        log.info("=== Rust 文件搜索示例 ===\n");
+        log.info("动态库版本: " + RustFileSearchBridge.getVersion());
+        log.info("扫描目录: " + rootDir);
+        log.info("最大结果数: " + (maxResults == 0 ? "无限制" : maxResults));
+        log.info();
 
         long start = System.currentTimeMillis();
 
@@ -104,9 +107,9 @@ public class FileSearchExample {
         System.out.printf("扫描完成: %d 文件, %d 目录, 用时 %d ms\n\n", fileCount, dirCount, elapsed);
 
         printWizTreeTable(results, topN);
-        System.out.println();
+        log.info();
         printTreeIndented(results, treeDepth);
-        System.out.println();
+        log.info();
         printSimpleList(results, topN);
     }
 
@@ -117,7 +120,7 @@ public class FileSearchExample {
      * @param topN    显示的 Top N 扩展名数
      */
     static void printWizTreeTable(List<FileInfo> results, int topN) {
-        System.out.println("=== WizTree 扩展名统计 ===");
+        log.info("=== WizTree 扩展名统计 ===");
         System.out.printf("%-12s %12s %12s %s\n", "扩展名", "文件数", "总大小", "占比");
 
         List<FileInfo> files = results.stream()
@@ -127,7 +130,7 @@ public class FileSearchExample {
         long totalFiles = files.size();
 
         if (totalFiles == 0) {
-            System.out.println("  (无文件)");
+            log.info("  (无文件)");
             return;
         }
 
@@ -163,7 +166,7 @@ public class FileSearchExample {
      * @param depth   最大显示深度
      */
     static void printTreeIndented(List<FileInfo> results, int depth) {
-        System.out.println("=== 目录树缩进（前 " + depth + " 层）===");
+        log.info("=== 目录树缩进（前 " + depth + " 层）===");
 
         List<FileInfo> dirs = results.stream()
                 .filter(FileInfo::isDirectory)
@@ -171,7 +174,7 @@ public class FileSearchExample {
                 .toList();
 
         if (dirs.isEmpty()) {
-            System.out.println("  (无目录)");
+            log.info("  (无目录)");
             return;
         }
 
@@ -203,7 +206,7 @@ public class FileSearchExample {
      * @param topN    显示数量上限
      */
     static void printSimpleList(List<FileInfo> results, int topN) {
-        System.out.println("=== 文件列表（前 " + topN + "，按大小降序）===");
+        log.info("=== 文件列表（前 " + topN + "，按大小降序）===");
         System.out.printf("%-12s %-60s %s\n", "大小", "路径", "修改时间");
 
         List<FileInfo> sorted = results.stream()
@@ -213,7 +216,7 @@ public class FileSearchExample {
                 .toList();
 
         if (sorted.isEmpty()) {
-            System.out.println("  (无文件)");
+            log.info("  (无文件)");
             return;
         }
 
@@ -221,7 +224,7 @@ public class FileSearchExample {
             String path = f.path().length() > 57
                     ? "..." + f.path().substring(f.path().length() - 57)
                     : f.path();
-            String mtime = DATE_FMT.format(new Date(f.lastModified()));
+            String mtime = DATE_FMT.format(Instant.ofEpochMilli(f.lastModified()));
             System.out.printf("%-12s %-60s %s\n",
                     formatSize(f.size()), path, mtime);
         }

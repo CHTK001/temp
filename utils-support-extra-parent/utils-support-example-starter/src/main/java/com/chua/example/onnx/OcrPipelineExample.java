@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.ocr.OcrPipeline;
 import com.chua.deeplearning.support.ocr.OcrResult;
 
@@ -17,7 +18,7 @@ import java.util.List;
  *   OcrPipelineExample
  *   OcrPipelineExample G:\images\车票.png
  * }</pre>
- *
+ *@author CH`n *
  * @since 4.0.0.42
  */
 public final class OcrPipelineExample extends ExampleBase {
@@ -44,10 +45,10 @@ public final class OcrPipelineExample extends ExampleBase {
         List<OcrResult> results = ocr.recognizeDetail(img);
         long elapsed = System.currentTimeMillis() - t0;
 
-        System.out.println("[ocr-pipeline] 图片: " + imagePath);
-        System.out.println("       文本块数: " + results.size() + " 耗时=" + elapsed + "ms");
+        log.info("[ocr-pipeline] 图片: " + imagePath);
+        log.info("       文本块数: " + results.size() + " 耗时=" + elapsed + "ms");
         for (OcrResult r : results) {
-            System.out.println("       text='" + r.text() + "' conf=" + String.format("%.2f", r.confidence())
+            log.info("       text='" + r.text() + "' conf=" + String.format("%.2f", r.confidence())
                     + " box=" + (r.boundingBox() == null ? "null" : String.format("(%.0f,%.0f) %.0fx%.0f",
                     r.boundingBox().x(), r.boundingBox().y(),
                     r.boundingBox().width(), r.boundingBox().height())));

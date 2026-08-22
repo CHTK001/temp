@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.engine.ModelRegistry;
 import com.chua.deeplearning.support.image.ImageDetector;
 import com.chua.deeplearning.support.model.DetectionInfo;
@@ -17,7 +18,7 @@ import java.util.List;
  *   ImageDetectorExample list
  *   ImageDetectorExample yolov8s scene.jpg
  * }</pre>
- *
+ *@author CH`n *
  * @since 4.0.0.42
  */
 public final class ImageDetectorExample extends ExampleBase {
@@ -39,17 +40,17 @@ public final class ImageDetectorExample extends ExampleBase {
             return;
         }
         if (imagePath == null) {
-            System.out.println("[detect] 需要图片路径");
+            log.info("[detect] 需要图片路径");
             return;
         }
         byte[] img = Files.readAllBytes(Path.of(imagePath));
         ImageDetector detector = ImageDetector.create(model);
         long t0 = System.currentTimeMillis();
         List<DetectionInfo> results = detector.detect(img);
-        System.out.println("[detect] model: " + model + " 图片: " + imagePath);
-        System.out.println("       目标数: " + results.size());
+        log.info("[detect] model: " + model + " 图片: " + imagePath);
+        log.info("       目标数: " + results.size());
         for (DetectionInfo d : results) {
-            System.out.println(String.format("       %s: (%.0f,%.0f) %.0fx%.0f conf=%.2f",
+            log.info(String.format("       %s: (%.0f,%.0f) %.0fx%.0f conf=%.2f",
                     d.label(), d.x(), d.y(), d.width(), d.height(), d.confidence()));
         }
         printResult("detect", "onnx", model, t0);

@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.image.ImageDetector;
 import com.chua.deeplearning.support.model.DetectionInfo;
 import com.chua.deeplearning.support.ocr.OcrPipeline;
@@ -14,7 +15,7 @@ import java.util.List;
 /**
  * 全局 deskew 影响对比：对每张图的 deskew 触发框，对比 raw / +angle / -angle 识别，
  * 判定 deskew 是否有害以及方向。
- *
+ *@author CH`n *
  * @since 4.0.0.42
  */
 public final class OcrDeskewCompareExample {
@@ -59,11 +60,11 @@ public final class OcrDeskewCompareExample {
                                 b.angle(), raw, plus, minus));
                     }
                     if (trig > 0) {
-                        System.out.println("[cmp] " + p.getFileName() + " 触发deskew框=" + trig);
+                        log.info("[cmp] " + p.getFileName() + " 触发deskew框=" + trig);
                         System.out.print(sb);
                     }
                 } catch (Exception e) {
-                    System.out.println("[cmp] " + p.getFileName() + " 异常: " + e.getMessage());
+                    log.info("[cmp] " + p.getFileName() + " 异常: " + e.getMessage());
                 }
             });
         }

@@ -1,6 +1,9 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
+import com.chua.deeplearning.support.audio.AudioFingerprinter;
 import com.chua.deeplearning.support.audio.AudioRecognitionPipeline;
+import com.chua.deeplearning.support.audio.SpeakerDiarizer;
 import com.chua.deeplearning.support.audio.SpeakerSegment;
 
 import java.nio.file.Path;
@@ -27,10 +30,17 @@ import java.util.List;
  *   // 仅列出可用模型
  *   SpeakerDiarizationExample list
  * }</pre>
- *
- * @since 4.0.0.43
+ *@author CH`n *
+ * @since 4.0.0.42
  */
 public final class SpeakerDiarizationExample extends ExampleBase {
+
+    /** 默认说话人嵌入模型（wespeaker-resnet34 为嵌入式，随依赖内置） */
+    private static final String DEFAULT_SPEAKER_MODEL = "wespeaker-resnet34";
+    /** 默认 ASR 模型（whisper-tiny 为嵌入式，随依赖内置） */
+    private static final String DEFAULT_ASR_MODEL = "whisper-tiny";
+    /** 能量 VAD 模型标识（零模型依赖） */
+    private static final String ENERGY_VAD_MODEL = "energy-vad";
 
     /** 创建 SpeakerDiarizationExample 实例 */
     private SpeakerDiarizationExample() {
@@ -48,43 +58,43 @@ public final class SpeakerDiarizationExample extends ExampleBase {
         // 列出可用模型
         if ("list".equals(mode)) {
             printModels("speaker-diarization", "onnx",
-                    com.chua.deeplearning.support.audio.SpeakerDiarizer.listModels());
+                    SpeakerDiarizer.listModels());
             printModels("audio-fingerprint", "onnx",
-                    com.chua.deeplearning.support.audio.AudioFingerprinter.listModels());
+                    AudioFingerprinter.listModels());
             return;
         }
 
         // 需要音频文件路径
         if (args.length < 2) {
-            System.out.println("[error] 需要音频文件路径");
+            log.info("[error] 需要音频文件路径");
             printUsage();
             return;
         }
         String audioPath = args[1];
         Path path = Path.of(audioPath);
         if (!java.nio.file.Files.exists(path)) {
-            System.out.println("[error] 文件不存在: " + path);
+            log.info("[error] 文件不存在: " + path);
             return;
         }
 
         // vad 模式：仅 VAD 时间切分，无需深度学习模型
         if ("vad".equals(mode)) {
             long t0 = System.currentTimeMillis();
-            var diarizer = com.chua.deeplearning.support.audio.SpeakerDiarizer
+            var diarizer = SpeakerDiarizer
                     .create("onnx", "")
-                    .model("energy-vad");
+                    .model(ENERGY_VAD_MODEL);
             List<SpeakerSegment> segments = diarizer.diarize(path);
             long elapsed = System.currentTimeMillis() - t0;
-            System.out.println("[diarization] mode=vad (能量VAD，零模型依赖)");
-            System.out.println("       file:  " + audioPath);
-            System.out.println("       片段数: " + segments.size() + "  耗时: " + elapsed + "ms");
+            log.info("[diarization] mode=vad (能量VAD，零模型依赖)");
+            log.info("       file:  " + audioPath);
+            log.info("       片段数: " + segments.size() + "  耗时: " + elapsed + "ms");
             printSegments(segments);
             return;
         }
 
         // diarize 模式：VAD + 说话人嵌入聚类
         if ("diarize".equals(mode)) {
-            String speakerModel = args.length > 2 ? args[2] : "wespeaker-resnet34";
+            String speakerModel = args.length > 2 ? args[2] : DEFAULT_SPEAKER_MODEL;
             Integer maxSpeakers = args.length > 3 ? Integer.parseInt(args[3]) : null;
             long t0 = System.currentTimeMillis();
             var pipeline = AudioRecognitionPipeline.builder()
@@ -93,49 +103,49 @@ public final class SpeakerDiarizationExample extends ExampleBase {
                     .build();
             List<SpeakerSegment> segments = pipeline.recognize(path);
             long elapsed = System.currentTimeMillis() - t0;
-            System.out.println("[diarization] mode=diarize");
-            System.out.println("       file:        " + audioPath);
-            System.out.println("       嵌入模型:    " + speakerModel);
-            System.out.println("       max_speakers:" + (maxSpeakers != null ? maxSpeakers : "不限"));
-            System.out.println("       片段数:      " + segments.size() + "  耗时: " + elapsed + "ms");
+            log.info("[diarization] mode=diarize");
+            log.info("       file:        " + audioPath);
+            log.info("       嵌入模型:    " + speakerModel);
+            log.info("       max_speakers:" + (maxSpeakers != null ? maxSpeakers : "不限"));
+            log.info("       片段数:      " + segments.size() + "  耗时: " + elapsed + "ms");
             printSegments(segments);
             return;
         }
 
         // full 模式：VAD + 嵌入聚类 + ASR 转写
         if ("full".equals(mode)) {
-            String asrModel = args.length > 2 ? args[2] : "whisper-tiny";
+            String asrModel = args.length > 2 ? args[2] : DEFAULT_ASR_MODEL;
             Integer maxSpeakers = args.length > 3 ? Integer.parseInt(args[3]) : null;
             long t0 = System.currentTimeMillis();
             var pipeline = AudioRecognitionPipeline.builder()
-                    .speakerEmbeddingModel("wespeaker-resnet34")
+                    .speakerEmbeddingModel(DEFAULT_SPEAKER_MODEL)
                     .asrModel(asrModel)
                     .maxSpeakers(maxSpeakers)
                     .build();
             List<SpeakerSegment> segments = pipeline.recognize(path);
             long elapsed = System.currentTimeMillis() - t0;
-            System.out.println("[diarization] mode=full (VAD+嵌入+ASR)");
-            System.out.println("       file:        " + audioPath);
-            System.out.println("       嵌入模型:    wespeaker-resnet34");
-            System.out.println("       ASR 模型:    " + asrModel);
-            System.out.println("       max_speakers:" + (maxSpeakers != null ? maxSpeakers : "不限"));
-            System.out.println("       片段数:      " + segments.size() + "  耗时: " + elapsed + "ms");
+            log.info("[diarization] mode=full (VAD+嵌入+ASR)");
+            log.info("       file:        " + audioPath);
+            log.info("       嵌入模型:    " + DEFAULT_SPEAKER_MODEL);
+            log.info("       ASR 模型:    " + asrModel);
+            log.info("       max_speakers:" + (maxSpeakers != null ? maxSpeakers : "不限"));
+            log.info("       片段数:      " + segments.size() + "  耗时: " + elapsed + "ms");
             printSegments(segments);
             return;
         }
 
-        System.out.println("[error] 未知模式: " + mode);
+        log.info("[error] 未知模式: " + mode);
         printUsage();
     }
 
     private static void printSegments(List<SpeakerSegment> segments) {
         if (segments.isEmpty()) {
-            System.out.println("  (无语音片段)");
+            log.info("  (无语音片段)");
             return;
         }
-        System.out.println("  ┌──────────┬────────────┬────────────┬───────────┬────────────────────────────┐");
-        System.out.println("  │ 说话人    │ 起始(ms)   │ 结束(ms)   │ 时长(s)   │ 文本                        │");
-        System.out.println("  ├──────────┼────────────┼────────────┼───────────┼────────────────────────────┤");
+        log.info("  ┌──────────┬────────────┬────────────┬───────────┬────────────────────────────┐");
+        log.info("  │ 说话人    │ 起始(ms)   │ 结束(ms)   │ 时长(s)   │ 文本                        │");
+        log.info("  ├──────────┼────────────┼────────────┼───────────┼────────────────────────────┤");
         for (SpeakerSegment seg : segments) {
             String text = seg.transcript() != null ? seg.transcript() : "(未转写)";
             if (text.length() > 28) text = text.substring(0, 25) + "...";
@@ -146,23 +156,24 @@ public final class SpeakerDiarizationExample extends ExampleBase {
                     seg.durationSec(),
                     text);
         }
-        System.out.println("  └──────────┴────────────┴────────────┴───────────┴────────────────────────────┘");
+        log.info("  └──────────┴────────────┴────────────┴───────────┴────────────────────────────┘");
     }
 
     private static void printUsage() {
-        System.out.println("===== 说话人分离与音频识别管线示例 =====");
-        System.out.println();
-        System.out.println("用法:");
-        System.out.println("  SpeakerDiarizationExample list                       # 列出可用模型");
-        System.out.println("  SpeakerDiarizationExample vad <audio.wav>            # 仅 VAD 时间切分（零模型依赖）");
-        System.out.println("  SpeakerDiarizationExample diarize <audio.wav>        # VAD + 说话人嵌入聚类");
-        System.out.println("  SpeakerDiarizationExample diarize <audio.wav> <model> [maxSpeakers]");
-        System.out.println("  SpeakerDiarizationExample full <audio.wav> <asrModel> [maxSpeakers]  # VAD+嵌入+ASR");
-        System.out.println();
-        System.out.println("示例:");
-        System.out.println("  SpeakerDiarizationExample vad   meeting.wav");
-        System.out.println("  SpeakerDiarizationExample full  meeting.wav whisper-tiny 3");
-        System.out.println();
-        System.out.println("注意: wav2vec2/wespeaker/whisper 模型需首次运行时自动下载（~80MB~950MB）");
+        log.info("===== 说话人分离与音频识别管线示例 =====");
+        log.info();
+        log.info("用法:");
+        log.info("  SpeakerDiarizationExample list                       # 列出可用模型");
+        log.info("  SpeakerDiarizationExample vad <audio.wav>            # 仅 VAD 时间切分（零模型依赖）");
+        log.info("  SpeakerDiarizationExample diarize <audio.wav>        # VAD + 说话人嵌入聚类");
+        log.info("  SpeakerDiarizationExample diarize <audio.wav> <model> [maxSpeakers]");
+        log.info("  SpeakerDiarizationExample full <audio.wav> <asrModel> [maxSpeakers]  # VAD+嵌入+ASR");
+        log.info();
+        log.info("示例:");
+        log.info("  SpeakerDiarizationExample vad   meeting.wav");
+        log.info("  SpeakerDiarizationExample full  meeting.wav whisper-tiny 3");
+        log.info();
+        log.info("注意: whisper-tiny 与 wespeaker-resnet34 已随依赖内置（嵌入式）；");
+        log.info("      wav2vec2-zh-fingerprint 首次运行需下载（~950MB）。");
     }
 }

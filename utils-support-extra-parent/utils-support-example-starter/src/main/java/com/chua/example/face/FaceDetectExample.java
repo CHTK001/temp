@@ -84,10 +84,10 @@ public class FaceDetectExample {
                                  .done();
                          Files.write(Path.of(OUTPUT_DIR + name), drawn);
 
-                         System.out.println("面孔=" + hits.size()
+                         log.info("面孔=" + hits.size()
                                  + " " + (System.currentTimeMillis() - t0) + "ms");
                      } catch (Exception e) {
-                         System.out.println("FAIL: " + e.getMessage());
+                         log.info("FAIL: " + e.getMessage());
                      }
                  });
         }

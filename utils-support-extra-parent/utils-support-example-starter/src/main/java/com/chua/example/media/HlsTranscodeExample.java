@@ -1,5 +1,6 @@
 package com.chua.example.media;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.utils.CommandLine;
 import com.chua.video.processor.support.bridge.VideoProcessorBridge;
 
@@ -19,11 +20,12 @@ import java.nio.file.Path;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public class HlsTranscodeExample {
 
     /** Main */
     public static void main(String[] args) throws Exception {
-        System.out.println("===== HLS 转码示例 =====\n");
+        log.info("===== HLS 转码示例 =====\n");
 
         CommandLine cli = CommandLine.parse(args)
                 .program("HlsTranscodeExample")
@@ -38,7 +40,7 @@ public class HlsTranscodeExample {
 
         String inputPath = cli.get("input");
         if (inputPath == null || inputPath.isBlank()) {
-            System.out.println("[ERROR] 必须指定 --input 输入文件路径");
+            log.info("[ERROR] 必须指定 --input 输入文件路径");
             cli.help();
             System.exit(1);
             return;
@@ -49,32 +51,32 @@ public class HlsTranscodeExample {
                 : Files.createTempDirectory("hls-output");
 
         if (!VideoProcessorBridge.isLoaded()) {
-            System.out.println("[ERROR] Native VideoProcessor 库未加载，请先编译动态库");
+            log.info("[ERROR] Native VideoProcessor 库未加载，请先编译动态库");
             System.exit(1);
             return;
         }
 
         File inputFile = new File(inputPath);
         if (!inputFile.exists()) {
-            System.out.println("输入文件不存在: " + inputPath);
+            log.info("输入文件不存在: " + inputPath);
             System.exit(1);
             return;
         }
 
-        System.out.println("--- 1. 获取 native 版本 ---");
-        System.out.println("  版本: " + VideoProcessorBridge.getVersion());
+        log.info("--- 1. 获取 native 版本 ---");
+        log.info("  版本: " + VideoProcessorBridge.getVersion());
 
-        System.out.println("\n--- 2. HLS 转码 ---");
+        log.info("\n--- 2. HLS 转码 ---");
         boolean ok = VideoProcessorBridge.transcodeToHls(inputPath, outputDir.toString());
         if (!ok) {
             throw new RuntimeException("HLS 转码失败");
         }
 
-        System.out.println("  输出目录: " + outputDir);
+        log.info("  输出目录: " + outputDir);
         try (var stream = Files.list(outputDir)) {
-            stream.forEach(p -> System.out.println("    " + p.getFileName()));
+            stream.forEach(p -> log.info("    " + p.getFileName()));
         }
 
-        System.out.println("\n===== 示例结束 =====");
+        log.info("\n===== 示例结束 =====");
     }
 }

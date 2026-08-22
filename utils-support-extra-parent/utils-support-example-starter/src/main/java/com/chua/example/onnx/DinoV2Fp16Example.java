@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import ai.djl.modality.cv.Image;
 import ai.djl.modality.cv.ImageFactory;
 import com.chua.deeplearning.support.engine.ModelRegistry;
@@ -17,7 +18,7 @@ import java.nio.file.Path;
  *
  * <p>用法：{@code mvn -o exec:java -Dexec.classpathScope=test
  * -Dexec.mainClass=com.chua.deeplearning.support.onnx.example.DinoV2Fp16Verify}</p>
- *
+ *@author CH`n *
  * @since 4.0.0.42
  */
 public final class DinoV2Fp16Example {
@@ -39,12 +40,12 @@ public final class DinoV2Fp16Example {
         double cos = cosine(fp32, fp16);
         ok = ok && cos > 0.98;
 
-        System.out.println("[fp32] dim=" + (fp32 == null ? 0 : fp32.length)
+        log.info("[fp32] dim=" + (fp32 == null ? 0 : fp32.length)
                 + " head=" + head(fp32));
-        System.out.println("[fp16] dim=" + (fp16 == null ? 0 : fp16.length)
+        log.info("[fp16] dim=" + (fp16 == null ? 0 : fp16.length)
                 + " head=" + head(fp16));
         System.out.printf("[similarity] fp32/fp16 余弦=%s%n", String.format("%.4f", cos));
-        System.out.println(ok ? "[DinoV2Fp16Verify] ALL PASS" : "[DinoV2Fp16Verify] FAIL");
+        log.info(ok ? "[DinoV2Fp16Verify] ALL PASS" : "[DinoV2Fp16Verify] FAIL");
         if (!ok) {
             System.exit(1);
         }
@@ -56,7 +57,7 @@ public final class DinoV2Fp16Example {
             Object out = translator.translate(image);
             return (float[]) out;
         } catch (Exception e) {
-            System.out.println("[" + modelId + "] FAIL: " + e.getMessage());
+            log.info("[" + modelId + "] FAIL: " + e.getMessage());
             return null;
         } finally {
             if (translator instanceof AutoCloseable ac) {

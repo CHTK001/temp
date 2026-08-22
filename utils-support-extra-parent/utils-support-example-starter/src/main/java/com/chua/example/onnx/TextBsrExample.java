@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.engine.AbstractIdentificationEngine;
 import com.chua.deeplearning.support.translator.ITranslator;
 
@@ -12,7 +13,7 @@ import java.nio.file.Path;
  * <pre>{@code
  *   TextBsrExample G:\images\很不清楚的文字图片用于测试文字高清修复模型.png [2|4]
  * }</pre>
- *
+ *@author CH`n *
  * @since 4.0.0.42
  */
 public final class TextBsrExample {
@@ -32,7 +33,7 @@ public final class TextBsrExample {
                 (ITranslator<Object, Object>) AbstractIdentificationEngine.getInstance()
                         .get("text-bsr", ITranslator.class);
         if (t == null) {
-            System.out.println("[text-bsr] 模型未注册");
+            log.info("[text-bsr] 模型未注册");
             return;
         }
         // 穿透 LazyDjlTranslator / ITranslatorDelegate 包装，找到原生 TextBsrTranslator 设置 scale
@@ -40,24 +41,24 @@ public final class TextBsrExample {
             Object target = unwrap(t);
             java.lang.reflect.Method setScale = target.getClass().getMethod("setScale", int.class);
             setScale.invoke(target, scale);
-            System.out.println("[text-bsr] scale=" + scale + "x");
+            log.info("[text-bsr] scale=" + scale + "x");
         } catch (Exception e) {
-            System.out.println("[text-bsr] 设置 scale 失败: " + e.getMessage() + "，使用默认 2x");
+            log.info("[text-bsr] 设置 scale 失败: " + e.getMessage() + "，使用默认 2x");
         }        long t0 = System.currentTimeMillis();
         Object out = t.translate(img);
         long elapsed = System.currentTimeMillis() - t0;
-        System.out.println("[text-bsr] 图片: " + imagePath);
-        System.out.println("       输出类型: " + (out == null ? "null" : out.getClass().getName()));
+        log.info("[text-bsr] 图片: " + imagePath);
+        log.info("       输出类型: " + (out == null ? "null" : out.getClass().getName()));
         if (out instanceof java.awt.image.BufferedImage bi) {
-            System.out.println("       尺寸: " + bi.getWidth() + "x" + bi.getHeight());
-            System.out.println("       耗时=" + elapsed + "ms");
+            log.info("       尺寸: " + bi.getWidth() + "x" + bi.getHeight());
+            log.info("       耗时=" + elapsed + "ms");
             Path outPath = Path.of("G:\\images\\output\\textbsr_out_" + scale + "x.png");
             java.io.File f = outPath.toFile();
             if (!f.getParentFile().exists()) {
                 f.getParentFile().mkdirs();
             }
             javax.imageio.ImageIO.write(bi, "png", f);
-            System.out.println("       已保存: " + outPath + " (" + f.length() + " bytes)");
+            log.info("       已保存: " + outPath + " (" + f.length() + " bytes)");
         }
     }
     /**

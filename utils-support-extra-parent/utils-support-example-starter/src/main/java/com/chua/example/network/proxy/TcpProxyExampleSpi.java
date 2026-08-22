@@ -4,7 +4,7 @@ import com.chua.common.support.network.server.Server;
 import com.chua.common.support.network.server.ServerBuilder;
 import com.chua.common.support.network.server.ServerSetting;
 import com.chua.common.support.network.server.proxy.TcpProxyServer;
-import com.chua.example.network.perf.PerfReport;
+import com.chua.example.network.perf.PerfReportExample;
 import com.chua.example.spi.Example;
 import lombok.extern.slf4j.Slf4j;
 
@@ -221,13 +221,13 @@ public class TcpProxyExampleSpi implements Example {
 
     /** 运行Perf */
     private boolean runPerf(int concurrency, int connections, int requestsPerConn, int payloadSize) {
-        PerfReport.printEnvironment("TcpProxyServer", "tcp-proxy", "static-resolver (固定后端)");
+        PerfReportExample.printEnvironment("TcpProxyServer", "tcp-proxy", "static-resolver (固定后端)");
         log.info("  │ 代理路径 : client -> TcpProxyServer(virtual-thread) -> EchoServer");
         EchoServer backend = null;
         TcpProxyServer proxy = null;
         ExecutorService pool = null;
         try {
-            PerfReport.SweepRow row = runPerfOnce(concurrency, connections, requestsPerConn, payloadSize, /* printFull = */ true);
+            PerfReportExample.SweepRow row = runPerfOnce(concurrency, connections, requestsPerConn, payloadSize, /* printFull = */ true);
             return row != null;
         } catch (Exception e) {
             fail("PERF 异常: " + e.getMessage());
@@ -237,7 +237,7 @@ public class TcpProxyExampleSpi implements Example {
 
     /** 运行Sweep */
     private boolean runSweep(int payloadSize) {
-        PerfReport.printEnvironment("TcpProxyServer [sweep]", "tcp-proxy", "static-resolver (固定后端)");
+        PerfReportExample.printEnvironment("TcpProxyServer [sweep]", "tcp-proxy", "static-resolver (固定后端)");
         log.info("  │ 代理路径 : client -> TcpProxyServer(virtual-thread) -> EchoServer");
         EchoServer backend = null;
         TcpProxyServer proxy = null;
@@ -250,16 +250,16 @@ public class TcpProxyExampleSpi implements Example {
             proxy = new TcpProxyServer(setting, new InetSocketAddress("127.0.0.1", backend.getPort()));
             proxy.start();
 
-            List<PerfReport.SweepRow> rows = new ArrayList<>();
+            List<PerfReportExample.SweepRow> rows = new ArrayList<>();
             for (int cc : SWEEP_CONCURRENCY) {
                 int conn = Math.min(SWEEP_CONNECTIONS, Math.max(1, cc / 8));
                 int req = SWEEP_REQUESTS_PER_CONN;
-                PerfReport.SweepRow row = runSweepOnce(cc, conn, req, payloadSize, proxy);
+                PerfReportExample.SweepRow row = runSweepOnce(cc, conn, req, payloadSize, proxy);
                 if (row != null) {
                     rows.add(row);
                 }
             }
-            PerfReport.printSweepResult("tcp-proxy 64B echo 扫档 (按并发比例分配连接 / 500 请求每连接 / 并发扫描)", payloadSize, rows);
+            PerfReportExample.printSweepResult("tcp-proxy 64B echo 扫档 (按并发比例分配连接 / 500 请求每连接 / 并发扫描)", payloadSize, rows);
             return !rows.isEmpty();
         } catch (Exception e) {
             fail("SWEEP 异常: " + e.getMessage());
@@ -273,7 +273,7 @@ public class TcpProxyExampleSpi implements Example {
     /**
      * 单档压测：使用全局 server（sweep 模式复用同一个 proxy + backend）。
      */
-    private PerfReport.SweepRow runSweepOnce(int concurrency, int connections, int requestsPerConn, int payloadSize, TcpProxyServer proxy) {
+    private PerfReportExample.SweepRow runSweepOnce(int concurrency, int connections, int requestsPerConn, int payloadSize, TcpProxyServer proxy) {
         ExecutorService pool = null;
         try {
             int proxyPort = proxy.getPort();
@@ -336,11 +336,11 @@ public class TcpProxyExampleSpi implements Example {
             }
             long elapsedNs = System.nanoTime() - startWall;
 
-            long[] all = PerfReport.mergeLatencies(latencies);
+            long[] all = PerfReportExample.mergeLatencies(latencies);
             Arrays.sort(all);
             long total = (long) connections * requestsPerConn;
             long elapsedMs = elapsedNs / 1_000_000L;
-            return new PerfReport.SweepRow(concurrency, connections, requestsPerConn, total, errors.sum(), elapsedMs, all);
+            return new PerfReportExample.SweepRow(concurrency, connections, requestsPerConn, total, errors.sum(), elapsedMs, all);
         } catch (Exception e) {
             log.warn("  │ 并发={} 异常: {}", concurrency, e.getMessage());
             return null;
@@ -354,7 +354,7 @@ public class TcpProxyExampleSpi implements Example {
     /**
      * 单档压测（独立 server 生命周期），可独立打印完整报告。
      */
-    private PerfReport.SweepRow runPerfOnce(int concurrency, int connections, int requestsPerConn, int payloadSize, boolean printFull) {
+    private PerfReportExample.SweepRow runPerfOnce(int concurrency, int connections, int requestsPerConn, int payloadSize, boolean printFull) {
         EchoServer backend = null;
         TcpProxyServer proxy = null;
         ExecutorService pool = null;
@@ -369,13 +369,13 @@ public class TcpProxyExampleSpi implements Example {
             int proxyPort = proxy.getPort();
             assertTrue(proxyPort > 0, "代理端口应被自动分配");
 
-            PerfReport.SweepRow row = runSweepOnce(concurrency, connections, requestsPerConn, payloadSize, proxy);
+            PerfReportExample.SweepRow row = runSweepOnce(concurrency, connections, requestsPerConn, payloadSize, proxy);
             if (row == null) {
                 return null;
             }
             if (printFull) {
                 long startupMs = 0;
-                PerfReport.printResult("tcp-proxy 64B echo 压力", row.concurrency, row.connections, row.requestsPerConn,
+                PerfReportExample.printResult("tcp-proxy 64B echo 压力", row.concurrency, row.connections, row.requestsPerConn,
                         payloadSize, row.total, row.errors, row.elapsedMs, row.sortedLatencyNs, startupMs);
                 pass();
             }

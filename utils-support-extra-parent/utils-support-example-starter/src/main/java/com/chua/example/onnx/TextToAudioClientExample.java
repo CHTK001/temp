@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.ai.audio.TextToAudioClient;
 
 import java.nio.file.Files;
@@ -15,7 +16,7 @@ import java.nio.file.Path;
  *   TextToAudioClientExample list
  *   TextToAudioClientExample onnx mms-tts-eng "Hello world"
  * }</pre>
- *
+ *@author CH`n *
  * @since 4.0.0.42
  */
 public final class TextToAudioClientExample extends ExampleBase {
@@ -44,11 +45,11 @@ public final class TextToAudioClientExample extends ExampleBase {
         client.model(model);
         long t0 = System.currentTimeMillis();
         byte[] wav = client.synthesize(text);
-        System.out.println("[tts] text: " + text);
-        System.out.println("       WAV: " + wav.length + " bytes");
+        log.info("[tts] text: " + text);
+        log.info("       WAV: " + wav.length + " bytes");
         Path out = Files.createTempFile("tts-example-", ".wav");
         Files.write(out, wav);
-        System.out.println("       saved: " + out);
+        log.info("       saved: " + out);
         printResult("tts", provider, model, t0);
         client.close();
     }

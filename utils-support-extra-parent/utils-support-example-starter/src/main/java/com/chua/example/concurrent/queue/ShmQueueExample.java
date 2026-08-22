@@ -274,18 +274,18 @@ public class ShmQueueExample {
 
     /** PrintResult */
     private static void printResult(String name, boolean passed) {
-        System.out.println((passed ? "[PASS] " : "[FAIL] ") + name);
+        log.info((passed ? "[PASS] " : "[FAIL] ") + name);
     }
 
     /** PrintHelp */
     private static void printHelp() {
-        System.out.println("ShmQueueExample - 共享内存环形队列示例");
-        System.out.println();
-        System.out.println("用法: java ShmQueueExample [--mode <key>] [--help]");
-        System.out.println();
-        System.out.println("选项:");
-        System.out.println("  --mode <spin|block|hybrid|all>   等待模式（默认 all）");
-        System.out.println("  --help, -h                       显示此帮助");
+        log.info("ShmQueueExample - 共享内存环形队列示例");
+        log.info();
+        log.info("用法: java ShmQueueExample [--mode <key>] [--help]");
+        log.info();
+        log.info("选项:");
+        log.info("  --mode <spin|block|hybrid|all>   等待模式（默认 all）");
+        log.info("  --help, -h                       显示此帮助");
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.image.ImageDetector;
 import com.chua.deeplearning.support.model.DetectionInfo;
 import com.chua.deeplearning.support.ocr.OcrPipeline;
@@ -13,7 +14,7 @@ import java.util.List;
 
 /**
  * OCR 裁剪块 deskew 诊断：保存每个检测框裁剪前后与 deskew 后的图像，肉眼核对倾斜矫正方向。
- *
+ *@author CH`n *
  * @since 4.0.0.42
  */
 public final class OcrCropExample {
@@ -34,12 +35,12 @@ public final class OcrCropExample {
                 .recognizer("paddleocrv6-medium-rec")
                 .build();
         byte[] corrected = ocr.correct(img);
-        System.out.println("[diag] 矫正后尺寸=" + ImageUtils.decode(corrected).cols() + "x"
+        log.info("[diag] 矫正后尺寸=" + ImageUtils.decode(corrected).cols() + "x"
                 + ImageUtils.decode(corrected).rows());
 
         ImageDetector det = ocr.detector();
         List<DetectionInfo> boxes = det.detect(corrected);
-        System.out.println("[diag] 检测框数=" + boxes.size());
+        log.info("[diag] 检测框数=" + boxes.size());
         int i = 0;
         for (DetectionInfo b : boxes) {
             int px = 2;
@@ -61,11 +62,11 @@ public final class OcrCropExample {
         }
 
         List<OcrResult> results = ocr.recognizeDetail(img);
-        System.out.println("[diag] 识别块数=" + results.size());
+        log.info("[diag] 识别块数=" + results.size());
         for (OcrResult r : results) {
             System.out.printf("  rec conf=%.2f angle=%.1f text='%s'%n",
                     r.confidence(), r.angle(), r.text());
         }
-        System.out.println("[diag] 裁剪图已保存: " + outDir);
+        log.info("[diag] 裁剪图已保存: " + outDir);
     }
 }

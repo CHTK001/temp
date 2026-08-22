@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.ocr.OcrPipeline;
 import com.chua.deeplearning.support.ocr.OcrResult;
 import com.chua.deeplearning.support.utils.ImageUtils;
@@ -13,7 +14,7 @@ import java.util.List;
 
 /**
  * 对比 rotate 实现：当前 SPI 版 vs 纯 OpenCV 版，对旋转车票识别票号。
- *
+ *@author CH`n *
  * @since 4.0.0.42
  */
 public final class OcrRotateCompareExample {
@@ -34,23 +35,23 @@ public final class OcrRotateCompareExample {
 
         // 用正向原图生成 90° 旋转（无损），再旋转回正向，验证"旋转往返"是否丢 Z
         byte[] gen90 = ImageUtils.rotate(img0, 90);
-        byte[] gen90_back = ImageUtils.rotate(gen90, 270);
-        recognize("正向图->转90->转回", gen90_back);
+        byte[] gen90back = ImageUtils.rotate(gen90, 270);
+        recognize("正向图->转90->转回", gen90back);
 
         // 现有 ticket_90 图旋转回正向
-        byte[] rot90_spi = ImageUtils.rotate(img90, 270);
-        recognize("ticket_90图->转回", rot90_spi);
+        byte[] rot90spi = ImageUtils.rotate(img90, 270);
+        recognize("ticket_90图->转回", rot90spi);
 
         // 保留旋转回正向的图和生成图，做票号区域像素对比
-        byte[] gen_back = ImageUtils.rotate(gen90, 270);
-        java.nio.file.Files.write(java.nio.file.Path.of("G:\\images\\output\\diag_ticket90_back.png"), rot90_spi);
+        byte[] genback = ImageUtils.rotate(gen90, 270);
+        java.nio.file.Files.write(java.nio.file.Path.of("G:\\images\\output\\diag_ticket90_back.png"), rot90spi);
         java.nio.file.Files.write(java.nio.file.Path.of("G:\\images\\output\\diag_orig.png"), img0);
         // 将 ticket_90 转回图缩放对齐到正向尺寸后裁剪放大，供肉眼核对 Z 字形
-        saveZoomedAligned(img0, rot90_spi, 103, 65, 253, 20,
+        saveZoomedAligned(img0, rot90spi, 103, 65, 253, 20,
                 "G:\\images\\output\\diag_ticketno_orig.png",
                 "G:\\images\\output\\diag_ticketno_from90.png");
-        System.out.println("[cmp] 已保存: diag_ticket90_back.png, diag_orig.png, diag_ticketno_orig.png, diag_ticketno_from90.png");
-        System.out.println("[cmp] 票号区域像素对比(正向原图 vs ticket_90转回):");
+        log.info("[cmp] 已保存: diag_ticket90_back.png, diag_orig.png, diag_ticketno_orig.png, diag_ticketno_from90.png");
+        log.info("[cmp] 票号区域像素对比(正向原图 vs ticket_90转回):");
     }
 
     /**
@@ -78,7 +79,7 @@ public final class OcrRotateCompareExample {
             saveZoomedHelper(msScaled, x, y, w, h, outSrc);
             msScaled.release(); mr.release(); ms.release();
         } catch (Exception e) {
-            System.out.println("[cmp] saveZoomedAligned 失败: " + e.getMessage());
+            log.info("[cmp] saveZoomedAligned 失败: " + e.getMessage());
         }
     }
 
@@ -130,13 +131,13 @@ public final class OcrRotateCompareExample {
                     .direction("doc-orientation")
                     .build();
             List<OcrResult> results = ocr.recognizeDetail(img);
-            System.out.println("[cmp] " + label + " 块数=" + results.size());
+            log.info("[cmp] " + label + " 块数=" + results.size());
             for (OcrResult r : results) {
                 String t = r.text();
-                System.out.println("      '" + t + "' conf=" + String.format("%.2f", r.confidence()));
+                log.info("      '" + t + "' conf=" + String.format("%.2f", r.confidence()));
             }
         } catch (Exception e) {
-            System.out.println("[cmp] " + label + " 异常: " + e.getMessage());
+            log.info("[cmp] " + label + " 异常: " + e.getMessage());
         }
     }
 

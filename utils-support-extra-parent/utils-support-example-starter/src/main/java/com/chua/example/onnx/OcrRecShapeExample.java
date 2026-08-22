@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import ai.onnxruntime.OnnxTensor;
 import ai.onnxruntime.OrtEnvironment;
 import ai.onnxruntime.OrtSession;
@@ -13,7 +14,7 @@ import java.util.Map;
 
 /**
  * 查询 PP-OCRv6 rec ONNX 输入/输出维度是否动态。
- *
+ *@author CH`n *
  * @since 4.0.0.42
  */
 public final class OcrRecShapeExample {
@@ -40,13 +41,13 @@ public final class OcrRecShapeExample {
         OrtEnvironment env = OrtEnvironment.getEnvironment();
         OrtSession.SessionOptions opts = new OrtSession.SessionOptions();
         try (OrtSession session = env.createSession(modelDir.resolve("inference.onnx").toString(), opts)) {
-            System.out.println("== inputs ==");
+            log.info("== inputs ==");
             for (var e : session.getInputInfo().entrySet()) {
-                System.out.println(e.getKey() + " -> " + e.getValue());
+                log.info(e.getKey() + " -> " + e.getValue());
             }
-            System.out.println("== outputs ==");
+            log.info("== outputs ==");
             for (var e : session.getOutputInfo().entrySet()) {
-                System.out.println(e.getKey() + " -> " + e.getValue());
+                log.info(e.getKey() + " -> " + e.getValue());
             }
         }
     }

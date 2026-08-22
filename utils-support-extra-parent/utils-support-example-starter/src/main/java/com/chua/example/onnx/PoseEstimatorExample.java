@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.pose.PoseEstimator;
 import com.chua.deeplearning.support.pose.PoseKeypoint;
 
@@ -15,7 +16,7 @@ import java.util.List;
  * <pre>{@code
  *   PoseEstimatorExample yolov8n-pose person.jpg
  * }</pre>
- *
+ *@author CH`n *
  * @since 4.0.0.42
  */
 public final class PoseEstimatorExample extends ExampleBase {
@@ -29,18 +30,18 @@ public final class PoseEstimatorExample extends ExampleBase {
         String model = args.length > 0 ? args[0] : "yolov8n-pose";
         String imagePath = args.length > 1 ? args[1] : null;
         if (imagePath == null) {
-            System.out.println("[pose] 需要图片路径");
+            log.info("[pose] 需要图片路径");
             return;
         }
         byte[] img = Files.readAllBytes(Path.of(imagePath));
         PoseEstimator estimator = PoseEstimator.create(model);
         long t0 = System.currentTimeMillis();
         List<PoseKeypoint> keypoints = estimator.estimate(img);
-        System.out.println("[pose] model: " + model + " 图片: " + imagePath);
-        System.out.println("       关键点数: " + keypoints.size());
+        log.info("[pose] model: " + model + " 图片: " + imagePath);
+        log.info("       关键点数: " + keypoints.size());
         if (!keypoints.isEmpty()) {
             PoseKeypoint first = keypoints.get(0);
-            System.out.println(String.format("       首个关键点: %s (%.0f, %.0f) conf=%.2f",
+            log.info(String.format("       首个关键点: %s (%.0f, %.0f) conf=%.2f",
                     first.name(), first.x(), first.y(), first.confidence()));
         }
         printResult("pose", "onnx", model, t0);

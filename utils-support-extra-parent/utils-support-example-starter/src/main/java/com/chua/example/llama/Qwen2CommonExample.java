@@ -1,5 +1,6 @@
 package com.chua.example.llama;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.ai.chat.ChatClient;
 
 public final class Qwen2CommonExample {
@@ -15,28 +16,28 @@ public final class Qwen2CommonExample {
                     && ask(client, "开放", "介绍一下人工智能的应用场景。")
                     && ask(client, "列表", "请列出5种水果。");
         } catch (Exception e) {
-            System.out.println("[Qwen2CommonVerify] FAIL: " + e.getMessage());
+            log.info("[Qwen2CommonVerify] FAIL: " + e.getMessage());
             pass = false;
         }
-        System.out.println(pass ? "[Qwen2CommonVerify] ALL PASS" : "[Qwen2CommonVerify] FAIL");
+        log.info(pass ? "[Qwen2CommonVerify] ALL PASS" : "[Qwen2CommonVerify] FAIL");
         if (!pass) {
             System.exit(1);
         }
     }
 
     private static boolean ask(ChatClient client, String label, String prompt) {
-        System.out.println("[" + label + "] 提问: " + prompt);
+        log.info("[" + label + "] 提问: " + prompt);
         long t0 = System.currentTimeMillis();
         String reply;
         try {
             reply = client.chatSync(prompt);
         } catch (Exception e) {
-            System.out.println("[" + label + "] FAIL: " + e.getMessage());
+            log.info("[" + label + "] FAIL: " + e.getMessage());
             return false;
         }
         long cost = System.currentTimeMillis() - t0;
         boolean ok = reply != null && !reply.isBlank() && reply.length() > 3;
-        System.out.println("[" + label + "] 回复(" + (ok ? "OK" : "空") + ", " + cost + "ms): "
+        log.info("[" + label + "] 回复(" + (ok ? "OK" : "空") + ", " + cost + "ms): "
                 + (reply != null ? reply.trim() : "NULL"));
         return ok;
     }

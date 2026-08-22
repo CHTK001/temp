@@ -24,13 +24,13 @@ import com.chua.example.spi.Example;
  * @since 4.0.0.42
  */
 @Slf4j
-public class `PipelineActionExample implements Example {
+public class PipelineActionExample implements Example {
 
     /** Main */
     public static void main(String[] args) {
         String type = PipelineBasicExample.parseType(args);
         boolean passed = runTest(type);
-        System.out.println("[PipelineActionExample] type=" + type + ", passed=" + passed);
+        log.info("[PipelineActionExample] type=" + type + ", passed=" + passed);
         System.exit(passed ? 0 : 1);
     }
 
@@ -200,6 +200,6 @@ public class `PipelineActionExample implements Example {
 
     /** PrintResult */
     private static void printResult(String name, boolean passed) {
-        System.out.println((passed ? "[PASS] " : "[FAIL] ") + name);
+        log.info((passed ? "[PASS] " : "[FAIL] ") + name);
     }
 }

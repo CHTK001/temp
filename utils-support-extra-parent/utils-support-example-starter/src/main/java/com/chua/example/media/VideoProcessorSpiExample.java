@@ -1,5 +1,6 @@
 package com.chua.example.media;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.media.ffmpeg.FFmpegProcessor;
 import com.chua.common.support.spi.ServiceProvider;
 import com.chua.common.support.utils.CommandLine;
@@ -22,11 +23,12 @@ import java.util.List;
  *
  * @author CH
  */
+@Slf4j
 public class VideoProcessorSpiExample {
 
     /** Main */
     public static void main(String[] args) throws Exception {
-        System.out.println("===== 视频处理 SPI 示例 =====\n");
+        log.info("===== 视频处理 SPI 示例 =====\n");
 
         CommandLine cli = CommandLine.parse(args)
                 .program("VideoProcessorSpiExample")
@@ -42,7 +44,7 @@ public class VideoProcessorSpiExample {
 
         String inputPath = cli.get("input");
         if (inputPath == null || inputPath.isBlank()) {
-            System.out.println("[ERROR] 必须指定 --input 输入文件路径");
+            log.info("[ERROR] 必须指定 --input 输入文件路径");
             cli.help();
             System.exit(1);
             return;
@@ -53,63 +55,63 @@ public class VideoProcessorSpiExample {
                 ? Path.of(cli.get("output"))
                 : Files.createTempDirectory("video-output");
 
-        System.out.println("===== 视频处理 SPI 示例 (provider=" + providerType + ") =====\n");
+        log.info("===== 视频处理 SPI 示例 (provider=" + providerType + ") =====\n");
 
         ServiceProvider<FFmpegProcessor> provider = ServiceProvider.of(FFmpegProcessor.class);
 
-        System.out.println("--- 1. SPI 发现 ---");
+        log.info("--- 1. SPI 发现 ---");
         List<FFmpegProcessor> all = provider.collect();
-        System.out.println("  实现数量: " + all.size());
+        log.info("  实现数量: " + all.size());
         for (FFmpegProcessor impl : all) {
-            System.out.println("    " + impl.getClass().getName() + " | available=" + impl.isAvailable());
+            log.info("    " + impl.getClass().getName() + " | available=" + impl.isAvailable());
         }
 
-        System.out.println("\n--- 2. 获取指定实现 ---");
+        log.info("\n--- 2. 获取指定实现 ---");
         FFmpegProcessor processor = provider.getNewExtension(providerType);
         if (processor == null || !processor.isAvailable()) {
             processor = all.stream().findFirst().orElse(null);
         }
         if (processor == null) {
-            System.out.println("  [ERROR] 未找到可用的 FFmpegProcessor 实现");
+            log.info("  [ERROR] 未找到可用的 FFmpegProcessor 实现");
             System.exit(1);
             return;
         }
-        System.out.println("  实现类: " + processor.getClass().getSimpleName());
-        System.out.println("  可用: " + processor.isAvailable());
-        System.out.println("  版本: " + processor.getVersion());
+        log.info("  实现类: " + processor.getClass().getSimpleName());
+        log.info("  可用: " + processor.isAvailable());
+        log.info("  版本: " + processor.getVersion());
 
-        System.out.println("\n--- 3. 获取媒体信息 ---");
+        log.info("\n--- 3. 获取媒体信息 ---");
         File inputFile = new File(inputPath);
         if (!inputFile.exists()) {
-            System.out.println("  输入文件不存在: " + inputPath);
+            log.info("  输入文件不存在: " + inputPath);
             System.exit(1);
             return;
         }
         var info = processor.getMediaInfo(inputFile);
-        System.out.println("  格式: " + info.getFormatName());
-        System.out.println("  时长: " + info.getDuration() + "s");
+        log.info("  格式: " + info.getFormatName());
+        log.info("  时长: " + info.getDuration() + "s");
         if (info.getVideoStream() != null) {
-            System.out.println("  视频: " + info.getVideoStream().getWidth() + "x" + info.getVideoStream().getHeight());
+            log.info("  视频: " + info.getVideoStream().getWidth() + "x" + info.getVideoStream().getHeight());
         }
 
-        System.out.println("\n--- 4. 视频转 HLS ---");
+        log.info("\n--- 4. 视频转 HLS ---");
         File hlsOutput = new File(outputDir.toFile(), "output.m3u8");
         if (VideoProcessorBridge.isLoaded()) {
-            System.out.println("  使用 VideoProcessorBridge.transcodeToHls");
+            log.info("  使用 VideoProcessorBridge.transcodeToHls");
             boolean ok = VideoProcessorBridge.transcodeToHls(inputPath, outputDir.toString());
             if (!ok) {
                 throw new RuntimeException("HLS 转码失败");
             }
         } else {
-            System.out.println("  [INFO] Native VideoProcessor 未加载，回退到 FFmpegProcessor.convertVideo");
+            log.info("  [INFO] Native VideoProcessor 未加载，回退到 FFmpegProcessor.convertVideo");
             processor.convertVideo(inputFile, hlsOutput, "hls");
         }
 
-        System.out.println("  输出目录: " + outputDir);
+        log.info("  输出目录: " + outputDir);
         try (var stream = Files.list(outputDir)) {
-            stream.forEach(p -> System.out.println("    " + p.getFileName()));
+            stream.forEach(p -> log.info("    " + p.getFileName()));
         }
 
-        System.out.println("\n===== 示例结束 =====");
+        log.info("\n===== 示例结束 =====");
     }
 }

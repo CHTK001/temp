@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.ai.chat.ChatClient;
 
 /**
@@ -13,7 +14,7 @@ import com.chua.common.support.ai.chat.ChatClient;
  *   ChatClientExample onnx minimind "你好"       # 对话
  *   ChatClientExample onnx bert-squad "什么是Java?"
  * }</pre>
- *
+ *@author CH`n *
  * @since 4.0.0.42
  */
 public final class ChatClientExample extends ExampleBase {
@@ -42,8 +43,8 @@ public final class ChatClientExample extends ExampleBase {
         client.model(model);
         long t0 = System.currentTimeMillis();
         String answer = client.chatSync(prompt);
-        System.out.println("[chat] input: " + prompt);
-        System.out.println("       output: " + answer);
+        log.info("[chat] input: " + prompt);
+        log.info("       output: " + answer);
         printResult("chat", provider, model, t0);
         client.close();
     }

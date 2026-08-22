@@ -1,8 +1,11 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.audio.AudioFingerprinter;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -24,8 +27,8 @@ import java.util.List;
  *   // 计算两段音频相似度
  *   AudioFingerprintExample onnx wav2vec2-zh-fingerprint audio1.wav audio2.wav
  * }</pre>
- *
- * @since 4.0.0.43
+ *@author CH`n *
+ * @since 4.0.0.42
  */
 public final class AudioFingerprintExample extends ExampleBase {
 
@@ -52,11 +55,11 @@ public final class AudioFingerprintExample extends ExampleBase {
         // 列出模型
         if (model == null) {
             List<String> models = AudioFingerprinter.listModels();
-            System.out.println("===== [audio-fingerprint] provider=" + provider + " =====");
+            log.info("===== [audio-fingerprint] provider=" + provider + " =====");
             if (models.isEmpty()) {
-                System.out.println("  (无可用模型，请确认 OnnxModelRegistrar 已加载 wav2vec2/wespeaker 注册项)");
+                log.info("  (无可用模型，请确认 OnnxModelRegistrar 已加载 wav2vec2/wespeaker 注册项)");
             } else {
-                models.forEach(m -> System.out.println("  - " + m));
+                models.forEach(m -> log.info("  - " + m));
             }
             return;
         }
@@ -68,18 +71,17 @@ public final class AudioFingerprintExample extends ExampleBase {
         // 单文件：提取指纹并打印向量信息
         if (audioPath1 != null && audioPath2 == null) {
             Path path = Path.of(audioPath1);
-            if (!java.nio.file.Files.exists(path)) {
-                System.out.println("[error] 文件不存在: " + path);
+            if (!Files.exists(path)) {
+                log.info("[error] 文件不存在: " + path);
                 return;
             }
             long t0 = System.currentTimeMillis();
             float[] vec = fp.extract(path);
-            long elapsed = System.currentTimeMillis() - t0;
-            System.out.println("[audio-fingerprint] provider=" + provider + " model=" + model);
-            System.out.println("       file:  " + audioPath1);
-            System.out.println("       dim:   " + vec.length);
-            System.out.println("       norm:  " + normalize);
-            System.out.println("       vec[0..7]: " + java.util.Arrays.toString(java.util.Arrays.copyOf(vec, 8)));
+            log.info("[audio-fingerprint] provider=" + provider + " model=" + model);
+            log.info("       file:  " + audioPath1);
+            log.info("       dim:   " + vec.length);
+            log.info("       norm:  " + normalize);
+            log.info("       vec[0..7]: " + Arrays.toString(Arrays.copyOf(vec, 8)));
             printResult("audio-fingerprint", provider, model, t0);
             return;
         }
@@ -88,12 +90,12 @@ public final class AudioFingerprintExample extends ExampleBase {
         if (audioPath1 != null && audioPath2 != null) {
             Path p1 = Path.of(audioPath1);
             Path p2 = Path.of(audioPath2);
-            if (!java.nio.file.Files.exists(p1)) {
-                System.out.println("[error] 文件不存在: " + p1);
+            if (!Files.exists(p1)) {
+                log.info("[error] 文件不存在: " + p1);
                 return;
             }
-            if (!java.nio.file.Files.exists(p2)) {
-                System.out.println("[error] 文件不存在: " + p2);
+            if (!Files.exists(p2)) {
+                log.info("[error] 文件不存在: " + p2);
                 return;
             }
             long t0 = System.currentTimeMillis();
@@ -101,12 +103,12 @@ public final class AudioFingerprintExample extends ExampleBase {
             float[] vec2 = fp.extract(p2);
             float sim = cosineSimilarity(vec1, vec2);
             long elapsed = System.currentTimeMillis() - t0;
-            System.out.println("[audio-fingerprint] provider=" + provider + " model=" + model);
-            System.out.println("       file1: " + audioPath1 + "  dim=" + vec1.length);
-            System.out.println("       file2: " + audioPath2 + "  dim=" + vec2.length);
-            System.out.println("       cos_sim: " + String.format("%.4f", sim));
-            System.out.println("       耗时: " + elapsed + "ms");
-            System.out.println();
+            log.info("[audio-fingerprint] provider=" + provider + " model=" + model);
+            log.info("       file1: " + audioPath1 + "  dim=" + vec1.length);
+            log.info("       file2: " + audioPath2 + "  dim=" + vec2.length);
+            log.info("       cos_sim: " + String.format("%.4f", sim));
+            log.info("       耗时: " + elapsed + "ms");
+            log.info();
         }
     }
 

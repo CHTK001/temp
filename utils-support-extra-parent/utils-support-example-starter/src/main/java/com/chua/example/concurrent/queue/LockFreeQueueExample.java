@@ -101,11 +101,11 @@ public class LockFreeQueueExample {
         allPassed &= testSingle(QueueType.MPMC, capacity);
         allPassed &= testSingle(QueueType.UNBOUNDED, capacity);
 
-        System.out.println("-----");
+        log.info("-----");
         if (allPassed) {
-            System.out.println("[PASS] 全部实现自检通过");
+            log.info("[PASS] 全部实现自检通过");
         } else {
-            System.out.println("[FAIL] 存在失败的测试项");
+            log.info("[FAIL] 存在失败的测试项");
             System.exit(1);
         }
     }
@@ -393,7 +393,7 @@ public class LockFreeQueueExample {
      * @param passed 是否通过
      */
     private static void printResult(String name, boolean passed) {
-        System.out.println((passed ? "[PASS] " : "[FAIL] ") + name);
+        log.info((passed ? "[PASS] " : "[FAIL] ") + name);
     }
 
     /**
@@ -429,14 +429,14 @@ public class LockFreeQueueExample {
      * 打印帮助信息。
      */
     private static void printHelp() {
-        System.out.println("无锁队列综合示例 — SPSC / MPMC / Unbounded");
-        System.out.println();
-        System.out.println("用法: java LockFreeQueueExample [选项]");
-        System.out.println();
-        System.out.println("选项:");
-        System.out.println("  --type,     -t <key>    队列类型（spsc/mpmc/unbounded，默认全部）");
-        System.out.println("  --capacity, -c <n>      有界队列容量（默认: " + DEFAULT_CAPACITY + "）");
-        System.out.println("  --help,     -h          显示此帮助");
+        log.info("无锁队列综合示例 — SPSC / MPMC / Unbounded");
+        log.info();
+        log.info("用法: java LockFreeQueueExample [选项]");
+        log.info();
+        log.info("选项:");
+        log.info("  --type,     -t <key>    队列类型（spsc/mpmc/unbounded，默认全部）");
+        log.info("  --capacity, -c <n>      有界队列容量（默认: " + DEFAULT_CAPACITY + "）");
+        log.info("  --help,     -h          显示此帮助");
     }
 
     /**

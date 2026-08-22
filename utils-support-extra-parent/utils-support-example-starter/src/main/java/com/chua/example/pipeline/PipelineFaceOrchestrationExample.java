@@ -52,7 +52,7 @@ import java.util.*;
  * @since 4.0.0.42
  */
 @Slf4j
-public class `PipelineFaceOrchestrationExample implements Example {
+public class PipelineFaceOrchestrationExample implements Example {
 
     /** Exit_code_success */
     private static final int EXIT_CODE_SUCCESS = 0;
@@ -395,7 +395,7 @@ public class `PipelineFaceOrchestrationExample implements Example {
     public static void main(String[] args) {
         String type = parseType(args);
         boolean passed = runTest(type);
-        System.out.println("[PipelineFaceOrchestrationExample] type=" + type + ", passed=" + passed);
+        log.info("[PipelineFaceOrchestrationExample] type=" + type + ", passed=" + passed);
         System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
     }
 
@@ -948,6 +948,6 @@ public class `PipelineFaceOrchestrationExample implements Example {
      * @param passed 是否通过
      */
     private static void printResult(String name, boolean passed) {
-        System.out.println((passed ? "[PASS] " : "[FAIL] ") + name);
+        log.info((passed ? "[PASS] " : "[FAIL] ") + name);
     }
 }

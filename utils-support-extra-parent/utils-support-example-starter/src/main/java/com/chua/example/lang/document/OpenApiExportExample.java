@@ -1,5 +1,6 @@
 package com.chua.example.lang.document;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.lang.document.OpenApiDocumentData;
 import com.chua.common.support.lang.document.OpenApiDocumentProvider;
 import com.chua.common.support.lang.document.OpenApiSection;
@@ -44,6 +45,7 @@ import java.util.Map;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public class OpenApiExportExample implements Example {
 
     @Override
@@ -68,7 +70,7 @@ public class OpenApiExportExample implements Example {
     /** 运行 */
     public boolean run(Map<String, String> args) {
         try {
-            System.out.println("=== OpenApiDocumentProvider 烟雾测试 ===");
+            log.info("=== OpenApiDocumentProvider 烟雾测试 ===");
 
             // 1) 构造样例 OpenAPI
             OpenAPI openAPI = buildSampleOpenApi();
@@ -79,7 +81,7 @@ public class OpenApiExportExample implements Example {
             data.setVersion("1.0.0-TEST");
             data.getSections().add(buildIntroSection());
 
-            System.out.println("  转换完成: title=" + data.getTitle() + " tags=" + data.getTags().size()
+            log.info("  转换完成: title=" + data.getTitle() + " tags=" + data.getTags().size()
                     + " endpoints=" + data.getEndpoints().size() + " sections=" + data.getSections().size());
 
             // 3) 通过 SPI 创建 provider
@@ -88,7 +90,7 @@ public class OpenApiExportExample implements Example {
                 System.err.println("  ✗ 未找到 OpenApiDocumentProvider (type=html) SPI");
                 return false;
             }
-            System.out.println("  SPI Provider: " + provider.getClass().getName() + " extensions="
+            log.info("  SPI Provider: " + provider.getClass().getName() + " extensions="
                     + java.util.Arrays.toString(provider.getExtensions()));
 
             // 4) 导出
@@ -97,7 +99,7 @@ public class OpenApiExportExample implements Example {
                 out.getParentFile().mkdirs();
             }
             provider.export(data, out);
-            System.out.println("  已导出: " + out.getAbsolutePath() + " size=" + out.length() + " bytes");
+            log.info("  已导出: " + out.getAbsolutePath() + " size=" + out.length() + " bytes");
 
             // 5) 结构断言
             String html = new String(java.nio.file.Files.readAllBytes(out.toPath()),
@@ -125,7 +127,7 @@ public class OpenApiExportExample implements Example {
                 return false;
             }
 
-            System.out.println("  全部断言通过 ✓");
+            log.info("  全部断言通过 ✓");
             return true;
         } catch (Exception e) {
             System.err.println("  ✗ 测试异常: " + e.getMessage());
@@ -258,6 +260,11 @@ public class OpenApiExportExample implements Example {
                     + "\n--- 实际开头 500 字符 ---\n"
                     + html.substring(0, Math.min(500, html.length())));
         }
-        System.out.println("  ✓ " + label);
+        log.info("  ✓ " + label);
     }
+
+    public static void main(String[] args) {
+        new OpenApiExportExample().run(java.util.Arrays.stream(args).collect(java.util.stream.Collectors.toMap(a -> a.split("=")[0], a -> a.split("=")[1])));
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.engine.ModelRegistry;
 import com.chua.deeplearning.support.translator.ITranslator;
 import com.chua.deeplearning.support.utils.ImageUtils;
@@ -19,11 +20,11 @@ public final class DepthAnythingExample {
         byte[] imageBytes = Files.readAllBytes(Path.of(imagePath));
 
         var entry = ModelRegistry.get("depth-anything");
-        System.out.println("[depth-anything] 注册: " + (entry != null ? "OK" : "FAIL"));
+        log.info("[depth-anything] 注册: " + (entry != null ? "OK" : "FAIL"));
         if (entry == null) { System.exit(1); }
 
         var path = ModelRegistry.resolveModelPath("depth-anything");
-        System.out.println("[depth-anything] 路径: " + path);
+        log.info("[depth-anything] 路径: " + path);
         if (path == null || !path.toFile().exists()) { System.exit(1); }
 
         Object translator = ModelRegistry.createTranslator("depth-anything", null);
@@ -31,8 +32,8 @@ public final class DepthAnythingExample {
         Object out = ((ITranslator<Object, Object>) translator).translate(imageBytes);
         long cost = System.currentTimeMillis() - t0;
         boolean ok = out != null;
-        System.out.println("[depth-anything] 耗时=" + cost + "ms 输出类型=" + out.getClass().getName());
-        System.out.println(ok ? "[DepthAnythingVerify] ALL PASS" : "[DepthAnythingVerify] FAIL");
+        log.info("[depth-anything] 耗时=" + cost + "ms 输出类型=" + out.getClass().getName());
+        log.info(ok ? "[DepthAnythingVerify] ALL PASS" : "[DepthAnythingVerify] FAIL");
         if (!ok) { System.exit(1); }
     }
 }

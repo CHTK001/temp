@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.ai.embedding.EmbeddingClient;
 
 /**
@@ -13,7 +14,7 @@ import com.chua.common.support.ai.embedding.EmbeddingClient;
  *   EmbeddingClientExample onnx bge-small-zh "你好世界"
  *   EmbeddingClientExample minilm minilm "hello world"
  * }</pre>
- *
+ *@author CH`n *
  * @since 4.0.0.42
  */
 public final class EmbeddingClientExample extends ExampleBase {
@@ -43,9 +44,9 @@ public final class EmbeddingClientExample extends ExampleBase {
         client.model(model);
         long t0 = System.currentTimeMillis();
         float[] vec = client.embedding(text);
-        System.out.println("[embedding] text: " + text);
-        System.out.println("       dim: " + vec.length);
-        System.out.println("       head: " + java.util.Arrays.toString(java.util.Arrays.copyOf(vec, 5)));
+        log.info("[embedding] text: " + text);
+        log.info("       dim: " + vec.length);
+        log.info("       head: " + java.util.Arrays.toString(java.util.Arrays.copyOf(vec, 5)));
         printResult("embedding", provider, model, t0);
         client.close();
     }

@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.image.ImageSegmenter;
 
 import java.nio.file.Files;
@@ -53,13 +54,13 @@ public final class ZeroShotSegmentationExample extends ExampleBase {
         // 读取测试图片
         Path imageFile = Path.of(imagePath);
         if (!Files.exists(imageFile)) {
-            System.out.println("[ERROR] 测试图片不存在: " + imagePath);
-            System.out.println("请提供有效的图片路径，例如: java ZeroShotSegmentationTest clipseg-zero-shot D:/images/test.jpg");
+            log.info("[ERROR] 测试图片不存在: " + imagePath);
+            log.info("请提供有效的图片路径，例如: java ZeroShotSegmentationTest clipseg-zero-shot D:/images/test.jpg");
             return;
         }
         byte[] imageData = Files.readAllBytes(imageFile);
-        System.out.println("[INFO] 测试图片: " + imagePath + " (" + imageData.length + " bytes)");
-        System.out.println();
+        log.info("[INFO] 测试图片: " + imagePath + " (" + imageData.length + " bytes)");
+        log.info();
 
         if (model != null) {
             // 测试指定模型
@@ -79,11 +80,11 @@ public final class ZeroShotSegmentationExample extends ExampleBase {
      * @param imageData 图片数据
      */
     private static void testModel(String modelId, byte[] imageData) {
-        System.out.println("===== [零样本分割] 模型: " + modelId + " =====");
+        log.info("===== [零样本分割] 模型: " + modelId + " =====");
         try {
             ImageSegmenter segmenter = ImageSegmenter.create(modelId);
             if (segmenter == null) {
-                System.out.println("  ⚠️ 跳过 - 模型未注册: " + modelId);
+                log.info("  ⚠️ 跳过 - 模型未注册: " + modelId);
                 return;
             }
             long t0 = System.currentTimeMillis();
@@ -91,19 +92,19 @@ public final class ZeroShotSegmentationExample extends ExampleBase {
             long elapsed = System.currentTimeMillis() - t0;
 
             if (mask != null && mask.length > 0) {
-                System.out.println("  分割掩码: " + mask.length + " bytes (PNG)");
+                log.info("  分割掩码: " + mask.length + " bytes (PNG)");
                 // 统计前景像素比例
                 int foregroundPixels = countForegroundPixels(mask);
-                System.out.println("  前景像素占比: " + foregroundPixels + "%");
+                log.info("  前景像素占比: " + foregroundPixels + "%");
             } else {
-                System.out.println("  分割掩码: (空)");
+                log.info("  分割掩码: (空)");
             }
-            System.out.println("  耗时: " + elapsed + "ms");
-            System.out.println("  ✅ 通过");
+            log.info("  耗时: " + elapsed + "ms");
+            log.info("  ✅ 通过");
         } catch (Exception e) {
-            System.out.println("  ❌ 失败: " + e.getMessage());
+            log.info("  ❌ 失败: " + e.getMessage());
         }
-        System.out.println();
+        log.info();
     }
 
     /**

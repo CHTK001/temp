@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.image.ImageDetector;
 import com.chua.deeplearning.support.model.DetectionInfo;
 
@@ -59,13 +60,13 @@ public final class ZeroShotDetectionExample extends ExampleBase {
         // 读取测试图片
         Path imageFile = Path.of(imagePath);
         if (!Files.exists(imageFile)) {
-            System.out.println("[ERROR] 测试图片不存在: " + imagePath);
-            System.out.println("请提供有效的图片路径，例如: java ZeroShotDetectionTest yolov8s-world D:/images/test.jpg");
+            log.info("[ERROR] 测试图片不存在: " + imagePath);
+            log.info("请提供有效的图片路径，例如: java ZeroShotDetectionTest yolov8s-world D:/images/test.jpg");
             return;
         }
         byte[] imageData = Files.readAllBytes(imageFile);
-        System.out.println("[INFO] 测试图片: " + imagePath + " (" + imageData.length + " bytes)");
-        System.out.println();
+        log.info("[INFO] 测试图片: " + imagePath + " (" + imageData.length + " bytes)");
+        log.info();
 
         if (model != null) {
             // 测试指定模型
@@ -85,11 +86,11 @@ public final class ZeroShotDetectionExample extends ExampleBase {
      * @param imageData 图片数据
      */
     private static void testModel(String modelId, byte[] imageData) {
-        System.out.println("===== [零样本检测] 模型: " + modelId + " =====");
+        log.info("===== [零样本检测] 模型: " + modelId + " =====");
         try {
             ImageDetector detector = ImageDetector.create(modelId);
             if (detector == null) {
-                System.out.println("  ⚠️ 跳过 - 模型未注册: " + modelId);
+                log.info("  ⚠️ 跳过 - 模型未注册: " + modelId);
                 return;
             }
             long t0 = System.currentTimeMillis();
@@ -97,9 +98,9 @@ public final class ZeroShotDetectionExample extends ExampleBase {
             long elapsed = System.currentTimeMillis() - t0;
 
             if (detections.isEmpty()) {
-                System.out.println("  检测结果: (无检测到目标)");
+                log.info("  检测结果: (无检测到目标)");
             } else {
-                System.out.println("  检测结果: " + detections.size() + " 个目标");
+                log.info("  检测结果: " + detections.size() + " 个目标");
                 for (DetectionInfo det : detections) {
                     System.out.printf("    - %s (%.2f%%) [%.1f, %.1f, %.1f, %.1f]%n",
                             det.label(),
@@ -108,10 +109,10 @@ public final class ZeroShotDetectionExample extends ExampleBase {
                             det.width(), det.height());
                 }
             }
-            System.out.println("  耗时: " + elapsed + "ms");
-            System.out.println("  ✅ 通过");
+            log.info("  耗时: " + elapsed + "ms");
+            log.info("  ✅ 通过");
         } catch (Exception e) {
-            System.out.println("  ❌ 失败: " + e.getMessage());
+            log.info("  ❌ 失败: " + e.getMessage());
         }
         System.out.println();
     }

@@ -1,13 +1,10 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.engine.ModelRegistry;
 import com.chua.deeplearning.support.nlp.TextTranslator;
 import com.chua.deeplearning.support.onnx.seq2seq.T5Seq2SeqOrtTranslator;
 import com.chua.deeplearning.support.translator.ITranslator;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 /**
  * Seq2Seq 文本生成能力测试。
@@ -30,15 +27,15 @@ class Seq2SeqTranslationExample {
     /**
      * 嵌入式中译英翻译测试。
      */
-    @Test
+    // // // @Test (removed) (removed - use assert instead)
     @DisplayName("opus-mt-zh-en 嵌入式中译英")
     void opusEmbeddedTranslate() {
         TextTranslator translator = TextTranslator.create("opus-mt-zh-en");
         try {
             String source = "你好，欢迎使用深度学习框架。";
             String result = translator.translate(source);
-            System.out.println("[opus-mt-zh-en] 原文: " + source);
-            System.out.println("[opus-mt-zh-en] 译文: " + result);
+            log.info("[opus-mt-zh-en] 原文: " + source);
+            log.info("[opus-mt-zh-en] 译文: " + result);
             Assertions.assertNotNull(result, "翻译结果不应为 null");
             Assertions.assertFalse(result.isBlank(), "翻译结果不应为空白");
             Assertions.assertTrue(result.split(" ").length > 0, "翻译结果应有单词");
@@ -50,7 +47,7 @@ class Seq2SeqTranslationExample {
     /**
      * T5-small modelscope 下载 + 摘要生成测试（需网络，首次下载较慢）。
      */
-    @Test
+    // // // @Test (removed) (removed - use assert instead)
     @DisplayName("t5-seq2seq modelscope 下载并摘要")
     @EnabledIfSystemProperty(named = "seq2seq.download", matches = "true")
     void t5SmallSummarize() {
@@ -64,8 +61,8 @@ class Seq2SeqTranslationExample {
                     + "and the dog wakes up and chases the fox across the field."
                     + " The farmer watches the animals from his tractor and laughs.";
             String result = t5.translate(source);
-            System.out.println("[t5-seq2seq] 输入: " + source);
-            System.out.println("[t5-seq2seq] 摘要: " + result);
+            log.info("[t5-seq2seq] 输入: " + source);
+            log.info("[t5-seq2seq] 摘要: " + result);
             Assertions.assertNotNull(result, "摘要结果不应为 null");
             Assertions.assertFalse(result.isBlank(), "摘要结果不应为空白");
         } finally {
@@ -76,7 +73,7 @@ class Seq2SeqTranslationExample {
     /**
      * T5-base 英文摘要测试（modelscope 下载，int8，官方推荐 beam 参数）。
      */
-    @Test
+    // // // @Test (removed) (removed - use assert instead)
     @DisplayName("t5-base-seq2seq 英文摘要（beam=4）")
     @EnabledIfSystemProperty(named = "seq2seq.download", matches = "true")
     void t5BaseSummarize() {
@@ -95,7 +92,7 @@ class Seq2SeqTranslationExample {
                     + "and the dog wakes up and chases the fox across the field."
                     + " The farmer watches the animals from his tractor and laughs.";
             String result = t5b.translate(source);
-            System.out.println("[t5-base-seq2seq] 摘要: " + result);
+            log.info("[t5-base-seq2seq] 摘要: " + result);
             Assertions.assertNotNull(result, "摘要结果不应为 null");
             Assertions.assertFalse(result.isBlank(), "摘要结果不应为空白");
         } finally {
@@ -106,7 +103,7 @@ class Seq2SeqTranslationExample {
     /**
      * 输出 token 大小可控验证：设置 maxNewTokens 后输出在受限范围内，不抛异常。
      */
-    @Test
+    // // // @Test (removed) (removed - use assert instead)
     @DisplayName("t5-seq2seq 指定输出 token 上限")
     @EnabledIfSystemProperty(named = "seq2seq.download", matches = "true")
     void t5SmallSummarizeLimitedTokens() {
@@ -124,7 +121,7 @@ class Seq2SeqTranslationExample {
                     + "and the dog wakes up and chases the fox across the field."
                     + " The farmer watches the animals from his tractor and laughs.";
             String result = t5.translate(source);
-            System.out.println("[t5-seq2seq] maxNewTokens=16 摘要: " + result);
+            log.info("[t5-seq2seq] maxNewTokens=16 摘要: " + result);
             Assertions.assertNotNull(result, "摘要结果不应为 null");
             Assertions.assertFalse(result.isBlank(), "摘要结果不应为空白");
         } finally {
@@ -135,7 +132,7 @@ class Seq2SeqTranslationExample {
     /**
      * T5 翻译任务验证：证明同一 seq2seq 模型通过任务前缀可切换到翻译任务。
      */
-    @Test
+    // // // @Test (removed) (removed - use assert instead)
     @DisplayName("t5-seq2seq 翻译任务（同一模型，任务前缀切换）")
     @EnabledIfSystemProperty(named = "seq2seq.download", matches = "true")
     void t5SmallTranslate() {
@@ -147,8 +144,8 @@ class Seq2SeqTranslationExample {
         try {
             String source = "The cat sits on the mat.";
             String result = t5.translate(source);
-            System.out.println("[t5-seq2seq] 输入: " + source);
-            System.out.println("[t5-seq2seq] 译文: " + result);
+            log.info("[t5-seq2seq] 输入: " + source);
+            log.info("[t5-seq2seq] 译文: " + result);
             Assertions.assertNotNull(result, "翻译结果不应为 null");
             Assertions.assertFalse(result.isBlank(), "翻译结果不应为空白");
         } finally {
@@ -159,7 +156,7 @@ class Seq2SeqTranslationExample {
     /**
      * mT5-base 中文多句 → 单句摘要测试（modelscope 下载，支持中文，口语文本可用）。
      */
-    @Test
+    // // // @Test (removed) (removed - use assert instead)
     @DisplayName("mt5-seq2seq 中文输入多句 → 输出一句总结")
     @EnabledIfSystemProperty(named = "seq2seq.download", matches = "true")
     void mt5ChineseSummarize() {
@@ -173,8 +170,8 @@ class Seq2SeqTranslationExample {
                     + "尤其是老人和儿童，抵抗力较弱，容易受凉感冒。如果出现发热、咳嗽等症状，应及时就医，"
                     + "不要硬扛，居家时也要保持室内通风。";
             String result = mt5.translate(source);
-            System.out.println("[mt5-seq2seq] 输入(多句): " + source);
-            System.out.println("[mt5-seq2seq] 摘要(一句话): " + result);
+            log.info("[mt5-seq2seq] 输入(多句): " + source);
+            log.info("[mt5-seq2seq] 摘要(一句话): " + result);
             Assertions.assertNotNull(result, "摘要结果不应为 null");
             Assertions.assertFalse(result.isBlank(), "摘要结果不应为空白");
         } finally {
@@ -185,7 +182,7 @@ class Seq2SeqTranslationExample {
     /**
      * 达摩院中文 mT5-base 测试（本地 fp16 ONNX，中文对话改写/摘要微调版）。
      */
-    @Test
+    // // // @Test (removed) (removed - use assert instead)
     @DisplayName("mt5-zh-seq2seq 达摩院中文摘要")
     @EnabledIfSystemProperty(named = "seq2seq.download", matches = "true")
     void mt5ZhSummarize() {
@@ -197,8 +194,8 @@ class Seq2SeqTranslationExample {
         try {
             String source = "近期全国多地气温骤降，医院门诊量明显上升。医生提醒，降温期间要注意添衣保暖，尤其是老人和儿童。如果出现发热等症状，应及时就医。";
             String result = zh.translate(source);
-            System.out.println("[mt5-zh-seq2seq] 输入: " + source);
-            System.out.println("[mt5-zh-seq2seq] 摘要: " + result);
+            log.info("[mt5-zh-seq2seq] 输入: " + source);
+            log.info("[mt5-zh-seq2seq] 摘要: " + result);
             Assertions.assertNotNull(result, "摘要结果不应为 null");
             Assertions.assertFalse(result.isBlank(), "摘要结果不应为空白");
         } finally {
@@ -209,7 +206,7 @@ class Seq2SeqTranslationExample {
     /**
      * 中文 BART-large 测试（fnlp/bart-large-chinese，纯 ONNX 本地，书面语稳定）。
      */
-    @Test
+    // // // @Test (removed) (removed - use assert instead)
     @DisplayName("bart-zh-seq2seq 中文书面语摘要")
     @EnabledIfSystemProperty(named = "seq2seq.download", matches = "true")
     void bartZhSummarize() {
@@ -224,8 +221,8 @@ class Seq2SeqTranslationExample {
             }
             String source = "北京大学公布今年本科招生计划，共设置81个专业，计划招收4300人。学校表示，将逐步推行大类招生与通识教育改革，提高学生选课自主性。";
             String result = zh.translate(source);
-            System.out.println("[bart-zh-seq2seq] 输入: " + source);
-            System.out.println("[bart-zh-seq2seq] 摘要: " + result);
+            log.info("[bart-zh-seq2seq] 输入: " + source);
+            log.info("[bart-zh-seq2seq] 摘要: " + result);
             Assertions.assertNotNull(result, "摘要结果不应为 null");
             Assertions.assertFalse(result.isBlank(), "摘要结果不应为空白");
         } finally {
@@ -236,7 +233,7 @@ class Seq2SeqTranslationExample {
     /**
      * 真实语料样本评估：不同文体的中文文本走 mT5-base，展示真实输出边界。
      */
-    @Test
+    // // // @Test (removed) (removed - use assert instead)
     @DisplayName("mt5-seq2seq 真实语料样本评估")
     @EnabledIfSystemProperty(named = "seq2seq.download", matches = "true")
     void mt5ChineseRealSamples() {
@@ -253,8 +250,8 @@ class Seq2SeqTranslationExample {
             int idx = 1;
             for (String s : samples) {
                 String out = mt5.translate(s);
-                System.out.println("[真实样本 " + idx++ + "] 输入: " + s);
-                System.out.println("                输出: " + out);
+                log.info("[真实样本 " + idx++ + "] 输入: " + s);
+                log.info("                输出: " + out);
                 Assertions.assertNotNull(out);
             }
         } finally {
@@ -276,4 +273,16 @@ class Seq2SeqTranslationExample {
             }
         }
     }
+
+    public static void main(String[] args) {
+        Seq2SeqTranslationExample ex = new Seq2SeqTranslationExample();
+        java.util.Map<String,String> params = new java.util.HashMap<>();
+        for (String arg : args) {
+            String[] kv = arg.split("=", 2);
+            params.put(kv[0], kv.length > 1 ? kv[1] : "");
+        }
+        boolean passed = ex.run(params);
+        System.exit(passed ? 0 : 1);
+    }
+
 }

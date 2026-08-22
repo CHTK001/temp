@@ -1,25 +1,26 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.engine.ModelRegistry;
 
 /**
  * 校验 MiniLM 两个模型在 ModelRegistry 中的注册条目。
- */
+  * @author CH`n **/
 public final class MiniLMRegistryExample {
 
-    private MiniLMRegistryVerify() {
+    private MiniLMRegistryExample() {
     }
 
-    /** Main */
+    /** Main  * @author CH`n **/
     public static void main(String[] args) {
         ModelRegistry.discoverAll();
         boolean pass = true;
         pass &= check("minilm-embedding", "nlp/embedding/minilm/model_quantized.onnx");
         pass &= check("minilm-fp32-embedding", "nlp/embedding/minilm-fp32/model.onnx");
         if (pass) {
-            System.out.println("[MiniLMRegistryVerify] ALL PASS");
+            log.info("[MiniLMRegistryVerify] ALL PASS");
         } else {
-            System.out.println("[MiniLMRegistryVerify] FAIL");
+            log.info("[MiniLMRegistryVerify] FAIL");
             System.exit(1);
         }
     }
@@ -27,7 +28,7 @@ public final class MiniLMRegistryExample {
     private static boolean check(String modelId, String expectedPath) {
         var entry = ModelRegistry.get(modelId);
         if (entry == null) {
-            System.out.println("[" + modelId + "] FAIL: 未注册");
+            log.info("[" + modelId + "] FAIL: 未注册");
             return false;
         }
         String actual = entry.relativePath();

@@ -14,6 +14,7 @@ import com.chua.fory.support.serialize.ForySerialization;
 import com.chua.gson.support.json.GsonJsonProvider;
 import com.chua.protobuf.support.serialize.ProtobufSerialization;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
@@ -52,6 +53,7 @@ import java.util.function.Function;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public class SerializationBenchmarkExample implements Example {
 
     @Override
@@ -88,14 +90,14 @@ public class SerializationBenchmarkExample implements Example {
             }
         }
         if (adapters.isEmpty()) {
-            System.out.println("[PERF] 无匹配实现: " + impl);
+            log.info("[PERF] 无匹配实现: " + impl);
             return false;
         }
 
-        System.out.println("===== serialization-bench =====");
+        log.info("===== serialization-bench =====");
         System.out.printf("[PERF] impl=%s  warmup=%dms  measure=%dms  rounds=%d%n",
                 impl, warmupMs, measureMs, rounds);
-        System.out.println("[PERF] " + header());
+        log.info("[PERF] " + header());
 
         boolean passed = true;
         for (BenchAdapter a : adapters) {
@@ -108,7 +110,7 @@ public class SerializationBenchmarkExample implements Example {
         for (BenchAdapter a : adapters) {
             passed &= bench(a, list, UserList.class, "集合x" + listSize, warmupMs, measureMs, rounds);
         }
-        System.out.println("===== serialization-bench " + (passed ? "PASSED" : "FAILED") + " =====");
+        log.info("===== serialization-bench " + (passed ? "PASSED" : "FAILED") + " =====");
         return passed;
     }
 
@@ -262,7 +264,7 @@ public class SerializationBenchmarkExample implements Example {
                         && orig.getOrders().size() == u.getOrders().size()
                         && orig.getAttrs().get("k1").equals(u.getAttrs().get("k1"));
                 if (!same) {
-                    System.out.println("[PERF] 字段差异(" + a.label() + "): name=" + u.getName()
+                    log.info("[PERF] 字段差异(" + a.label() + "): name=" + u.getName()
                             + " age=" + u.getAge() + " city=" + u.getAddress().getCity()
                             + " tags.size=" + u.getTags().size() + " orders.size=" + u.getOrders().size()
                             + " attrs.k1=" + u.getAttrs().get("k1"));
@@ -271,7 +273,7 @@ public class SerializationBenchmarkExample implements Example {
             }
             if (payload instanceof UserList ol && back instanceof UserList ul) {
                 if (ol.getUsers().size() != ul.getUsers().size()) {
-                    System.out.println("[PERF] 集合大小差异(" + a.label() + "): 期望=" + ol.getUsers().size()
+                    log.info("[PERF] 集合大小差异(" + a.label() + "): 期望=" + ol.getUsers().size()
                             + " 实际=" + ul.getUsers().size());
                     return false;
                 }
@@ -279,16 +281,16 @@ public class SerializationBenchmarkExample implements Example {
                 User u0 = ul.getUsers().get(0);
                 boolean same = o0.getName().equals(u0.getName()) && o0.getOrders().size() == u0.getOrders().size();
                 if (!same) {
-                    System.out.println("[PERF] 集合元素差异(" + a.label() + "): name=" + u0.getName()
+                    log.info("[PERF] 集合元素差异(" + a.label() + "): name=" + u0.getName()
                             + " orders.size=" + u0.getOrders().size());
                 }
                 return same;
             }
-            System.out.println("[PERF] 类型不匹配(" + a.label() + "): 期望=" + type.getSimpleName()
+            log.info("[PERF] 类型不匹配(" + a.label() + "): 期望=" + type.getSimpleName()
                     + " 实际=" + (back == null ? "null" : back.getClass().getSimpleName()));
             return false;
         } catch (Exception e) {
-            System.out.println("[PERF] 往返校验异常: " + e);
+            log.info("[PERF] 往返校验异常: " + e);
             return false;
         }
     }

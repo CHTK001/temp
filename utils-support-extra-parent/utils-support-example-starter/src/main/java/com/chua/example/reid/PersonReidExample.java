@@ -1,5 +1,6 @@
 package com.chua.example.reid;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.feature.FeatureExtractor;
 import com.chua.deeplearning.support.reid.PersonReidPipeline;
 import com.chua.deeplearning.support.reid.PersonReidPipeline.SearchResult;
@@ -20,6 +21,7 @@ import java.util.stream.Stream;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public class PersonReidExample {
 
     /** 成功退出码 */
@@ -48,7 +50,7 @@ public class PersonReidExample {
         }
 
         PersonReidPipeline reid = new PersonReidPipeline(fe);
-        System.out.println("===== Person ReID 测试 =====");
+        log.info("===== Person ReID 测试 =====");
 
         // 读取 D:/images 下所有图片作为图库
         List<byte[]> galleryImages = new ArrayList<>();
@@ -67,22 +69,22 @@ public class PersonReidExample {
                  });
         }
 
-        System.out.println("图库大小: " + galleryImages.size() + " 张");
-        System.out.println("构建图库特征索引...");
+        log.info("图库大小: " + galleryImages.size() + " 张");
+        log.info("构建图库特征索引...");
         long t0 = System.currentTimeMillis();
         List<GalleryEntry> gallery = reid.buildGallery(galleryImages, galleryLabels);
-        System.out.println("  完成: " + (System.currentTimeMillis() - t0) + "ms");
+        log.info("  完成: " + (System.currentTimeMillis() - t0) + "ms");
 
         // 用前 3 张图作为查询
         int queryCount = Math.min(3, galleryImages.size());
         for (int q = 0; q < queryCount; q++) {
-            System.out.println("\n--- 查询: " + galleryLabels.get(q) + " ---");
+            log.info("\n--- 查询: " + galleryLabels.get(q) + " ---");
             long t1 = System.currentTimeMillis();
             List<SearchResult> results = reid.search(galleryImages.get(q), gallery, TOP_K);
-            System.out.println("  检索耗时: " + (System.currentTimeMillis() - t1) + "ms");
+            log.info("  检索耗时: " + (System.currentTimeMillis() - t1) + "ms");
             for (int i = 0; i < results.size(); i++) {
                 SearchResult r = results.get(i);
-                System.out.println("  [" + (i + 1) + "] " + r.label() + " score=" + String.format("%.4f", r.score()));
+                log.info("  [" + (i + 1) + "] " + r.label() + " score=" + String.format("%.4f", r.score()));
             }
         }
         return true;
