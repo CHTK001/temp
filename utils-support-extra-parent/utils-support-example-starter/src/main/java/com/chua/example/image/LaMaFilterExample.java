@@ -1,4 +1,4 @@
-package com.chua.example.image;
+﻿package com.chua.example.image;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -6,6 +6,9 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import com.chua.image.support.filter.lama.LaMaConfiguration;
+import com.chua.image.support.filter.lama.LaMaFilterFactory;
+import com.chua.image.support.filter.lama.LaMaImageUtils;
 
 
 /**

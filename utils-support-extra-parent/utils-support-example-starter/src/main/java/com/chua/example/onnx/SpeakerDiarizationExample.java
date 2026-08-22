@@ -162,18 +162,18 @@ public final class SpeakerDiarizationExample extends ExampleBase {
 
     private static void printUsage() {
         log.info("===== 说话人分离与音频识别管线示例 =====");
-        log.info();
+            log.info("");
         log.info("用法:");
         log.info("  SpeakerDiarizationExample list                       # 列出可用模型");
         log.info("  SpeakerDiarizationExample vad <audio.wav>            # 仅 VAD 时间切分（零模型依赖）");
         log.info("  SpeakerDiarizationExample diarize <audio.wav>        # VAD + 说话人嵌入聚类");
         log.info("  SpeakerDiarizationExample diarize <audio.wav> <model> [maxSpeakers]");
         log.info("  SpeakerDiarizationExample full <audio.wav> <asrModel> [maxSpeakers]  # VAD+嵌入+ASR");
-        log.info();
+            log.info("");
         log.info("示例:");
         log.info("  SpeakerDiarizationExample vad   meeting.wav");
         log.info("  SpeakerDiarizationExample full  meeting.wav whisper-tiny 3");
-        log.info();
+            log.info("");
         log.info("注意: whisper-tiny 与 wespeaker-resnet34 已随依赖内置（嵌入式）；");
         log.info("      wav2vec2-zh-fingerprint 首次运行需下载（~950MB）。");
     }

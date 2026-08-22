@@ -1,4 +1,4 @@
-package com.chua.example.network.rpc;
+﻿package com.chua.example.network.rpc;
 
 import com.chua.common.support.network.rpc.RpcClient;
 import com.chua.common.support.network.rpc.RpcConsumerConfig;
@@ -208,7 +208,7 @@ public class RpcExample implements Example {
             }
             server = RpcServer.createService(protocolName, List.of(registry), protocol, APP_NAME);
             server.afterPropertiesSet();
-            server.register(RpcEchoServiceExample.class.getName(), new RpcEchoServiceExampleImpl());
+            server.register(RpcEchoServiceExample.class.getName(), new RpcEchoServiceImplExample());
 
             RpcConsumerConfig consumer = RpcConsumerConfig.auto();
             consumer.setCheck(false);
@@ -361,7 +361,7 @@ public class RpcExample implements Example {
             server = RpcServer.createService("native",
                     List.of(registry), protocol("native", NATIVE_PORT), APP_NAME);
             server.afterPropertiesSet();
-            server.register(RpcEchoServiceExample.class.getName(), new RpcEchoServiceExampleImpl());
+            server.register(RpcEchoServiceExample.class.getName(), new RpcEchoServiceImplExample());
 
             RpcConsumerConfig consumer = new RpcConsumerConfig();
             consumer.setTimeout(5000);
@@ -400,7 +400,7 @@ public class RpcExample implements Example {
             server = RpcServer.createService("json",
                     List.of(registry), protocol("json", JSON_PORT), APP_NAME);
             server.afterPropertiesSet();
-            server.register(RpcEchoServiceExample.class.getName(), new RpcEchoServiceExampleImpl());
+            server.register(RpcEchoServiceExample.class.getName(), new RpcEchoServiceImplExample());
 
             RpcConsumerConfig consumer = new RpcConsumerConfig();
             consumer.setTimeout(5000);
@@ -440,7 +440,7 @@ public class RpcExample implements Example {
             server = RpcServer.createService("dubbo",
                     List.of(registry), protocol("dubbo", DUBBO_PORT), APP_NAME);
             server.afterPropertiesSet();
-            server.register(RpcEchoServiceExample.class.getName(), new RpcEchoServiceExampleImpl());
+            server.register(RpcEchoServiceExample.class.getName(), new RpcEchoServiceImplExample());
 
             RpcConsumerConfig consumer = new RpcConsumerConfig();
             consumer.setTimeout(5000);
@@ -481,7 +481,7 @@ public class RpcExample implements Example {
             server = RpcServer.createService("sofa",
                     List.of(registry), protocol("bolt", SOFA_PORT), APP_NAME);
             server.afterPropertiesSet();
-            server.register(RpcEchoServiceExample.class.getName(), new RpcEchoServiceExampleImpl());
+            server.register(RpcEchoServiceExample.class.getName(), new RpcEchoServiceImplExample());
 
             RpcConsumerConfig consumer = new RpcConsumerConfig();
             consumer.setTimeout(5000);

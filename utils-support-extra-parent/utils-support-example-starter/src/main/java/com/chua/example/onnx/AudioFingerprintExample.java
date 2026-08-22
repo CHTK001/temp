@@ -41,9 +41,9 @@ public final class AudioFingerprintExample extends ExampleBase {
     public static void main(String[] args) throws Exception {
         if (args.length == 0) {
             printModelIds("audio-fingerprint", "onnx",
-                    AudioFingerprinter.create("onnx", "").listModels());
+                    AudioFingerprinter.listModels());
             printModelIds("audio-fingerprint", "pytorch",
-                    AudioFingerprinter.create("pytorch", "").listModels());
+                    AudioFingerprinter.listModels());
             return;
         }
 
@@ -109,7 +109,7 @@ public final class AudioFingerprintExample extends ExampleBase {
             log.info("       file2: " + audioPath2 + "  dim=" + vec2.length);
             log.info("       cos_sim: " + String.format("%.4f", sim));
             log.info("       耗时: " + elapsed + "ms");
-            log.info();
+            log.info("");
         }
     }
 

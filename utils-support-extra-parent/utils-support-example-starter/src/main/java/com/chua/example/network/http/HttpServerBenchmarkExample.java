@@ -1,4 +1,4 @@
-package com.chua.example.network.http;
+﻿package com.chua.example.network.http;
 
 import com.chua.common.support.network.server.Server;
 import com.chua.common.support.network.server.ServerBuilder;
@@ -562,7 +562,7 @@ public final class HttpServerBenchmarkExample {
 
     /** 从 classpath 加载报告模板(resources/benchmark-report-template.html)。 */
     private static String loadTemplate() {
-        try (var in = HttpServerBenchmark.class.getResourceAsStream("/benchmark-report-template.html")) {
+        try (var in = HttpServerBenchmarkExample.class.getResourceAsStream("/benchmark-report-template.html")) {
             if (in == null) {
                 return null;
             }
