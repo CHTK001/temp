@@ -1,7 +1,8 @@
 package com.chua.example.onnx;
 
-import lombok.extern.slf4j.Slf4j;
+import com.chua.deeplearning.support.draw.DrawerPipeline;
 import com.chua.deeplearning.support.engine.ModelRegistry;
+import com.chua.deeplearning.support.model.DetectionInfo;
 import com.chua.deeplearning.support.model.PredictRectangle;
 import com.chua.deeplearning.support.plate.LicensePlateRecognizer;
 import com.chua.deeplearning.support.plate.PlateDetectHit;
@@ -10,17 +11,12 @@ import com.chua.deeplearning.support.plate.PlatePipeline;
 import com.chua.deeplearning.support.plate.PlateResult;
 import com.chua.deeplearning.support.recognition.PlateNumberPipeline;
 import com.chua.deeplearning.support.utils.ImageUtils;
+import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-/**
- * Example: PlatePipelineComprehensiveExample
- *
- * @author CH
- * @since 4.0.0.42
- */
 @Slf4j
 public final class PlatePipelineComprehensiveExample {
 
@@ -34,139 +30,118 @@ public final class PlatePipelineComprehensiveExample {
     private static final String DETECTOR_MODEL = "yolov5-plate-detect";
     private static final String RECOGNIZER_MODEL = "yolov5-plate-recognize";
 
-    // 测试 1-4: 场景级检测+识别（仅对场景图 "more car plate.webp" 验证通过）
-    // "car plate1/2/3.webp" 是裁剪后的车牌特写，非场景图，检测器预期不返回结果
-    // 测试5: 独立识别测试（直接对裁剪车牌识别）
+    private static final String OUTPUT_DIR = "D:\\ch\\output\\plate\\";
+
+    // 统计
+    private static int scenePassed = 0;
+    private static int sceneTotal = 0;
+    private static StringBuilder summary = new StringBuilder();
 
     public static void main(String[] args) throws Exception {
         ModelRegistry.discoverAll();
         ImageUtils.load();
+        Files.createDirectories(Path.of(OUTPUT_DIR));
 
-        log.info("==========================================");
-        log.info("  车牌识别管线全面测试");
-        log.info("==========================================");
-        log.info("检测模型: " + DETECTOR_MODEL);
-        log.info("识别模型: " + RECOGNIZER_MODEL);
-        log.info("测试图片: " + TEST_IMAGES.length + " 张");
-        log.info("");
+        summary.append("==========================================\n");
+        summary.append("  车牌识别管线全面测试 — ").append(java.time.LocalDateTime.now()).append("\n");
+        summary.append("==========================================\n");
+        summary.append("检测模型: ").append(DETECTOR_MODEL).append("\n");
+        summary.append("识别模型: ").append(RECOGNIZER_MODEL).append("\n");
+        summary.append("测试图片: ").append(TEST_IMAGES.length).append(" 张\n");
+        summary.append("结果图输出: ").append(OUTPUT_DIR).append("\n\n");
+        log.info("结果图输出: {}", OUTPUT_DIR);
 
-        int totalTests = 0;
-        int passed = 0;
-
-        // 测试1: 检测 + 识别 (PlateNumberPipeline)
-        log.info("--- 测试1: PlateNumberPipeline 端到端 ---");
+        // 逐图测试
         for (String imgPath : TEST_IMAGES) {
-            if (!Files.exists(Path.of(imgPath))) {
-                log.info("  [SKIP] 文件不存在: " + imgPath);
-                continue;
-            }
-            totalTests++;
-            byte[] img = Files.readAllBytes(Path.of(imgPath));
-            long t0 = System.currentTimeMillis();
-            List<PlateResult> results = PlateNumberPipeline.builder()
-                    .model(RECOGNIZER_MODEL)
-                    .detector(DETECTOR_MODEL)
-                    .build()
-                    .recognize(img);
-            long cost = System.currentTimeMillis() - t0;
-            boolean ok = !results.isEmpty();
-            for (PlateResult r : results) {
-                log.info("  " + Path.of(imgPath).getFileName() + " -> 车牌: " + r.plateNo() + "  颜色: " + r.plateColor() + "  [" + cost + "ms]");
-            }
-            if (!ok) {
-                log.info("  " + Path.of(imgPath).getFileName() + " -> 未检测到车牌 [" + cost + "ms]");
-            }
-            if (ok) { passed++; }
+            testOneImage(imgPath);
         }
-        log.info("  测试1 通过: " + passed + "/" + totalTests);
-        log.info("");
-
-        // 测试2: 仅检测 (PlateDetector)
-        log.info("--- 测试2: PlateDetector 仅检测 ---");
-        int detPassed = 0;
-        int detTotal = 0;
-        for (String imgPath : TEST_IMAGES) {
-            if (!Files.exists(Path.of(imgPath))) { continue; }
-            detTotal++;
-            byte[] img = Files.readAllBytes(Path.of(imgPath));
-            long t0 = System.currentTimeMillis();
-            List<PredictRectangle> boxes = PlateDetector.create(DETECTOR_MODEL).detect(img);
-            long cost = System.currentTimeMillis() - t0;
-            boolean ok = !boxes.isEmpty();
-            log.info("  " + Path.of(imgPath).getFileName() + " -> " + boxes.size() + " 个车牌框 [" + cost + "ms]");
-            if (ok) { detPassed++; }
-        }
-        log.info("  测试2 通过: " + detPassed + "/" + detTotal);
-        log.info("");
-
-        // 测试3: 仅识别 (LicensePlateRecognizer) - 需要先检测再裁切
-        log.info("--- 测试3: LicensePlateRecognizer 仅识别 ---");
-        int recPassed = 0;
-        int recTotal = 0;
-        for (String imgPath : TEST_IMAGES) {
-            if (!Files.exists(Path.of(imgPath))) { continue; }
-            recTotal++;
-            byte[] img = Files.readAllBytes(Path.of(imgPath));
-            List<PredictRectangle> boxes = PlateDetector.create(DETECTOR_MODEL).detect(img);
-            if (boxes.isEmpty()) {
-                log.info("  " + Path.of(imgPath).getFileName() + " -> 检测无结果，跳过识别");
-                continue;
-            }
-            LicensePlateRecognizer recognizer = LicensePlateRecognizer.create(RECOGNIZER_MODEL);
-            for (int i = 0; i < boxes.size(); i++) {
-                long t0 = System.currentTimeMillis();
-                PlateResult pr = recognizer.recognizePlate(img);
-                long cost = System.currentTimeMillis() - t0;
-                if (pr != null) {
-                    log.info("  " + Path.of(imgPath).getFileName() + "[" + i + "] -> " + pr.plateNo() + "  " + pr.plateColor() + " [" + cost + "ms]");
-                    recPassed++;
-                }
-            }
-        }
-        log.info("  测试3 通过: " + recPassed + "/" + recTotal);
-        log.info("");
-
-        // 测试4: PlatePipeline 端到端 (新版管线)
-        log.info("--- 测试4: PlatePipeline 端到端 ---");
-        int ppPassed = 0;
-        int ppTotal = 0;
-        for (String imgPath : TEST_IMAGES) {
-            if (!Files.exists(Path.of(imgPath))) { continue; }
-            ppTotal++;
-            byte[] img = Files.readAllBytes(Path.of(imgPath));
-            long t0 = System.currentTimeMillis();
-            PlatePipeline pipeline = PlatePipeline.builder()
-                    .detector(DETECTOR_MODEL)
-                    .recognizer(RECOGNIZER_MODEL)
-                    .build();
-            List<PlateDetectHit> hits = pipeline.detect(img);
-            long cost = System.currentTimeMillis() - t0;
-            boolean ok = !hits.isEmpty();
-            for (PlateDetectHit hit : hits) {
-                log.info("  " + Path.of(imgPath).getFileName() + " -> 车牌: " + hit.plateText() + "  颜色: " + hit.plateColor() + "  框: " + hit.box() + " [" + cost + "ms]");
-            }
-            if (!ok) {
-                log.info("  " + Path.of(imgPath).getFileName() + " -> 未检测到车牌 [" + cost + "ms]");
-            }
-            if (ok) { ppPassed++; }
-        }
-        log.info("  测试4 通过: " + ppPassed + "/" + ppTotal);
-        log.info("");
 
         // 汇总
-        log.info("==========================================");
-        log.info("  测试汇总");
-        log.info("==========================================");
-        log.info("  PlateNumberPipeline:  " + passed + "/" + totalTests + " 通过");
-        log.info("  PlateDetector:        " + detPassed + "/" + detTotal + " 通过");
-        log.info("  LicensePlateRec:      " + recPassed + "/" + recTotal + " 通过");
-        log.info("  PlatePipeline:        " + ppPassed + "/" + ppTotal + " 通过");
-        log.info("==========================================");
+        summary.append("==========================================\n");
+        summary.append("  测试汇总\n");
+        summary.append("==========================================\n");
+        summary.append("  场景图片检测: ").append(scenePassed).append("/").append(sceneTotal).append(" 通过\n");
+        summary.append("==========================================\n");
 
-        int allPassed = passed + detPassed + recPassed + ppPassed;
-        int allTotal = totalTests + detTotal + recTotal + ppTotal;
-        boolean allOk = allPassed == allTotal && allTotal > 0;
-        log.info(allOk ? "[COMPREHENSIVE] ALL PASS" : "[COMPREHENSIVE] 部分未通过 (" + allPassed + "/" + allTotal + ")");
+        Path reportPath = Path.of(OUTPUT_DIR, "report.txt");
+        Files.writeString(reportPath, summary.toString());
+        log.info("测试报告: {}", reportPath.toAbsolutePath());
+        log.info(summary.toString());
+
+        boolean allOk = scenePassed == sceneTotal && sceneTotal > 0;
+        log.info(allOk ? "[PLATE] ALL PASS" : "[PLATE] 部分未通过 (" + scenePassed + "/" + sceneTotal + ")");
         if (!allOk) { System.exit(1); }
+    }
+
+    private static void testOneImage(String imgPath) throws Exception {
+        String fileName = Path.of(imgPath).getFileName().toString();
+        String baseName = fileName.replaceAll("\\.(jpg|jpeg|webp|png)$", "");
+        boolean isScene = fileName.contains("more car plate");
+
+        log.info("=== {} {} ===", fileName, isScene ? "(场景图)" : "(裁剪车牌)");
+        summary.append("=== ").append(fileName).append(" ===\n");
+
+        byte[] img = Files.readAllBytes(Path.of(imgPath));
+
+        // 1. 检测
+        long t0 = System.currentTimeMillis();
+        List<PredictRectangle> boxes = PlateDetector.create(DETECTOR_MODEL).detect(img);
+        long detCost = System.currentTimeMillis() - t0;
+
+        // 保存标注图
+        if (!boxes.isEmpty()) {
+            List<DetectionInfo> detInfos = boxes.stream()
+                .map(b -> new DetectionInfo(
+                    b.labelName() + " " + String.format("%.2f", b.confidence()),
+                    b.confidence(), b.x(), b.y(), b.width(), b.height(), 0f, 0f, 0f, 0f, 0f))
+                .toList();
+            List<String> labels = detInfos.stream().map(d -> d.label()).toList();
+            byte[] annotated = new DrawerPipeline(0f)
+                .target(img)
+                .boxes(detInfos, labels)
+                .done();
+            Path outPath = Path.of(OUTPUT_DIR, baseName + "_detect.png");
+            Files.write(outPath, annotated);
+            log.info("  标注图: {} ({} 个框)", outPath, boxes.size());
+        }
+
+        log.info("  检测: {} 个车牌框 [{}ms]", boxes.size(), detCost);
+
+        // 2. 识别（场景图用端到端管线，裁剪图直接识别）
+        if (isScene) {
+            long t1 = System.currentTimeMillis();
+            PlatePipeline pipeline = PlatePipeline.builder()
+                .detector(DETECTOR_MODEL).recognizer(RECOGNIZER_MODEL).build();
+            List<PlateDetectHit> hits = pipeline.detect(img);
+            long recCost = System.currentTimeMillis() - t1;
+
+            sceneTotal++;
+            if (!hits.isEmpty()) { scenePassed++; }
+
+            for (PlateDetectHit hit : hits) {
+                String line = String.format("  车牌: %s  颜色: %s  框: [%.0f,%.0f,%.0f,%.0f]  %.2f",
+                    hit.plateText(), hit.plateColor(),
+                    hit.box().x(), hit.box().y(), hit.box().width(), hit.box().height(),
+                    hit.box().confidence());
+                log.info(line);
+                summary.append(line).append("\n");
+            }
+            if (hits.isEmpty()) {
+                String line = "  未检测到车牌";
+                log.info("  {}", line);
+                summary.append("  ").append(line).append("\n");
+            }
+            log.info("  识别耗时: {}ms\n", recCost);
+        } else {
+            long t1 = System.currentTimeMillis();
+            PlateResult r = LicensePlateRecognizer.create(RECOGNIZER_MODEL).recognizePlate(img);
+            long recCost = System.currentTimeMillis() - t1;
+            String line = r != null
+                ? String.format("  车牌: %s  颜色: %s  [%dms]", r.plateNo(), r.plateColor(), recCost)
+                : "  未识别出车牌 [" + recCost + "ms]";
+            log.info("  {}", line);
+            summary.append("  ").append(line).append("\n");
+        }
+        summary.append("\n");
     }
 }
