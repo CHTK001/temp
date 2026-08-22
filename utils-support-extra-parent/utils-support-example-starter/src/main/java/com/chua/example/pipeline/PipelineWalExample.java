@@ -1,4 +1,4 @@
-package com.chua.example.pipeline;
+﻿package com.chua.example.pipeline;
 
 import com.chua.common.support.task.pipeline.builder.PipelineBuilder;
 import com.chua.common.support.task.pipeline.core.Pipeline;
@@ -288,4 +288,9 @@ public class PipelineWalExample implements Example {
                     });
         } catch (Exception ignored) {}
     }
-}
+
+    @Override
+    public boolean run(java.util.Map<String, String> args) {
+        main(new String[0]);
+        return true;
+    }}

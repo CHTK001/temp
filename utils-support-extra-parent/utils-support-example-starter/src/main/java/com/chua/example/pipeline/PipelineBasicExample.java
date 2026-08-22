@@ -1,4 +1,4 @@
-package com.chua.example.pipeline;
+﻿package com.chua.example.pipeline;
 
 import com.chua.common.support.task.pipeline.builder.PipelineBuilder;
 import com.chua.common.support.task.pipeline.core.Pipeline;
@@ -220,4 +220,9 @@ public class PipelineBasicExample implements Example {
     private static void printResult(String name, boolean passed) {
         log.info((passed ? "[PASS] " : "[FAIL] ") + name);
     }
-}
+
+    @Override
+    public boolean run(java.util.Map<String, String> args) {
+        main(new String[0]);
+        return true;
+    }}
