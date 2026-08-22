@@ -1,6 +1,7 @@
 package com.chua.example.ai.vision;
 
 import com.chua.deeplearning.support.engine.ModelRegistry;
+import com.chua.common.support.reflection.ReflectUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Path;
@@ -73,7 +74,7 @@ public class OpenVocabularyDetectionExample {
         boolean instanceOk = false;
         try {
             Class<?> translatorClass = Class.forName(entry.translatorClassName());
-            translatorClass.getDeclaredConstructor().newInstance();
+            ReflectUtils.instantiate(translatorClass);
             instanceOk = true;
         } catch (Throwable t) {
             log.warn("      实例化 {} 失败: {}", entry.translatorClassName(), t.getMessage());

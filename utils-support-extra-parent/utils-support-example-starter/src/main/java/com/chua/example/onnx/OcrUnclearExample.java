@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import com.chua.common.support.reflection.ReflectUtils;
 import com.chua.deeplearning.support.ocr.OcrPipeline;
 import com.chua.deeplearning.support.ocr.OcrResult;
 import com.chua.deeplearning.support.translator.ITranslator;
@@ -46,8 +47,8 @@ public final class OcrUnclearExample {
             System.out.println("  原图尺寸=" + m0.cols() + "x" + m0.rows());
 
             Object dr = dirT.translate(img);
-            String cls = String.valueOf(dr.getClass().getMethod("getName").invoke(dr));
-            double prob = (double) dr.getClass().getMethod("getProbability").invoke(dr);
+            String cls = String.valueOf(ReflectUtils.invoke(dr, "getName", Object.class));
+            double prob = (double) ReflectUtils.invoke(dr, "getProbability", double.class);
             System.out.println("  方向分类=" + cls + " prob=" + String.format("%.3f", prob));
 
             byte[] corrected = ocr.correct(img);
