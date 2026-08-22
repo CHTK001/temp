@@ -2,9 +2,7 @@ package com.chua.example.onnx;
 
 import com.chua.deeplearning.support.draw.DrawerPipeline;
 import com.chua.deeplearning.support.engine.ModelRegistry;
-import com.chua.deeplearning.support.model.DetectionInfo;
-import com.chua.deeplearning.support.plate.PlateDetectHit;
-import com.chua.deeplearning.support.plate.PlatePipeline;
+import com.chua.deeplearning.support.plate.PlateDetector;
 import com.chua.deeplearning.support.utils.ImageUtils;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,7 +21,6 @@ public final class PlatePipelineComprehensiveExample {
     };
 
     private static final String DETECTOR = "yolov5-plate-detect";
-    private static final String RECOGNIZER = "yolov5-plate-recognize";
 
     public static void main(String[] args) throws Exception {
         ModelRegistry.discoverAll();
@@ -36,27 +33,15 @@ public final class PlatePipelineComprehensiveExample {
             String name = Path.of(imgPath).getFileName().toString();
             byte[] img = Files.readAllBytes(Path.of(imgPath));
 
-            PlatePipeline pipeline = PlatePipeline.builder()
-                .detector(DETECTOR)
-                .recognizer(RECOGNIZER)
-                .build();
-            List<PlateDetectHit> hits = pipeline.detect(img);
+            var rects = PlateDetector.create(DETECTOR).detect(img);
+            var labels = rects.stream().map(b -> String.format("%.2f", b.confidence())).toList();
+            byte[] drawn = new DrawerPipeline(0f).target(img).predictBoxes(rects, labels).done();
+            Files.write(outDir.resolve(name.replaceAll("\\.(jpg|jpeg|webp|png)$", ".png")), drawn);
 
-            // 绘制标注图
-            List<DetectionInfo> dets = hits.stream()
-                .map(h -> new DetectionInfo(h.plateText() + " " + h.plateColor(),
-                    h.box().confidence(), h.box().x(), h.box().y(), h.box().width(), h.box().height(), 0, 0, 0, 0, 0))
-                .toList();
-            byte[] drawn = pipeline.withInitDrawer().target(img).boxes(dets, dets.stream().map(d -> d.label()).toList()).done();
-            String outName = name.replaceAll("\\.(jpg|jpeg|webp|png)$", ".png");
-            Files.write(outDir.resolve(outName), drawn);
-
-            String result = hits.isEmpty() ? "未检测到车牌" : hits.size() + " 个车牌";
-            boolean ok = !hits.isEmpty();
-            if (ok) passed++;
-            log.info("{} -> {} [{}]", name, result, hits.isEmpty() ? "" : hits.stream().map(h -> h.plateText() + "(" + h.plateColor() + ")").reduce((a, b) -> a + ", " + b).orElse(""));
+            if (!rects.isEmpty()) passed++;
+            log.info("{} -> {} 个框", name, rects.size());
         }
-        log.info("[PLATE] {}/{} 通过 -> {}", passed, TEST_IMAGES.length, outDir);
+        log.info("[PLATE] {}/{} 通过", passed, TEST_IMAGES.length);
         if (passed == 0) System.exit(1);
     }
 }
