@@ -45,19 +45,30 @@ public final class PocketTtsVoiceCloneExample extends ExampleBase {
                 doSynthesize(text, (String) null);
             }
             case "clone" -> {
-                // 声音克隆：参数1=参考音频路径，参数2=目标文本
-                String refPath = args.length > 1 ? args[1] : null;
-                String text    = args.length > 2 ? args[2] : "Hello can you hear me?";
+                // 声音克隆：参数1=参考音频路径（可选，缺省时自动生成），参数2=目标文本
+                String refArg = args.length > 1 ? args[1] : null;
+                String text   = args.length > 2 ? args[2] : "Hello can you hear me?";
+                String refPath;
+                if (refArg == null) {
+                    // 无参数：自动生成参考音频
+                    refPath = null;
+                } else if (refArg.endsWith(".wav") || refArg.endsWith(".mp3")
+                        || refArg.endsWith(".flac") || refArg.contains("/") || refArg.contains("\\")) {
+                    // 参数1 是文件路径
+                    refPath = refArg;
+                } else {
+                    // 参数1 是目标文本（无参考音频，自动生成）
+                    text = refArg;
+                    refPath = null;
+                }
                 if (refPath == null) {
                     System.out.println("[clone] 自动生成参考音频...");
                     byte[] refWav = TextToAudioClient.create(PROVIDER, "")
                             .model(MODEL)
                             .synthesize("This is a reference voice sample.");
-                    Path refFile = saveTempWav(refWav);
-                    doSynthesize(text, refFile.toString());
-                } else {
-                    doSynthesize(text, refPath);
+                    refPath = saveTempWav(refWav).toString();
                 }
+                doSynthesize(text, refPath);
             }
             default -> System.out.println("用法：\n  synthesize <文本>\n  clone [参考音频路径] <目标文本>");
         }
