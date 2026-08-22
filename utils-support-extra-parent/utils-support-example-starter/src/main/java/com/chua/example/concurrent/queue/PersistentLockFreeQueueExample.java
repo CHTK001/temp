@@ -2,7 +2,7 @@ package com.chua.example.concurrent.queue;
 
 import com.chua.common.support.concurrent.queue.QueueType;
 import com.chua.common.support.concurrent.queue.persistent.PersistentLockFreeQueue;
-import com.chua.common.support.concurrent.queue.persistent.WalConfig;
+import com.chua.common.support.wal.WalConfig;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Files;
@@ -82,9 +82,9 @@ public class PersistentLockFreeQueueExample {
         cleanDir(walDir);
 
         WalConfig config = WalConfig.builder()
-                .walDir(walDir.toString())
-                .mmap(true)
-                .sync(false)
+                .walDir(walDir)
+                .useMemoryMap(true)
+                .syncOnWrite(false)
                 .build();
 
         boolean passed = true;
@@ -114,9 +114,9 @@ public class PersistentLockFreeQueueExample {
         cleanDir(walDir);
 
         WalConfig config = WalConfig.builder()
-                .walDir(walDir.toString())
-                .mmap(true)
-                .sync(true)
+                .walDir(walDir)
+                .useMemoryMap(true)
+                .syncOnWrite(true)
                 .build();
 
         // 第一阶段：写入元素后关闭（模拟 crash 截断）
@@ -160,9 +160,9 @@ public class PersistentLockFreeQueueExample {
         cleanDir(walDir);
 
         WalConfig config = WalConfig.builder()
-                .walDir(walDir.toString())
-                .mmap(true)
-                .sync(true)
+                .walDir(walDir)
+                .useMemoryMap(true)
+                .syncOnWrite(true)
                 .build();
 
         // 第一阶段：offer 100 条，poll 30 条，关闭
@@ -201,10 +201,10 @@ public class PersistentLockFreeQueueExample {
         cleanDir(walDir);
 
         WalConfig config = WalConfig.builder()
-                .walDir(walDir.toString())
-                .mmap(true)
-                .sync(false)
-                .flushIntervalMillis(50)
+                .walDir(walDir)
+                .useMemoryMap(true)
+                .syncOnWrite(false)
+                .fsyncBatchIntervalMs(50)
                 .build();
 
         boolean passed;
@@ -233,9 +233,9 @@ public class PersistentLockFreeQueueExample {
         cleanDir(walDir);
 
         WalConfig config = WalConfig.builder()
-                .walDir(walDir.toString())
-                .mmap(false)
-                .sync(true)
+                .walDir(walDir)
+                .useMemoryMap(false)
+                .syncOnWrite(true)
                 .build();
 
         boolean passed;
