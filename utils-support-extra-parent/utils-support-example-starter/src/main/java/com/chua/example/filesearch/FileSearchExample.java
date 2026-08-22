@@ -1,4 +1,4 @@
-package com.chua.filesearch.support.example;
+package com.chua.example.filesearch;
 
 import com.chua.common.support.utils.CommandLine;
 import com.chua.filesearch.support.bridge.RustFileSearchBridge;

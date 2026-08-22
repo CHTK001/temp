@@ -1,4 +1,4 @@
-package com.chua.deeplearning.support.pytorch.example;
+package com.chua.example.pytorch;
 
 import com.chua.deeplearning.support.face.FaceDetector;
 import com.chua.deeplearning.support.image.ImageEnhancer;
