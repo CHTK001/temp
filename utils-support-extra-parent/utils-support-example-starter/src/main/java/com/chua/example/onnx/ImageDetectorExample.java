@@ -18,7 +18,8 @@ import java.util.List;
  *   ImageDetectorExample list
  *   ImageDetectorExample yolov8s scene.jpg
  * }</pre>
- *@author CH`n *
+ *@author CH
+ *
  * @since 4.0.0.42
  */
 public final class ImageDetectorExample extends ExampleBase {

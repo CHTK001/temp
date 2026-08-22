@@ -16,7 +16,8 @@ import java.util.List;
  *   FaceExtraExample anime-face-detector G:\images\anime_test.jpg
  *   FaceExtraExample face-liveness-flrgb G:\images\黑白人物.jpg
  * }</pre>
- *@author CH`n *
+ *@author CH
+ *
  * @since 4.0.0.42
  */
 public final class FaceExtraExample extends ExampleBase {

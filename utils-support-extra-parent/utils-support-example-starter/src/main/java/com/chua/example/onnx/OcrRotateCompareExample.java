@@ -14,7 +14,8 @@ import java.util.List;
 
 /**
  * 对比 rotate 实现：当前 SPI 版 vs 纯 OpenCV 版，对旋转车票识别票号。
- *@author CH`n *
+ *@author CH
+ *
  * @since 4.0.0.42
  */
 public final class OcrRotateCompareExample {

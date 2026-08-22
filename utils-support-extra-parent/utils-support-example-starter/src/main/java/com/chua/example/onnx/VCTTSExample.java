@@ -7,7 +7,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Enumeration;
 
-/**`n * TTS->STT Pipeline Example`n *`n * @author CH`n * @since 4.0.0.42`n */`npublic final class VCTTSExample {
+/**
+ * TTS->STT Pipeline Example
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
+public final class VCTTSExample {
     private VCTTS() {}
 
     public static void main(String[] args) throws Exception {

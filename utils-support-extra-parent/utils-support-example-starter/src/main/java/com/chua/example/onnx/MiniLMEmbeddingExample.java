@@ -15,7 +15,8 @@ import com.chua.common.support.ai.embedding.EmbeddingClient;
  *
  * <p>用法：{@code mvn -o exec:java -Dexec.classpathScope=test
  * -Dexec.mainClass=com.chua.deeplearning.support.onnx.example.MiniLMEmbeddingVerify}</p>
- *@author CH`n *
+ *@author CH
+ *
  * @since 4.0.0.42
  */
 public final class MiniLMEmbeddingExample {

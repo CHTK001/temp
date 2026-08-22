@@ -15,7 +15,8 @@ import java.util.List;
 /**
  * 全局 deskew 影响对比：对每张图的 deskew 触发框，对比 raw / +angle / -angle 识别，
  * 判定 deskew 是否有害以及方向。
- *@author CH`n *
+ *@author CH
+ *
  * @since 4.0.0.42
  */
 public final class OcrDeskewCompareExample {

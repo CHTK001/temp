@@ -2,29 +2,31 @@ package com.chua.example.osgi;
 
 /**
  * OSGi 集成测试服务实现。
- *@author CH`n *
+ *
+ * @author CH
  * @since 4.0.0.42
  */
-public final class HelloServiceImplExample implements HelloService {
+public final class HelloServiceImplExample implements HelloServiceExample {
     /** Greeting */
     private final String greeting;
 
-    /** 创建 HelloServiceExampleImplExample 实例 */
-    public HelloServiceExampleImplExample() {
+    /** 创建 HelloServiceImplExample 实例 */
+    public HelloServiceImplExample() {
         this("default");
     }
 
     /**
-     * 创建 HelloServiceExampleImplExample 实例
+     * 创建 HelloServiceImplExample 实例
+     *
      * @param greeting greeting
      */
-    public HelloServiceExampleImplExample(String greeting) {
+    public HelloServiceImplExample(String greeting) {
         this.greeting = greeting;
     }
 
-    /** Greet */`n
-
-    @Override`n    public String greet() {
+    /** Greet */
+    @Override
+    public String greet() {
         return greeting;
     }
 }

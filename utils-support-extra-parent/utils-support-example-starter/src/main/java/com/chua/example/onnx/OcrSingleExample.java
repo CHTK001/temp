@@ -13,7 +13,8 @@ import java.util.List;
 
 /**
  * 单图 OCR 诊断：输出检测框明细 + 每块识别文本/置信度 + 裁剪图，定位识别失败环节。
- *@author CH`n *
+ *@author CH
+ *
  * @since 4.0.0.42
  */
 public final class OcrSingleExample {

@@ -14,7 +14,8 @@ import java.util.List;
 
 /**
  * 诊断三张"很不清楚的文字图片"：方向模型分类 → correct 是否旋转 → 识别。
- *@author CH`n *
+ *@author CH
+ *
  * @since 4.0.0.42
  */
 public final class OcrUnclearExample {
