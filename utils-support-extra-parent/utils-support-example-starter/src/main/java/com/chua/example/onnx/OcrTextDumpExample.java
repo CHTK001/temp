@@ -12,10 +12,10 @@ import java.util.List;
  *
  * @since 4.0.0.42
  */
-public final class OcrTextDump {
+public final class OcrTextDumpExample {
 
-    /** 创建 OcrTextDump 实例 */
-    private OcrTextDump() {
+    /** 创建 OcrTextDumpExample 实例 */
+    private OcrTextDumpExample() {
     }
 
     /** Main */

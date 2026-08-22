@@ -1,4 +1,4 @@
-package com.chua.prometheus.support.example;
+package com.chua.example.network;
 
 import com.chua.common.support.spi.ServiceProvider;
 import com.chua.common.support.lang.datasource.engine.Engine;

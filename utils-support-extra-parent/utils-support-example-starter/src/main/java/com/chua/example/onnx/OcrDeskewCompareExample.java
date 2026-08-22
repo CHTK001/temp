@@ -17,10 +17,10 @@ import java.util.List;
  *
  * @since 4.0.0.42
  */
-public final class OcrDeskewCompareAll {
+public final class OcrDeskewCompareExample {
 
-    /** 创建 OcrDeskewCompareAll 实例 */
-    private OcrDeskewCompareAll() {
+    /** 创建 OcrDeskewCompareExample 实例 */
+    private OcrDeskewCompareExample() {
     }
 
     /** Main */

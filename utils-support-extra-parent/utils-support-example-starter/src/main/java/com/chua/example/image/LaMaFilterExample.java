@@ -1,4 +1,4 @@
-package com.chua.image.support.filter.lama;
+package com.chua.example.image;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,7 +19,7 @@ import javax.annotation.Nullable;
  * @since 2024/7/29
  */
 @Slf4j
-public class LaMaFilterTest {
+public class LaMaFilterExample {
 
     /** Main */
     public static void main(String[] args) {

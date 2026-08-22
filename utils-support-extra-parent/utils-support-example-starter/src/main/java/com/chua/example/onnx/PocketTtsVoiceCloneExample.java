@@ -33,7 +33,7 @@ public final class PocketTtsVoiceCloneExample extends ExampleBase {
     private static final String TTS_PROVIDER = "onnx";
     private static final String POCKET_TTS   = "pocket-tts";
     private static final String VITS_ZH      = "vits-icefall-zh";
-    private static final String STT_MODEL    = "moonshine-base";
+    private static final String STT_MODEL    = "whisper-tiny";
 
     private PocketTtsVoiceCloneExample() {}
 

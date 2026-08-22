@@ -1,4 +1,4 @@
-package com.chua.video.processor.support.example;
+package com.chua.example.media;
 
 import com.chua.common.support.media.ffmpeg.FFmpegProcessor;
 import com.chua.common.support.spi.ServiceProvider;

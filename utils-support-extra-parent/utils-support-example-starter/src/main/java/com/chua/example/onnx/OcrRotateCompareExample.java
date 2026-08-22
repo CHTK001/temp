@@ -16,10 +16,10 @@ import java.util.List;
  *
  * @since 4.0.0.42
  */
-public final class OcrRotateCompare {
+public final class OcrRotateCompareExample {
 
-    /** 创建 OcrRotateCompare 实例 */
-    private OcrRotateCompare() {
+    /** 创建 OcrRotateCompareExample 实例 */
+    private OcrRotateCompareExample() {
     }
 
     /** Main */

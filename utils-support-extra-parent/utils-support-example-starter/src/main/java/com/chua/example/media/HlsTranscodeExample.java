@@ -1,4 +1,4 @@
-package com.chua.video.processor.support.example;
+package com.chua.example.media;
 
 import com.chua.common.support.utils.CommandLine;
 import com.chua.video.processor.support.bridge.VideoProcessorBridge;
