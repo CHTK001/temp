@@ -345,6 +345,11 @@
         </dependency>
         <dependency>
             <groupId>com.chua</groupId>
+            <artifactId>utils-support-redis-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.chua</groupId>
             <artifactId>utils-support-hbase-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -655,10 +660,14 @@
                           <!-- 零样本分类示例（ZeroShotClassificationExample） -->
                           <include>**/classification/*.java</include>
 <!-- 版面分析管线示例（LayoutPipelineExample） -->
-                           <include>**/layout/*.java</include>
+<include>**/layout/*.java</include>
                            <!-- 车牌管线示例（PlatePipelineVerifyExample / PlatePipelineComprehensiveExample） -->
                            <include>**/onnx/*Plate*.java</include>
-                                               </includes>
+                           <!-- 工具类 / 数据源 / Redis 示例 -->
+                           <include>**/utils/*.java</include>
+                           <include>**/datasource/*.java</include>
+                           <include>**/redis/*.java</include>
+                                                </includes>
                 </configuration>
             </plugin>
         </plugins>
