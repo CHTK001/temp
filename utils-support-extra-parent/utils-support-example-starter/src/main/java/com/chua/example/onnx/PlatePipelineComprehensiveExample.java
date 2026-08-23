@@ -21,7 +21,7 @@ public final class PlatePipelineComprehensiveExample {
         "D:/images/car plate3.webp"
     };
 
-    private static final String[] DETECTORS = {"yolov5-plate-detect", "yolo11-plate-detect"};
+    private static final String[] DETECTORS = {"yolo11-plate-detect"};
 
     public static void main(String[] args) throws Exception {
         ModelRegistry.discoverAll();
