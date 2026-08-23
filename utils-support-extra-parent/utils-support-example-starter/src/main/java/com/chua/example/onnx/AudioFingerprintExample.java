@@ -117,14 +117,18 @@ public final class AudioFingerprintExample extends ExampleBase {
      * 计算两个向量的余弦相似度。
      */
     private static float cosineSimilarity(float[] a, float[] b) {
-        if (a.length != b.length || a.length == 0) return 0f;
+        if (a.length != b.length || a.length == 0) {
+            return 0f;
+        }
         float dot = 0f, nA = 0f, nB = 0f;
         for (int i = 0; i < a.length; i++) {
             dot += a[i] * b[i];
             nA += a[i] * a[i];
             nB += b[i] * b[i];
         }
-        if (nA < 1e-12f || nB < 1e-12f) return 0f;
+        if (nA < 1e-12f || nB < 1e-12f) {
+            return 0f;
+        }
         return dot / (float) (Math.sqrt(nA) * Math.sqrt(nB));
     }
 }

@@ -85,10 +85,16 @@ import java.util.Enumeration;
                     while (entries.hasMoreElements()) {
                         java.util.jar.JarEntry entry = entries.nextElement();
                         String name = entry.getName();
-                        if (!name.startsWith(entryPrefix) && !name.startsWith(entryPrefix + "/")) continue;
+                        if (!name.startsWith(entryPrefix) && !name.startsWith(entryPrefix + "/")) {
+                            continue;
+                        }
                         String rel = name.substring(entryPrefix.length());
-                        if (rel.startsWith("/")) rel = rel.substring(1);
-                        if (rel.isEmpty()) continue;
+                        if (rel.startsWith("/")) {
+                            rel = rel.substring(1);
+                        }
+                        if (rel.isEmpty()) {
+                            continue;
+                        }
                         Path dest = modelDir.resolve(rel);
                         if (entry.isDirectory()) {
                             Files.createDirectories(dest);
@@ -103,7 +109,9 @@ import java.util.Enumeration;
                 }
             }
         }
-        if (extracted == 0) throw new RuntimeException("No whisper resources found");
+        if (extracted == 0) {
+            throw new RuntimeException("No whisper resources found");
+        }
         return modelDir;
     }
 }

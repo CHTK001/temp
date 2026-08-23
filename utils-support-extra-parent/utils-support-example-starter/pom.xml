@@ -664,9 +664,11 @@
                            <!-- 车牌管线示例（PlatePipelineVerifyExample / PlatePipelineComprehensiveExample） -->
                            <include>**/onnx/*Plate*.java</include>
                            <!-- 工具类 / 数据源 / Redis 示例 -->
-                           <include>**/utils/*.java</include>
-                           <include>**/datasource/*.java</include>
-                           <include>**/redis/*.java</include>
+                            <include>**/utils/*.java</include>
+                            <include>**/datasource/*.java</include>
+                            <include>**/redis/*.java</include>
+                           <!-- 任务分发示例（TaskDistributionExample / ReactiveTaskManagerExample） -->
+                           <include>**/taskdistribution/*.java</include>
                                                 </includes>
                 </configuration>
             </plugin>

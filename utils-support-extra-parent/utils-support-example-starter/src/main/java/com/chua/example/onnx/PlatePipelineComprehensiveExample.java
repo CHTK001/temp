@@ -10,6 +10,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+/**
+ * 车牌检测全流程综合示例。
+ * <p>
+ * 对内置测试图片依次执行车牌检测模型推理，绘制检测框并输出结果图，
+ * 最后统计通过率，全部失败时以非零退出码结束。
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
 @Slf4j
 public final class PlatePipelineComprehensiveExample {
 
@@ -38,10 +47,14 @@ public final class PlatePipelineComprehensiveExample {
             byte[] drawn = new DrawerPipeline(0f).target(img).predictBoxes(rects, labels).done();
             Files.write(outDir.resolve(name.replaceAll("\\.(jpg|jpeg|webp|png)$", ".png")), drawn);
 
-            if (!rects.isEmpty()) passed++;
+            if (!rects.isEmpty()) {
+                passed++;
+            }
             log.info("{} -> {} 个框", name, rects.size());
         }
         log.info("[PLATE] {}/{} 通过", passed, TEST_IMAGES.length);
-        if (passed == 0) System.exit(1);
+        if (passed == 0) {
+            System.exit(1);
+        }
     }
 }

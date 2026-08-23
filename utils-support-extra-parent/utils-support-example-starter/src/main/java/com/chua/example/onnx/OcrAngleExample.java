@@ -61,7 +61,9 @@ public final class OcrAngleExample {
             log.info("  检测框数: " + boxes.size());
             int shown = 0;
             for (DetectionInfo b : boxes) {
-                if (shown++ >= 3) break;
+                if (shown++ >= 3) {
+                    break;
+                }
                 System.out.printf("    box: (%.0f,%.0f) %.0fx%.0f angle=%.1f conf=%.2f%n",
                         b.x(), b.y(), b.width(), b.height(), b.angle(), b.confidence());
             }
@@ -70,7 +72,9 @@ public final class OcrAngleExample {
             log.info("  识别结果(前3): ");
             int n = 0;
             for (OcrResult r : results) {
-                if (n++ >= 3) break;
+                if (n++ >= 3) {
+                    break;
+                }
                 System.out.printf("    text='%s' conf=%.2f%n", r.text(), r.confidence());
             }
             log.info("");

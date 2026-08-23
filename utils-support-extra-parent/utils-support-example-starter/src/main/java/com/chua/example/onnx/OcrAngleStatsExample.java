@@ -46,7 +46,9 @@ public final class OcrAngleStatsExample {
                     for (DetectionInfo b : boxes) {
                         double a = Math.abs(b.angle());
                         maxA = Math.max(maxA, a);
-                        if (a > 1f && a < 30f) trig++;
+                        if (a > 1f && a < 30f) {
+                            trig++;
+                        }
                     }
                     System.out.printf("[stat] %-24s 框数=%2d 最大|angle|=%.1f° deskew触发框数=%d%n",
                             p.getFileName(), boxes.size(), maxA, trig);

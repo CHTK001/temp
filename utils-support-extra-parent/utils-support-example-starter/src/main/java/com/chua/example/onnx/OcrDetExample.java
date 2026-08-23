@@ -124,7 +124,9 @@ public final class OcrDetExample {
                     for (float[] row : probs) {
                         for (float v : row) {
                             pMax2 = Math.max(pMax2, v);
-                            if (v > 0.3f) over03b++;
+                            if (v > 0.3f) {
+                                over03b++;
+                            }
                         }
                     }
                     log.info("probs dims=" + probs.length + "x" + probs[0].length

@@ -111,10 +111,12 @@ public class TaskDistributionExample {
             dispatcher.listener(new DispatcherListener() {
                 @Override
                 /** OnTask */
+                @SuppressWarnings({"unchecked", "rawtypes"})
                 public void onTask(Task<?> task) {
-                    TaskExecutor<?> executor = registry.findExecutor(task);
+                    /* 通配符捕获限制：执行器类型参数与任务无法静态对齐，使用 raw 类型桥接 */
+                    TaskExecutor executor = registry.findExecutor(task);
                     if (executor != null) {
-                        TaskResult<?> result = executor.execute(task);
+                        TaskResult<?> result = executor.execute((Task) task);
                         taskManager.handleResult(result);
                         resultBuffer.cacheResult(task.getTaskId(), result);
                         dispatcher.receive(result);

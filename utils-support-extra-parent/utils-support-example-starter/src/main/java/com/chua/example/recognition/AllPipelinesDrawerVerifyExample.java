@@ -45,7 +45,9 @@ public class AllPipelinesDrawerVerify {
                 Method m = c.getMethod("withInitDrawer");
                 Class<?> rt = m.getReturnType();
                 log.info(String.valueOf("[OK] " + cls + " -> " + rt.getSimpleName()));
-                if (rt == DrawerPipeline.class || rt.getSimpleName().equals("DrawerPipeline")) ok++;
+                if (rt == DrawerPipeline.class || rt.getSimpleName().equals("DrawerPipeline")) {
+                    ok++;
+                }
             } catch (Exception e) {
                 log.info("[FAIL] {}: {}", cls, e.getMessage());
             }

@@ -98,7 +98,8 @@ public class ScatterDiscoveryExampleSpi implements Example {
         sd.registerService("/api", Discovery.builder()
                 .serverId("order-3").scatterId("order").protocol("tcp")
                 .host("127.0.0.1").port(19091).weight(1).build());
-        Thread.sleep(100); // 等待注册生效
+        // 等待注册生效
+        Thread.sleep(100);
         return sd;
     }
 

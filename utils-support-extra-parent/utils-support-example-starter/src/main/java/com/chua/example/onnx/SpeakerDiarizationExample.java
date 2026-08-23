@@ -149,7 +149,9 @@ public final class SpeakerDiarizationExample extends ExampleBase {
         log.info("  ├──────────┼────────────┼────────────┼───────────┼────────────────────────────┤");
         for (SpeakerSegment seg : segments) {
             String text = seg.transcript() != null ? seg.transcript() : "(未转写)";
-            if (text.length() > 28) text = text.substring(0, 25) + "...";
+            if (text.length() > 28) {
+                text = text.substring(0, 25) + "...";
+            }
             System.out.printf("  │ %-8s │ %9d │ %9d │ %7.2f │ %-28s │%n",
                     seg.speakerId(),
                     seg.startTimeMs(),

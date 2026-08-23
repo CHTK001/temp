@@ -55,7 +55,8 @@ public class AsyncHttpPerfExample {
 
         LongAdder ok = new LongAdder();
         LongAdder errors = new LongAdder();
-        Semaphore inflight = new Semaphore(conc); // 限量并发 inflight 请求数
+        // 信号量限制 inflight 并发请求数
+        Semaphore inflight = new Semaphore(conc);
         AtomicBoolean stop = new AtomicBoolean(false);
         long t0 = System.nanoTime();
         long deadline = System.nanoTime() + (long) durSec * 1_000_000_000L;

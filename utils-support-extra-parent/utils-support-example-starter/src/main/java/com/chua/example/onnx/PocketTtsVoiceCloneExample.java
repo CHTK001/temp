@@ -110,7 +110,9 @@ public final class PocketTtsVoiceCloneExample extends ExampleBase {
     private static void doSynthesize(String text, String refPath, String model) throws Exception {
         try (TextToAudioClient client = TextToAudioClient.create(TTS_PROVIDER, "")) {
             client.model(model);
-            if (refPath != null) client.voice(refPath);
+            if (refPath != null) {
+                client.voice(refPath);
+            }
 
             long t0 = System.currentTimeMillis();
             byte[] wav = client.synthesize(text);
@@ -149,7 +151,9 @@ public final class PocketTtsVoiceCloneExample extends ExampleBase {
 
     /** 智能判断参考音频路径 */
     private static String resolveRefPath(String refArg) {
-        if (refArg == null || refArg.isBlank()) return null;
+        if (refArg == null || refArg.isBlank()) {
+            return null;
+        }
         String lower = refArg.toLowerCase();
         return (lower.endsWith(".wav") || lower.endsWith(".mp3")
                 || lower.endsWith(".flac") || refArg.contains("/") || refArg.contains("\\"))
@@ -167,7 +171,9 @@ public final class PocketTtsVoiceCloneExample extends ExampleBase {
 
     private static boolean isChinese(String text) {
         for (char c : text.toCharArray()) {
-            if (c >= '\u4e00' && c <= '\u9fff') return true;
+            if (c >= '\u4e00' && c <= '\u9fff') {
+                return true;
+            }
         }
         return false;
     }

@@ -1,0 +1,1 @@
+﻿INSERT INTO user VALUES (1, 'zhangsan', 20), (2, 'lisi', 30), (3, 'wangwu', 40);

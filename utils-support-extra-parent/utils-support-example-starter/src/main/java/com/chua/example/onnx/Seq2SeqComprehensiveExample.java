@@ -113,7 +113,9 @@ class Seq2SeqComprehensiveExample {
         ModelRegistry.discoverAll();
         ITranslator<String,String> zh = tr("bart-zh-seq2seq");
         try {
-            if (zh instanceof T5Seq2SeqOrtTranslator o) o.setMaxNewTokens(32);
+            if (zh instanceof T5Seq2SeqOrtTranslator o) {
+                o.setMaxNewTokens(32);
+            }
             String r = zh.translate("近期全国多地气温骤降，医院门诊量明显上升。医生提醒要注意添衣保暖。");
             log.info("[bart-zh 短] " + r);
             Assertions.assertFalse(r.isBlank());
@@ -127,7 +129,9 @@ class Seq2SeqComprehensiveExample {
         ModelRegistry.discoverAll();
         ITranslator<String,String> zh = tr("bart-zh-seq2seq");
         try {
-            if (zh instanceof T5Seq2SeqOrtTranslator o) o.setMaxNewTokens(40);
+            if (zh instanceof T5Seq2SeqOrtTranslator o) {
+                o.setMaxNewTokens(40);
+            }
             for (String s : List.of(
                     "北京大学公布今年本科招生计划，共设置81个专业，计划招收4300人。学校将推行大类招生与通识教育改革。",
                     "专家表示睡眠不足会明显影响记忆力和判断力，长期熬夜还可能增加心血管疾病风险。建议保持规律作息。",

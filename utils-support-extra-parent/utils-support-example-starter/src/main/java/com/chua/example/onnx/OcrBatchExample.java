@@ -101,7 +101,11 @@ public final class OcrBatchExample {
                 System.out.printf("[ocr] %-40s 文本数=%-3d 耗时=%5dms 已输出=%s top='%s'%n",
                         name, results.size(), elapsed, replaceExt(name),
                         topText.length() > 30 ? topText.substring(0, 30) + "..." : topText);
-                if (!results.isEmpty()) pass++; else fail++;
+                if (!results.isEmpty()) {
+                    pass++;
+                } else {
+                    fail++;
+                }
             } catch (Exception e) {
                 long elapsed = System.currentTimeMillis() - t0;
                 System.out.printf("[ocr] %-40s 异常 耗时=%5dms err='%s'%n",

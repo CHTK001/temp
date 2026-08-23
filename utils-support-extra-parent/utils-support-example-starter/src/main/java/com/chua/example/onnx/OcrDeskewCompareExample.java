@@ -42,12 +42,16 @@ public final class OcrDeskewCompareExample {
                     byte[] img = Files.readAllBytes(p);
                     byte[] corrected = ocr.correct(img);
                     List<DetectionInfo> boxes = det.detect(corrected);
-                    if (boxes == null || boxes.isEmpty()) return;
+                    if (boxes == null || boxes.isEmpty()) {
+                        return;
+                    }
                     int trig = 0;
                     StringBuilder sb = new StringBuilder();
                     for (DetectionInfo b : boxes) {
                         double a = Math.abs(b.angle());
-                        if (!(a > 1f && a < 30f)) continue;
+                        if (!(a > 1f && a < 30f)) {
+                            continue;
+                        }
                         trig++;
                         int px = 2;
                         byte[] crop = ImageCropUtils.crop(corrected,

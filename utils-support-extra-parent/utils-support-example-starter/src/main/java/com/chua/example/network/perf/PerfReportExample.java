@@ -334,7 +334,9 @@ public final class PerfReportExample {
         sb.append("| 场景 | ").append(title).append(" |\n");
         sb.append("| 并发等级 | ");
         for (int i = 0; i < rows.size(); i++) {
-            if (i > 0) sb.append(" / ");
+            if (i > 0) {
+                sb.append(" / ");
+            }
             sb.append(rows.get(i).concurrency);
         }
         sb.append(" |\n\n");

@@ -85,9 +85,13 @@ public class ImageProcessorSpiExample {
 
     /** 运行Test */
     public boolean runTest(String type, String inputPath, String outputPath) {
-        if (type == null || type.isEmpty()) type = DEFAULT_TYPE;
+        if (type == null || type.isEmpty()) {
+            type = DEFAULT_TYPE;
+        }
         File outputDir = new File(outputPath);
-        if (!outputDir.exists()) outputDir.mkdirs();
+        if (!outputDir.exists()) {
+            outputDir.mkdirs();
+        }
 
         switch (type.toLowerCase()) {
             case "spi": return testSpiAll();
@@ -469,9 +473,15 @@ public class ImageProcessorSpiExample {
                            String opName, Map<String, Object> params) {
         try {
             String operation = opName.contains("_") ? opName.substring(0, opName.indexOf("_")) : opName;
-            if (opName.startsWith("rotate")) operation = "rotate";
-            if (opName.startsWith("flip")) operation = "flip";
-            if (opName.startsWith("resize")) operation = "resize";
+            if (opName.startsWith("rotate")) {
+                operation = "rotate";
+            }
+            if (opName.startsWith("flip")) {
+                operation = "flip";
+            }
+            if (opName.startsWith("resize")) {
+                operation = "resize";
+            }
 
             long t0 = System.nanoTime();
             byte[] result = processor.process(imageData, operation, params);
@@ -501,7 +511,9 @@ public class ImageProcessorSpiExample {
     private boolean testBatch(String inputPath, String outputPath) {
         try {
             byte[] imageData = readTestImage(inputPath);
-            if (imageData == null) return false;
+            if (imageData == null) {
+                return false;
+            }
 
             ImageProcessor processor = ImageProcessors.getProcessor();
             byte[][] images = new byte[][]{imageData, imageData, imageData};

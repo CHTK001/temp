@@ -12,8 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 多模型批量绘图压测 — 对 G:\images 下全部图片逐模型跑检测，输出到 G:\images\output\<模型ID>\。
@@ -27,8 +26,8 @@ import org.slf4j.LoggerFactory;
  * @since 4.0.0.42
  */
 
+@Slf4j
 public class MultiModelBatchDrawExample {
-    private static final Logger log = LoggerFactory.getLogger(MultiModelBatchDrawExample.class);
 
     /** 默认输入目录 */
     private static final String DEFAULT_INPUT = "G:\\images";

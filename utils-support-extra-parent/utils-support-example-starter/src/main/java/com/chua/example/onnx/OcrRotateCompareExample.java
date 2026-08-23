@@ -144,7 +144,9 @@ public final class OcrRotateCompareExample {
     /** Dims */
     private static String dims(byte[] data) {
         Mat m = ImageUtils.decode(data);
-        if (m == null) return "null";
+        if (m == null) {
+            return "null";
+        }
         String s = m.cols() + "x" + m.rows();
         m.release();
         return s;
@@ -158,7 +160,9 @@ public final class OcrRotateCompareExample {
     /** RotateLocal */
     private static byte[] rotateLocal(byte[] imageData, int degree) {
         Mat src = Imgcodecs.imdecode(new MatOfByte(imageData), Imgcodecs.IMREAD_COLOR);
-        if (src == null) return imageData;
+        if (src == null) {
+            return imageData;
+        }
         Mat out = new Mat();
         try {
             switch (degree) {

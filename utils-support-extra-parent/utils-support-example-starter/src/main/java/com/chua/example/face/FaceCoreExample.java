@@ -80,7 +80,8 @@ public class FaceCoreExample {
 
         float[] feat1 = face.extractFeature(img1);
         float[] feat2 = face.extractFeature(img2);
-        float[] feat3 = face.extractFeature(img1); // 同图重提
+        // 同一张图重新提取特征
+        float[] feat3 = face.extractFeature(img1);
 
         log.info("  1people vs 1people(重提): " + String.format("%.4f", cosine(feat1, feat3)));
         log.info("  1people vs 1people2:      " + String.format("%.4f", cosine(feat1, feat2)));

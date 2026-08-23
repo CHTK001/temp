@@ -204,7 +204,8 @@ public final class HttpServerBenchmarkExample {
                                         errors.incrementAndGet();
                                     }
                                     if (resp.statusCode() != 200) {
-                                        continue; // 重试一次
+                                        // 重试一次
+                                        continue;
                                     }
                                     mine[k] = lat;
                                     break;
@@ -444,9 +445,12 @@ public final class HttpServerBenchmarkExample {
             scripts.append("]});\n");
             scripts.append("window.addEventListener('resize',function(){chl").append(delayMs).append(".resize();});\n");
             scripts.append("</script>\n");
-            panels.append("</div>\n"); // 闭合 chart-wrap(p99/p95)
-            panels.append("</div>\n"); // 闭合 charts-grid
-            panels.append("</div>\n"); // 闭合 tab-delay-{delayMs} 面板
+            // 闭合 chart-wrap(p99/p95)
+            panels.append("</div>\n");
+            // 闭合 charts-grid
+            panels.append("</div>\n");
+            // 闭合 tab-delay-{delayMs} 面板
+            panels.append("</div>\n");
         }
 
         // 汇总: 各实现 × 各延迟场景的 RPS 横向对比表
@@ -501,7 +505,8 @@ public final class HttpServerBenchmarkExample {
         scripts.append("]});\n");
         scripts.append("window.addEventListener('resize',function(){chs.resize();});\n");
         scripts.append("</script>\n");
-        panels.append("</div>\n"); // 闭合 tab-summary 面板
+        // 闭合 tab-summary 面板
+        panels.append("</div>\n");
 
         // 7) 全量明细表
         panels.append("<div id=\"tab-detail\" class=\"panel\">\n");
@@ -526,7 +531,8 @@ public final class HttpServerBenchmarkExample {
                     .append("<td>").append(r.elapsedMs).append("</td></tr>\n");
         }
         panels.append("</table>\n</div>\n");
-        panels.append("</div>\n"); // 闭合 tab-detail 面板
+        // 闭合 tab-detail 面板
+        panels.append("</div>\n");
 
         // ===== 占位符替换模板 =====
         // 图表脚本包装为 window.__runCharts:ECharts 由模板多 CDN 兜底加载,

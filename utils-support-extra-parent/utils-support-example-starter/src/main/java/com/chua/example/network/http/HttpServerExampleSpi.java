@@ -676,7 +676,8 @@ public class HttpServerExampleSpi implements Example {
         try {
             server = startServer(cfg -> {
                 cfg.registerMapping("/bytes", (req, resp) -> {
-                    byte[] data = {0x48, 0x65, 0x6C, 0x6C, 0x6F}; // "Hello"
+                    // 字节内容为 "Hello"
+                    byte[] data = {0x48, 0x65, 0x6C, 0x6C, 0x6F};
                     resp.setBody(data);
                 });
                 cfg.registerMapping("/stream", (req, resp) -> {
