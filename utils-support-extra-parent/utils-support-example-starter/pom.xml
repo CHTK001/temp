@@ -549,13 +549,6 @@
             <artifactId>logback-core</artifactId>
             <version>1.2.12</version>
         </dependency>
-        <!-- 音频单元测试（SpeakerDiarizerTest / AudioFingerprinterTest）随示例模块存放 -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>6.0.3</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
     <build>
         <extensions>
@@ -659,11 +652,9 @@
 <!-- 版面分析管线示例（LayoutPipelineExample） -->
                            <include>**/layout/*.java</include>
                            <!-- 车牌管线示例（PlatePipelineVerifyExample / PlatePipelineComprehensiveExample） -->
-                          <include>**/onnx/*Plate*.java</include>
-                           <include>**/onnx/*MultiModel*.java</include>
-                           <!-- 音频单元测试（SpeakerDiarizerTest / AudioFingerprinterTest，随示例模块存放） -->
-                           <include>**/onnx/audio/*Test.java</include>
-                                          </includes>
+                           <include>**/onnx/*Plate*.java</include>
+                            <include>**/onnx/*MultiModel*.java</include>
+                                           </includes>
                 </configuration>
             </plugin>
         </plugins>
