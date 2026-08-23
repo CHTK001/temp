@@ -25,33 +25,41 @@ public final class CardCorrectionExample extends ExampleBase {
 
     /** Main */
     public static void main(String[] args) throws Exception {
-        String imagePath = args.length > 0 ? args[0] : "G:\\images\\card_test.jpg";
-        byte[] img = Files.readAllBytes(Path.of(imagePath));
-
-        ImageDetector detector = ImageDetector.create("card-correction-detector");
-        long t0 = System.currentTimeMillis();
-        List<DetectionInfo> corners = detector.detect(img);
-        log.info("[card-correction] 图片=" + imagePath + " 角点数=" + corners.size()
-                + " 耗时=" + (System.currentTimeMillis() - t0) + "ms");
-        for (DetectionInfo c : corners) {
-            log.info(String.format("       角点[%s] conf=%.3f box=(%.0f,%.0f) %.0fx%.0f",
-                    c.label(), c.confidence(), c.x(), c.y(), c.width(), c.height()));
+        String modelId = "card-correction-detector";
+        java.io.File inputDir = new java.io.File("D:/images");
+        java.io.File outputRoot = new java.io.File("G:/images/output/" + modelId);
+        outputRoot.mkdirs();
+        java.io.File[] files = inputDir.listFiles((d, n) -> {
+            String s = n.toLowerCase();
+            return s.endsWith(".jpg") || s.endsWith(".jpeg") || s.endsWith(".png") || s.endsWith(".webp");
+        });
+        if (files == null || files.length == 0) {
+            log.info("[card-correction] D:/images 无图片");
+            return;
         }
-        // 透视矫正出图
-        if (!corners.isEmpty()) {
-            long t1 = System.currentTimeMillis();
+        long t0 = System.currentTimeMillis();
+        int total = 0;
+        for (java.io.File f : files) {
+            byte[] img = Files.readAllBytes(f.toPath());
+            List<DetectionInfo> corners = ImageDetector.create("card-correction-detector").detect(img);
+            log.info("[card-correction] " + f.getName() + " 角点数=" + corners.size());
+            for (DetectionInfo c : corners) {
+                log.info(String.format("       角点[%s] conf=%.3f box=(%.0f,%.0f) %.0fx%.0f",
+                        c.label(), c.confidence(), c.x(), c.y(), c.width(), c.height()));
+            }
             com.chua.deeplearning.support.onnx.classification.CardCorrectionTranslator translator =
                     com.chua.deeplearning.support.onnx.classification.CardCorrectionTranslator.shared();
             byte[] corrected = translator.correct(img);
-            log.info("[card-correction] 矫正耗时=" + (System.currentTimeMillis() - t1) + "ms");
             if (corrected != null) {
-                java.nio.file.Path out = java.nio.file.Path.of("G:\\images\\output\\card_corrected.png");
+                java.nio.file.Path out = outputRoot.toPath().resolve(f.getName().replaceAll("\\.[^.]+$", "_corrected.png"));
                 java.nio.file.Files.write(out, corrected);
                 log.info("[card-correction] 已输出矫正图: " + out);
             } else {
                 log.info("[card-correction] 未检测到卡片，无矫正图");
             }
+            total++;
         }
-        printResult("card-correction", "onnx", "card-correction-detector", t0);
+        printResult("card-correction", "onnx", modelId, t0);
+        log.info("[card-correction] 共处理 " + total + " 张，输出目录: " + outputRoot.getAbsolutePath());
     }
 }
