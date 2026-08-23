@@ -79,6 +79,7 @@
             <groupId>com.chua</groupId>
             <artifactId>utils-support-protobuf-starter</artifactId>
             <version>${project.version}</version>
+                    <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.chua</groupId>
@@ -165,6 +166,7 @@
             <groupId>com.chua</groupId>
             <artifactId>utils-support-deeplearning-llama-starter</artifactId>
             <version>${project.version}</version>
+                    <optional>true</optional>
         </dependency>
         <!-- OpenCV ImageProcessor SPI provider（@SpiOrder(50)，rust>opencv>jdk 优先级链） -->
         <dependency>
@@ -177,18 +179,21 @@
             <groupId>com.chua</groupId>
             <artifactId>utils-support-native-image</artifactId>
             <version>${project.version}</version>
+                    <optional>true</optional>
         </dependency>
         <!-- 共享内存环形队列示例（ShmQueueExample） -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-native-shm-queue</artifactId>
             <version>${project.version}</version>
+                    <optional>true</optional>
         </dependency>
         <!-- 共享内存 + Rust hyper HTTP bridge 示例（ShmHttpServerExample） -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-native-shm-queue-http</artifactId>
             <version>${project.version}</version>
+                    <optional>true</optional>
         </dependency>
         <!--
         <dependency>
