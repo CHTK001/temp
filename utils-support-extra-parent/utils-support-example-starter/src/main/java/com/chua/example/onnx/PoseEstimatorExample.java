@@ -16,10 +16,11 @@ import java.util.List;
  * <pre>{@code
  *   PoseEstimatorExample yolov8n-pose person.jpg
  * }</pre>
- *@author CH`n *
+ *@author CH
+ *
  * @since 4.0.0.42
  */
-public final class PoseEstimatorExample extends ExampleBase {
+public final class PoseEstimatorExample extends BaseExample {
 
     /** 创建 PoseEstimatorExample 实例 */
     private PoseEstimatorExample() {

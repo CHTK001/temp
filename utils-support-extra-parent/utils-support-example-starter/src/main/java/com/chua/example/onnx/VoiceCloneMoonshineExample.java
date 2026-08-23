@@ -9,7 +9,8 @@ import java.nio.file.Path;
 
 /**
  * 用已嵌入的 moonshine-base 模型做 TTS→STT 验证。
-  * @author CH`n **/
+  * @author CH
+ **/
 public final class VoiceCloneMoonshineExample {
 
     private VoiceCloneMoonshineExample() {}

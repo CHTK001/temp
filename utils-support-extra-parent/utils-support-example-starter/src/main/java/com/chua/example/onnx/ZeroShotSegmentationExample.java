@@ -24,7 +24,7 @@ import java.util.Arrays;
  * @author CH
  * @since 4.0.0.42
  */
-public final class ZeroShotSegmentationExample extends ExampleBase {
+public final class ZeroShotSegmentationExample extends BaseExample {
 
     /** 零样本分割模型列表 */
     private static final String[] MODELS = {

@@ -26,10 +26,11 @@ import java.nio.file.Path;
  *   # 完整管线：TTS 生成 → STT 回读
  *   PocketTtsVoiceCloneExample pipeline "你好世界"
  * }</pre>
- *@author CH`n *
+ *@author CH
+ *
  * @since 4.0.0.42
  */
-public final class PocketTtsVoiceCloneExample extends ExampleBase {
+public final class PocketTtsVoiceCloneExample extends BaseExample {
 
     private static final String TTS_PROVIDER = "onnx";
     private static final String POCKET_TTS   = "pocket-tts";

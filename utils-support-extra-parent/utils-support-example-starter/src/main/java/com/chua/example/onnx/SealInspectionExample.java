@@ -21,7 +21,7 @@ import java.util.List;
  * @since 4.0.0.42
  */
 @Slf4j
-public final class SealInspectionExample extends ExampleBase {
+public final class SealInspectionExample extends BaseExample {
 
     private SealInspectionExample() {
     }

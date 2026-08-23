@@ -18,10 +18,11 @@ import java.util.List;
  *   FaceDetectorExample list
  *   FaceDetectorExample scrfd-face-detector face.jpg
  * }</pre>
- *@author CH`n *
+ *@author CH
+ *
  * @since 4.0.0.42
  */
-public final class FaceDetectorExample extends ExampleBase {
+public final class FaceDetectorExample extends BaseExample {
 
     /** 创建 FaceDetectorExample 实例 */
     private FaceDetectorExample() {

@@ -16,10 +16,11 @@ import java.nio.file.Path;
  *   TextToAudioClientExample list
  *   TextToAudioClientExample onnx mms-tts-eng "Hello world"
  * }</pre>
- *@author CH`n *
+ *@author CH
+ *
  * @since 4.0.0.42
  */
-public final class TextToAudioClientExample extends ExampleBase {
+public final class TextToAudioClientExample extends BaseExample {
 
     /** 创建 TextToAudioClientExample 实例 */
     private TextToAudioClientExample() {

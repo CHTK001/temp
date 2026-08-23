@@ -18,10 +18,11 @@ import java.util.List;
  *   ImageDetectorExample list
  *   ImageDetectorExample yolov8s scene.jpg
  * }</pre>
- *@author CH`n *
+ *@author CH
+ *
  * @since 4.0.0.42
  */
-public final class ImageDetectorExample extends ExampleBase {
+public final class ImageDetectorExample extends BaseExample {
 
     /** 创建 ImageDetectorExample 实例 */
     private ImageDetectorExample() {

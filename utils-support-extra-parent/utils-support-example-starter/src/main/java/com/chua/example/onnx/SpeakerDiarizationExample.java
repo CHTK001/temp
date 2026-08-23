@@ -34,7 +34,7 @@ import java.util.List;
  * @since 4.0.0.42
  */
 @Slf4j
-public final class SpeakerDiarizationExample extends ExampleBase {
+public final class SpeakerDiarizationExample extends BaseExample {
 
     /** 默认说话人嵌入模型（wespeaker-resnet34 为嵌入式，随依赖内置） */
     private static final String DEFAULT_SPEAKER_MODEL = "wespeaker-resnet34";

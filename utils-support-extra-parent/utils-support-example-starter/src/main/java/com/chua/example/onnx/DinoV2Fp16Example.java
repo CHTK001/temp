@@ -18,7 +18,8 @@ import java.nio.file.Path;
  *
  * <p>用法：{@code mvn -o exec:java -Dexec.classpathScope=test
  * -Dexec.mainClass=com.chua.deeplearning.support.onnx.example.DinoV2Fp16Verify}</p>
- *@author CH`n *
+ *@author CH
+ *
  * @since 4.0.0.42
  */
 public final class DinoV2Fp16Example {

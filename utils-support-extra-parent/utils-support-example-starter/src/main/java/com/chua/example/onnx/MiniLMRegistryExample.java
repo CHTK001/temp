@@ -5,13 +5,15 @@ import com.chua.deeplearning.support.engine.ModelRegistry;
 
 /**
  * 校验 MiniLM 两个模型在 ModelRegistry 中的注册条目。
-  * @author CH`n **/
+  * @author CH
+ **/
 public final class MiniLMRegistryExample {
 
     private MiniLMRegistryExample() {
     }
 
-    /** Main  * @author CH`n **/
+    /** Main  * @author CH
+ **/
     public static void main(String[] args) {
         ModelRegistry.discoverAll();
         boolean pass = true;

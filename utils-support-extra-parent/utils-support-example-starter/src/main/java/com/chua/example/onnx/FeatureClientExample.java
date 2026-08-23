@@ -14,10 +14,11 @@ import com.chua.common.support.ai.feature.FeatureClient;
  *   FeatureClientExample onnx clip-text-feature "a cat"
  *   FeatureClientExample onnx clip-image-feature <图片路径>
  * }</pre>
- *@author CH`n *
+ *@author CH
+ *
  * @since 4.0.0.42
  */
-public final class FeatureClientExample extends ExampleBase {
+public final class FeatureClientExample extends BaseExample {
 
     /** 创建 FeatureClientExample 实例 */
     private FeatureClientExample() {

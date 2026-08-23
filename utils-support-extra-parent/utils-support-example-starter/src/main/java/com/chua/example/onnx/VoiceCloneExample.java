@@ -9,7 +9,7 @@ import java.nio.file.Path;
 
 /**
  @author CH
- *脚本：TTS生成 → STT回读，绕过 ExampleBase 依赖。
+ *脚本：TTS生成 → STT回读，绕过 BaseExample 依赖。
  */
 public final class VoiceCloneExample {
 

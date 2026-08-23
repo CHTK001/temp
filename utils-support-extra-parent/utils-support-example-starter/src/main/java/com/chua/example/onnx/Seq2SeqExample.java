@@ -31,10 +31,11 @@ import java.util.List;
  *   Seq2SeqExample t5 <文本>                                          # T5 文本生成（无任务前缀）
  *   Seq2SeqExample mt5 summarize 30 <中文多句文本>                    # 中文 多句→一句，最多 30 token
  * }</pre>
- *@author CH`n *
+ *@author CH
+ *
  * @since 4.0.0.42
  */
-public final class Seq2SeqExample extends ExampleBase {
+public final class Seq2SeqExample extends BaseExample {
 
     /**
      * 构造工具类。
