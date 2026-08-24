@@ -155,8 +155,9 @@ public final class RagClientLocalExample {
                 boolean fileCleaned = true;
                 Path filesDir = tempDir.resolve("files");
                 if (Files.exists(filesDir)) {
-                    fileCleaned = Files.list(filesDir)
-                            .noneMatch(p -> p.getFileName().toString().startsWith(docId));
+                    try (var stream = Files.list(filesDir)) {
+                        fileCleaned = stream.noneMatch(p -> p.getFileName().toString().startsWith(docId));
+                    }
                 }
                 boolean ok = removed && gone && fileCleaned;
                 print("deleteDocument 清理向量与文件", ok);

@@ -1,5 +1,6 @@
 package com.chua.example.recognition;
 
+import com.chua.common.support.reflection.ReflectUtils;
 import com.chua.deeplearning.support.draw.DrawerPipeline;
 import lombok.extern.slf4j.Slf4j;
 
@@ -51,8 +52,8 @@ public class AllPipelinesDrawerVerifyExample {
         int ok = 0;
         for (String cls : PIPELINES) {
             try {
-                Class<?> c = Class.forName(cls);
-                Method m = c.getMethod("withInitDrawer");
+                Class<?> c = ReflectUtils.forName(cls);
+                Method m = ReflectUtils.getMethod(c, "withInitDrawer");
                 Class<?> rt = m.getReturnType();
                 log.info("[OK] {} -> {}", cls, rt.getSimpleName());
                 if (rt == DrawerPipeline.class || rt.getSimpleName().equals("DrawerPipeline")) {

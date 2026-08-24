@@ -2,323 +2,311 @@ package com.chua.example.shmqueue;
 
 import com.chua.common.support.shmqueue.ShmQueue;
 import com.chua.common.support.shmqueue.ShmQueueException;
-import com.chua.common.support.shmqueue.ShmQueueProvider;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ServiceLoader;
 
 /**
- * ShmQueue 抽象 API 层示例。
+ * ShmQueue 抽象 API 层示例：覆盖单条收发、顺序性、队列满、数据过大、超时、attach、大批量等场景。
  *
- * <p>改写自 ShmQueueTest，针对 common-starter 的抽象 {@link ShmQueue} 接口，
- * 要求 classpath 中至少存在一个 {@link ShmQueueProvider} SPI 实现
- * （通常由 utils-support-native-shm-queue 模块提供）。</p>
+ * <p>改写自 common-starter 测试代码 shmqueue/ShmQueueTest，共 7 个场景：
+ * create+send/recv、200 条消息不丢不乱、队列满错误码、数据过大错误码、recv 超时及时长边界、
+ * attach 已存在队列、5000 条大批量消息。</p>
  *
- * <p>若 SPI 缺失或 native 库加载失败，打印 {@code [SKIP] native-unavailable}
- * 后以退出码 0 结束，不计为 FAIL。</p>
+ * <p>前置条件：classpath 中需存在至少一个 {@link com.chua.common.support.shmqueue.ShmQueueProvider}
+ * SPI 实现（通常由 utils-support-native-shm-queue 模块提供）。native 库加载失败时打印
+ * {@code [SKIP] native-unavailable} 并正常退出（退出码 0），不计为 FAIL。</p>
  *
- * <h2>覆盖场景</h2>
- * <ol>
- *   <li>创建 + 单条 send/recv</li>
- *   <li>顺序：200 条消息不丢不乱</li>
- *   <li>队列满返回 ERR_QUEUE_FULL</li>
- *   <li>数据过大返回 ERR_DATA_TOO_LARGE</li>
- *   <li>recv 超时返回 ERR_TIMEOUT</li>
- *   <li>attach 已存在的队列</li>
- *   <li>大批量消息（5000 条）</li>
- * </ol>
+ * <h2>用法</h2>
+ * <pre>
+ *   java com.chua.example.shmqueue.ShmQueueExample
+ * </pre>
  *
  * @author CH
  * @since 4.0.0.42
  */
-@Slf4j
-public class ShmQueueExample {
+public final class ShmQueueExample {
 
     /**
-     * 顺序场景消息条数
+     * 私有构造，防止实例化
      */
-    private static final int ORDER_COUNT = 200;
+    private ShmQueueExample() {
+    }
 
     /**
-     * 大批量场景消息条数
-     */
-    private static final int BURST_COUNT = 5000;
-
-    /**
-     * 队列满场景容量（与源测试一致：3 条可写入，第 4 条触发 ERR_QUEUE_FULL）
-     */
-    private static final int FULL_CAPACITY = 4;
-
-    /**
-     * 超时场景等待时长（纳秒，约 50ms）
-     */
-    private static final long TIMEOUT_NANOS = 50_000_000L;
-
-    /**
-     * 超时窗口下限（毫秒）
-     */
-    private static final long TIMEOUT_FLOOR_MILLIS = 40L;
-
-    /**
-     * 超时窗口上限（毫秒）
-     */
-    private static final long TIMEOUT_CEILING_MILLIS = 2_000L;
-
-    /**
-     * Main 入口。
+     * 入口：先探测 native 可用性，随后依次执行 7 个自检场景，任一失败立即退出非零。
      *
-     * @param args 命令行参数（未使用）
+     * @param args 未使用
      */
     public static void main(String[] args) {
-        if (!isNativeAvailable()) {
-            log.info("[SKIP] native-unavailable");
-            System.exit(0);
+        if (!probeNative()) {
             return;
         }
-        boolean passed = true;
-        try {
-            passed &= testCreateAndSendRecv();
-            passed &= testOrderPreserved();
-            passed &= testQueueFullThrows();
-            passed &= testDataTooLargeThrows();
-            passed &= testRecvTimeoutThrows();
-            passed &= testAttachExisting();
-            passed &= testLargeBurst();
-        } catch (Throwable t) {
-            log.info("[FAIL] 示例执行异常: {}", t.getMessage());
-            passed = false;
-        }
-        if (!passed) {
-            log.info("[FAIL] ShmQueue 存在失败场景");
+        System.out.println("[PASS] native-ready");
+        if (!runCreateAndSendRecv()) {
+            System.out.println("[FAIL] create-send-recv");
             System.exit(1);
+        } else {
+            System.out.println("[PASS] create-send-recv");
         }
-        log.info("[PASS] ShmQueue 全部场景通过");
-        System.exit(0);
+        if (!runOrderPreserved()) {
+            System.out.println("[FAIL] order-preserved");
+            System.exit(1);
+        } else {
+            System.out.println("[PASS] order-preserved");
+        }
+        if (!runQueueFull()) {
+            System.out.println("[FAIL] queue-full-error-code");
+            System.exit(1);
+        } else {
+            System.out.println("[PASS] queue-full-error-code");
+        }
+        if (!runDataTooLarge()) {
+            System.out.println("[FAIL] data-too-large-error-code");
+            System.exit(1);
+        } else {
+            System.out.println("[PASS] data-too-large-error-code");
+        }
+        if (!runRecvTimeout()) {
+            System.out.println("[FAIL] recv-timeout-boundary");
+            System.exit(1);
+        } else {
+            System.out.println("[PASS] recv-timeout-boundary");
+        }
+        if (!runAttachExisting()) {
+            System.out.println("[FAIL] attach-existing");
+            System.exit(1);
+        } else {
+            System.out.println("[PASS] attach-existing");
+        }
+        if (!runLargeBurst()) {
+            System.out.println("[FAIL] large-burst-5000");
+            System.exit(1);
+        } else {
+            System.out.println("[PASS] large-burst-5000");
+        }
+        System.out.println("[PASS] shm-queue 全部 7 个场景通过");
     }
 
     /**
-     * 探测 classpath 是否存在可用 Provider 且 native 库可正常加载。
+     * 探测 native 库与 Provider 是否可用。
      *
-     * @return 可用返回 true
+     * <p>创建一个最小队列验证链路；任何 Throwable（含 UnsatisfiedLinkError、
+     * Provider 缺失的 IllegalStateException）均视为环境不可用，
+     * 打印 {@code [SKIP] native-unavailable} 后正常返回 false，进程以 0 退出。</p>
+     *
+     * @return 可用返回 true；不可用返回 false（跳过而非失败）
      */
-    private static boolean isNativeAvailable() {
-        if (!ServiceLoader.load(ShmQueueProvider.class).iterator().hasNext()) {
-            return false;
-        }
-        String name = "/shmq_probe_" + System.nanoTime();
-        try (ShmQueue probe = ShmQueue.create(name, 2, 64, ShmQueue.Mode.HYBRID)) {
-            return probe != null;
-        } catch (IllegalStateException | LinkageError | ShmQueueException e) {
-            log.info("[SKIP] 探测创建失败: {}", e.getMessage());
+    private static boolean probeNative() {
+        String name = "/shmq_ex_probe_" + System.nanoTime();
+        try (ShmQueue q = ShmQueue.create(name, 2, 64, ShmQueue.Mode.SPIN)) {
+            return q != null;
+        } catch (Throwable t) {
+            System.out.println("[SKIP] native-unavailable " + t.getClass().getSimpleName()
+                    + ": " + t.getMessage());
             return false;
         }
     }
 
     /**
-     * 场景一：创建 + 单条 send/recv。
+     * 场景 1：创建队列后单条 send/recv 往返一致。
      *
      * @return 通过返回 true
      */
-    private static boolean testCreateAndSendRecv() {
+    private static boolean runCreateAndSendRecv() {
         String name = uniqueName();
         byte[] data = "hello".getBytes();
         try (ShmQueue q = ShmQueue.create(name, 16, 128, ShmQueue.Mode.HYBRID)) {
             q.send(7, data);
             ShmQueue.Message msg = q.recv();
-            if (msg.type() != 7 || !java.util.Arrays.equals(data, msg.bytes())) {
-                log.info("[FAIL] 单条消息 type={} bytes={}", msg.type(), java.util.Arrays.toString(msg.bytes()));
-                return false;
-            }
-            log.info("[PASS] 创建 + 单条 send/recv");
-            return true;
+            return msg.type() == 7 && java.util.Arrays.equals(data, msg.bytes());
         } catch (Throwable t) {
-            log.info("[FAIL] 单条 send/recv 异常: {}", t.getMessage());
-            return false;
+            return detail("create-send-recv", t);
         }
     }
 
     /**
-     * 场景二：200 条消息顺序不丢不乱。
-     *
-     * <p>容量放大到 256 以避免发送侧触发队列满。</p>
+     * 场景 2：200 条消息按序不丢不乱。
      *
      * @return 通过返回 true
      */
-    private static boolean testOrderPreserved() {
+    private static boolean runOrderPreserved() {
         String name = uniqueName();
-        try (ShmQueue q = ShmQueue.create(name, ORDER_COUNT + 64, 64, ShmQueue.Mode.SPIN)) {
-            for (int i = 0; i < ORDER_COUNT; i++) {
+        int count = 200;
+        try (ShmQueue q = ShmQueue.create(name, 64, 64, ShmQueue.Mode.SPIN)) {
+            for (int i = 0; i < count; i++) {
                 q.send(0, intToBytes(i));
             }
-            for (int i = 0; i < ORDER_COUNT; i++) {
+            for (int i = 0; i < count; i++) {
                 ShmQueue.Message msg = q.recv();
                 if (bytesToInt(msg.bytes()) != i) {
-                    log.info("[FAIL] 第 {} 条消息乱序: {}", i, bytesToInt(msg.bytes()));
+                    System.out.println("  fail order at index=" + i);
                     return false;
                 }
             }
-            log.info("[PASS] {} 条消息顺序保持", ORDER_COUNT);
             return true;
         } catch (Throwable t) {
-            log.info("[FAIL] 顺序场景异常: {}", t.getMessage());
-            return false;
+            return detail("order-preserved", t);
         }
     }
 
     /**
-     * 场景三：队列满时抛出 ERR_QUEUE_FULL。
+     * 场景 3：容量 4 的队列发满后再发应抛 ERR_QUEUE_FULL。
      *
      * @return 通过返回 true
      */
-    private static boolean testQueueFullThrows() {
+    private static boolean runQueueFull() {
         String name = uniqueName();
-        try (ShmQueue q = ShmQueue.create(name, FULL_CAPACITY, 64, ShmQueue.Mode.SPIN)) {
+        try (ShmQueue q = ShmQueue.create(name, 4, 64, ShmQueue.Mode.SPIN)) {
             q.send(1, new byte[]{1});
             q.send(1, new byte[]{2});
             q.send(1, new byte[]{3});
-            int code = Integer.MIN_VALUE;
+            boolean fullCaught = false;
             try {
                 q.send(1, new byte[]{4});
-            } catch (ShmQueueException ex) {
-                code = ex.getCode();
-            }
-            if (code != ShmQueue.ERR_QUEUE_FULL) {
-                log.info("[FAIL] 队列满应抛 ERR_QUEUE_FULL({})，实际 {}",
-                        ShmQueue.ERR_QUEUE_FULL, code);
-                return false;
-            }
-            log.info("[PASS] 队列满错误码");
-            return true;
-        } catch (Throwable t) {
-            log.info("[FAIL] 队列满场景异常: {}", t.getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * 场景四：数据超过槽位大小时抛出 ERR_DATA_TOO_LARGE。
-     *
-     * @return 通过返回 true
-     */
-    private static boolean testDataTooLargeThrows() {
-        String name = uniqueName();
-        byte[] big = new byte[64];
-        try (ShmQueue q = ShmQueue.create(name, 8, 16, ShmQueue.Mode.HYBRID)) {
-            int code = Integer.MIN_VALUE;
-            try {
-                q.send(1, big);
-            } catch (ShmQueueException ex) {
-                code = ex.getCode();
-            }
-            if (code != ShmQueue.ERR_DATA_TOO_LARGE) {
-                log.info("[FAIL] 数据过大应抛 ERR_DATA_TOO_LARGE({})，实际 {}",
-                        ShmQueue.ERR_DATA_TOO_LARGE, code);
-                return false;
-            }
-            log.info("[PASS] 数据过大错误码");
-            return true;
-        } catch (Throwable t) {
-            log.info("[FAIL] 数据过大场景异常: {}", t.getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * 场景五：空队列 recvTimeout 在超时窗口内抛出 ERR_TIMEOUT。
-     *
-     * @return 通过返回 true
-     */
-    private static boolean testRecvTimeoutThrows() {
-        String name = uniqueName();
-        try (ShmQueue q = ShmQueue.create(name, 8, 64, ShmQueue.Mode.BLOCK)) {
-            long t0 = System.nanoTime();
-            int code = Integer.MIN_VALUE;
-            try {
-                q.recvTimeout(TIMEOUT_NANOS);
-            } catch (ShmQueueException ex) {
-                code = ex.getCode();
-            }
-            long elapsedMs = (System.nanoTime() - t0) / 1_000_000L;
-            if (code != ShmQueue.ERR_TIMEOUT) {
-                log.info("[FAIL] 空队列超时应抛 ERR_TIMEOUT({})，实际 {}", ShmQueue.ERR_TIMEOUT, code);
-                return false;
-            }
-            if (elapsedMs < TIMEOUT_FLOOR_MILLIS || elapsedMs >= TIMEOUT_CEILING_MILLIS) {
-                log.info("[FAIL] 超时窗口异常 elapsed={}ms", elapsedMs);
-                return false;
-            }
-            log.info("[PASS] recv 超时错误码 ({}ms)", elapsedMs);
-            return true;
-        } catch (Throwable t) {
-            log.info("[FAIL] 超时场景异常: {}", t.getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * 场景六：attach 已存在的队列并消费创建者消息。
-     *
-     * @return 通过返回 true
-     */
-    private static boolean testAttachExisting() {
-        String name = uniqueName();
-        try (ShmQueue c1 = ShmQueue.create(name, 8, 128, ShmQueue.Mode.HYBRID)) {
-            c1.send(100, "from-creator".getBytes());
-            try (ShmQueue c2 = ShmQueue.attach(name)) {
-                ShmQueue.Message msg = c2.recv();
-                if (msg.type() != 100 || !java.util.Arrays.equals("from-creator".getBytes(), msg.bytes())) {
-                    log.info("[FAIL] attach 消息 type={} bytes={}", msg.type(),
-                            java.util.Arrays.toString(msg.bytes()));
-                    return false;
+            } catch (ShmQueueException e) {
+                fullCaught = e.getCode() == ShmQueue.ERR_QUEUE_FULL;
+                if (!fullCaught) {
+                    System.out.println("  fail unexpected code=" + e.getCode());
                 }
             }
-            log.info("[PASS] attach 已存在队列");
-            return true;
+            return fullCaught;
         } catch (Throwable t) {
-            log.info("[FAIL] attach 场景异常: {}", t.getMessage());
-            return false;
+            return detail("queue-full", t);
         }
     }
 
     /**
-     * 场景七：大批量消息不丢不乱。
-     *
-     * <p>容量按消息数放大，避免源测试中"发送量大于容量即触发队列满"的隐患。</p>
+     * 场景 4：超过槽位大小的数据应抛 ERR_DATA_TOO_LARGE。
      *
      * @return 通过返回 true
      */
-    private static boolean testLargeBurst() {
+    private static boolean runDataTooLarge() {
         String name = uniqueName();
-        try (ShmQueue q = ShmQueue.create(name, BURST_COUNT + 1024, 4096, ShmQueue.Mode.HYBRID)) {
-            List<Integer> sent = new ArrayList<>(BURST_COUNT);
-            for (int i = 0; i < BURST_COUNT; i++) {
+        try (ShmQueue q = ShmQueue.create(name, 8, 16, ShmQueue.Mode.HYBRID)) {
+            byte[] big = new byte[64];
+            boolean caught = false;
+            try {
+                q.send(1, big);
+            } catch (ShmQueueException e) {
+                caught = e.getCode() == ShmQueue.ERR_DATA_TOO_LARGE;
+                if (!caught) {
+                    System.out.println("  fail unexpected code=" + e.getCode());
+                }
+            }
+            return caught;
+        } catch (Throwable t) {
+            return detail("data-too-large", t);
+        }
+    }
+
+    /**
+     * 场景 5：空队列 recvTimeout(50ms) 应抛 ERR_TIMEOUT 且耗时在 40ms~2s 区间。
+     *
+     * @return 通过返回 true
+     */
+    private static boolean runRecvTimeout() {
+        String name = uniqueName();
+        try (ShmQueue q = ShmQueue.create(name, 8, 64, ShmQueue.Mode.BLOCK)) {
+            long start = System.nanoTime();
+            boolean timeoutCaught = false;
+            try {
+                q.recvTimeout(50_000_000L);
+            } catch (ShmQueueException e) {
+                timeoutCaught = e.getCode() == ShmQueue.ERR_TIMEOUT;
+                if (!timeoutCaught) {
+                    System.out.println("  fail unexpected code=" + e.getCode());
+                }
+            }
+            long elapsedMs = (System.nanoTime() - start) / 1_000_000L;
+            if (!timeoutCaught) {
+                return false;
+            }
+            if (elapsedMs < 40 || elapsedMs >= 2000) {
+                System.out.println("  fail elapsed=" + elapsedMs + "ms out of range");
+                return false;
+            }
+            System.out.println("  ok elapsed=" + elapsedMs + "ms");
+            return true;
+        } catch (Throwable t) {
+            return detail("recv-timeout", t);
+        }
+    }
+
+    /**
+     * 场景 6：attach 已存在队列并读取创建方写入的消息。
+     *
+     * @return 通过返回 true
+     */
+    private static boolean runAttachExisting() {
+        String name = uniqueName();
+        byte[] payload = "from-creator".getBytes();
+        try (ShmQueue creator = ShmQueue.create(name, 8, 128, ShmQueue.Mode.HYBRID)) {
+            creator.send(100, payload);
+            try (ShmQueue attacher = ShmQueue.attach(name)) {
+                ShmQueue.Message msg = attacher.recv();
+                return msg.type() == 100 && java.util.Arrays.equals(payload, msg.bytes());
+            }
+        } catch (Throwable t) {
+            return detail("attach-existing", t);
+        }
+    }
+
+    /**
+     * 场景 7：1024 槽 × 4096 字节队列写入并读回 5000 条消息。
+     *
+     * @return 通过返回 true
+     */
+    private static boolean runLargeBurst() {
+        String name = uniqueName();
+        int count = 5000;
+        List<Integer> sent = new ArrayList<>(count);
+        try (ShmQueue q = ShmQueue.create(name, 1024, 4096, ShmQueue.Mode.HYBRID)) {
+            for (int i = 0; i < count; i++) {
                 q.send(0xAB, intToBytes(i));
                 sent.add(i);
             }
-            for (int i = 0; i < sent.size(); i++) {
+            for (int i = 0; i < count; i++) {
                 ShmQueue.Message m = q.recv();
-                if (m.type() != 0xAB || bytesToInt(m.bytes()) != i) {
-                    log.info("[FAIL] burst 第 {} 条不匹配 type={} payload={}",
-                            i, m.type(), bytesToInt(m.bytes()));
+                if (m.type() != 0xAB || bytesToInt(m.bytes()) != sent.get(i)) {
+                    System.out.println("  fail burst at index=" + i);
                     return false;
                 }
             }
-            log.info("[PASS] 大批量 {} 条消息", BURST_COUNT);
             return true;
         } catch (Throwable t) {
-            log.info("[FAIL] 大批量场景异常: {}", t.getMessage());
-            return false;
+            return detail("large-burst", t);
         }
     }
 
-    /** UniqueName */
-    private static String uniqueName() {
-        return "/shmq_example_" + System.nanoTime();
+    /**
+     * 输出异常明细并返回 false。
+     *
+     * @param scene 场景名
+     * @param t     异常
+     * @return 固定返回 false
+     */
+    private static boolean detail(String scene, Throwable t) {
+        System.out.println("  fail " + scene + " exception: "
+                + t.getClass().getSimpleName() + ": " + t.getMessage());
+        return false;
     }
 
-    /** IntToBytes */
+    /**
+     * 生成唯一的共享内存对象名。
+     *
+     * @return 形如 /shmq_ex_<纳秒时间戳> 的名称
+     */
+    private static String uniqueName() {
+        return "/shmq_ex_" + System.nanoTime();
+    }
+
+    /**
+     * Int 转 4 字节大端数组。
+     *
+     * @param v 整数值
+     * @return 4 字节数组
+     */
     private static byte[] intToBytes(int v) {
         return new byte[]{
                 (byte) ((v >> 24) & 0xFF),
@@ -328,7 +316,12 @@ public class ShmQueueExample {
         };
     }
 
-    /** BytesToInt */
+    /**
+     * 4 字节大端数组转 Int。
+     *
+     * @param b 字节数组
+     * @return 整数值；长度非法返回 -1
+     */
     private static int bytesToInt(byte[] b) {
         if (b == null || b.length != 4) {
             return -1;

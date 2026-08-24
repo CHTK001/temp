@@ -2,6 +2,7 @@ package com.chua.example.onnx;
 
 import com.chua.common.support.ai.audio.AudioClient;
 import com.chua.common.support.ai.audio.TextToAudioClient;
+import com.chua.common.support.reflection.ReflectUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.LinkedHashMap;
@@ -41,14 +42,14 @@ public class VoiceCloneExample extends BaseExample {
 
         boolean passed = true;
         try {
-            Class.forName(TextToAudioClient.class.getName());
+            ReflectUtils.forName(TextToAudioClient.class.getName());
             log.info("[TTS] TextToAudioClient 类型可用");
         } catch (Throwable e) {
             log.warn("[FAIL] TextToAudioClient 不可用: {}", e.getMessage());
             passed = false;
         }
         try {
-            Class.forName(AudioClient.class.getName());
+            ReflectUtils.forName(AudioClient.class.getName());
             log.info("[STT] AudioClient 类型可用");
         } catch (Throwable e) {
             log.warn("[FAIL] AudioClient 不可用: {}", e.getMessage());

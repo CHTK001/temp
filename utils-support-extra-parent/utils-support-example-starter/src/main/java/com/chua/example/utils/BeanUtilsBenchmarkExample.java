@@ -41,14 +41,15 @@ public class BeanUtilsBenchmarkExample {
     public static void main(String[] args) {
         int iterations = parseIterations(args);
         if (iterations <= 0) {
-            log.info("[FAIL] 非法 --iterations 参数: {}", iterations);
+            System.out.println("[FAIL] 非法 --iterations 参数: " + iterations);
             System.exit(1);
         }
         log.info("[PERF] ===== BeanUtils 基准（迭代 {} 次）=====", iterations);
         if (!verify()) {
-            log.info("[FAIL] copyProperties / objectToMap 正确性自检未通过");
+            System.out.println("[FAIL] copyProperties / objectToMap 正确性自检未通过");
             System.exit(1);
         }
+        System.out.println("[PASS] copyProperties / objectToMap 正确性自检通过");
         System.out.printf("[PERF] %-32s %12s %12s %16s %10s%n",
                 "场景", "耗时(ms)", "ops/s", "us/call", "迭代");
         bench("copyProperties(src,target)", iterations, () -> {
@@ -57,7 +58,8 @@ public class BeanUtilsBenchmarkExample {
         });
         bench("copyProperties(src,Target.class)", iterations, () -> BeanUtils.copyProperties(SOURCE, Target.class));
         bench("objectToMap(src)", iterations, () -> BeanUtils.objectToMap(SOURCE));
-        log.info("[PERF] ===== BeanUtils 基准完成 [PASS] =====");
+        log.info("[PERF] ===== BeanUtils 基准完成 =====");
+        System.out.println("[PASS] BeanUtils 基准全部场景通过");
     }
 
     /**
@@ -82,6 +84,7 @@ public class BeanUtilsBenchmarkExample {
         double usPerCall = elapsed / (double) iterations / 1000.0D;
         System.out.printf("[PERF] %-32s %12.1f %12s %16.3f %10d%n",
                 label, millis, String.format("%,.0f", opsPerSecond), usPerCall, iterations);
+        System.out.println("[PASS] " + label);
     }
 
     /**

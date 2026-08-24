@@ -520,12 +520,6 @@
             <artifactId>utils-support-datasearch-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- DataSearch 浏览器渲染兜底（定价页渲染器） -->
-        <dependency>
-            <groupId>com.chua</groupId>
-            <artifactId>utils-support-playwright-starter</artifactId>
-            <version>${project.version}</version>
-        </dependency>
         <!-- 文件检索演示 -->
         <dependency>
             <groupId>com.chua</groupId>

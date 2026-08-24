@@ -27,6 +27,9 @@ import java.util.Set;
  *
  *   # 打印时间戳解析
  *   java IdUtilsUuidv7Example decode
+ *
+ *   # 仅运行正确性校验（对齐 IdUtilsUuidv7Test 五个用例）
+ *   java IdUtilsUuidv7Example verify
  * </pre>
  *
  * @author CH
@@ -34,6 +37,11 @@ import java.util.Set;
  */
 @Slf4j
 public final class IdUtilsUuidv7Example {
+
+    /**
+     * RFC 9562 UUIDv7 合法格式
+     */
+    private static final String UUIDV7_REGEX = "[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}";
 
     private IdUtilsUuidv7Example() {
     }
@@ -51,11 +59,15 @@ public final class IdUtilsUuidv7Example {
             case "decode":
                 exampleDecode();
                 break;
+            case "verify":
+                runVerifications();
+                break;
             default:
                 exampleSingle();
                 exampleBatch(20);
                 exampleDecode();
                 exampleMonotonic();
+                runVerifications();
                 break;
         }
     }
@@ -131,5 +143,82 @@ public final class IdUtilsUuidv7Example {
         for (int i = 0; i < ids.size(); i++) {
             log.info("  [{}] {}", i + 1, ids.get(i));
         }
+    }
+
+    /** 依次运行全部正确性校验场景（对齐 common-starter IdUtilsUuidv7Test 五个用例） */
+    private static void runVerifications() throws InterruptedException {
+        verifyNotNull();
+        verifyFormat();
+        verifyTimestampMonotonic();
+        verifyCreateUuidv7Format();
+        verifyUniqueness();
+    }
+
+    /** 校验 uuidv7() 返回非空（对应 testUuidv7ReturnsNotNull） */
+    private static void verifyNotNull() {
+        String id = IdUtils.uuidv7();
+        if (id == null || id.isEmpty()) {
+            System.out.println("[FAIL] uuidv7 返回空值");
+            System.exit(1);
+        }
+        System.out.println("[PASS] uuidv7 非空校验通过");
+    }
+
+    /** 校验 uuidv7() 符合 RFC 9562 格式（对应 testUuidv7Format） */
+    private static void verifyFormat() {
+        String id = IdUtils.uuidv7();
+        if (!id.matches(UUIDV7_REGEX)) {
+            System.out.println("[FAIL] UUIDv7 格式不符合 RFC 9562: " + id);
+            System.exit(1);
+        }
+        System.out.println("[PASS] UUIDv7 格式符合 RFC 9562");
+    }
+
+    /** 校验跨毫秒时间戳非递减（对应 testUuidv7IsMonotonic，200 次、间隔 1ms） */
+    private static void verifyTimestampMonotonic() throws InterruptedException {
+        List<Long> timestamps = new ArrayList<>();
+        for (int i = 0; i < 200; i++) {
+            timestamps.add(extractTimestamp(IdUtils.uuidv7()));
+            if (i < 199) {
+                Thread.sleep(1);
+            }
+        }
+        for (int i = 1; i < timestamps.size(); i++) {
+            long previous = timestamps.get(i - 1);
+            long current = timestamps.get(i);
+            if (current < previous) {
+                System.out.println("[FAIL] UUIDv7 时间戳应非递减: " + previous + " > " + current);
+                System.exit(1);
+            }
+        }
+        System.out.println("[PASS] 200 个跨毫秒时间戳全部非递减");
+    }
+
+    /** 校验 createUuidv7() 同样产出合法 UUIDv7（对应 testCreateUuidv7SameAsUuidv7） */
+    private static void verifyCreateUuidv7Format() {
+        String id = IdUtils.createUuidv7();
+        if (!id.matches(UUIDV7_REGEX)) {
+            System.out.println("[FAIL] createUuidv7 格式不符合 RFC 9562: " + id);
+            System.exit(1);
+        }
+        System.out.println("[PASS] createUuidv7 与 uuidv7 格式一致");
+    }
+
+    /** 校验批量生成唯一率（对应 testUuidv7Uniqueness，1000 次去重数 >= 950，容忍同毫秒极小碰撞） */
+    private static void verifyUniqueness() {
+        Set<String> unique = new HashSet<>();
+        for (int i = 0; i < 1000; i++) {
+            unique.add(IdUtils.uuidv7());
+        }
+        if (unique.size() < 950) {
+            System.out.println("[FAIL] UUIDv7 唯一性不足，去重数: " + unique.size());
+            System.exit(1);
+        }
+        System.out.println("[PASS] 1000 次生成去重数 " + unique.size() + " >= 950");
+    }
+
+    /** 提取 UUIDv7 的 Unix 毫秒时间戳（去连字符后前 12 位 hex） */
+    private static long extractTimestamp(String id) {
+        return Long.parseUnsignedLong(id.replace("-", "").substring(0, 12), 16);
     }
 }
