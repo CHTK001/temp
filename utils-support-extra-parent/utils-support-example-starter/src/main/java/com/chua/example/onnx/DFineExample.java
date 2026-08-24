@@ -28,6 +28,13 @@ import java.nio.file.Path;
  */
 public final class DFineExample {
 
+    static {
+        try {
+            nu.pattern.OpenCV.loadShared();
+        } catch (Throwable ignored) {
+        }
+    }
+
     private DFineExample() {
     }
 
