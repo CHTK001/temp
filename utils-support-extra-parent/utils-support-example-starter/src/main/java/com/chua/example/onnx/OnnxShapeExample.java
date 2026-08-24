@@ -17,7 +17,7 @@ import java.nio.file.Path;
 public final class OnnxShapeExample {
 
     /** 创建 OnnxShapeDiag 实例 */
-    private OnnxShapeDiag() {
+    private OnnxShapeExample() {
     }
 
     /** Main */

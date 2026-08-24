@@ -21,7 +21,7 @@ import java.util.List;
 public final class OcrCropExample {
 
     /** 创建 OcrCropDiag 实例 */
-    private OcrCropDiag() {
+    private OcrCropExample() {
     }
 
     /** Main */

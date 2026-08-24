@@ -35,7 +35,7 @@ public final class ZeroShotSegmentationExample extends BaseExample {
     private static final String DEFAULT_IMAGE = "D:/images/test.jpg";
 
     /** 创建 ZeroShotSegmentationTest 实例 */
-    private ZeroShotSegmentationTest() {
+    private ZeroShotSegmentationExample() {
     }
 
     /** Main */

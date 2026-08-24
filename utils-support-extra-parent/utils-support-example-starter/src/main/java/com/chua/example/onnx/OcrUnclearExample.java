@@ -21,7 +21,7 @@ import java.util.List;
 public final class OcrUnclearExample {
 
     /** 创建 OcrUnclearDiag 实例 */
-    private OcrUnclearDiag() {
+    private OcrUnclearExample() {
     }
 
     /** Main */

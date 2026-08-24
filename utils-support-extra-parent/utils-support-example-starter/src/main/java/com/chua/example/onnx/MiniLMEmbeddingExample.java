@@ -14,14 +14,14 @@ import com.chua.common.support.ai.embedding.EmbeddingClient;
  * </ul>
  *
  * <p>用法：{@code mvn -o exec:java -Dexec.classpathScope=test
- * -Dexec.mainClass=com.chua.deeplearning.support.onnx.example.MiniLMEmbeddingVerify}</p>
+ * -Dexec.mainClass=com.chua.deeplearning.support.onnx.example.MiniLMEmbeddingExample}</p>
  *@author CH
  *
  * @since 4.0.0.42
  */
 public final class MiniLMEmbeddingExample {
 
-    private MiniLMEmbeddingVerify() {
+    private MiniLMEmbeddingExample() {
     }
 
     /** Main */
@@ -31,9 +31,9 @@ public final class MiniLMEmbeddingExample {
         pass &= check("fp32", "minilm", "minilm-fp32");
         pass &= similarityCheck();
         if (pass) {
-            log.info("[MiniLMEmbeddingVerify] ALL PASS");
+            log.info("[MiniLMEmbeddingExample] ALL PASS");
         } else {
-            log.info("[MiniLMEmbeddingVerify] FAIL");
+            log.info("[MiniLMEmbeddingExample] FAIL");
             System.exit(1);
         }
     }

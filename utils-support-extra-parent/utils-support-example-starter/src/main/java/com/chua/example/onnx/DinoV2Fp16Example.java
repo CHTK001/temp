@@ -24,7 +24,7 @@ import java.nio.file.Path;
  */
 public final class DinoV2Fp16Example {
 
-    private DinoV2Fp16Verify() {
+    private DinoV2Fp16Example() {
     }
 
     /** Main */

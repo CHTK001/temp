@@ -18,7 +18,7 @@ import java.util.List;
 public final class OcrQualityGateExample {
 
     /** 创建 OcrQualityGateDiag 实例 */
-    private OcrQualityGateDiag() {
+    private OcrQualityGateExample() {
     }
 
     /** Main */

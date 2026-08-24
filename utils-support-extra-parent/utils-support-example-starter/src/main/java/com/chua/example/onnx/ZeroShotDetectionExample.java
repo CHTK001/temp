@@ -41,7 +41,7 @@ public final class ZeroShotDetectionExample extends BaseExample {
     private static final String DEFAULT_IMAGE = "D:/images/test.jpg";
 
     /** 创建 ZeroShotDetectionTest 实例 */
-    private ZeroShotDetectionTest() {
+    private ZeroShotDetectionExample() {
     }
 
     /** Main */

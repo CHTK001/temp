@@ -16,7 +16,7 @@ import java.nio.file.Path;
  */
 public final class DepthAnythingExample {
 
-    private DepthAnythingVerify() {
+    private DepthAnythingExample() {
     }
 
     public static void main(String[] args) throws Exception {

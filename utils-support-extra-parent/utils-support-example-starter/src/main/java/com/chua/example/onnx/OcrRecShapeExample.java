@@ -21,7 +21,7 @@ import java.util.Map;
 public final class OcrRecShapeExample {
 
     /** 创建 OcrRecShapeDiag 实例 */
-    private OcrRecShapeDiag() {
+    private OcrRecShapeExample() {
     }
 
     /** Main */

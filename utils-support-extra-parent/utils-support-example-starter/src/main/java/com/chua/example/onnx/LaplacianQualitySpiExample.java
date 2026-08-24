@@ -16,7 +16,7 @@ import java.nio.file.Path;
 public final class LaplacianQualitySpiExample {
 
     /** 创建 LaplacianQualitySpiDiag 实例 */
-    private LaplacianQualitySpiDiag() {
+    private LaplacianQualitySpiExample() {
     }
 
     /** Main */

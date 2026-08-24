@@ -43,7 +43,7 @@ public final class OcrBatchExample {
     );
 
     /** 创建 OcrBatchTest 实例 */
-    private OcrBatchTest() {
+    private OcrBatchExample() {
     }
 
     /** Main */

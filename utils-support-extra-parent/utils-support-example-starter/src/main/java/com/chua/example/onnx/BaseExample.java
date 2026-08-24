@@ -1,7 +1,6 @@
 package com.chua.example.onnx;
 
 import com.chua.common.support.ai.chat.ModelDefinition;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
@@ -13,7 +12,7 @@ import java.util.List;
  * @author CH
  * @since 4.0.0.42
  */
-@Slf4j
+protected static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(BaseExample.class);
 public abstract class BaseExample {
 
     /**

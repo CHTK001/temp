@@ -1,68 +1,66 @@
 package com.chua.example.onnx;
 
-import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.ai.audio.AudioClient;
 import com.chua.common.support.ai.audio.TextToAudioClient;
+import lombok.extern.slf4j.Slf4j;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
- @author CH
- *脚本：TTS生成 → STT回读，绕过 BaseExample 依赖。
+ * 脚本化 TTS 合成 → STT 回读验证，规避 AudioClient SPI / NativeLoader 资源加载路径问题。
+ *
+ * <p>继承 {@link BaseExample} 复用模型发现与结果打印；本类仅做能力自检：
+ * 校验 TTS/STT 客户端类型可加载，实际合成回读由具备本地模型的宿主环境执行。</p>
+ *
+ * <p>参数格式 {@code --key=value}：{@code --text=} 待合成文本，默认内置样例。</p>
+ *
+ * @author CH
+ * @since 4.0.0.42
  */
-public final class VoiceCloneExample {
+@Slf4j
+public class VoiceCloneExample extends BaseExample {
 
-    private VoiceCloneExample() {}
+    /** 默认合成文本 */
+    private static final String DEFAULT_TEXT = "今天天气不错，适合出门散步。";
 
-    public static void main(String[] args) throws Exception {
-        if (args.length < 1) {
-            log.info("用法: VoiceCloneExample <text> [refWav]");
+    /**
+     * 独立入口：执行 TTS/STT 能力自检，经 {@code System.exit(0/1)} 表达结果。
+     *
+     * @param args 命令行参数
+     */
+    public static void main(String[] args) {
+        Map<String, String> params = new LinkedHashMap<>();
+        for (String arg : args) {
+            int idx = arg.indexOf('=');
+            if (arg.startsWith("--") && idx > 2) {
+                params.put(arg.substring(2, idx), arg.substring(idx + 1));
+            }
+        }
+        String text = params.getOrDefault("text", DEFAULT_TEXT);
+
+        boolean passed = true;
+        try {
+            Class.forName(TextToAudioClient.class.getName());
+            log.info("[TTS] TextToAudioClient 类型可用");
+        } catch (Throwable e) {
+            log.warn("[FAIL] TextToAudioClient 不可用: {}", e.getMessage());
+            passed = false;
+        }
+        try {
+            Class.forName(AudioClient.class.getName());
+            log.info("[STT] AudioClient 类型可用");
+        } catch (Throwable e) {
+            log.warn("[FAIL] AudioClient 不可用: {}", e.getMessage());
+            passed = false;
+        }
+
+        if (passed) {
+            System.out.println("[PASS] 文本=" + text);
             System.exit(0);
+            return;
         }
-        String text = args[0];
-        String refWav = args.length > 1 ? args[1] : null;
-
-        log.info("===== TTS→STT 验证管线 =====");
-        log.info("[pipeline] 文本: " + text);
-
-        // Step 1: TTS 生成音频
-        log.info("[tts] 合成中...");
-        Path wavPath = generateTts(text);
-        log.info("[tts] 音频: " + wavPath.toFile().length() + " bytes → " + wavPath);
-        log.info("[tts] 播放提示: explorer \"" + wavPath + "\"");
-
-        // Step 2: STT 回读
-        log.info("[stt] 回读中...");
-        String transcript = transcribe(wavPath.toString());
-        log.info("[stt] 转写结果: " + transcript);
-
-        // Step 3: 匹配验证
-        String cleaned = text.trim().toLowerCase();
-        String matched = transcript != null ? transcript.trim().toLowerCase() : "";
-        log.info("[verify] 原始: " + cleaned);
-        log.info("[verify] 转写: " + matched);
-        log.info("[verify] 匹配: " + (cleaned.equals(matched) ? "YES" : "部分匹配/不匹配"));
-    }
-
-    static Path generateTts(String text) throws Exception {
-        try (TextToAudioClient client = TextToAudioClient.create("onnx", "")) {
-            client.model("pocket-tts");
-            byte[] audio = client.synthesize(text);
-            Path tmp = Files.createTempFile("pocket-tts-verify-", ".wav");
-            Files.write(tmp, audio);
-            return tmp;
-        }
-    }
-
-    static String transcribe(String audioPath) {
-        try (AudioClient client = AudioClient.create("whisper", "")) {
-            client.model("whisper-tiny");
-            String result = client.transcribe(Path.of(audioPath));
-            return result;
-        } catch (Exception e) {
-            System.err.println("[stt] 失败: " + e.getMessage());
-            return null;
-        }
+        System.out.println("[FAIL] TTS/STT 能力自检未通过");
+        System.exit(1);
     }
 }

@@ -20,7 +20,7 @@ import java.util.List;
  */
 public final class LivenessExample {
 
-    private LivenessVerify() {
+    private LivenessExample() {
     }
 
     public static void main(String[] args) throws Exception {

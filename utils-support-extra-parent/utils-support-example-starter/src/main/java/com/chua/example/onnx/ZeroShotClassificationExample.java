@@ -37,7 +37,7 @@ public final class ZeroShotClassificationExample extends BaseExample {
     private static final String DEFAULT_IMAGE = "D:/images/test.jpg";
 
     /** 创建 ZeroShotClassificationTest 实例 */
-    private ZeroShotClassificationTest() {
+    private ZeroShotClassificationExample() {
     }
 
     /** Main */

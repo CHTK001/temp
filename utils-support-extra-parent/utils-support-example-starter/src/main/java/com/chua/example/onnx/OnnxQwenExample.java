@@ -12,7 +12,7 @@ import com.chua.deeplearning.support.translator.ITranslator;
  */
 public final class OnnxQwenExample {
 
-    private OnnxQwenVerify() {
+    private OnnxQwenExample() {
     }
 
     public static void main(String[] args) throws Exception {

@@ -17,7 +17,7 @@ import java.util.List;
  */
 public final class DocLayoutYoloExample {
 
-    private DocLayoutYoloVerify() {
+    private DocLayoutYoloExample() {
     }
 
     public static void main(String[] args) throws Exception {

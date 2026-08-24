@@ -14,7 +14,7 @@ import java.util.Enumeration;
  * @since 4.0.0.42
  */
 public final class VCTTSExample {
-    private VCTTS() {}
+    private VCTTSExample() {}
 
     public static void main(String[] args) throws Exception {
         String text = args.length > 0 ? args[0] : "Hello world";

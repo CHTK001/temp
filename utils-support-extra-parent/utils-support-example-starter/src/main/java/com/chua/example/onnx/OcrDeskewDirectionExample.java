@@ -22,7 +22,7 @@ import java.util.List;
 public final class OcrDeskewDirectionExample {
 
     /** 创建 OcrDeskewDirectionDiag 实例 */
-    private OcrDeskewDirectionDiag() {
+    private OcrDeskewDirectionExample() {
     }
 
     /** Main */

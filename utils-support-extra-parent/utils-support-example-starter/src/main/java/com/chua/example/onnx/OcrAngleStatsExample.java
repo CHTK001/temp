@@ -18,7 +18,7 @@ import java.util.List;
 public final class OcrAngleStatsExample {
 
     /** 创建 OcrAngleStatsDiag 实例 */
-    private OcrAngleStatsDiag() {
+    private OcrAngleStatsExample() {
     }
 
     /** Main */

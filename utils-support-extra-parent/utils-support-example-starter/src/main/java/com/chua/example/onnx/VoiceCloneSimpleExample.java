@@ -7,8 +7,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Enumeration;
 
-/** Simple TTS->STT verification (no Lombok dependency).  * @author CH
-*/
+/**
+ * Simple TTS->STT verification (no Lombok dependency).
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
 public final class VoiceCloneSimpleExample {
     private VoiceCloneSimpleExample() {}
 

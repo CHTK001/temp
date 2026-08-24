@@ -21,7 +21,7 @@ import java.util.List;
 public final class OcrAngleExample {
 
     /** 创建 OcrAngleDiag 实例 */
-    private OcrAngleDiag() {
+    private OcrAngleExample() {
     }
 
     /** Main */

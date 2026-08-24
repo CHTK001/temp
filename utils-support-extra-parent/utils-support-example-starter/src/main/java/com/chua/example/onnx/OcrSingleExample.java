@@ -20,7 +20,7 @@ import java.util.List;
 public final class OcrSingleExample {
 
     /** 创建 OcrSingleDiag 实例 */
-    private OcrSingleDiag() {
+    private OcrSingleExample() {
     }
 
     /** Main */

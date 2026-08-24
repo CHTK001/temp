@@ -25,7 +25,7 @@ import java.util.Map;
 public final class OcrDetExample {
 
     /** 创建 OcrDetDiag 实例 */
-    private OcrDetDiag() {
+    private OcrDetExample() {
     }
 
     /** Main */

@@ -26,7 +26,7 @@ import java.util.List;
 public final class OcrBigAngleExample {
 
     /** 创建 OcrBigAngleDiag 实例 */
-    private OcrBigAngleDiag() {
+    private OcrBigAngleExample() {
     }
 
     /** Main */

@@ -636,6 +636,13 @@
                         <include>**/onnx/*Plate*.java</include>
                         <include>**/onnx/*MultiModel*.java</include>
                         <include>**/onnx/Gemma3Example.java</include>
+                        <include>**/onnx/YoloWorldBatchDrawExample.java</include>
+                        <include>**/onnx/WebpDecodeExample.java</include>
+                        <include>**/onnx/ImageColorizeExample.java</include>
+                        <include>**/onnx/DeepfakeDetectionExample.java</include>
+                        <include>**/onnx/LamaInpaintingExample.java</include>
+                        <include>**/onnx/SealInspectionBlackboxExample.java</include>
+                        <include>**/onnx/TtsBenchmarkExample.java</include>
                     </includes>
                     <excludes>
                         <!-- common-starter 的 LazyExpiringList.java 当前为空文件(WIP)，待实现后移出 -->

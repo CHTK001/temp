@@ -15,7 +15,7 @@ import java.nio.file.Path;
 public final class OcrEnhanceOnlyExample {
 
     /** 创建 OcrEnhanceOnlyDiag 实例 */
-    private OcrEnhanceOnlyDiag() {
+    private OcrEnhanceOnlyExample() {
     }
 
     /** Main */
