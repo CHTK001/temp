@@ -290,6 +290,10 @@ public final class BranchExample {
                     .end()
                     .onError(e -> {
                     })
+                    .when(v -> true, v -> {
+                        throw new RuntimeException("bad");
+                    })
+                    .end()
                     .when(v -> true, v -> "never-reached")
                     .end()
                     .get();
@@ -311,9 +315,7 @@ public final class BranchExample {
         try {
             Integer fine = Branch.of(1).when(v -> true, v -> 2).get();
             Branch<String> bomb = Branch.of("x")
-                    .when(v -> true, v -> {
-                        throw new IllegalArgumentException("no-handler");
-                    })
+                    .when(v -> true, BranchExample::explode)
                     .end();
             expectThrows(name, IllegalArgumentException.class, bomb::get);
             boolean ok = fine != null && fine == 2;
@@ -323,6 +325,26 @@ public final class BranchExample {
             System.out.println("[FAIL] " + name + ": " + e.getMessage());
             return false;
         }
+    }
+
+    /**
+     * 恒抛动作（方法引用锚定返回类型）。
+     *
+     * @param v 入参
+     * @return 永不返回
+     */
+    private static String explode(String v) {
+        throw new IllegalArgumentException("no-handler");
+    }
+
+    /**
+     * 恒抛列表动作（方法引用锚定返回类型）。
+     *
+     * @param v 组内原始输入
+     * @return 永不返回
+     */
+    private static List<String> boomList(List<?> v) {
+        throw new IllegalStateException("should-propagate");
     }
 
     /**
@@ -355,20 +377,17 @@ public final class BranchExample {
             AtomicInteger underlying = new AtomicInteger();
             String first = Branch.of("in")
                     .protect(uniqueName, 1, 1, 60_000L)
-                    .when(v -> true, v -> {
-                        underlying.incrementAndGet();
-                        throw new RuntimeException("down");
-                    })
                     .recover(e -> "fallback-1")
+                    .when(v -> true, v -> failWithCount(underlying))
                     .end()
                     .get();
             String second = Branch.of("in")
                     .protect(uniqueName)
+                    .recover(e -> "fallback-2")
                     .when(v -> true, v -> {
                         underlying.incrementAndGet();
                         return "real";
                     })
-                    .recover(e -> "fallback-2")
                     .end()
                     .get();
             boolean ok = "fallback-1".equals(first);
@@ -394,13 +413,11 @@ public final class BranchExample {
                     .when(v -> true, v -> List.of(v))
                     .end()
                     .afterBranch()
-                    .when(v -> !((List<?>) v).isEmpty(), v -> {
-                        throw new IllegalStateException("should-propagate");
-                    })
                     .recover(e -> {
                         seen.set(e);
                         return List.of("reset");
                     })
+                    .when(v -> !((List<?>) v).isEmpty(), BranchExample::boomList)
                     .end()
                     .get();
             boolean ok = List.of("reset").equals(r);
@@ -437,6 +454,17 @@ public final class BranchExample {
     }
 
     // ==================== 辅助方法 ====================
+
+    /**
+     * 恒抛计数动作（方法引用锚定返回类型）。
+     *
+     * @param counter 执行计数器
+     * @return 永不返回
+     */
+    private static String failWithCount(AtomicInteger counter) {
+        counter.incrementAndGet();
+        throw new RuntimeException("down");
+    }
 
     /**
      * 输出单场景结果。

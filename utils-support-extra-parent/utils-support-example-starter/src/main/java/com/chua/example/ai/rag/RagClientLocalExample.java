@@ -89,17 +89,12 @@ public final class RagClientLocalExample {
         Path tempDir = createTempDir("rag-local-example-");
         boolean passed;
         try {
-            RagClient client = createClient(tempDir, options);
-            try {
-                passed = testUploadReturnsFileId(client);
-                passed &= testDeleteRemovesVectorAndFile(client, tempDir);
-                passed &= testUpdateDocument(client);
-                passed &= testListAndCount(client);
-                passed &= testReadDocumentContent(client);
-                passed &= testRemoteChatQuery(client, options);
-            } finally {
-                client.close();
-            }
+            passed = testUploadReturnsFileId(tempDir, options);
+            passed &= testDeleteRemovesVectorAndFile(tempDir, options);
+            passed &= testUpdateDocument(tempDir, options);
+            passed &= testListAndCount(tempDir, options);
+            passed &= testReadDocumentContent(tempDir, options);
+            passed &= testRemoteChatQuery(tempDir, options);
         } finally {
             deleteRecursively(tempDir.toFile());
         }
@@ -117,19 +112,25 @@ public final class RagClientLocalExample {
     /**
      * 场景 1：上传返回非空 fileId，状态 READY 且已分块。
      *
-     * @param client RAG 客户端
+     * @param tempDir 上传根目录
+     * @param options 命令行选项
      * @return 通过返回 true
      */
-    private static boolean testUploadReturnsFileId(RagClient client) {
+    private static boolean testUploadReturnsFileId(Path tempDir, Options options) {
         byte[] data = "这是一份测试文档，关于RAG检索增强生成的介绍".getBytes(StandardCharsets.UTF_8);
         try {
-            RagDocument doc = client.uploadDocument("test.txt", data);
-            boolean ok = doc.id() != null;
-            ok &= "test.txt".equals(doc.fileName());
-            ok &= "READY".equals(doc.status());
-            ok &= doc.chunkCount() > 0;
-            print("uploadDocument 返回 READY 文档", ok);
-            return ok;
+            RagClient client = createClient(tempDir, options);
+            try {
+                RagDocument doc = client.uploadDocument("test.txt", data);
+                boolean ok = doc.id() != null;
+                ok &= "test.txt".equals(doc.fileName());
+                ok &= "READY".equals(doc.status());
+                ok &= doc.chunkCount() > 0;
+                print("uploadDocument 返回 READY 文档", ok);
+                return ok;
+            } finally {
+                client.close();
+            }
         } catch (Exception e) {
             return fail("uploadDocument 返回 READY 文档", e);
         }
@@ -138,26 +139,31 @@ public final class RagClientLocalExample {
     /**
      * 场景 2：删除后文档消失且落盘文件被清理。
      *
-     * @param client  RAG 客户端
      * @param tempDir 上传根目录
+     * @param options 命令行选项
      * @return 通过返回 true
      */
-    private static boolean testDeleteRemovesVectorAndFile(RagClient client, Path tempDir) {
+    private static boolean testDeleteRemovesVectorAndFile(Path tempDir, Options options) {
         byte[] data = "删除测试文档内容".getBytes(StandardCharsets.UTF_8);
         try {
-            String docId = client.uploadDocument("delete-test.txt", data).id();
-            boolean removed = client.deleteDocument(docId);
-            boolean gone = client.documentCount() == 0;
-            gone &= client.listDocuments(1, 10).stream().noneMatch(d -> d.id().equals(docId));
-            boolean fileCleaned = true;
-            Path filesDir = tempDir.resolve("files");
-            if (Files.exists(filesDir)) {
-                fileCleaned = Files.list(filesDir)
-                        .noneMatch(p -> p.getFileName().toString().startsWith(docId));
+            RagClient client = createClient(tempDir, options);
+            try {
+                String docId = client.uploadDocument("delete-test.txt", data).id();
+                boolean removed = client.deleteDocument(docId);
+                boolean gone = client.documentCount() == 0;
+                gone &= client.listDocuments(1, 10).stream().noneMatch(d -> d.id().equals(docId));
+                boolean fileCleaned = true;
+                Path filesDir = tempDir.resolve("files");
+                if (Files.exists(filesDir)) {
+                    fileCleaned = Files.list(filesDir)
+                            .noneMatch(p -> p.getFileName().toString().startsWith(docId));
+                }
+                boolean ok = removed && gone && fileCleaned;
+                print("deleteDocument 清理向量与文件", ok);
+                return ok;
+            } finally {
+                client.close();
             }
-            boolean ok = removed && gone && fileCleaned;
-            print("deleteDocument 清理向量与文件", ok);
-            return ok;
         } catch (Exception e) {
             return fail("deleteDocument 清理向量与文件", e);
         }
@@ -166,20 +172,26 @@ public final class RagClientLocalExample {
     /**
      * 场景 3：更新文档保持 docId 不变且状态 READY。
      *
-     * @param client RAG 客户端
+     * @param tempDir 上传根目录
+     * @param options 命令行选项
      * @return 通过返回 true
      */
-    private static boolean testUpdateDocument(RagClient client) {
+    private static boolean testUpdateDocument(Path tempDir, Options options) {
         byte[] oldData = "这是旧版本的内容，需要被替换".getBytes(StandardCharsets.UTF_8);
         byte[] newData = "这是新版本的内容，更加详细和完整".getBytes(StandardCharsets.UTF_8);
         try {
-            String docId = client.uploadDocument("update-test.txt", oldData).id();
-            RagDocument newDoc = client.updateDocument(docId, "update-test.txt", newData);
-            boolean ok = newDoc != null;
-            ok &= docId.equals(newDoc.id());
-            ok &= "READY".equals(newDoc.status());
-            print("updateDocument 原位替换", ok);
-            return ok;
+            RagClient client = createClient(tempDir, options);
+            try {
+                String docId = client.uploadDocument("update-test.txt", oldData).id();
+                RagDocument newDoc = client.updateDocument(docId, "update-test.txt", newData);
+                boolean ok = newDoc != null;
+                ok &= docId.equals(newDoc.id());
+                ok &= "READY".equals(newDoc.status());
+                print("updateDocument 原位替换", ok);
+                return ok;
+            } finally {
+                client.close();
+            }
         } catch (Exception e) {
             return fail("updateDocument 原位替换", e);
         }
@@ -188,23 +200,29 @@ public final class RagClientLocalExample {
     /**
      * 场景 4：documentCount 与 listDocuments 分页一致。
      *
-     * @param client RAG 客户端
+     * @param tempDir 上传根目录
+     * @param options 命令行选项
      * @return 通过返回 true
      */
-    private static boolean testListAndCount(RagClient client) {
+    private static boolean testListAndCount(Path tempDir, Options options) {
         try {
-            client.uploadDocument("doc1.txt", "文档一的内容".getBytes(StandardCharsets.UTF_8));
-            client.uploadDocument("doc2.txt", "文档二的内容".getBytes(StandardCharsets.UTF_8));
-            client.uploadDocument("doc3.txt", "文档三的内容".getBytes(StandardCharsets.UTF_8));
-            boolean ok = client.documentCount() == 3;
-            List<RagDocument> page1 = client.listDocuments(1, 2);
-            List<RagDocument> page2 = client.listDocuments(2, 2);
-            List<RagDocument> page3 = client.listDocuments(3, 2);
-            ok &= page1.size() == 2;
-            ok &= page2.size() == 1;
-            ok &= page3.isEmpty();
-            print("listDocuments 分页正确", ok);
-            return ok;
+            RagClient client = createClient(tempDir, options);
+            try {
+                client.uploadDocument("doc1.txt", "文档一的内容".getBytes(StandardCharsets.UTF_8));
+                client.uploadDocument("doc2.txt", "文档二的内容".getBytes(StandardCharsets.UTF_8));
+                client.uploadDocument("doc3.txt", "文档三的内容".getBytes(StandardCharsets.UTF_8));
+                boolean ok = client.documentCount() == 3;
+                List<RagDocument> page1 = client.listDocuments(1, 2);
+                List<RagDocument> page2 = client.listDocuments(2, 2);
+                List<RagDocument> page3 = client.listDocuments(3, 2);
+                ok &= page1.size() == 2;
+                ok &= page2.size() == 1;
+                ok &= page3.isEmpty();
+                print("listDocuments 分页正确", ok);
+                return ok;
+            } finally {
+                client.close();
+            }
         } catch (Exception e) {
             return fail("listDocuments 分页正确", e);
         }
@@ -213,17 +231,23 @@ public final class RagClientLocalExample {
     /**
      * 场景 5：读取内容包含上传原文。
      *
-     * @param client RAG 客户端
+     * @param tempDir 上传根目录
+     * @param options 命令行选项
      * @return 通过返回 true
      */
-    private static boolean testReadDocumentContent(RagClient client) {
+    private static boolean testReadDocumentContent(Path tempDir, Options options) {
         byte[] data = "读取测试文档的原始内容".getBytes(StandardCharsets.UTF_8);
         try {
-            String docId = client.uploadDocument("read-test.txt", data).id();
-            String readBack = client.readDocumentContent(docId);
-            boolean ok = readBack != null && readBack.contains("读取测试");
-            print("readDocumentContent 读回原文", ok);
-            return ok;
+            RagClient client = createClient(tempDir, options);
+            try {
+                String docId = client.uploadDocument("read-test.txt", data).id();
+                String readBack = client.readDocumentContent(docId);
+                boolean ok = readBack != null && readBack.contains("读取测试");
+                print("readDocumentContent 读回原文", ok);
+                return ok;
+            } finally {
+                client.close();
+            }
         } catch (Exception e) {
             return fail("readDocumentContent 读回原文", e);
         }
@@ -232,22 +256,27 @@ public final class RagClientLocalExample {
     /**
      * 场景 6：远端 LLM 问答。默认跳过；加 --remote 才真实调用外部服务。
      *
-     * @param client  RAG 客户端
+     * @param tempDir 上传根目录
      * @param options 命令行选项
      * @return 通过（或按预期跳过）返回 true
      */
-    private static boolean testRemoteChatQuery(RagClient client, Options options) {
-        if (!options.remote) {
+    private static boolean testRemoteChatQuery(Path tempDir, Options options) {
+        if (!options.remote()) {
             System.out.println("[SKIP] remote-disabled 远端问答依赖外部 LLM 服务，加 --remote 启用");
             return true;
         }
         try {
-            client.uploadDocument("qa.txt", "RAG 检索增强生成用于结合检索与生成能力"
-                    .getBytes(StandardCharsets.UTF_8));
-            var response = client.query("什么是RAG？");
-            boolean ok = response != null && response.answer() != null && !response.answer().isBlank();
-            print("远端问答返回非空回答", ok);
-            return ok;
+            RagClient client = createClient(tempDir, options);
+            try {
+                client.uploadDocument("qa.txt", "RAG 检索增强生成用于结合检索与生成能力"
+                        .getBytes(StandardCharsets.UTF_8));
+                var response = client.query("什么是RAG？");
+                boolean ok = response != null && response.answer() != null && !response.answer().isBlank();
+                print("远端问答返回非空回答", ok);
+                return ok;
+            } finally {
+                client.close();
+            }
         } catch (Exception e) {
             return fail("远端问答返回非空回答", e);
         }
@@ -289,17 +318,17 @@ public final class RagClientLocalExample {
      * @return 聊天客户端
      */
     private static ChatClient buildChatClient(Options options) {
-        if (!options.remote) {
+        if (!options.remote()) {
             return ChatClient.create(ChatClientSetting.builder().provider("memory").build());
         }
-        if (options.key == null || options.key.isBlank()) {
+        if (options.key() == null || options.key().isBlank()) {
             throw new IllegalArgumentException("--remote 需要指定 --key");
         }
         ChatClientSetting setting = ChatClientSetting.builder()
-                .provider(options.provider)
-                .appKey(options.key)
-                .baseUrl(options.baseUrl)
-                .model(options.model)
+                .provider(options.provider())
+                .appKey(options.key())
+                .baseUrl(options.baseUrl())
+                .model(options.model())
                 .build();
         return ChatClient.create(setting);
     }
