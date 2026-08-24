@@ -140,6 +140,7 @@ public class HttpServerExampleSpi implements Example {
             passed &= testPostPlainText();
             passed &= testPostJson();
             passed &= testPostFormUrlEncoded();
+            passed &= testMultipartUpload();
             passed &= testPutMethod();
             passed &= testDeleteMethod();
             passed &= testPatchMethod();
@@ -353,6 +354,53 @@ public class HttpServerExampleSpi implements Example {
         }
     }
 
+    /** 表单文件上传(multipart/form-data):字段+文件混合,验证 getFiles/getFormData */
+    private boolean testMultipartUpload() {
+        log.info("  [FUNC-05B] POST /upload multipart 文件上传");
+        Server server = null;
+        try {
+            server = startServer(cfg -> cfg.registerMapping("/upload", (req, resp) -> {
+                java.util.List<com.chua.common.support.network.server.request.FormFile> files =
+                        req.getFiles();
+                StringBuilder sb = new StringBuilder();
+                for (com.chua.common.support.network.server.request.FormFile f : files) {
+                    sb.append(f.getFileName()).append(':')
+                      .append(new String(f.getData(), StandardCharsets.UTF_8)).append(';');
+                }
+                String note = req.getFormData().get("note");
+                resp.setResult("files=" + files.size() + "|" + sb + "|note=" + note);
+            }));
+            String boundary = "----aioBoundary123";
+            String body = "--" + boundary + "\r\n"
+                    + "Content-Disposition: form-data; name=\"note\"\r\n\r\n"
+                    + "hello-note\r\n"
+                    + "--" + boundary + "\r\n"
+                    + "Content-Disposition: form-data; name=\"file\"; filename=\"a.txt\"\r\n"
+                    + "Content-Type: text/plain\r\n\r\n"
+                    + "UPLOAD-CONTENT-123\r\n"
+                    + "--" + boundary + "--\r\n";
+            HttpClient noRedirect = client();
+            HttpResponse<String> resp = noRedirect.send(
+                    HttpRequest.newBuilder(uri(server, "/upload"))
+                            .timeout(Duration.ofSeconds(10))
+                            .header("Content-Type", "multipart/form-data; boundary=" + boundary)
+                            .POST(HttpRequest.BodyPublishers.ofString(body, StandardCharsets.UTF_8))
+                            .build(),
+                    HttpResponse.BodyHandlers.ofString());
+            assertEquals(200, resp.statusCode(), "上传状态码");
+            String b = resp.body();
+            assertTrue(b.contains("files=1"), "应解析到1个文件: " + b);
+            assertTrue(b.contains("a.txt:UPLOAD-CONTENT-123"), "文件名+内容应正确: " + b);
+            assertTrue(b.contains("note=hello-note"), "普通字段应正确: " + b);
+            pass();
+            return true;
+        } catch (Exception e) {
+            fail("multipart 上传异常: " + e.getMessage());
+            return false;
+        } finally {
+            closeQuietly(server);
+        }
+    }
     /** TestPutMethod */
     private boolean testPutMethod() {
         log.info("  [FUNC-06] PUT /update 回显");
