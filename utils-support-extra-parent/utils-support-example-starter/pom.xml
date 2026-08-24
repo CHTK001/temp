@@ -748,6 +748,8 @@
                           <include>**/spi/*.java</include>
                           <include>**/ssh/*.java</include>
                           <include>**/taskdistribution/*.java</include>
+                          <include>**/taskbranch/*.java</include>
+                          <include>**/taskrunner/*.java</include>
                           <include>**/tui/*.java</include>
                           <include>**/utils/*.java</include>
                           <include>**/vector/*.java</include>
