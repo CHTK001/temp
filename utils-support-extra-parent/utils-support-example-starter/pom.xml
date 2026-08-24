@@ -200,6 +200,12 @@
             <artifactId>utils-support-models-onnx-seal-inspection</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- D-FINE-L 目标检测（COCO 80 类，int8 量化嵌入式），供 DFineExample 使用 -->
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-models-onnx-dfine-l-obj2coco</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-deeplearning-llama-starter</artifactId>
@@ -717,6 +723,7 @@
                         <include>**/onnx/ReflectiveClothesExample.java</include>
                         <include>**/onnx/FaceMaskDetectorExample.java</include>
                         <include>**/onnx/SealInspectionExample.java</include>
+                        <include>**/onnx/DFineExample.java</include>
                                               <include>**/arcsoft/*.java</include>
                           <include>**/datalake/integrated/*.java</include>
                           <include>**/datalake/pipeline/*.java</include>
@@ -742,26 +749,13 @@
                           <include>**/utils/*.java</include>
                           <include>**/vector/*.java</include>
 </includes>
-                    <!-- 排除引用了已失效 API 的历史遗留示例，修复后应逐个移出本清单 -->
                     <excludes>
-                        <exclude>**/llama/*.java</exclude>
-                        <exclude>**/flow/FlowTraceExample.java</exclude>
-                        <exclude>**/network/HttpClientExample.java</exclude>
-                        <exclude>**/datasync/DataSyncExample.java</exclude>
-                        <exclude>**/ai/rag/RagChatExample.java</exclude>
-                        <exclude>**/onnx/OcrAngleExample.java</exclude>
-                        <exclude>**/onnx/OcrBatchExample.java</exclude>
-                        <exclude>**/onnx/OcrBigAngleExample.java</exclude>
-                        <exclude>**/onnx/LivenessExample.java</exclude>
-                        <exclude>**/onnx/LaplacianQualitySpiExample.java</exclude>
-                        <exclude>**/onnx/ModelRealVerifyExample.java</exclude>
-                        <exclude>**/onnx/DocLayoutYoloExample.java</exclude>
-                        <exclude>**/onnx/DinoV2Fp16Example.java</exclude>
-                        <exclude>**/onnx/DepthAnythingExample.java</exclude>
-                        <exclude>**/onnx/MiniLMEmbeddingExample.java</exclude>
-                        <exclude>**/onnx/MiniLMRegistryExample.java</exclude>
+                        <exclude>**/com/chua/example/datasearch/UsageParserExample.java</exclude>
                     </excludes>
-                </configuration>
+                    <!-- 排除引用了已失效 API 的历史遗留示例，修复后应逐个移出本清单 -->
+
+                    </configuration>
+
             </plugin>
         </plugins>
     </build>
