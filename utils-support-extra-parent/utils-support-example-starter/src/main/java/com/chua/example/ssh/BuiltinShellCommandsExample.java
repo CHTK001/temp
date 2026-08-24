@@ -1,4 +1,4 @@
-package com.chua.ssh.support.example;
+package com.chua.example.ssh;
 
 import com.chua.ssh.support.annotations.ShellMethod;
 import com.chua.ssh.support.server.SshCommandResponse;
