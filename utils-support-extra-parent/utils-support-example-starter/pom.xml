@@ -645,9 +645,10 @@
                         <include>**/face/*.java</include>
                         <include>**/classification/*.java</include>
                         <include>**/layout/*.java</include>
-                        <include>**/onnx/*Plate*.java</include>
-                        <include>**/onnx/*MultiModel*.java</include>
-                        <include>**/onnx/Gemma3Example.java</include>
+                         <include>**/onnx/*Plate*.java</include>
+                         <include>**/onnx/*MultiModel*.java</include>
+                         <include>**/onnx/AnimeFaceDetectExample.java</include>
+                         <include>**/onnx/Gemma3Example.java</include>
                         <include>**/onnx/YoloWorldBatchDrawExample.java</include>
                         <include>**/onnx/WebpDecodeExample.java</include>
                         <include>**/onnx/ImageColorizeExample.java</include>
