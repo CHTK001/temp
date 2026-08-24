@@ -232,7 +232,14 @@ public class MqttServerExampleSpi implements Example {
             CountDownLatch receivedAll = new CountDownLatch(connections * requestsPerConn);
             server.onSubscribe("bench/topic", (topic, payloadStr) -> receivedAll.countDown());
 
-            pool = new ThreadPoolExecutor(concurrency, concurrency, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(256), new ThreadFactory() { private final AtomicInteger n = new AtomicInteger(1); public Thread newThread(Runnable r) { Thread t = new Thread(r, "mqtt-bench-" + n.getAndIncrement()); t.setDaemon(true); return t; } });
+            pool = new ThreadPoolExecutor(concurrency, concurrency, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(256), new ThreadFactory() {
+                private final AtomicInteger n = new AtomicInteger(1);
+                public Thread newThread(Runnable r) {
+                    Thread t = new Thread(r, "mqtt-bench-" + n.getAndIncrement());
+                    t.setDaemon(true);
+                    return t;
+                }
+            });
             CountDownLatch ready = new CountDownLatch(connections);
             CountDownLatch start = new CountDownLatch(1);
             CountDownLatch done = new CountDownLatch(connections);

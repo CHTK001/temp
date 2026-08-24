@@ -48,7 +48,10 @@ public class PipelineTreeExample implements Example {
                 passed &= testPrintTreeWithHistory();
                 passed &= testFromJson();
             }
-            default -> { log.error("[FAIL] 未知 type: {}", type); passed = false; }
+            default -> {
+                log.error("[FAIL] 未知 type: {}", type);
+                passed = false;
+            }
         }
         return passed;
     }
@@ -62,9 +65,15 @@ public class PipelineTreeExample implements Example {
         log.info("===== testPrintTree =====");
         try {
             Pipeline pipeline = PipelineBuilder.newBuilder("tree-demo")
-                    .task("step1", ctx -> { return null; }).taskEnd()
-                    .task("step2", ctx -> { return "step3"; }).taskEnd()
-                    .task("step3", ctx -> { return null; }).taskEnd()
+                    .task("step1", ctx -> {
+                        return null;
+                    }).taskEnd()
+                    .task("step2", ctx -> {
+                        return "step3";
+                    }).taskEnd()
+                    .task("step3", ctx -> {
+                        return null;
+                    }).taskEnd()
                     .build();
 
             // 打印树结构（不标记已执行节点）
@@ -88,9 +97,15 @@ public class PipelineTreeExample implements Example {
         log.info("===== testPrintTreeWithHistory =====");
         try {
             Pipeline pipeline = PipelineBuilder.newBuilder("tree-history")
-                    .task("step1", ctx -> { return null; }).taskEnd()
-                    .task("step2", ctx -> { return null; }).taskEnd()
-                    .task("step3", ctx -> { return null; }).exit().taskEnd()
+                    .task("step1", ctx -> {
+                        return null;
+                    }).taskEnd()
+                    .task("step2", ctx -> {
+                        return null;
+                    }).taskEnd()
+                    .task("step3", ctx -> {
+                        return null;
+                    }).exit().taskEnd()
                     .build();
 
             PipelineContext<?> ctx = pipeline.execute("input");
@@ -116,8 +131,12 @@ public class PipelineTreeExample implements Example {
         try {
             // 构建一个简单流水线并获取 JSON
             Pipeline original = PipelineBuilder.newBuilder("json-demo")
-                    .task("step1", ctx -> { return null; }).taskEnd()
-                    .task("step2", ctx -> { return null; }).taskEnd()
+                    .task("step1", ctx -> {
+                        return null;
+                    }).taskEnd()
+                    .task("step2", ctx -> {
+                        return null;
+                    }).taskEnd()
                     .build();
 
             // 先执行原流水线验证

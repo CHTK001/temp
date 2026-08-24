@@ -54,7 +54,10 @@ public class PipelineParallelExample implements Example {
                 passed &= testOnComplete();
                 passed &= testMergeCurrentData();
             }
-            default -> { log.error("[FAIL] 未知 type: {}", type); passed = false; }
+            default -> {
+                log.error("[FAIL] 未知 type: {}", type);
+                passed = false;
+            }
         }
         return passed;
     }
@@ -69,16 +72,28 @@ public class PipelineParallelExample implements Example {
         try {
             // 构建并行子流水线
             Pipeline parallelSub = PipelineBuilder.newBuilder("parallelSub")
-                    .task("p1", ctx -> { ctx.setAttribute("p1", "done"); return null; }).taskEnd()
-                    .task("p2", ctx -> { ctx.setAttribute("p2", "done"); return null; }).taskEnd()
+                    .task("p1", ctx -> {
+                        ctx.setAttribute("p1", "done");
+                        return null;
+                    }).taskEnd()
+                    .task("p2", ctx -> {
+                        ctx.setAttribute("p2", "done");
+                        return null;
+                    }).taskEnd()
                     .build();
 
             StringBuilder sb = new StringBuilder();
             Pipeline mainPipeline = PipelineBuilder.newBuilder("main-parallel")
-                    .task("init", ctx -> { sb.append("A"); return null; }).taskEnd()
+                    .task("init", ctx -> {
+                        sb.append("A");
+                        return null;
+                    }).taskEnd()
                     .parallel("parallelStep", parallelSub)
                     .taskEnd()
-                    .task("continue", ctx -> { sb.append("B"); return null; }).taskEnd()
+                    .task("continue", ctx -> {
+                        sb.append("B");
+                        return null;
+                    }).taskEnd()
                     .build();
 
             PipelineContext<?> ctx = mainPipeline.execute("input");
@@ -101,13 +116,24 @@ public class PipelineParallelExample implements Example {
         log.info("===== testAsyncResult =====");
         try {
             Pipeline parallelSub = PipelineBuilder.newBuilder("asyncSub")
-                    .task("a1", ctx -> { ctx.setAttribute("a1", "result-a1"); ((PipelineContext) ctx).setCurrentData("a1-output"); return null; }).taskEnd()
-                    .task("a2", ctx -> { ctx.setAttribute("a2", "result-a2"); ((PipelineContext) ctx).setCurrentData("a2-output"); return null; }).taskEnd()
+                    .task("a1", ctx -> {
+                        ctx.setAttribute("a1", "result-a1");
+                        ((PipelineContext) ctx).setCurrentData("a1-output");
+                        return null;
+                    }).taskEnd()
+                    .task("a2", ctx -> {
+                        ctx.setAttribute("a2", "result-a2");
+                        ((PipelineContext) ctx).setCurrentData("a2-output");
+                        return null;
+                    }).taskEnd()
                     .build();
 
             AtomicReference<AsyncResult> resultRef = new AtomicReference<>();
             Pipeline mainPipeline = PipelineBuilder.newBuilder("main-async")
-                    .task("init", ctx -> { ctx.setAttribute("init", "yes"); return null; }).taskEnd()
+                    .task("init", ctx -> {
+                        ctx.setAttribute("init", "yes");
+                        return null;
+                    }).taskEnd()
                     .parallel("asyncStep", parallelSub)
                     .taskEnd()
                     .task("check", ctx -> {
@@ -144,19 +170,26 @@ public class PipelineParallelExample implements Example {
         log.info("===== testOnComplete =====");
         try {
             Pipeline parallelSub = PipelineBuilder.newBuilder("completeSub")
-                    .task("c1", ctx -> { ((PipelineContext) ctx).setCurrentData("c1-done"); return null; }).taskEnd()
+                    .task("c1", ctx -> {
+                        ((PipelineContext) ctx).setCurrentData("c1-done");
+                        return null;
+                    }).taskEnd()
                     .build();
 
             AtomicReference<String> callbackResult = new AtomicReference<>();
             Pipeline mainPipeline = PipelineBuilder.newBuilder("main-complete")
-                    .task("init", ctx -> { return null; }).taskEnd()
+                    .task("init", ctx -> {
+                        return null;
+                    }).taskEnd()
                     .task("parallelStep", ctx -> null)
                     .parallel(parallelSub)
                     .onComplete((ctx, asyncResult) -> {
                         callbackResult.set("callback-fired:" + asyncResult.isCompleted());
                     })
                     .taskEnd()
-                    .task("after", ctx -> { return null; }).taskEnd()
+                    .task("after", ctx -> {
+                        return null;
+                    }).taskEnd()
                     .build();
 
             PipelineContext<?> ctx = mainPipeline.execute("input");
@@ -187,12 +220,18 @@ public class PipelineParallelExample implements Example {
         log.info("===== testMergeCurrentData =====");
         try {
             Pipeline parallelSub = PipelineBuilder.newBuilder("mergeSub")
-                    .task("m1", ctx -> { ((PipelineContext) ctx).setCurrentData("merged-data"); return null; }).taskEnd()
+                    .task("m1", ctx -> {
+                        ((PipelineContext) ctx).setCurrentData("merged-data");
+                        return null;
+                    }).taskEnd()
                     .build();
 
             // mergeCurrentData=true（默认）
             Pipeline mergePipeline = PipelineBuilder.newBuilder("main-merge")
-                    .task("init", ctx -> { ((PipelineContext) ctx).setCurrentData("init-data"); return null; }).taskEnd()
+                    .task("init", ctx -> {
+                        ((PipelineContext) ctx).setCurrentData("init-data");
+                        return null;
+                    }).taskEnd()
                     .task("parallelStep", ctx -> null)
                     .parallel(parallelSub)
                     .mergeCurrentData(true)
@@ -213,7 +252,10 @@ public class PipelineParallelExample implements Example {
 
             // mergeCurrentData=false
             Pipeline noMergePipeline = PipelineBuilder.newBuilder("main-nomerge")
-                    .task("init", c -> { ((PipelineContext) c).setCurrentData("init-data"); return null; }).taskEnd()
+                    .task("init", c -> {
+                        ((PipelineContext) c).setCurrentData("init-data");
+                        return null;
+                    }).taskEnd()
                     .task("parallelStep", c -> null)
                     .parallel(parallelSub)
                     .mergeCurrentData(false)

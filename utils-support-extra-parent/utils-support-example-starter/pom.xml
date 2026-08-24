@@ -168,6 +168,12 @@
             <artifactId>utils-support-models-onnx-gemma-3-270m</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- 嵌入式老照片上色模型（DeOldify ONNX ~830MB），供 ImageColorizeExample 使用 -->
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-models-onnx-image-colorize</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-deeplearning-llama-starter</artifactId>
@@ -468,6 +474,12 @@
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-datasync-agent-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- DataSearch 用量解析演示 -->
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-datasearch-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
         <!-- OSHI 本机指标采集 -->

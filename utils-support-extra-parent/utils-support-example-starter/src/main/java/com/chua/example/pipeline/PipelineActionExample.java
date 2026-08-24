@@ -50,7 +50,10 @@ public class PipelineActionExample implements Example {
                 passed &= testPrev();
                 passed &= testWait();
             }
-            default -> { log.error("[FAIL] 未知 type: {}", type); passed = false; }
+            default -> {
+                log.error("[FAIL] 未知 type: {}", type);
+                passed = false;
+            }
         }
         return passed;
     }
@@ -67,8 +70,14 @@ public class PipelineActionExample implements Example {
                         ctx.setAction(Action.JUMP);
                         return null;
                     }).taskEnd()
-                    .task("skipped", ctx -> { sb.append("X"); return null; }).taskEnd()
-                    .task("target", ctx -> { sb.append("T"); return null; }).taskEnd()
+                    .task("skipped", ctx -> {
+                        sb.append("X");
+                        return null;
+                    }).taskEnd()
+                    .task("target", ctx -> {
+                        sb.append("T");
+                        return null;
+                    }).taskEnd()
                     .build();
 
             PipelineContext<?> ctx = pipeline.execute((Object) null);
@@ -87,13 +96,19 @@ public class PipelineActionExample implements Example {
         try {
             StringBuilder sb = new StringBuilder();
             Pipeline pipeline = PipelineBuilder.newBuilder("exit-action")
-                    .task("step1", ctx -> { sb.append("A"); return null; }).taskEnd()
+                    .task("step1", ctx -> {
+                        sb.append("A");
+                        return null;
+                    }).taskEnd()
                     .task("step2", ctx -> {
                         sb.append("B");
                         ctx.setAction(Action.EXIT);
                         return null;
                     }).taskEnd()
-                    .task("step3", ctx -> { sb.append("C"); return null; }).taskEnd()
+                    .task("step3", ctx -> {
+                        sb.append("C");
+                        return null;
+                    }).taskEnd()
                     .build();
 
             PipelineContext<?> ctx = pipeline.execute((Object) null);
@@ -140,7 +155,10 @@ public class PipelineActionExample implements Example {
         try {
             StringBuilder sb = new StringBuilder();
             Pipeline pipeline = PipelineBuilder.newBuilder("prev-demo")
-                    .task("step1", ctx -> { sb.append("A"); return null; }).taskEnd()
+                    .task("step1", ctx -> {
+                        sb.append("A");
+                        return null;
+                    }).taskEnd()
                     .task("step2", ctx -> {
                         sb.append("B");
                         int prevCount = ctx.getAttribute("prevCount") != null ? ctx.getAttribute("prevCount") : 0;
@@ -151,7 +169,10 @@ public class PipelineActionExample implements Example {
                         }
                         return null;
                     }).taskEnd()
-                    .task("step3", ctx -> { sb.append("C"); return null; }).taskEnd()
+                    .task("step3", ctx -> {
+                        sb.append("C");
+                        return null;
+                    }).taskEnd()
                     .build();
 
             PipelineContext<?> ctx = pipeline.execute((Object) null);
@@ -172,13 +193,19 @@ public class PipelineActionExample implements Example {
         try {
             StringBuilder sb = new StringBuilder();
             Pipeline pipeline = PipelineBuilder.newBuilder("wait-demo")
-                    .task("before-wait", ctx -> { sb.append("A"); return null; }).taskEnd()
+                    .task("before-wait", ctx -> {
+                        sb.append("A");
+                        return null;
+                    }).taskEnd()
                     .task("wait-step", ctx -> {
                         sb.append("W");
                         ctx.setAction(Action.WAIT);
                         return null;
                     }).taskEnd()
-                    .task("after-wait", ctx -> { sb.append("B"); return null; }).taskEnd()
+                    .task("after-wait", ctx -> {
+                        sb.append("B");
+                        return null;
+                    }).taskEnd()
                     .build();
 
             // 第一次执行，到 WAIT 节点挂起

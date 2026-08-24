@@ -57,7 +57,10 @@ public class PipelineRetryExample implements Example {
                 passed &= testRetryOnException();
                 passed &= testRetryListener();
             }
-            default -> { log.error("[FAIL] 未知 type: {}", type); passed = false; }
+            default -> {
+                log.error("[FAIL] 未知 type: {}", type);
+                passed = false;
+            }
         }
         return passed;
     }

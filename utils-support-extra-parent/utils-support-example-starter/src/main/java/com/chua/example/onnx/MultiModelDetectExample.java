@@ -23,6 +23,7 @@ import java.util.Map;
  * <ul>
  *   <li>{@code --model=id}：仅运行指定模型（缺省运行全部）</li>
  *   <li>{@code --out=dir}：标注图输出根目录</li>
+ *   <li>{@code --threshold=0.5}：置信度阈值（仅对显式设置的模型生效，未设置用各模型默认值）</li>
  * </ul>
  *
  * @author CH
@@ -63,6 +64,7 @@ public final class MultiModelDetectExample {
     public static void main(String[] args) throws Exception {
         String onlyModel = null;
         String outDirBase = DEFAULT_OUTPUT_DIR;
+        Float threshold = null;
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.startsWith("--model=")) {
@@ -73,6 +75,10 @@ public final class MultiModelDetectExample {
                 outDirBase = arg.substring("--out=".length());
             } else if (arg.equals("--out") && i + 1 < args.length) {
                 outDirBase = args[++i];
+            } else if (arg.startsWith("--threshold=")) {
+                threshold = Float.parseFloat(arg.substring("--threshold=".length()));
+            } else if (arg.equals("--threshold") && i + 1 < args.length) {
+                threshold = Float.parseFloat(args[++i]);
             }
         }
 
@@ -90,6 +96,9 @@ public final class MultiModelDetectExample {
             Files.createDirectories(outDir);
             try {
                 ImageDetector detector = ImageDetector.create(modelId);
+                if (threshold != null) {
+                    detector.threshold(threshold);
+                }
                 for (String imgPath : entry.getValue()) {
                     Path p = Path.of(imgPath);
                     if (!Files.isRegularFile(p)) {

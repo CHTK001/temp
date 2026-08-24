@@ -560,7 +560,10 @@ public class HttpServerExampleSpi implements Example {
         Server server = null;
         try {
             server = startServer(cfg -> {
-                cfg.registerMapping("/s201", (req, resp) -> { resp.setStatus(201); resp.setResult("created"); });
+                cfg.registerMapping("/s201", (req, resp) -> {
+                    resp.setStatus(201);
+                    resp.setResult("created");
+                });
                 cfg.registerMapping("/s204", (req, resp) -> resp.setStatus(204));
                 cfg.registerMapping("/s302", (req, resp) -> resp.sendRedirect("/target"));
                 cfg.registerMapping("/s400", (req, resp) -> resp.sendError(400, "Bad Request"));
@@ -810,7 +813,9 @@ public class HttpServerExampleSpi implements Example {
                 /** 校验ServerTrusted */
                 public void checkServerTrusted(X509Certificate[] chain, String authType) {}
                 /** 获取AcceptedIssuers */
-                public X509Certificate[] getAcceptedIssuers() { return new X509Certificate[0]; }
+                public X509Certificate[] getAcceptedIssuers() {
+                    return new X509Certificate[0];
+                }
             }}, new SecureRandom());
             HttpClient client = HttpClient.newBuilder()
                     .sslContext(trustAll)
@@ -844,7 +849,9 @@ public class HttpServerExampleSpi implements Example {
             Server s = ServiceProvider.of(Server.class).getNewExtension(serverType, setting);
             server = s;
             ((ConfigServer) server).registerMapping("/slow", (req, resp) -> {
-                try { Thread.sleep(500); } catch (InterruptedException ignored) {}
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException ignored) {}
                 resp.setResult("done");
             });
             server.start();
@@ -884,20 +891,29 @@ public class HttpServerExampleSpi implements Example {
 
     /** TestWebSocketUpgrade */
     private boolean testWebSocketUpgrade() {
-        log.info("  [FUNC-22] WebSocket 升级（仅 nio 实现支持）");
-        if (!"nio".equals(serverType)) {
+        log.info("  [FUNC-22] WebSocket 升级（nio / aio 实现支持）");
+        if (!"nio".equals(serverType) && !"aio".equals(serverType)) {
             log.info("    跳过：当前类型 {} 不支持 WebSocket 升级", serverType);
             return true;
         }
         Server server = null;
         try {
-            NioHttpServer nio = new NioHttpServer(ServerSetting.defaults());
-            nio.getSetting().setHost("127.0.0.1");
-            nio.getSetting().setPort(0);
-            nio.onSubscribe("chat", (req, resp) -> resp.setResult("echo:" + req.getBodyString()));
-            server = nio;
-            nio.start();
-            int port = nio.getPort();
+            if ("aio".equals(serverType)) {
+                com.chua.common.support.network.server.aio.AioHttpServer aio =
+                        new com.chua.common.support.network.server.aio.AioHttpServer(ServerSetting.defaults());
+                aio.getSetting().setHost("127.0.0.1");
+                aio.getSetting().setPort(0);
+                aio.onSubscribe("chat", (req, resp) -> resp.setResult("echo:" + req.getBodyString()));
+                server = aio;
+            } else {
+                NioHttpServer nio = new NioHttpServer(ServerSetting.defaults());
+                nio.getSetting().setHost("127.0.0.1");
+                nio.getSetting().setPort(0);
+                nio.onSubscribe("chat", (req, resp) -> resp.setResult("echo:" + req.getBodyString()));
+                server = nio;
+            }
+            server.start();
+            int port = server.getPort();
 
             CompletableFuture<String> echoed = new CompletableFuture<>();
             java.net.http.WebSocket ws = HttpClient.newHttpClient()

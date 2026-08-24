@@ -52,7 +52,10 @@ public class PipelineContextExample implements Example {
                 passed &= testNodeLocalData();
                 passed &= testHistory();
             }
-            default -> { log.error("[FAIL] 未知 type: {}", type); passed = false; }
+            default -> {
+                log.error("[FAIL] 未知 type: {}", type);
+                passed = false;
+            }
         }
         return passed;
     }
@@ -208,9 +211,15 @@ public class PipelineContextExample implements Example {
         log.info("===== testHistory =====");
         try {
             Pipeline pipeline = PipelineBuilder.newBuilder("history-demo")
-                    .task("step1", ctx -> { return null; }).taskEnd()
-                    .task("step2", ctx -> { return null; }).taskEnd()
-                    .task("step3", ctx -> { return null; }).taskEnd()
+                    .task("step1", ctx -> {
+                        return null;
+                    }).taskEnd()
+                    .task("step2", ctx -> {
+                        return null;
+                    }).taskEnd()
+                    .task("step3", ctx -> {
+                        return null;
+                    }).taskEnd()
                     .build();
 
             PipelineContext<?> ctx = pipeline.execute((Object) null);

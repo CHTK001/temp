@@ -95,9 +95,18 @@ public class PipelineBasicExample implements Example {
         try {
             StringBuilder sb = new StringBuilder();
             Pipeline pipeline = PipelineBuilder.newBuilder("sequential")
-                    .task("step1", ctx -> { sb.append("A"); return null; }).taskEnd()
-                    .task("step2", ctx -> { sb.append("B"); return null; }).taskEnd()
-                    .task("step3", ctx -> { sb.append("C"); return null; }).taskEnd()
+                    .task("step1", ctx -> {
+                        sb.append("A");
+                        return null;
+                    }).taskEnd()
+                    .task("step2", ctx -> {
+                        sb.append("B");
+                        return null;
+                    }).taskEnd()
+                    .task("step3", ctx -> {
+                        sb.append("C");
+                        return null;
+                    }).taskEnd()
                     .build();
 
             PipelineContext<?> ctx = pipeline.execute("input");
@@ -151,7 +160,10 @@ public class PipelineBasicExample implements Example {
                         return "target";
                     })
                     .taskEnd()
-                    .task("target", ctx -> { sb.append("->target"); return null; }).taskEnd()
+                    .task("target", ctx -> {
+                        sb.append("->target");
+                        return null;
+                    }).taskEnd()
                     .build();
 
             PipelineContext<?> ctx = pipeline.execute((Object) null);
@@ -172,9 +184,18 @@ public class PipelineBasicExample implements Example {
         try {
             StringBuilder sb = new StringBuilder();
             Pipeline pipeline = PipelineBuilder.newBuilder("exit-demo")
-                    .task("step1", ctx -> { sb.append("A"); return null; }).taskEnd()
-                    .task("step2", ctx -> { sb.append("B"); return null; }).exit().taskEnd()
-                    .task("step3", ctx -> { sb.append("C"); return null; }).taskEnd()
+                    .task("step1", ctx -> {
+                        sb.append("A");
+                        return null;
+                    }).taskEnd()
+                    .task("step2", ctx -> {
+                        sb.append("B");
+                        return null;
+                    }).exit().taskEnd()
+                    .task("step3", ctx -> {
+                        sb.append("C");
+                        return null;
+                    }).taskEnd()
                     .build();
 
             PipelineContext<?> ctx = pipeline.execute((Object) null);
@@ -195,9 +216,18 @@ public class PipelineBasicExample implements Example {
         try {
             StringBuilder sb = new StringBuilder();
             Pipeline pipeline = PipelineBuilder.newBuilder("start-demo")
-                    .task("skip-me", ctx -> { sb.append("X"); return null; }).taskEnd()
-                    .task("start-here", ctx -> { sb.append("S"); return null; }).taskEnd()
-                    .task("then-this", ctx -> { sb.append("T"); return null; }).taskEnd()
+                    .task("skip-me", ctx -> {
+                        sb.append("X");
+                        return null;
+                    }).taskEnd()
+                    .task("start-here", ctx -> {
+                        sb.append("S");
+                        return null;
+                    }).taskEnd()
+                    .task("then-this", ctx -> {
+                        sb.append("T");
+                        return null;
+                    }).taskEnd()
                     .start("start-here")
                     .build();
 

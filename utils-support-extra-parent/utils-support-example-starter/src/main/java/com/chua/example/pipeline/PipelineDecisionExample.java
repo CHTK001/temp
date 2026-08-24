@@ -43,7 +43,10 @@ public class PipelineDecisionExample implements Example {
                 passed &= testMultiWayBranch();
                 passed &= testDecisionDefinition();
             }
-            default -> { log.error("[FAIL] 未知 type: {}", type); passed = false; }
+            default -> {
+                log.error("[FAIL] 未知 type: {}", type);
+                passed = false;
+            }
         }
         return passed;
     }
@@ -58,8 +61,14 @@ public class PipelineDecisionExample implements Example {
                         boolean valid = ctx.getCurrentData() != null;
                         return valid ? "process" : "error";
                     }).taskEnd()
-                    .task("process", ctx -> { sb.append("PROCESSED"); return null; }).exit().taskEnd()
-                    .task("error", ctx -> { sb.append("ERROR"); return null; }).exit().taskEnd()
+                    .task("process", ctx -> {
+                        sb.append("PROCESSED");
+                        return null;
+                    }).exit().taskEnd()
+                    .task("error", ctx -> {
+                        sb.append("ERROR");
+                        return null;
+                    }).exit().taskEnd()
                     .build();
 
             // 测试有效数据 → process
@@ -93,9 +102,18 @@ public class PipelineDecisionExample implements Example {
                             default -> "nodeDefault";
                         };
                     }).taskEnd()
-                    .task("nodeA", ctx -> { sb.append("A"); return null; }).exit().taskEnd()
-                    .task("nodeB", ctx -> { sb.append("B"); return null; }).exit().taskEnd()
-                    .task("nodeDefault", ctx -> { sb.append("D"); return null; }).exit().taskEnd()
+                    .task("nodeA", ctx -> {
+                        sb.append("A");
+                        return null;
+                    }).exit().taskEnd()
+                    .task("nodeB", ctx -> {
+                        sb.append("B");
+                        return null;
+                    }).exit().taskEnd()
+                    .task("nodeDefault", ctx -> {
+                        sb.append("D");
+                        return null;
+                    }).exit().taskEnd()
                     .build();
 
             // 测试路由到 A：先设置属性再执行
@@ -135,8 +153,14 @@ public class PipelineDecisionExample implements Example {
                     .branch("pass", "passedNode")
                     .branch("fail", "failedNode")
                     .taskEnd()
-                    .task("passedNode", ctx -> { sb.append("PASS"); return null; }).exit().taskEnd()
-                    .task("failedNode", ctx -> { sb.append("FAIL"); return null; }).exit().taskEnd()
+                    .task("passedNode", ctx -> {
+                        sb.append("PASS");
+                        return null;
+                    }).exit().taskEnd()
+                    .task("failedNode", ctx -> {
+                        sb.append("FAIL");
+                        return null;
+                    }).exit().taskEnd()
                     .build();
 
             // 先设置 score 再执行 → 走 pass 分支
