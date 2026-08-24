@@ -14,6 +14,7 @@ import java.nio.file.Path;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class ModelRealVerifyExample {
     public static void main(String[] args) throws Exception {
         ModelRegistry.discoverAll();
@@ -34,9 +35,15 @@ public final class ModelRealVerifyExample {
             String imgPath = test[1];
             log.info("=== " + modelId + " ===");
             var entry = ModelRegistry.get(modelId);
-            if (entry == null) { log.info("  未注册"); continue; }
+            if (entry == null) {
+                log.info("  未注册");
+                continue;
+            }
             var path = ModelRegistry.resolveModelPath(modelId);
-            if (path == null || !path.toFile().exists()) { log.info("  模型不存在"); continue; }
+            if (path == null || !path.toFile().exists()) {
+                log.info("  模型不存在");
+                continue;
+            }
             try {
                 byte[] img = Files.readAllBytes(Path.of(imgPath));
                 var t = (ITranslator<Object, Object>) ModelRegistry.createTranslator(modelId, null);

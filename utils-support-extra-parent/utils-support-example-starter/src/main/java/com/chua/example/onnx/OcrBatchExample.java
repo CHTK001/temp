@@ -23,9 +23,11 @@ import java.util.Set;
  * <pre>{@code
  *   OcrBatchTest G:\images
  * }</pre>
- *@author CH`n *
+ *@author CH
+ *
  * @since 4.0.0.42
  */
+@Slf4j
 public final class OcrBatchExample {
 
     /** OCR 名称集合 */
@@ -42,7 +44,7 @@ public final class OcrBatchExample {
     );
 
     /** 创建 OcrBatchTest 实例 */
-    private OcrBatchTest() {
+    private OcrBatchExample() {
     }
 
     /** Main */

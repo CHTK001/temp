@@ -15,6 +15,8 @@ import com.chua.tui.support.widgets.MemoryWidget;
 import lombok.extern.slf4j.Slf4j;
 import com.chua.example.spi.Example;
 
+import java.util.Map;
+
 /**
  * TUI 仪表盘综合示例 — 覆盖布局、组件、构建器、Mordant 渲染、处理器绑定、colspan 区域布局。
  *
@@ -64,7 +66,7 @@ import com.chua.example.spi.Example;
  * @since 4.0.0.42
  */
 @Slf4j
-public $1class TuiDashboardExample implements Example {
+public class TuiDashboardExample implements Example {
 
     /**
      * 程序退出码：成功
@@ -90,6 +92,60 @@ public $1class TuiDashboardExample implements Example {
      * 仪表盘启停测试观察时长（毫秒）
      */
     private static final long DASHBOARD_RUN_MILLIS = 500L;
+
+    // ==================== SPI 调度入口 ====================
+
+    /**
+     * SPI 调度入口：运行全部能力点自检。
+     *
+     * @param args 参数映射（未使用）
+     * @return 全部用例是否通过
+     */
+    @Override
+    public boolean run(Map<String, String> args) {
+        TuiDashboardExample example = new TuiDashboardExample();
+        boolean passed = true;
+        passed &= example.testLayout();
+        passed &= example.testWidget();
+        passed &= example.testBuilder();
+        passed &= example.testCapacity();
+        passed &= example.testWidgetRender();
+        passed &= example.testMordantHelper();
+        passed &= example.testHandlerBinding();
+        passed &= example.testDashboard();
+        passed &= example.testColspan();
+        return passed;
+    }
+
+    /**
+     * 返回示例名称。
+     *
+     * @return 名称字符串
+     */
+    @Override
+    public String name() {
+        return "tui-dashboard";
+    }
+
+    /**
+     * 返回所属模块。
+     *
+     * @return 模块名
+     */
+    @Override
+    public String module() {
+        return "tui";
+    }
+
+    /**
+     * 返回示例描述。
+     *
+     * @return 描述字符串
+     */
+    @Override
+    public String description() {
+        return "TUI 仪表盘自检（布局/Widget/Builder/容量/渲染/Mordant/IPC 绑定/启停/colspan）";
+    }
 
     // ==================== main ====================
 

@@ -31,8 +31,10 @@ public class Rmbg14Example {
             ModelRegistry.discoverAll();
             BufferedImage testImg = new BufferedImage(TEST_SIZE, TEST_SIZE, BufferedImage.TYPE_INT_RGB);
             Graphics2D g = testImg.createGraphics();
-            g.setColor(Color.WHITE); g.fillRect(0, 0, TEST_SIZE, TEST_SIZE);
-            g.setColor(new Color(200, 40, 40)); g.fillRect(60, 60, 136, 136);
+            g.setColor(Color.WHITE);
+            g.fillRect(0, 0, TEST_SIZE, TEST_SIZE);
+            g.setColor(new Color(200, 40, 40));
+            g.fillRect(60, 60, 136, 136);
             g.dispose();
             ImageIO.write(testImg, "png", new File(System.getProperty("java.io.tmpdir"), "rmbg14_test.png"));
 

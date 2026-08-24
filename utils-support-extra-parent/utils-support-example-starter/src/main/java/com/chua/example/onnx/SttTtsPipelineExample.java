@@ -25,10 +25,12 @@ import java.nio.file.Path;
  *   // 仅 TTS（使用上一步输出的文本）
  *   SttTtsPipelineExample null vits-icefall-zh null SSB0005 "你好世界"
  * }</pre>
- *@author CH`n *
+ *@author CH
+ *
  * @since 4.0.0.42
  */
-public final class SttTtsPipelineExample extends ExampleBase {
+@Slf4j
+public final class SttTtsPipelineExample extends BaseExample {
 
     private SttTtsPipelineExample() {
     }

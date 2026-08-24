@@ -24,7 +24,8 @@ import java.util.Arrays;
  * @author CH
  * @since 4.0.0.42
  */
-public final class ZeroShotClassificationExample extends ExampleBase {
+@Slf4j
+public final class ZeroShotClassificationExample extends BaseExample {
 
     /** 零样本分类模型列表 */
     private static final String[] MODELS = {
@@ -37,7 +38,7 @@ public final class ZeroShotClassificationExample extends ExampleBase {
     private static final String DEFAULT_IMAGE = "D:/images/test.jpg";
 
     /** 创建 ZeroShotClassificationTest 实例 */
-    private ZeroShotClassificationTest() {
+    private ZeroShotClassificationExample() {
     }
 
     /** Main */

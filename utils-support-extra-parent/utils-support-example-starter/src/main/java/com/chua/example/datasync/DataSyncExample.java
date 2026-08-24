@@ -40,7 +40,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 4.0.0.42
  */
 @Slf4j
-public $1class DataSyncExample implements Example {
+public class DataSyncExample implements Example {
 
     /**
      * 退出码：成功
@@ -104,6 +104,27 @@ public $1class DataSyncExample implements Example {
                 log.error("[DataSyncExample] 未知 type: {}", type);
                 return false;
         }
+    }
+
+    /**
+     * Example 接口实现：根据 args 中的 type 参数执行对应测试。
+     *
+     * @param args 参数映射，支持 type=basic / repeat / direct / all
+     * @return 全部通过返回 {@code true}
+     */
+    @Override
+    public String name() { return "datasync"; }
+
+    @Override
+    public String module() { return "datatask"; }
+
+    @Override
+    public String description() { return "DataSync 数据同步引擎能力自检"; }
+
+    @Override
+    public boolean run(java.util.Map<String, String> args) {
+        String type = args.getOrDefault("type", DEFAULT_TYPE);
+        return runTest(type);
     }
 
     /**

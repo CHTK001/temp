@@ -23,7 +23,7 @@ import java.util.stream.Stream;
  * @since 4.0.0.42
  */
 @Slf4j
-public final class FaceMaskDetectorExample extends ExampleBase {
+public final class FaceMaskDetectorExample extends BaseExample {
 
     private FaceMaskDetectorExample() {
     }

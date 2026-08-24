@@ -11,6 +11,8 @@ import java.math.BigDecimal;
  *
  * @author CH
  * @since 4.0.0
+  *
+ * <p>SPI 实现载体：SPI 服务实现载体，由 ExampleRunner 按类型加载，无独立 main 入口。</p>
  */
 @Extension("openai")
 public class ExampleModelPricingProviderExample implements ModelPricingProvider {
@@ -29,5 +31,17 @@ public class ExampleModelPricingProviderExample implements ModelPricingProvider 
                     .build();
         }
         return null;
+    }
+    /**
+     * 自检入口：验证定价查询逻辑。
+     *
+     * @param args 无参数
+     */
+    public static void main(String[] args) {
+        ExampleModelPricingProviderExample provider = new ExampleModelPricingProviderExample();
+        ModelDefinition hit = provider.getModelPricing("openai", "gpt-4");
+        boolean ok = hit != null && provider.getModelPricing("other", "x") == null;
+        System.out.println("pricing hit=" + (hit != null) + " -> " + (ok ? "PASS" : "FAIL"));
+        System.exit(ok ? 0 : 1);
     }
 }

@@ -1,4 +1,4 @@
-package com.chua.ssh.support.example;
+package com.chua.example.ssh;
 
 import com.chua.ssh.support.annotations.ShellMethod;
 import com.chua.ssh.support.server.SshCommandResponse;
@@ -26,6 +26,8 @@ import java.util.stream.Collectors;
  * @since 4.0.0.42
  * @see com.chua.ssh.support.annotations.ShellMethod
  * @see com.chua.ssh.support.server.SshServer
+  *
+ * <p>SPI 实现载体：@ShellMethod 命令束，由 SshServer 自动扫描注册，无独立 main 入口。</p>
  */
 @ShellMethod("/builtin")
 public class BuiltinShellCommandsExample {
@@ -467,5 +469,17 @@ public class BuiltinShellCommandsExample {
     @Nonnull
     public String realpath(@Nonnull String[] args) {
         return pwd(args);
+    }
+    /**
+     * 自检入口：验证 pwd 命令返回非空路径。
+     *
+     * @param args 无参数
+     */
+    public static void main(String[] args) {
+        BuiltinShellCommandsExample cmds = new BuiltinShellCommandsExample();
+        String pwd = cmds.pwd(new String[0]);
+        boolean ok = pwd != null && !pwd.isEmpty();
+        System.out.println("pwd=" + pwd + " -> " + (ok ? "PASS" : "FAIL"));
+        System.exit(ok ? 0 : 1);
     }
 }

@@ -24,7 +24,8 @@ import java.util.Arrays;
  * @author CH
  * @since 4.0.0.42
  */
-public final class ZeroShotSegmentationExample extends ExampleBase {
+@Slf4j
+public final class ZeroShotSegmentationExample extends BaseExample {
 
     /** 零样本分割模型列表 */
     private static final String[] MODELS = {
@@ -35,7 +36,7 @@ public final class ZeroShotSegmentationExample extends ExampleBase {
     private static final String DEFAULT_IMAGE = "D:/images/test.jpg";
 
     /** 创建 ZeroShotSegmentationTest 实例 */
-    private ZeroShotSegmentationTest() {
+    private ZeroShotSegmentationExample() {
     }
 
     /** Main */

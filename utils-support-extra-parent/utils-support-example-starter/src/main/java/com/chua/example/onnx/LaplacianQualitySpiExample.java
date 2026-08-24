@@ -9,13 +9,15 @@ import java.nio.file.Path;
 
 /**
  * 验证 LaplacianImageQualityAssessor 可通过 SPI(provider=laplacian) 创建并评估。
- *@author CH`n *
+ *@author CH
+ *
  * @since 4.0.0.42
  */
+@Slf4j
 public final class LaplacianQualitySpiExample {
 
     /** 创建 LaplacianQualitySpiDiag 实例 */
-    private LaplacianQualitySpiDiag() {
+    private LaplacianQualitySpiExample() {
     }
 
     /** Main */

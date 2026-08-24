@@ -5,12 +5,14 @@ import com.chua.common.support.taskdistribution.manager.TaskManager;
 import com.chua.common.support.taskdistribution.task.Task;
 import com.chua.common.support.taskdistribution.task.TaskPriority;
 import com.chua.common.support.taskdistribution.task.TaskResult;
+import com.chua.common.support.taskdistribution.task.TaskStatus;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -72,6 +74,15 @@ public class ReactiveTaskManagerExample {
             allPassed &= testWatchStream();
             allPassed &= testCancelLinkage();
             allPassed &= testBatchOrchestration();
+            allPassed &= testSubmitFailureResult();
+            allPassed &= testSubmitCachedResult();
+            allPassed &= testSubmitNullTaskIdRejected();
+            allPassed &= testGetStatusQuery();
+            allPassed &= testCancelUnknownTask();
+            allPassed &= testPauseResumeLifecycle();
+            allPassed &= testFluentBuildFields();
+            allPassed &= testFluentSubmitOnRegisteredTask();
+            allPassed &= testCloseErrorPropagation();
             log.info("===== 响应式任务门面示例结束 =====");
             return allPassed;
         } catch (Exception e) {
@@ -253,6 +264,320 @@ public class ReactiveTaskManagerExample {
         }
     }
 
+    // ==================== 场景 5：失败结果发射 ====================
+
+    /**
+     * 场景 5：工作端回传失败结果时，submit Mono 以 FAILED 结果值完成（而非异常）。
+     *
+     * <p>对应测试 {@code submitCompletesOnFailure}。</p>
+     *
+     * @return 通过返回 true
+     */
+    public boolean testSubmitFailureResult() {
+        String name = "submit 失败结果发射";
+        TaskManager manager = new TaskManager(false);
+        ReactiveTaskManager reactive = new ReactiveTaskManager(manager);
+        try {
+            String taskId = UUID.randomUUID().toString();
+            Thread worker = simulateFailureAsync(manager, taskId, "something went wrong");
+            worker.start();
+            Task<String> task = Task.<String>builder()
+                    .taskId(taskId)
+                    .taskType("test")
+                    .payload("fail-me")
+                    .build();
+            TaskResult<String> result = reactive.submit(task)
+                    .block(Duration.ofSeconds(TEST_TIMEOUT_SECONDS));
+            worker.join(2000);
+            boolean passed = result != null && !result.isSuccess();
+            report(name, passed);
+            return passed;
+        } catch (Exception e) {
+            return failQuietly(name, e);
+        } finally {
+            reactive.close();
+        }
+    }
+
+    // ==================== 场景 6：已完成任务秒回缓存 ====================
+
+    /**
+     * 场景 6：提交前结果已存在时，submit 直接发射既有结果。
+     *
+     * <p>对应测试 {@code submitReturnsExistingResultWhenAlreadyCompleted}。</p>
+     *
+     * @return 通过返回 true
+     */
+    public boolean testSubmitCachedResult() {
+        String name = "submit 已完成秒回缓存";
+        TaskManager manager = new TaskManager(false);
+        ReactiveTaskManager reactive = new ReactiveTaskManager(manager);
+        try {
+            String taskId = UUID.randomUUID().toString();
+            manager.addTask(
+                    Task.<String>builder().taskId(taskId).taskType("test").build(),
+                    null);
+            manager.handleResult(TaskResult.success(taskId, "cached", "w1"));
+            Task<String> task = Task.<String>builder()
+                    .taskId(taskId)
+                    .taskType("test")
+                    .payload("x")
+                    .build();
+            TaskResult<String> result = reactive.submit(task)
+                    .block(Duration.ofSeconds(TEST_TIMEOUT_SECONDS));
+            boolean passed = result != null && "cached".equals(result.getData());
+            report(name, passed);
+            return passed;
+        } catch (Exception e) {
+            return failQuietly(name, e);
+        } finally {
+            reactive.close();
+        }
+    }
+
+    // ==================== 场景 7：空 taskId 拒绝 ====================
+
+    /**
+     * 场景 7：提交无 taskId 的任务以 IllegalArgumentException 异常完成。
+     *
+     * <p>对应测试 {@code submitNullTaskIdErrors}。</p>
+     *
+     * @return 通过返回 true
+     */
+    public boolean testSubmitNullTaskIdRejected() {
+        String name = "submit 空 taskId 快速失败";
+        TaskManager manager = new TaskManager(false);
+        ReactiveTaskManager reactive = new ReactiveTaskManager(manager);
+        try {
+            Task<String> task = Task.<String>builder()
+                    .taskType("test")
+                    .payload("no-id")
+                    .build();
+            try {
+                reactive.submit(task).block(Duration.ofSeconds(TEST_TIMEOUT_SECONDS));
+                report(name, false);
+                return false;
+            } catch (IllegalArgumentException expected) {
+                report(name, true);
+                return true;
+            } catch (Exception unexpected) {
+                log.error("[FAIL] {}: 期望 IllegalArgumentException，实际 {}",
+                        name, unexpected.getClass().getSimpleName());
+                return false;
+            }
+        } finally {
+            reactive.close();
+        }
+    }
+
+    // ==================== 场景 8：状态查询 ====================
+
+    /**
+     * 场景 8：getStatus 对已注册任务返回当前状态，对未知任务以空完成。
+     *
+     * <p>对应测试 {@code getStatusReturnsCurrentStatus} 与
+     * {@code getStatusReturnsEmptyForUnknownTask}。</p>
+     *
+     * @return 通过返回 true
+     */
+    public boolean testGetStatusQuery() {
+        String name = "getStatus 状态查询";
+        TaskManager manager = new TaskManager(false);
+        ReactiveTaskManager reactive = new ReactiveTaskManager(manager);
+        try {
+            String taskId = UUID.randomUUID().toString();
+            manager.addTask(
+                    Task.<String>builder().taskId(taskId).taskType("t").build(),
+                    null);
+            manager.updateStatus(taskId, TaskStatus.RUNNING);
+            TaskStatus status = reactive.getStatus(taskId)
+                    .block(Duration.ofSeconds(TEST_TIMEOUT_SECONDS));
+            TaskStatus unknown = reactive.getStatus("nonexistent")
+                    .block(Duration.ofSeconds(TEST_TIMEOUT_SECONDS));
+            boolean passed = status == TaskStatus.RUNNING && unknown == null;
+            report(name, passed);
+            return passed;
+        } catch (Exception e) {
+            return failQuietly(name, e);
+        } finally {
+            reactive.close();
+        }
+    }
+
+    // ==================== 场景 9：取消未知任务 ====================
+
+    /**
+     * 场景 9：取消不存在的任务返回 false 而非报错。
+     *
+     * <p>对应测试 {@code cancelReturnsFalseForUnknownTask}。</p>
+     *
+     * @return 通过返回 true
+     */
+    public boolean testCancelUnknownTask() {
+        String name = "cancel 未知任务返回 false";
+        TaskManager manager = new TaskManager(false);
+        ReactiveTaskManager reactive = new ReactiveTaskManager(manager);
+        try {
+            Boolean cancelled = reactive.cancel("unknown-task")
+                    .block(Duration.ofSeconds(TEST_TIMEOUT_SECONDS));
+            boolean passed = Boolean.FALSE.equals(cancelled);
+            report(name, passed);
+            return passed;
+        } catch (Exception e) {
+            return failQuietly(name, e);
+        } finally {
+            reactive.close();
+        }
+    }
+
+    // ==================== 场景 10：暂停/恢复生命周期 ====================
+
+    /**
+     * 场景 10：pause 置 PAUSED、resume 回 PENDING；未知任务 pause 返回 false。
+     *
+     * <p>对应测试 {@code pauseAndResume} 与 {@code pauseUnknownTaskReturnsFalse}。</p>
+     *
+     * @return 通过返回 true
+     */
+    public boolean testPauseResumeLifecycle() {
+        String name = "pause/resume 生命周期";
+        TaskManager manager = new TaskManager(false);
+        ReactiveTaskManager reactive = new ReactiveTaskManager(manager);
+        try {
+            String taskId = UUID.randomUUID().toString();
+            manager.addTask(
+                    Task.<String>builder().taskId(taskId).taskType("test").build(),
+                    null);
+            Boolean paused = reactive.pause(taskId)
+                    .block(Duration.ofSeconds(TEST_TIMEOUT_SECONDS));
+            TaskStatus afterPause = manager.getStatus(taskId);
+            Boolean resumed = reactive.resume(taskId)
+                    .block(Duration.ofSeconds(TEST_TIMEOUT_SECONDS));
+            TaskStatus afterResume = manager.getStatus(taskId);
+            Boolean unknownPaused = reactive.pause("no-such-task")
+                    .block(Duration.ofSeconds(TEST_TIMEOUT_SECONDS));
+            boolean passed = Boolean.TRUE.equals(paused) && afterPause == TaskStatus.PAUSED;
+            passed &= Boolean.TRUE.equals(resumed) && afterResume == TaskStatus.PENDING;
+            passed &= Boolean.FALSE.equals(unknownPaused);
+            report(name, passed);
+            return passed;
+        } catch (Exception e) {
+            return failQuietly(name, e);
+        } finally {
+            reactive.close();
+        }
+    }
+
+    // ==================== 场景 11：链式构建字段映射 ====================
+
+    /**
+     * 场景 11：fluent 链式构建产出的 Task 各字段与设置一一对应。
+     *
+     * <p>对应测试 {@code fluentBuildProducesConfiguredTask}。</p>
+     *
+     * @return 通过返回 true
+     */
+    public boolean testFluentBuildFields() {
+        String name = "fluent build 字段映射";
+        TaskManager manager = new TaskManager(false);
+        ReactiveTaskManager reactive = new ReactiveTaskManager(manager);
+        try {
+            Task<String> task = reactive.task("email-send", "a@b.c")
+                    .traceId("trace-xyz")
+                    .tag("scene", "test")
+                    .shard(4, "region-a")
+                    .timeout(Duration.ofSeconds(15))
+                    .maxRetries(5)
+                    .priority(TaskPriority.HIGH)
+                    .build();
+            boolean passed = "email-send".equals(task.getTaskType());
+            passed &= "a@b.c".equals(task.getPayload());
+            passed &= "trace-xyz".equals(task.getTraceId());
+            passed &= "test".equals(task.getTags().get("scene"));
+            passed &= task.getShardCount() == 4;
+            passed &= "region-a".equals(task.getShardKey());
+            passed &= task.getTimeoutMs() == 15000L;
+            passed &= task.getMaxRetries() == 5;
+            passed &= task.getTaskId() != null;
+            report(name, passed);
+            return passed;
+        } catch (Exception e) {
+            return failQuietly(name, e);
+        } finally {
+            reactive.close();
+        }
+    }
+
+    // ==================== 场景 12：注册后链式提交 ====================
+
+    /**
+     * 场景 12：先注册 fluent 构建的任务，再 submit 并等待工作端结果。
+     *
+     * <p>对应测试 {@code fluentSubmitOnRegisteredTaskCompletes}。</p>
+     *
+     * @return 通过返回 true
+     */
+    public boolean testFluentSubmitOnRegisteredTask() {
+        String name = "fluent 注册后提交";
+        TaskManager manager = new TaskManager(false);
+        ReactiveTaskManager reactive = new ReactiveTaskManager(manager);
+        try {
+            Task<String> task = reactive.task("job-y", "data-1")
+                    .traceId("tr-1")
+                    .build();
+            manager.addTask(task, null);
+            Thread worker = simulateWorkerAsync(manager, task.getTaskId(), "y-result");
+            worker.start();
+            TaskResult<String> result = reactive.submit(task)
+                    .block(Duration.ofSeconds(TEST_TIMEOUT_SECONDS));
+            worker.join(2000);
+            boolean passed = result != null && result.isSuccess()
+                    && "y-result".equals(result.getData());
+            report(name, passed);
+            return passed;
+        } catch (Exception e) {
+            return failQuietly(name, e);
+        } finally {
+            reactive.close();
+        }
+    }
+
+    // ==================== 场景 13：关闭错误传播 ====================
+
+    /**
+     * 场景 13：close 后仍在等待的 submit Mono 以异常完成。
+     *
+     * <p>对应测试 {@code closeEmitsErrorToPendingSinks}。</p>
+     *
+     * @return 通过返回 true
+     */
+    public boolean testCloseErrorPropagation() {
+        String name = "close 错误传播至等待 Mono";
+        TaskManager manager = new TaskManager(false);
+        ReactiveTaskManager reactive = new ReactiveTaskManager(manager);
+        try {
+            String taskId = UUID.randomUUID().toString();
+            Task<String> task = Task.<String>builder()
+                    .taskId(taskId)
+                    .taskType("test")
+                    .payload("x")
+                    .build();
+            Mono<TaskResult<String>> pending = reactive.submit(task);
+            reactive.close();
+            String hint = pending
+                    .map(r -> "unexpected-value")
+                    .onErrorResume(e -> Mono.just("closed-as-expected"))
+                    .block(Duration.ofSeconds(TEST_TIMEOUT_SECONDS));
+            boolean passed = "closed-as-expected".equals(hint);
+            report(name, passed);
+            return passed;
+        } catch (Exception e) {
+            return failQuietly(name, e);
+        } finally {
+            reactive.close();
+        }
+    }
+
     // ==================== 工作端模拟辅助 ====================
 
     /**
@@ -289,6 +614,53 @@ public class ReactiveTaskManagerExample {
         });
         worker.setDaemon(true);
         return worker;
+    }
+
+    /**
+     * 启动后台线程模拟失败的工作端：延迟后回传失败结果。
+     *
+     * @param manager 任务管理器
+     * @param taskId  目标任务 ID
+     * @param message 失败消息
+     * @return 已启动的工作线程
+     */
+    private Thread simulateFailureAsync(TaskManager manager, String taskId, String message) {
+        Thread worker = new Thread(() -> {
+            try {
+                Thread.sleep(WORKER_DELAY_MS);
+                manager.handleResult(TaskResult.failure(taskId, message, "worker-demo"));
+            } catch (InterruptedException ignored) {
+                Thread.currentThread().interrupt();
+            }
+        });
+        worker.setDaemon(true);
+        return worker;
+    }
+
+    /**
+     * 输出单场景 PASS/FAIL 结论。
+     *
+     * @param name 场景名
+     * @param ok   是否通过
+     */
+    private static void report(String name, boolean ok) {
+        if (ok) {
+            log.info("[PASS] {}", name);
+        } else {
+            log.info("[FAIL] {}", name);
+        }
+    }
+
+    /**
+     * 输出单场景异常失败结论。
+     *
+     * @param name 场景名
+     * @param e    异常
+     * @return 恒为 false
+     */
+    private static boolean failQuietly(String name, Exception e) {
+        log.error("[FAIL] {}: {}", name, e.getMessage());
+        return false;
     }
 
     /**

@@ -14,10 +14,12 @@ import com.chua.common.support.ai.embedding.EmbeddingClient;
  *   EmbeddingClientExample onnx bge-small-zh "你好世界"
  *   EmbeddingClientExample minilm minilm "hello world"
  * }</pre>
- *@author CH`n *
+ *@author CH
+ *
  * @since 4.0.0.42
  */
-public final class EmbeddingClientExample extends ExampleBase {
+@Slf4j
+public final class EmbeddingClientExample extends BaseExample {
 
     /** 创建 EmbeddingClientExample 实例 */
     private EmbeddingClientExample() {

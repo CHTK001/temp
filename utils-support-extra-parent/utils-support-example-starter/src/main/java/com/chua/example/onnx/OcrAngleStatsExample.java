@@ -11,13 +11,14 @@ import java.util.List;
 
 /**
  * 统计各图片检测框角度分布：确认 deskew 在哪些图会被触发。
- *@author CH`n *
+ *@author CH
+ *
  * @since 4.0.0.42
  */
 public final class OcrAngleStatsExample {
 
     /** 创建 OcrAngleStatsDiag 实例 */
-    private OcrAngleStatsDiag() {
+    private OcrAngleStatsExample() {
     }
 
     /** Main */

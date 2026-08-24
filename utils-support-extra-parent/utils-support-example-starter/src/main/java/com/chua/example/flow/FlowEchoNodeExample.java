@@ -21,6 +21,8 @@ import com.chua.common.support.task.flow.FlowNodeRegistry;
  *
  * @author CH
  * @since 4.0.0.42
+  *
+ * <p>SPI 实现载体：FlowNode 节点实现载体，由 FlowExample 编排运行，无独立 main 入口。</p>
  */
 public class FlowEchoNodeExample implements FlowNode {
 
@@ -50,5 +52,16 @@ public class FlowEchoNodeExample implements FlowNode {
     public void execute(FlowContext context) {
         FlowProps props = context.currentNodeProps();
         context.setData(props.getString("message", DEFAULT_MESSAGE));
+    }
+    /**
+     * 自检入口：验证节点类型标识。
+     *
+     * @param args 无参数
+     */
+    public static void main(String[] args) {
+        FlowEchoNodeExample node = new FlowEchoNodeExample();
+        boolean ok = "echo".equals(node.type());
+        System.out.println("node type=" + node.type() + " -> " + (ok ? "PASS" : "FAIL"));
+        System.exit(ok ? 0 : 1);
     }
 }

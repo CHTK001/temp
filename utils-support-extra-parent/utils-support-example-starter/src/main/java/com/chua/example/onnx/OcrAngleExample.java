@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import com.chua.common.support.reflection.ReflectUtils;
 import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.image.ImageDetector;
 import com.chua.deeplearning.support.model.DetectionInfo;
@@ -14,13 +15,15 @@ import java.util.List;
 
 /**
  * OCR 旋转诊断：验证车票各旋转角度的方向分类 → 整图矫正 → 检测框角度 → 识别。
- *@author CH`n *
+ *@author CH
+ *
  * @since 4.0.0.42
  */
+@Slf4j
 public final class OcrAngleExample {
 
     /** 创建 OcrAngleDiag 实例 */
-    private OcrAngleDiag() {
+    private OcrAngleExample() {
     }
 
     /** Main */
@@ -84,9 +87,9 @@ public final class OcrAngleExample {
     /** DescribeDirection */
     private static String describeDirection(Object dr) {
         try {
-            java.lang.reflect.Method gm = dr.getClass().getMethod("getName");
-            java.lang.reflect.Method pm = dr.getClass().getMethod("getProbability");
-            return gm.invoke(dr) + " prob=" + String.format("%.3f", pm.invoke(dr));
+            Object name = ReflectUtils.invoke(dr, "getName", String.class);
+            Object prob = ReflectUtils.invoke(dr, "getProbability", double.class);
+            return name + " prob=" + String.format("%.3f", prob);
         } catch (Exception e) {
             return String.valueOf(dr);
         }

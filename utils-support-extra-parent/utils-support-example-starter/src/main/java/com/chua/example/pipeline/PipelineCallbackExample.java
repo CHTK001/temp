@@ -62,7 +62,10 @@ public class PipelineCallbackExample implements Example {
                 passed &= testLogging();
                 passed &= testOnDraw();
             }
-            default -> { log.error("[FAIL] 未知 type: {}", type); passed = false; }
+            default -> {
+                log.error("[FAIL] 未知 type: {}", type);
+                passed = false;
+            }
         }
         return passed;
     }
@@ -78,8 +81,12 @@ public class PipelineCallbackExample implements Example {
             List<String> events = new ArrayList<>();
             Pipeline pipeline = PipelineBuilder.newBuilder("onstart-demo")
                     .onStart(ctx -> events.add("started:" + ctx.getPipelineId()))
-                    .task("step1", ctx -> { return null; }).taskEnd()
-                    .task("step2", ctx -> { return null; }).taskEnd()
+                    .task("step1", ctx -> {
+                        return null;
+                    }).taskEnd()
+                    .task("step2", ctx -> {
+                        return null;
+                    }).taskEnd()
                     .build();
 
             pipeline.execute("input");
@@ -103,8 +110,12 @@ public class PipelineCallbackExample implements Example {
             List<String> events = new ArrayList<>();
             Pipeline pipeline = PipelineBuilder.newBuilder("oncomplete-demo")
                     .onComplete(ctx -> events.add("completed:" + ctx.getHistory().size()))
-                    .task("step1", ctx -> { return null; }).taskEnd()
-                    .task("step2", ctx -> { return null; }).taskEnd()
+                    .task("step1", ctx -> {
+                        return null;
+                    }).taskEnd()
+                    .task("step2", ctx -> {
+                        return null;
+                    }).taskEnd()
                     .build();
 
             pipeline.execute("input");
@@ -128,9 +139,15 @@ public class PipelineCallbackExample implements Example {
             List<String> events = new ArrayList<>();
             Pipeline pipeline = PipelineBuilder.newBuilder("onnextstep-demo")
                     .onNextStep((ctx, nextId) -> events.add(ctx.getCurrentNodeId() + "->" + nextId))
-                    .task("step1", ctx -> { return null; }).taskEnd()
-                    .task("step2", ctx -> { return null; }).taskEnd()
-                    .task("step3", ctx -> { return null; }).taskEnd()
+                    .task("step1", ctx -> {
+                        return null;
+                    }).taskEnd()
+                    .task("step2", ctx -> {
+                        return null;
+                    }).taskEnd()
+                    .task("step3", ctx -> {
+                        return null;
+                    }).taskEnd()
                     .build();
 
             pipeline.execute("input");
@@ -175,8 +192,12 @@ public class PipelineCallbackExample implements Example {
                             return null;
                         }
                     })
-                    .task("step1", ctx -> { return null; }).taskEnd()
-                    .task("step2", ctx -> { return null; }).taskEnd()
+                    .task("step1", ctx -> {
+                        return null;
+                    }).taskEnd()
+                    .task("step2", ctx -> {
+                        return null;
+                    }).taskEnd()
                     .build();
 
             pipeline.execute("input");
@@ -204,8 +225,12 @@ public class PipelineCallbackExample implements Example {
         try {
             Pipeline pipeline = PipelineBuilder.newBuilder("logging-demo")
                     .logging()
-                    .task("step1", ctx -> { return null; }).taskEnd()
-                    .task("step2", ctx -> { return null; }).taskEnd()
+                    .task("step1", ctx -> {
+                        return null;
+                    }).taskEnd()
+                    .task("step2", ctx -> {
+                        return null;
+                    }).taskEnd()
                     .build();
 
             PipelineContext<?> ctx = pipeline.execute("input");
@@ -236,9 +261,15 @@ public class PipelineCallbackExample implements Example {
             List<String> drawEvents = new ArrayList<>();
             Pipeline pipeline = PipelineBuilder.newBuilder("ondraw-demo")
                     .onDraw(ctx -> drawEvents.add("draw:" + ctx.getCurrentNodeId() + "@" + ctx.getHistory().size()))
-                    .task("step1", ctx -> { return null; }).taskEnd()
-                    .task("step2", ctx -> { return null; }).taskEnd()
-                    .task("step3", ctx -> { return null; }).taskEnd()
+                    .task("step1", ctx -> {
+                        return null;
+                    }).taskEnd()
+                    .task("step2", ctx -> {
+                        return null;
+                    }).taskEnd()
+                    .task("step3", ctx -> {
+                        return null;
+                    }).taskEnd()
                     .build();
 
             pipeline.execute("input");
@@ -258,21 +289,48 @@ public class PipelineCallbackExample implements Example {
 
             treeHolder[0] = PipelineBuilder.newBuilder("image-pipeline")
                     .onDraw(ctx -> treeHolder[0].drawTree(ctx.getHistory(), true))
-                    .task("load", ctx -> { sleep(800); return null; }).taskEnd()
-                    .task("validate", ctx -> { sleep(600); return null; }).taskEnd()
+                    .task("load", ctx -> {
+                        sleep(800);
+                        return null;
+                    }).taskEnd()
+                    .task("validate", ctx -> {
+                        sleep(600);
+                        return null;
+                    }).taskEnd()
                     .fork("process")
                         .startFork("analyze")
-                            .step("detect", ctx -> { sleep(600); return null; })
-                            .step("recognize", ctx -> { sleep(600); return null; })
+                            .step("detect", ctx -> {
+                                sleep(600);
+                                return null;
+                            })
+                            .step("recognize", ctx -> {
+                                sleep(600);
+                                return null;
+                            })
                         .endFork()
                         .startFork("enhance")
-                            .step("denoise", ctx -> { sleep(600); return null; })
-                            .step("sharpen", ctx -> { sleep(600); return null; })
+                            .step("denoise", ctx -> {
+                                sleep(600);
+                                return null;
+                            })
+                            .step("sharpen", ctx -> {
+                                sleep(600);
+                                return null;
+                            })
                         .endFork()
                     .endFork()
-                    .task("merge", ctx -> { sleep(500); return null; }).taskEnd()
-                    .task("quality", ctx -> { sleep(500); return null; }).exit().taskEnd()
-                    .task("export", ctx -> { sleep(600); return null; }).taskEnd()
+                    .task("merge", ctx -> {
+                        sleep(500);
+                        return null;
+                    }).taskEnd()
+                    .task("quality", ctx -> {
+                        sleep(500);
+                        return null;
+                    }).exit().taskEnd()
+                    .task("export", ctx -> {
+                        sleep(600);
+                        return null;
+                    }).taskEnd()
                     .build();
 
             PipelineContext<?> treeCtx = treeHolder[0].execute("image-data");
@@ -287,7 +345,9 @@ public class PipelineCallbackExample implements Example {
 
     /** Sleep */
     private static void sleep(long ms) {
-        try { Thread.sleep(ms); } catch (InterruptedException ignored) {}
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException ignored) {}
     }
 
     /**

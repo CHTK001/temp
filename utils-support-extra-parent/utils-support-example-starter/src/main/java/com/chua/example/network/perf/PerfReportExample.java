@@ -21,7 +21,8 @@ import java.util.Locale;
  * </ul>
  *
  * <p>所有 Server 子类（TCP / HTTP / HTTP 反向代理 / MQTT）的 Example 都通过本类输出结构化报告。</p>
- *@author CH`n *
+ *@author CH
+ *
  * @since 4.0.0.42
  */
 @Slf4j
@@ -29,6 +30,33 @@ public final class PerfReportExample {
 
     /** 创建 PerfReportExample 实例 */
     private PerfReportExample() {
+    }
+
+    /**
+     * 独立入口：输出当前环境信息自演示。
+     *
+     * <p>参数格式 {@code --key=value}：</p>
+     * <ul>
+     *     <li>{@code --server=} 服务器名称（默认 perf-self-check）</li>
+     *     <li>{@code --spi=} SPI 名称（默认 jdk）</li>
+     *     <li>{@code --discovery=} 发现服务类型（默认 static）</li>
+     * </ul>
+     *
+     * @param args 命令行参数
+     */
+    public static void main(String[] args) {
+        java.util.Map<String, String> params = new java.util.LinkedHashMap<>();
+        for (String arg : args) {
+            int idx = arg.indexOf('=');
+            if (arg.startsWith("--") && idx > 2) {
+                params.put(arg.substring(2, idx), arg.substring(idx + 1));
+            }
+        }
+        printEnvironment(
+                params.getOrDefault("server", "perf-self-check"),
+                params.getOrDefault("spi", "jdk"),
+                params.getOrDefault("discovery", "static"));
+        System.exit(0);
     }
 
     /**

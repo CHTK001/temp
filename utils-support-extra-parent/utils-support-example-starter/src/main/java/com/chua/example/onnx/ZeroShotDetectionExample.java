@@ -26,7 +26,8 @@ import java.util.List;
  * @author CH
  * @since 4.0.0.42
  */
-public final class ZeroShotDetectionExample extends ExampleBase {
+@Slf4j
+public final class ZeroShotDetectionExample extends BaseExample {
 
     /** 零样本检测模型列表（按体积从小到大） */
     private static final String[] MODELS = {
@@ -41,7 +42,7 @@ public final class ZeroShotDetectionExample extends ExampleBase {
     private static final String DEFAULT_IMAGE = "D:/images/test.jpg";
 
     /** 创建 ZeroShotDetectionTest 实例 */
-    private ZeroShotDetectionTest() {
+    private ZeroShotDetectionExample() {
     }
 
     /** Main */

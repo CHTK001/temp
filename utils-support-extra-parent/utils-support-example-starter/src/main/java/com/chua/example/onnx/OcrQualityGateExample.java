@@ -11,13 +11,15 @@ import java.util.List;
 
 /**
  * 质量门控对比：三张"不清楚"图，对比门控关 vs 门控开 + text-bsr 修复。
- *@author CH`n *
+ *@author CH
+ *
  * @since 4.0.0.42
  */
+@Slf4j
 public final class OcrQualityGateExample {
 
     /** 创建 OcrQualityGateDiag 实例 */
-    private OcrQualityGateDiag() {
+    private OcrQualityGateExample() {
     }
 
     /** Main */

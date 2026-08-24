@@ -19,13 +19,15 @@ import java.util.List;
 /**
  * 大角度矫正验证：用原图旋转 35° 生成倾斜图，对比"轴对齐裁剪直接 rec"与
  * "旋转矩形扶正裁剪 cropRotated" 的识别效果。
- *@author CH`n *
+ *@author CH
+ *
  * @since 4.0.0.42
  */
+@Slf4j
 public final class OcrBigAngleExample {
 
     /** 创建 OcrBigAngleDiag 实例 */
-    private OcrBigAngleDiag() {
+    private OcrBigAngleExample() {
     }
 
     /** Main */

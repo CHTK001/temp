@@ -10,9 +10,10 @@ import com.chua.deeplearning.support.llama.translator.Qwen2ChatTranslator;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class Qwen2ModelExample {
 
-    private Qwen2ModelVerify() {
+    private Qwen2ModelExample() {
     }
 
     public static void main(String[] args) throws Exception {

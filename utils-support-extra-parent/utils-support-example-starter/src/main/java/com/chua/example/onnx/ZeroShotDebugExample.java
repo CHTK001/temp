@@ -1,6 +1,7 @@
 package com.chua.example.onnx;
 
 import lombok.extern.slf4j.Slf4j;
+import com.chua.common.support.reflection.ReflectUtils;
 import com.chua.deeplearning.support.engine.ModelRegistry;
 import com.chua.deeplearning.support.image.ImageClassifier;
 import com.chua.deeplearning.support.image.ImageDetector;
@@ -16,7 +17,7 @@ import com.chua.deeplearning.support.image.ImageSegmenter;
 public class ZeroShotDebugExample {
     public static void main(String[] args) throws Exception {
         log.info("=== Debug: Loading OnnxModelRegistrar ===");
-        Class.forName("com.chua.deeplearning.support.onnx.OnnxModelRegistrar");
+        ReflectUtils.forName("com.chua.deeplearning.support.onnx.OnnxModelRegistrar");
         log.info("=== Debug: OnnxModelRegistrar loaded ===");
         
         log.info("\n=== All registered models ===");

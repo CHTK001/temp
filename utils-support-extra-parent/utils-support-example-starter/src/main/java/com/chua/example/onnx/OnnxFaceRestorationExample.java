@@ -24,9 +24,11 @@ import java.util.List;
  * <pre>{@code
  *   OnnxFaceRestorationExample G:\images\三个人.jpg
  * }</pre>
- *@author CH`n *
+ *@author CH
+ *
  * @since 4.0.0.42
  */
+@Slf4j
 public final class OnnxFaceRestorationExample {
 
     /**

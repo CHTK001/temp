@@ -10,7 +10,10 @@ import java.nio.file.Path;
 /**
  * 独立验证：TTS 生成 WAV → 直接调用 WhisperTranslator STT 回读。
  * 绕过 AudioClient SPI / NativeLoader 资源加载路径问题。
-  * @author CH`n **/
+ * @author CH
+ * @since 4.0.0.42
+ */
+@Slf4j
 public final class VoiceCloneDirectExample {
 
     private VoiceCloneDirectExample() {}

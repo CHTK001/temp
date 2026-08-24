@@ -18,9 +18,10 @@ import java.util.List;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class LivenessExample {
 
-    private LivenessVerify() {
+    private LivenessExample() {
     }
 
     public static void main(String[] args) throws Exception {

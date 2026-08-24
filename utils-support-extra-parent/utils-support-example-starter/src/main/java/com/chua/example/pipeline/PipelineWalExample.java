@@ -80,9 +80,18 @@ public class PipelineWalExample implements Example {
 
             Pipeline pipeline = PipelineBuilder.newBuilder("wal-basic")
                     .wal(walDir.toString())
-                    .task("step1", ctx -> { sb.append("A"); return null; }).taskEnd()
-                    .task("step2", ctx -> { sb.append("B"); return null; }).taskEnd()
-                    .task("step3", ctx -> { sb.append("C"); return null; }).taskEnd()
+                    .task("step1", ctx -> {
+                        sb.append("A");
+                        return null;
+                    }).taskEnd()
+                    .task("step2", ctx -> {
+                        sb.append("B");
+                        return null;
+                    }).taskEnd()
+                    .task("step3", ctx -> {
+                        sb.append("C");
+                        return null;
+                    }).taskEnd()
                     .build();
 
             PipelineContext<?> ctx = pipeline.execute("input");
@@ -195,8 +204,14 @@ public class PipelineWalExample implements Example {
 
             Pipeline pipeline = PipelineBuilder.newBuilder("wal-stop")
                     .wal(walDir.toString())
-                    .task("step1", ctx -> { sb.append("A"); return null; }).taskEnd()
-                    .task("step2", ctx -> { sb.append("B"); return null; }).taskEnd()
+                    .task("step1", ctx -> {
+                        sb.append("A");
+                        return null;
+                    }).taskEnd()
+                    .task("step2", ctx -> {
+                        sb.append("B");
+                        return null;
+                    }).taskEnd()
                     .build();
 
             PipelineContext<?> ctx = pipeline.execute("input");
@@ -210,8 +225,14 @@ public class PipelineWalExample implements Example {
             // 由于 stop 销毁了 WAL，新的 pipeline 实例无法恢复
             Pipeline pipeline2 = PipelineBuilder.newBuilder("wal-stop")
                     .wal(walDir.toString())
-                    .task("step1", ctx2 -> { sb.append("C"); return null; }).taskEnd()
-                    .task("step2", ctx2 -> { sb.append("D"); return null; }).taskEnd()
+                    .task("step1", ctx2 -> {
+                        sb.append("C");
+                        return null;
+                    }).taskEnd()
+                    .task("step2", ctx2 -> {
+                        sb.append("D");
+                        return null;
+                    }).taskEnd()
                     .build();
 
             sb.setLength(0);
@@ -243,8 +264,14 @@ public class PipelineWalExample implements Example {
             // 场景1：未启用 WAL
             StringBuilder sb1 = new StringBuilder();
             Pipeline noWalPipeline = PipelineBuilder.newBuilder("no-wal")
-                    .task("step1", ctx -> { sb1.append("A"); return null; }).taskEnd()
-                    .task("step2", ctx -> { sb1.append("B"); return null; }).taskEnd()
+                    .task("step1", ctx -> {
+                        sb1.append("A");
+                        return null;
+                    }).taskEnd()
+                    .task("step2", ctx -> {
+                        sb1.append("B");
+                        return null;
+                    }).taskEnd()
                     .build();
 
             PipelineContext<?> ctx1 = noWalPipeline.resume("input");
@@ -256,8 +283,14 @@ public class PipelineWalExample implements Example {
             StringBuilder sb2 = new StringBuilder();
             Pipeline freshWalPipeline = PipelineBuilder.newBuilder("wal-fallback")
                     .wal(walDir.toString())
-                    .task("step1", ctx -> { sb2.append("C"); return null; }).taskEnd()
-                    .task("step2", ctx -> { sb2.append("D"); return null; }).taskEnd()
+                    .task("step1", ctx -> {
+                        sb2.append("C");
+                        return null;
+                    }).taskEnd()
+                    .task("step2", ctx -> {
+                        sb2.append("D");
+                        return null;
+                    }).taskEnd()
                     .build();
 
             PipelineContext<?> ctx2 = freshWalPipeline.resume("input");
@@ -284,7 +317,9 @@ public class PipelineWalExample implements Example {
             Files.walk(dir)
                     .sorted(java.util.Comparator.reverseOrder())
                     .forEach(p -> {
-                        try { Files.deleteIfExists(p); } catch (Exception ignored) {}
+                        try {
+                            Files.deleteIfExists(p);
+                        } catch (Exception ignored) {}
                     });
         } catch (Exception ignored) {}
     }

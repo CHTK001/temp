@@ -23,7 +23,7 @@ import java.util.List;
  * @since 4.0.0.42
  */
 @Slf4j
-public final class ActionDetectionExample extends ExampleBase {
+public final class ActionDetectionExample extends BaseExample {
 
     private ActionDetectionExample() {
     }

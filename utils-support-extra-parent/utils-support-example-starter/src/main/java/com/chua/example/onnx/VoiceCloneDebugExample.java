@@ -14,6 +14,7 @@ import java.util.Enumeration;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class VoiceCloneDebugExample {
     private VoiceCloneDebugExample() {}
 

@@ -14,10 +14,12 @@ import java.nio.file.Path;
  * <pre>{@code
  *   ImageCaptioningExample vit-gpt2-captioning photo.jpg
  * }</pre>
- *@author CH`n *
+ *@author CH
+ *
  * @since 4.0.0.42
  */
-public final class ImageCaptioningExample extends ExampleBase {
+@Slf4j
+public final class ImageCaptioningExample extends BaseExample {
 
     /** 创建 ImageCaptioningExample 实例 */
     private ImageCaptioningExample() {

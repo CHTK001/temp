@@ -9,9 +9,10 @@ import com.chua.common.support.ai.chat.ChatClient;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class Qwen2FullExample {
 
-    private Qwen2FullVerify() {
+    private Qwen2FullExample() {
     }
 
     public static void main(String[] args) {

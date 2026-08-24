@@ -2,14 +2,18 @@ package com.chua.example.onnx;
 
 import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.ai.audio.TextToAudioClient;
-import com.chua.deeplearning.support.onnx.text.BertSquadTranslator;
+import com.chua.deeplearning.support.onnx.audio.whisper.WhisperTranslator;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
  * 用已嵌入的 moonshine-base 模型做 TTS→STT 验证。
-  * @author CH`n **/
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
+@Slf4j
 public final class VoiceCloneMoonshineExample {
 
     private VoiceCloneMoonshineExample() {}
@@ -49,7 +53,7 @@ public final class VoiceCloneMoonshineExample {
 
     static String directTranscribe(Path wavPath) throws Exception {
         // 使用 moonshine-base（已嵌入 in utils-support-deeplearning-onnx-starter.jar）
-        BertSquadTranslator translator = new BertSquadTranslator();
+        WhisperTranslator translator = new WhisperTranslator();
         Path modelDir = extractMoonshineModel();
         translator.prepare(modelDir);
         return translator.transcribe(wavPath);
@@ -57,8 +61,8 @@ public final class VoiceCloneMoonshineExample {
 
     static Path extractMoonshineModel() throws Exception {
         Path modelDir = Files.createTempDirectory("moonshine-model-");
-        java.net.Enumeration<java.net.URL> resources =
-                BertSquadTranslator.class.getClassLoader().getResources("nlp/audio/moonshine");
+        java.util.Enumeration<java.net.URL> resources =
+                WhisperTranslator.class.getClassLoader().getResources("nlp/audio/moonshine");
         int extracted = 0;
         while (resources.hasMoreElements()) {
             java.net.URL url = resources.nextElement();

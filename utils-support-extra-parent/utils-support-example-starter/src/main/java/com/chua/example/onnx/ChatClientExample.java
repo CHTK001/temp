@@ -14,10 +14,12 @@ import com.chua.common.support.ai.chat.ChatClient;
  *   ChatClientExample onnx minimind "你好"       # 对话
  *   ChatClientExample onnx bert-squad "什么是Java?"
  * }</pre>
- *@author CH`n *
+ *@author CH
+ *
  * @since 4.0.0.42
  */
-public final class ChatClientExample extends ExampleBase {
+@Slf4j
+public final class ChatClientExample extends BaseExample {
 
     /** 创建 ChatClientExample 实例 */
     private ChatClientExample() {

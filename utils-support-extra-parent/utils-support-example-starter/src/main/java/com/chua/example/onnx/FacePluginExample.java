@@ -18,10 +18,12 @@ import java.util.List;
  * <pre>{@code
  *   FacePluginExample G:\images\三个人.jpg
  * }</pre>
- *@author CH`n *
+ *@author CH
+ *
  * @since 4.0.0.42
  */
-public final class FacePluginExample extends ExampleBase {
+@Slf4j
+public final class FacePluginExample extends BaseExample {
 
     /** 创建 FacePluginExample 实例 */
     private FacePluginExample() {

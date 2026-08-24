@@ -14,13 +14,15 @@ import java.util.Map;
 
 /**
  * 查询 PP-OCRv6 rec ONNX 输入/输出维度是否动态。
- *@author CH`n *
+ *@author CH
+ *
  * @since 4.0.0.42
  */
+@Slf4j
 public final class OcrRecShapeExample {
 
     /** 创建 OcrRecShapeDiag 实例 */
-    private OcrRecShapeDiag() {
+    private OcrRecShapeExample() {
     }
 
     /** Main */
@@ -30,7 +32,7 @@ public final class OcrRecShapeExample {
         Path modelDir = tmpDir.resolve("rec");
         Files.createDirectories(modelDir);
         NativeLoader.of("paddleocrv6-rec-shape")
-                .from(OcrRecShapeDiag.class.getClassLoader())
+                .from(OcrRecShapeExample.class.getClassLoader())
                 .basePath("ocr/PP-OCRv6/medium/rec_infer/")
                 .toTarget(modelDir)
                 .glob("*")

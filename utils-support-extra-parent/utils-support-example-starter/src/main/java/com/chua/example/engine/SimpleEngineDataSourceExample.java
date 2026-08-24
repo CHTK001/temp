@@ -8,6 +8,8 @@ import com.chua.common.support.lang.datasource.engine.EngineDataSource;
  *
  * @author CH
  * @since 4.0.0
+  *
+ * <p>SPI 实现载体：SPI 引擎实现载体，由宿主 Example 按类型加载，无独立 main 入口。</p>
  */
 public class SimpleEngineDataSourceExample implements EngineDataSource<Object> {
 
@@ -93,5 +95,18 @@ public class SimpleEngineDataSourceExample implements EngineDataSource<Object> {
     /** 设置Dialect */
     public EngineDataSource<Object> setDialect(Dialect dialect) {
         return this;
+    }
+    /**
+     * 自检入口：验证数据源属性读写。
+     *
+     * @param args args[0] 可选 JDBC URL
+     */
+    public static void main(String[] args) {
+        String url = args.length > 0 ? args[0] : "jdbc:h2:mem:demo";
+        SimpleEngineDataSourceExample ds = new SimpleEngineDataSourceExample(url);
+        ds.setSource(new Object());
+        boolean ok = url.equals(ds.url()) && ds.getSource() != null;
+        System.out.println("datasource url ok=" + ok + " -> " + (ok ? "PASS" : "FAIL"));
+        System.exit(ok ? 0 : 1);
     }
 }

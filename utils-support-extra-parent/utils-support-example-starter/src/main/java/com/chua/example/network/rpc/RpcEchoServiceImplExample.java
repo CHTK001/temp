@@ -12,6 +12,8 @@ import java.util.List;
  *
  * @author CH
  * @since 4.0.0.42
+  *
+ * <p>SPI 实现载体：由 RpcExample 宿主通过 SPI 加载运行，无独立 main 入口。</p>
  */
 public class RpcEchoServiceImplExample implements RpcEchoServiceExample {
 
@@ -109,5 +111,18 @@ public class RpcEchoServiceImplExample implements RpcEchoServiceExample {
     @Override
     public RpcPayloadExample echoNested(RpcPayloadExample payload) {
         return payload;
+    }
+    /**
+     * 自检入口：验证 echo/add/payload 三个服务方法。
+     *
+     * @param args 无参数
+     */
+    public static void main(String[] args) {
+        RpcEchoServiceImplExample svc = new RpcEchoServiceImplExample();
+        boolean ok = "echo:hi".equals(svc.echo("hi"))
+                && svc.add(1, 2) == 3
+                && svc.echoPayload(null) == null;
+        System.out.println("rpc service -> " + (ok ? "PASS" : "FAIL"));
+        System.exit(ok ? 0 : 1);
     }
 }

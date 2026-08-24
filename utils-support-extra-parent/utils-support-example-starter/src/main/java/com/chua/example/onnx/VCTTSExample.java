@@ -1,14 +1,26 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
+
 import com.chua.common.support.ai.audio.TextToAudioClient;
 import com.chua.deeplearning.support.onnx.audio.whisper.WhisperTranslator;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Enumeration;
+import java.
+nio.file.Files;
+import java.
+nio.file.Path;
+import java.
+util.Enumeration;
 
-/**`n * TTS->STT Pipeline Example`n *`n * @author CH`n * @since 4.0.0.42`n */`npublic final class VCTTSExample {
-    private VCTTS() {}
+/**
+ * TTS->STT Pipeline Example
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
+@Slf4j
+public final class VCTTSExample {
+    private VCTTSExample() {}
 
     public static void main(String[] args) throws Exception {
         String text = args.length > 0 ? args[0] : "Hello world";
@@ -29,7 +41,7 @@ import java.util.Enumeration;
             String matched = transcript != null ? transcript.trim().toLowerCase() : "";
             log.info(String.valueOf("[verify] original: " + cleaned));
             log.info(String.valueOf("[verify] transcript: " + matched));
-            log.info(String.valueOf("[verify] match: " + (cleaned.equals(matched)) ? "YES" : "partial/no match"));
+            log.info("[verify] match: " + (cleaned.equals(matched) ? "YES" : "partial/no match"));
         } catch (Exception e) {
             System.err.println("[stt] failed: " + e.getMessage());
             log.info("[verify] match: N/A (ASR unavailable)");

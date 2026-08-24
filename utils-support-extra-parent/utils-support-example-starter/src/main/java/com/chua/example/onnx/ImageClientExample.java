@@ -17,10 +17,12 @@ import java.nio.file.Path;
  *   ImageClientExample list
  *   ImageClientExample onnx small-stable-diffusion-combined "一只柴犬在樱花树下" out.png
  * }</pre>
- *@author CH`n *
+ *@author CH
+ *
  * @since 4.0.0.42
  */
-public final class ImageClientExample extends ExampleBase {
+@Slf4j
+public final class ImageClientExample extends BaseExample {
 
     /** 创建 ImageClientExample 实例 */
     private ImageClientExample() {

@@ -16,10 +16,12 @@ import java.nio.file.Path;
  *   AudioClientExample whisper whisper-tiny audio.wav
  *   AudioClientExample onnx whisper-tiny audio.wav
  * }</pre>
- *@author CH`n *
+ *@author CH
+ *
  * @since 4.0.0.42
  */
-public final class AudioClientExample extends ExampleBase {
+@Slf4j
+public final class AudioClientExample extends BaseExample {
 
     /** 创建 AudioClientExample 实例 */
     private AudioClientExample() {

@@ -14,9 +14,11 @@ import java.util.List;
 
 /**
  * 对比 rotate 实现：当前 SPI 版 vs 纯 OpenCV 版，对旋转车票识别票号。
- *@author CH`n *
+ *@author CH
+ *
  * @since 4.0.0.42
  */
+@Slf4j
 public final class OcrRotateCompareExample {
 
     /** 创建 OcrRotateCompareExample 实例 */
@@ -77,7 +79,9 @@ public final class OcrRotateCompareExample {
                     0, 0, org.opencv.imgproc.Imgproc.INTER_LINEAR);
             saveZoomedHelper(mr, x, y, w, h, outRef);
             saveZoomedHelper(msScaled, x, y, w, h, outSrc);
-            msScaled.release(); mr.release(); ms.release();
+            msScaled.release();
+            mr.release();
+            ms.release();
         } catch (Exception e) {
             log.info("[cmp] saveZoomedAligned 失败: " + e.getMessage());
         }
@@ -90,7 +94,8 @@ public final class OcrRotateCompareExample {
         org.opencv.imgproc.Imgproc.resize(crop, big, new org.opencv.core.Size(w * 8, h * 8),
                 0, 0, org.opencv.imgproc.Imgproc.INTER_NEAREST);
         org.opencv.imgcodecs.Imgcodecs.imwrite(out, big);
-        crop.release(); big.release();
+        crop.release();
+        big.release();
     }
 
     /** RegionMae */
@@ -112,10 +117,13 @@ public final class OcrRotateCompareExample {
                 org.opencv.core.Core.absdiff(ra, rb, diff);
                 org.opencv.core.Core.meanStdDev(diff, new org.opencv.core.MatOfDouble(), new org.opencv.core.MatOfDouble());
                 double mean = org.opencv.core.Core.mean(diff).val[0];
-                ra.release(); rb.release(); diff.release();
+                ra.release();
+                rb.release();
+                diff.release();
                 return mean;
             } finally {
-                ma.release(); mb.release();
+                ma.release();
+                mb.release();
             }
         } catch (Exception e) {
             return -999;

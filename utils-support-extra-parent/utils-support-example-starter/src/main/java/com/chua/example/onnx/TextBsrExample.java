@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import com.chua.common.support.reflection.ReflectUtils;
 import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.engine.AbstractIdentificationEngine;
 import com.chua.deeplearning.support.translator.ITranslator;
@@ -13,9 +14,11 @@ import java.nio.file.Path;
  * <pre>{@code
  *   TextBsrExample G:\images\很不清楚的文字图片用于测试文字高清修复模型.png [2|4]
  * }</pre>
- *@author CH`n *
+ *@author CH
+ *
  * @since 4.0.0.42
  */
+@Slf4j
 public final class TextBsrExample {
 
     /** 创建 TextBsrExample 实例 */
@@ -39,8 +42,8 @@ public final class TextBsrExample {
         // 穿透 LazyDjlTranslator / ITranslatorDelegate 包装，找到原生 TextBsrTranslator 设置 scale
         try {
             Object target = unwrap(t);
-            java.lang.reflect.Method setScale = target.getClass().getMethod("setScale", int.class);
-            setScale.invoke(target, scale);
+            java.lang.reflect.Method setScale = ReflectUtils.getMethod(target.getClass(), "setScale", int.class);
+            ReflectUtils.invoke(target, "setScale", void.class, int.class, scale);
             log.info("[text-bsr] scale=" + scale + "x");
         } catch (Exception e) {
             log.info("[text-bsr] 设置 scale 失败: " + e.getMessage() + "，使用默认 2x");
@@ -70,18 +73,15 @@ public final class TextBsrExample {
     private static Object unwrap(Object obj) throws Exception {
         Object current = obj;
         for (int i = 0; i < 8 && current != null; i++) {
-            java.lang.reflect.Method unwrap;
             try {
-                unwrap = current.getClass().getMethod("unwrap");
-            } catch (NoSuchMethodException e) {
+                Object next = ReflectUtils.invoke(current, "unwrap", Object.class);
+                if (next == null || next == current) {
+                    break;
+                }
+                current = next;
+            } catch (Exception e) {
                 break;
             }
-            unwrap.setAccessible(true);
-            Object next = unwrap.invoke(current);
-            if (next == null || next == current) {
-                break;
-            }
-            current = next;
         }
         return current;
     }

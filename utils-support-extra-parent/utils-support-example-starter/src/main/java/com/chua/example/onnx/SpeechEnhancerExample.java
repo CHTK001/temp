@@ -23,7 +23,7 @@ import java.nio.file.Paths;
  * @since 4.0.0.42
  */
 @Slf4j
-public final class SpeechEnhancerExample extends ExampleBase {
+public final class SpeechEnhancerExample extends BaseExample {
 
     private SpeechEnhancerExample() {
     }

@@ -14,10 +14,12 @@ import java.util.List;
  * <pre>{@code
  *   CardCorrectionExample G:\images\card_test.jpg
  * }</pre>
- *@author CH`n *
+ *@author CH
+ *
  * @since 4.0.0.42
  */
-public final class CardCorrectionExample extends ExampleBase {
+@Slf4j
+public final class CardCorrectionExample extends BaseExample {
 
     /** 创建 CardCorrectionExample 实例 */
     private CardCorrectionExample() {

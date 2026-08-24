@@ -54,6 +54,7 @@ public class SipServerExample {
                 .host(kv.getOrDefault("host", "0.0.0.0"))
                 .port(Integer.parseInt(kv.getOrDefault("port", String.valueOf(SipConfig.DEFAULT_PORT))))
                 .token(kv.getOrDefault("token", SipConfig.defaults().getToken()))
+                .encrypt(Boolean.parseBoolean(kv.getOrDefault("encrypt", "false")))
                 .build();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {

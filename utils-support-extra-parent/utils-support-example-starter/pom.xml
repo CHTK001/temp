@@ -162,6 +162,56 @@
             <artifactId>utils-support-deeplearning-onnx-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- 嵌入式中文对话模型（Gemma-3-270M，uint8 ONNX ~437MB），供 Gemma3Example 使用 -->
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-models-onnx-gemma-3-270m</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- 嵌入式老照片上色模型（DeOldify ONNX ~830MB），供 ImageColorizeExample 使用 -->
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-models-onnx-image-colorize</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- 安全检测类嵌入式模型，供对应检测 Example 使用 -->
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-models-onnx-safety-helmet</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-models-onnx-fire-smoke</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-models-onnx-reflective-clothes</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-models-onnx-face-mask-detector</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-models-onnx-seal-inspection</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- D-FINE-L 目标检测（COCO 80 类，int8 量化嵌入式），供 DFineExample 使用 -->
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-models-onnx-dfine-l-obj2coco</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- RT-DETR v2 文档版面检测（DocLayNet 17 类，169MB fp32），供 RTDetrLayoutExample 使用 -->
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-models-onnx-rtdetr-layout</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-deeplearning-llama-starter</artifactId>
@@ -464,6 +514,36 @@
             <artifactId>utils-support-datasync-agent-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- DataSearch 用量解析演示 -->
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-datasearch-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- 文件检索演示 -->
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-filesearch-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- MQTT 演示 -->
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-mqtt-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- Prometheus 指标采集演示 -->
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-prometheus-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- 视频处理演示 -->
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-video-processor-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <!-- OSHI 本机指标采集 -->
         <!-- Syslog 实时日志监听 -->
         <dependency>
@@ -590,87 +670,95 @@
                 <configuration>
                     <release>25</release>
                     <includes>
-                        <!-- SPI 框架入口 -->
                         <include>**/Example.java</include>
                         <include>**/ExampleRunner.java</include>
-                        <!-- 流程编排示例 -->
                         <include>**/FlowExample.java</include>
                         <include>**/FlowEchoNode.java</include>
-                         <include>**/FlowCompleteExample.java</include>
-                        <!-- 辅助类 -->
+                        <include>**/FlowCompleteExample.java</include>
                         <include>**/SimpleEngineDataSource.java</include>
-                        <!-- RPC 示例（RpcExample / RpcEchoService(Impl) / RpcPayload / RpcServerMain） -->
                         <include>**/network/rpc/*.java</include>
-                        <!-- 云效链式客户端示例 -->
                         <include>**/network/yunxiao/*.java</include>
-                        <!-- lang.document 文档 SPI 烟雾测试 (OpenApiExportTestExample) -->
                         <include>**/lang/document/*.java</include>
-                         <!-- lang.json JsonProvider 自检 (JsonProviderExampleSpi) -->
-                         <include>**/lang/json/*.java</include>
-                         <!-- lang.serialize Fory 序列化自检 (ForySerializerExampleSpi) -->
-                         <include>**/lang/serialize/*.java</include>
-                         <!-- lang.protobuf Protobuf 序列化自检 (ProtobufSerializerExampleSpi) -->
-                         <include>**/lang/protobuf/*.java</include>
-                         <!-- AI 音频示例（WhisperAudioExample） -->
-                         <include>**/ai/audio/*.java</include>
-                         <!-- AI 视觉示例（EdgeSamExample） -->
-                         <include>**/ai/vision/*.java</include>
-                         <!-- AI 嵌入示例（BgeEmbeddingExample / MiniLM ...） -->
-                         <include>**/ai/embedding/*.java</include>
-                         <!-- AI 用量定价 SPI 示例（ExampleModelPricingProvider） -->
-                         <include>**/ai/usage/*.java</include>
-                        <!-- AI Proxy 聊天示例 — 排除 KimiProxyExample -->
+                        <include>**/lang/json/*.java</include>
+                        <include>**/lang/serialize/*.java</include>
+                        <include>**/lang/protobuf/*.java</include>
+                        <include>**/ai/audio/*.java</include>
+                        <include>**/ai/vision/*.java</include>
+                        <include>**/ai/embedding/*.java</include>
+                        <include>**/ai/usage/*.java</include>
                         <include>**/ai/chat/Qwen*.java</include>
                         <include>**/ai/chat/AiProxy*.java</include>
-<!-- 集合示例（LazyExpiringListExample） -->
                         <include>**/collection/*.java</include>
-                        <!-- ThreadFlow 并发示例（ThreadFlowExample / ThreadFlowExampleSpi） -->
                         <include>**/concurrent/threadflow/*.java</include>
-                        <!-- 无锁队列示例（LockFreeQueueExample） -->
                         <include>**/concurrent/queue/*.java</include>
-                        <!-- 共享内存环形队列示例（ShmQueueExample） -->
-                        <include>**/concurrent/queue/ShmQueueExample.java</include>
-                        <!-- 共享内存 HTTP bridge 示例（ShmHttpServerExample） -->
                         <include>**/nativehttp/*.java</include>
-                        <!-- NIO HttpServer 示例（NioHttpServerExampleSpi + PerfReport） -->
                         <include>**/network/nio/*.java</include>
                         <include>**/network/perf/*.java</include>
-                        <!-- HTTP HttpServer 示例（HttpServerExampleSpi） -->
                         <include>**/network/http/*.java</include>
-                        <!-- TCP 反向代理示例（TcpProxyExampleSpi） -->
                         <include>**/network/proxy/*.java</include>
-                        <!-- Scatter 集群示例（ScatterClusterExampleSpi 体系测试） -->
                         <include>**/network/scatter/*.java</include>
-                         <!-- Sync 全子类示例（SyncExampleSpi） -->
-                         <include>**/network/sync/*.java</include>
-                         <!-- SIP 信令服务器/客户端示例（SipExampleSpi / SipServerMain） -->
-                         <include>**/network/sip/*.java</include>
-<!-- Pipeline 流水线示例（PipelineBasicExample/Spi 等 11 组） -->
-                         <include>**/pipeline/*.java</include>
-<!-- ImageProcessor SPI 机制示例（ImageProcessorSpiExample / CustomImageProcessor / ImageProcessorSpiExampleSpi） -->
-                          <include>**/image/*.java</include>
-                          <!-- OCR 管线示例（OcrPipelineExample） -->
-                          <include>**/ocr/*.java</include>
-                          <!-- 分割/抠图示例（SegmentationExample） -->
-                          <include>**/segmentation/*.java</include>
-                          <!-- 行人重识别示例（PersonReidExample） -->
-                          <include>**/reid/*.java</include>
-                          <!-- 人脸示例（FaceCoreExample/FaceDetectExample） -->
-                          <include>**/face/*.java</include>
-                          <!-- 零样本分类示例（ZeroShotClassificationExample） -->
-                          <include>**/classification/*.java</include>
-<!-- 版面分析管线示例（LayoutPipelineExample） -->
-<include>**/layout/*.java</include>
-                           <!-- 车牌管线示例（PlatePipelineVerifyExample / PlatePipelineComprehensiveExample） -->
-                           <include>**/onnx/*Plate*.java</include>
-                           <!-- 工具类 / 数据源 / Redis 示例 -->
-                            <include>**/utils/*.java</include>
-                            <include>**/datasource/*.java</include>
-                            <include>**/redis/*.java</include>
-                           <!-- 任务分发示例（TaskDistributionExample / ReactiveTaskManagerExample） -->
-                           <include>**/taskdistribution/*.java</include>
-                                                </includes>
-                </configuration>
+                        <include>**/network/sync/*.java</include>
+                        <include>**/network/sip/*.java</include>
+                        <include>**/pipeline/*.java</include>
+                        <include>**/reflection/*.java</include>
+                        <include>**/shmqueue/*.java</include>
+                        <include>**/image/*.java</include>
+                        <include>**/ocr/*.java</include>
+                        <include>**/segmentation/*.java</include>
+                        <include>**/reid/*.java</include>
+                        <include>**/face/*.java</include>
+                        <include>**/classification/*.java</include>
+                        <include>**/layout/*.java</include>
+                        <include>**/onnx/*Plate*.java</include>
+                        <include>**/onnx/*MultiModel*.java</include>
+                        <include>**/onnx/Gemma3Example.java</include>
+                        <include>**/onnx/PocketTtsEdgeCaseExample.java</include>
+                        <include>**/onnx/YoloWorldBatchDrawExample.java</include>
+                        <include>**/onnx/WebpDecodeExample.java</include>
+                        <include>**/onnx/ImageColorizeExample.java</include>
+                        <include>**/onnx/DeepfakeDetectionExample.java</include>
+                        <include>**/onnx/LamaInpaintingExample.java</include>
+                        <include>**/onnx/SealInspectionBlackboxExample.java</include>
+                        <include>**/onnx/TtsBenchmarkExample.java</include>
+                        <include>**/onnx/SafetyHelmetExample.java</include>
+                        <include>**/onnx/FireSmokeExample.java</include>
+                        <include>**/onnx/ReflectiveClothesExample.java</include>
+                        <include>**/onnx/FaceMaskDetectorExample.java</include>
+                        <include>**/onnx/SealInspectionExample.java</include>
+                        <include>**/onnx/DFineExample.java</include>
+                        <include>**/onnx/RTDetrLayoutExample.java</include>
+                                              <include>**/arcsoft/*.java</include>
+                          <include>**/datalake/integrated/*.java</include>
+                          <include>**/datalake/pipeline/*.java</include>
+                          <include>**/datalake/query/*.java</include>
+                          <include>**/datalake/server/*.java</include>
+                          <include>**/datalake/sink/*.java</include>
+                          <include>**/datalake/subscribe/*.java</include>
+                          <include>**/datasearch/*.java</include>
+                          <include>**/datasource/*.java</include>
+                          <include>**/datasync/*.java</include>
+                          <include>**/engine/*.java</include>
+                          <include>**/filesearch/*.java</include>
+                          <include>**/llama/*.java</include>
+                          <include>**/media/*.java</include>
+                          <include>**/osgi/*.java</include>
+                          <include>**/pytorch/*.java</include>
+                          <include>**/recognition/*.java</include>
+                          <include>**/redis/*.java</include>
+                          <include>**/spi/*.java</include>
+                          <include>**/ssh/*.java</include>
+                          <include>**/taskdistribution/*.java</include>
+                          <include>**/tui/*.java</include>
+                          <include>**/utils/*.java</include>
+                          <include>**/vector/*.java</include>
+</includes>
+                    <excludes>
+                        <exclude>**/com/chua/example/datasearch/UsageParserExample.java</exclude>
+                    </excludes>
+                    <!-- 排除引用了已失效 API 的历史遗留示例，修复后应逐个移出本清单 -->
+
+                    </configuration>
+
             </plugin>
         </plugins>
     </build>
