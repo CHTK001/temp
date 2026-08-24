@@ -643,6 +643,7 @@
                         <include>**/onnx/LamaInpaintingExample.java</include>
                         <include>**/onnx/SealInspectionBlackboxExample.java</include>
                         <include>**/onnx/TtsBenchmarkExample.java</include>
+                        <include>**/onnx/PocketTtsEdgeCaseExample.java</include>
                     </includes>
                 </configuration>
             </plugin>
