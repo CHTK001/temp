@@ -22,6 +22,7 @@ import java.util.Map;
  *
  * @since 4.0.0.42
  */
+@Slf4j
 public final class OcrDetExample {
 
     /** 创建 OcrDetDiag 实例 */

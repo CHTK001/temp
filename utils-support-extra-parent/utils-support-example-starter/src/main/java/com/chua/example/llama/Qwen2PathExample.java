@@ -13,6 +13,7 @@ import java.nio.file.Paths;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class Qwen2PathExample {
 
     private Qwen2PathExample() {

@@ -19,6 +19,7 @@ import com.chua.common.support.ai.embedding.EmbeddingClient;
  *
  * @since 4.0.0.42
  */
+@Slf4j
 public final class MiniLMEmbeddingExample {
 
     private MiniLMEmbeddingExample() {

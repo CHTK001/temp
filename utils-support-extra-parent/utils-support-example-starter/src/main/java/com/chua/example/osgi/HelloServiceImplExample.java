@@ -31,4 +31,16 @@ public final class HelloServiceImplExample implements HelloServiceExample {
     public String greet() {
         return greeting;
     }
+    /**
+     * 自检入口：验证问候返回值。
+     *
+     * @param args args[0] 可选问候语
+     */
+    public static void main(String[] args) {
+        HelloServiceImplExample svc = new HelloServiceImplExample(
+                args.length > 0 ? args[0] : "default");
+        boolean ok = svc.greet() != null && !svc.greet().isEmpty();
+        System.out.println("greet=" + svc.greet() + " -> " + (ok ? "PASS" : "FAIL"));
+        System.exit(ok ? 0 : 1);
+    }
 }

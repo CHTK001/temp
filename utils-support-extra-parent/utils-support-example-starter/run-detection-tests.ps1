@@ -1,4 +1,4 @@
-# run-detection-tests.ps1
+﻿# run-detection-tests.ps1
 # 安全检测类 Example 批量真机验证脚本（可重复执行）。
 #
 # 用法：
@@ -25,6 +25,32 @@ if ($LASTEXITCODE -ne 0) { Write-Host "[ABORT] example-starter 编译失败"; ex
 mvn -o -q dependency:build-classpath "-Dmdep.outputFile=$env:TEMP\det-cp.txt"
 $deps = (Get-Content "$env:TEMP\det-cp.txt" -Raw).Trim().Replace('\', '/')
 $cls  = (($starter) + "\target\classes").Replace('\', '/')
+
+# 1.5) 从已安装的模型 jar 抽取权重到 DJL 模型目录约定：models/onnx/<id>.onnx/
+$repoRoot = 'D:/maven-repo/com/chua'
+$weightMap = @{
+    'safety-helmet'      = 'vision/safety-helmet/yolov8/model.onnx'
+    'fire-smoke'         = 'vision/fire-smoke/yolov8n/model.onnx'
+    'reflective-clothes' = 'vision/reflective-clothes/yolov8n/model.onnx'
+    'face-mask-detector' = 'vision/face-mask-detector/yolov8/model.onnx'
+    'seal-inspection'    = 'vision/detection/seal/model.onnx'
+}
+$jdkJar = "C:\Program Files\Amazon Corretto\jdk25.0.3_9\bin\jar.exe"
+foreach ($id in $weightMap.Keys) {
+    $modelDir = Join-Path "models\onnx" "$id.onnx"
+    if (-not (Test-Path $modelDir)) {
+        $res = $weightMap[$id]
+        $jar = Join-Path $repoRoot "utils-support-models-onnx-$id/4.0.0.42/utils-support-models-onnx-$id-4.0.0.42.jar".Replace('/', '\')
+        if (Test-Path $jar) {
+            Push-Location $env:TEMP
+            & $jdkJar xf $jar $res
+            Pop-Location
+            New-Item -ItemType Directory -Force -Path $modelDir | Out-Null
+            Move-Item (Join-Path $env:TEMP $res) $modelDir -Force
+            Write-Host "[weights] $id 已抽取"
+        }
+    }
+}
 
 # 2) 测试图
 if (-not $Image) {

@@ -30,6 +30,7 @@ import java.nio.file.Path;
  *
  * @since 4.0.0.42
  */
+@Slf4j
 public final class PocketTtsVoiceCloneExample extends BaseExample {
 
     private static final String TTS_PROVIDER = "onnx";

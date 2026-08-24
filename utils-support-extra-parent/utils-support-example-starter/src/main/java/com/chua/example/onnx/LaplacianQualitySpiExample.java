@@ -13,6 +13,7 @@ import java.nio.file.Path;
  *
  * @since 4.0.0.42
  */
+@Slf4j
 public final class LaplacianQualitySpiExample {
 
     /** 创建 LaplacianQualitySpiDiag 实例 */

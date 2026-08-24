@@ -24,6 +24,7 @@ import java.util.Arrays;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class ZeroShotClassificationExample extends BaseExample {
 
     /** 零样本分类模型列表 */

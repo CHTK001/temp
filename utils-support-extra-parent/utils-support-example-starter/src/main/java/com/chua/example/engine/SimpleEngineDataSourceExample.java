@@ -96,4 +96,17 @@ public class SimpleEngineDataSourceExample implements EngineDataSource<Object> {
     public EngineDataSource<Object> setDialect(Dialect dialect) {
         return this;
     }
+    /**
+     * 自检入口：验证数据源属性读写。
+     *
+     * @param args args[0] 可选 JDBC URL
+     */
+    public static void main(String[] args) {
+        String url = args.length > 0 ? args[0] : "jdbc:h2:mem:demo";
+        SimpleEngineDataSourceExample ds = new SimpleEngineDataSourceExample(url);
+        ds.setSource(new Object());
+        boolean ok = url.equals(ds.url()) && ds.getSource() != null;
+        System.out.println("datasource url ok=" + ok + " -> " + (ok ? "PASS" : "FAIL"));
+        System.exit(ok ? 0 : 1);
+    }
 }

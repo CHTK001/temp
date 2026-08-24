@@ -18,6 +18,7 @@ import com.chua.common.support.ai.feature.FeatureClient;
  *
  * @since 4.0.0.42
  */
+@Slf4j
 public final class FeatureClientExample extends BaseExample {
 
     /** 创建 FeatureClientExample 实例 */

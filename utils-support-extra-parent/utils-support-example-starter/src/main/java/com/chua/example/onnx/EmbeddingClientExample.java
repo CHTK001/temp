@@ -18,6 +18,7 @@ import com.chua.common.support.ai.embedding.EmbeddingClient;
  *
  * @since 4.0.0.42
  */
+@Slf4j
 public final class EmbeddingClientExample extends BaseExample {
 
     /** 创建 EmbeddingClientExample 实例 */

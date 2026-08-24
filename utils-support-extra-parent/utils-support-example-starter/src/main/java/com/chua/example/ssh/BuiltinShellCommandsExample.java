@@ -470,4 +470,16 @@ public class BuiltinShellCommandsExample {
     public String realpath(@Nonnull String[] args) {
         return pwd(args);
     }
+    /**
+     * 自检入口：验证 pwd 命令返回非空路径。
+     *
+     * @param args 无参数
+     */
+    public static void main(String[] args) {
+        BuiltinShellCommandsExample cmds = new BuiltinShellCommandsExample();
+        String pwd = cmds.pwd(new String[0]);
+        boolean ok = pwd != null && !pwd.isEmpty();
+        System.out.println("pwd=" + pwd + " -> " + (ok ? "PASS" : "FAIL"));
+        System.exit(ok ? 0 : 1);
+    }
 }

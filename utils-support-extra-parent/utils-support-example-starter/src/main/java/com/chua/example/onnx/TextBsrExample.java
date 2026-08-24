@@ -17,6 +17,7 @@ import java.nio.file.Path;
  *
  * @since 4.0.0.42
  */
+@Slf4j
 public final class TextBsrExample {
 
     /** 创建 TextBsrExample 实例 */

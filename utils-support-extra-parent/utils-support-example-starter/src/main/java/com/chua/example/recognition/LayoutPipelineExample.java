@@ -3,6 +3,7 @@ package com.chua.example.recognition;
 import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.image.ImagePipeline;
 import com.chua.deeplearning.support.engine.ModelRegistry;
+import com.chua.deeplearning.support.recognition.LayoutPipeline;
 import com.chua.deeplearning.support.model.PredictRectangle;
 import com.chua.deeplearning.support.utils.ImageUtils;
 
@@ -16,6 +17,7 @@ import java.util.List;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class LayoutPipelineExample {
 
     private LayoutPipelineExample() {

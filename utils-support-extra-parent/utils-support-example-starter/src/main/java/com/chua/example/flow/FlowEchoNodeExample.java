@@ -53,4 +53,15 @@ public class FlowEchoNodeExample implements FlowNode {
         FlowProps props = context.currentNodeProps();
         context.setData(props.getString("message", DEFAULT_MESSAGE));
     }
+    /**
+     * 自检入口：验证节点类型标识。
+     *
+     * @param args 无参数
+     */
+    public static void main(String[] args) {
+        FlowEchoNodeExample node = new FlowEchoNodeExample();
+        boolean ok = "echo".equals(node.type());
+        System.out.println("node type=" + node.type() + " -> " + (ok ? "PASS" : "FAIL"));
+        System.exit(ok ? 0 : 1);
+    }
 }

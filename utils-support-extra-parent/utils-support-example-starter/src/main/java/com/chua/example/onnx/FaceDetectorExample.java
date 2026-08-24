@@ -22,6 +22,7 @@ import java.util.List;
  *
  * @since 4.0.0.42
  */
+@Slf4j
 public final class FaceDetectorExample extends BaseExample {
 
     /** 创建 FaceDetectorExample 实例 */

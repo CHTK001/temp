@@ -19,6 +19,7 @@ import java.util.List;
  *
  * @since 4.0.0.42
  */
+@Slf4j
 public final class OcrDeskewCompareExample {
 
     /** 创建 OcrDeskewCompareExample 实例 */

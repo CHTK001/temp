@@ -18,6 +18,7 @@ import java.util.List;
  *
  * @since 4.0.0.42
  */
+@Slf4j
 public final class OcrRotateCompareExample {
 
     /** 创建 OcrRotateCompareExample 实例 */

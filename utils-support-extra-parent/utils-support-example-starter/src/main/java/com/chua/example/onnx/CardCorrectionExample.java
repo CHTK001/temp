@@ -18,6 +18,7 @@ import java.util.List;
  *
  * @since 4.0.0.42
  */
+@Slf4j
 public final class CardCorrectionExample extends BaseExample {
 
     /** 创建 CardCorrectionExample 实例 */

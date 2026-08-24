@@ -20,6 +20,7 @@ import java.nio.file.Path;
  *
  * @since 4.0.0.42
  */
+@Slf4j
 public final class ImageClassifierExample extends BaseExample {
 
     /** 创建 ImageClassifierExample 实例 */

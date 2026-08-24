@@ -22,6 +22,7 @@ import java.util.List;
  *
  * @since 4.0.0.42
  */
+@Slf4j
 public final class ImageDetectorExample extends BaseExample {
 
     /** 创建 ImageDetectorExample 实例 */

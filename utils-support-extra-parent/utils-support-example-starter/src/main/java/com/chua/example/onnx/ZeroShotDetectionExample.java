@@ -26,6 +26,7 @@ import java.util.List;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class ZeroShotDetectionExample extends BaseExample {
 
     /** 零样本检测模型列表（按体积从小到大） */

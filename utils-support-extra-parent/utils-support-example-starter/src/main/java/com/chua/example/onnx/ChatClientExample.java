@@ -18,6 +18,7 @@ import com.chua.common.support.ai.chat.ChatClient;
  *
  * @since 4.0.0.42
  */
+@Slf4j
 public final class ChatClientExample extends BaseExample {
 
     /** 创建 ChatClientExample 实例 */

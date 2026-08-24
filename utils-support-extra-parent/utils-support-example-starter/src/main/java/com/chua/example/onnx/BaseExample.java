@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.ai.chat.ModelDefinition;
 
 import java.util.List;
@@ -12,8 +13,9 @@ import java.util.List;
  * @author CH
  * @since 4.0.0.42
  */
-protected static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(BaseExample.class);
 public abstract class BaseExample {
+
+    protected static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(BaseExample.class);
 
     /**
      * 打印模型列表（含描述）。

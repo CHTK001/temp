@@ -10,7 +10,6 @@ import com.chua.common.support.network.server.filter.discovery.ServiceDiscoveryS
 import com.chua.common.support.network.server.filter.proxy.ReverseProxyServerFilter;
 import com.chua.common.support.network.server.proxy.DiscoveryProxyTargetResolver;
 import com.chua.common.support.network.server.proxy.TcpProxyServer;
-import com.chua.example.network.http.HttpServerBenchmark;
 import com.chua.example.spi.Example;
 import lombok.extern.slf4j.Slf4j;
 

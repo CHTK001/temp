@@ -5,14 +5,15 @@ import com.chua.common.support.ai.chat.ChatClient;
 import com.chua.deeplearning.support.engine.ModelRegistry;
 
 /**
- * Example: Qwen2_05bExample
+ * Example: Qwen205bExample
  *
  * @author CH
  * @since 4.0.0.42
  */
-public final class Qwen2_05bExample {
+@Slf4j
+public final class Qwen205bExample {
 
-    private Qwen2_05bExample() {
+    private Qwen205bExample() {
     }
 
     public static void main(String[] args) {

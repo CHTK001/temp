@@ -32,4 +32,16 @@ public class ExampleModelPricingProviderExample implements ModelPricingProvider 
         }
         return null;
     }
+    /**
+     * 自检入口：验证定价查询逻辑。
+     *
+     * @param args 无参数
+     */
+    public static void main(String[] args) {
+        ExampleModelPricingProviderExample provider = new ExampleModelPricingProviderExample();
+        ModelDefinition hit = provider.getModelPricing("openai", "gpt-4");
+        boolean ok = hit != null && provider.getModelPricing("other", "x") == null;
+        System.out.println("pricing hit=" + (hit != null) + " -> " + (ok ? "PASS" : "FAIL"));
+        System.exit(ok ? 0 : 1);
+    }
 }

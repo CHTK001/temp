@@ -508,6 +508,12 @@
             <artifactId>utils-support-datasearch-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- DataSearch 浏览器渲染兜底（定价页渲染器） -->
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-playwright-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <!-- 文件检索演示 -->
         <dependency>
             <groupId>com.chua</groupId>
@@ -711,7 +717,31 @@
                         <include>**/onnx/ReflectiveClothesExample.java</include>
                         <include>**/onnx/FaceMaskDetectorExample.java</include>
                         <include>**/onnx/SealInspectionExample.java</include>
-                    </includes>
+                                              <include>**/arcsoft/*.java</include>
+                          <include>**/datalake/integrated/*.java</include>
+                          <include>**/datalake/pipeline/*.java</include>
+                          <include>**/datalake/query/*.java</include>
+                          <include>**/datalake/server/*.java</include>
+                          <include>**/datalake/sink/*.java</include>
+                          <include>**/datalake/subscribe/*.java</include>
+                          <include>**/datasearch/*.java</include>
+                          <include>**/datasource/*.java</include>
+                          <include>**/datasync/*.java</include>
+                          <include>**/engine/*.java</include>
+                          <include>**/filesearch/*.java</include>
+                          <include>**/llama/*.java</include>
+                          <include>**/media/*.java</include>
+                          <include>**/osgi/*.java</include>
+                          <include>**/pytorch/*.java</include>
+                          <include>**/recognition/*.java</include>
+                          <include>**/redis/*.java</include>
+                          <include>**/spi/*.java</include>
+                          <include>**/ssh/*.java</include>
+                          <include>**/taskdistribution/*.java</include>
+                          <include>**/tui/*.java</include>
+                          <include>**/utils/*.java</include>
+                          <include>**/vector/*.java</include>
+</includes>
                     <!-- 排除引用了已失效 API 的历史遗留示例，修复后应逐个移出本清单 -->
                     <excludes>
                         <exclude>**/llama/*.java</exclude>

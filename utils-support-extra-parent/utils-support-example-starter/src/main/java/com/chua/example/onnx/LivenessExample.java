@@ -18,6 +18,7 @@ import java.util.List;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class LivenessExample {
 
     private LivenessExample() {

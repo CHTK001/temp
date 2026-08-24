@@ -10,6 +10,7 @@ import com.chua.deeplearning.support.translator.ITranslator;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class OnnxQwenExample {
 
     private OnnxQwenExample() {

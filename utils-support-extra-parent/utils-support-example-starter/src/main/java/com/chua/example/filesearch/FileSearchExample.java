@@ -3,8 +3,8 @@ package com.chua.example.filesearch;
 import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.utils.CommandLine;
 import com.chua.filesearch.support.bridge.RustFileSearchBridge;
-import com.chua.filesearch.support.model.FileInfo;
-import com.chua.filesearch.support.model.FileSearchCriteria;
+import com.chua.filesystem.support.filesearch.model.FileInfo;
+import com.chua.filesystem.support.filesearch.model.FileSearchCriteria;
 import com.chua.filesearch.support.service.FileSearchService;
 
 import java.time.Instant;

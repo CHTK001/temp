@@ -14,6 +14,7 @@ import java.util.List;
  *
  * @since 4.0.0.42
  */
+@Slf4j
 public final class OcrTextDumpExample {
 
     /** 创建 OcrTextDumpExample 实例 */

@@ -14,6 +14,7 @@ import java.nio.file.Path;
  *
  * @since 4.0.0.42
  */
+@Slf4j
 public final class OnnxShapeExample {
 
     /** 创建 OnnxShapeDiag 实例 */
@@ -23,7 +24,7 @@ public final class OnnxShapeExample {
     /** Main */
     public static void main(String[] args) throws Exception {
         print("yolov5-plate-rec", "vision/detection/yolov5_plate/", "yolov5_plate_rec_color.onnx",
-                OnnxShapeDiag.class.getClassLoader());
+                OnnxShapeExample.class.getClassLoader());
     }
 
     /** Print */

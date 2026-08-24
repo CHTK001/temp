@@ -12,6 +12,7 @@ import java.nio.file.Paths;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public class ArcFaceExample extends BaseExample {
 
     /** Main */

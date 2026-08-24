@@ -18,6 +18,7 @@ import java.util.Map;
  *
  * @since 4.0.0.42
  */
+@Slf4j
 public final class OcrRecShapeExample {
 
     /** 创建 OcrRecShapeDiag 实例 */
@@ -31,7 +32,7 @@ public final class OcrRecShapeExample {
         Path modelDir = tmpDir.resolve("rec");
         Files.createDirectories(modelDir);
         NativeLoader.of("paddleocrv6-rec-shape")
-                .from(OcrRecShapeDiag.class.getClassLoader())
+                .from(OcrRecShapeExample.class.getClassLoader())
                 .basePath("ocr/PP-OCRv6/medium/rec_infer/")
                 .toTarget(modelDir)
                 .glob("*")

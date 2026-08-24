@@ -27,6 +27,7 @@ import java.util.Set;
  *
  * @since 4.0.0.42
  */
+@Slf4j
 public final class OcrBatchExample {
 
     /** OCR 名称集合 */

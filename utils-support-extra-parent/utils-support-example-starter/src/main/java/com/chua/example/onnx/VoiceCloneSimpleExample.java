@@ -1,6 +1,8 @@
 package com.chua.example.onnx;
 
+import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.ai.audio.TextToAudioClient;
+import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.onnx.audio.whisper.WhisperTranslator;
 
 import java.nio.file.Files;
@@ -13,6 +15,7 @@ import java.util.Enumeration;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class VoiceCloneSimpleExample {
     private VoiceCloneSimpleExample() {}
 
@@ -38,7 +41,7 @@ public final class VoiceCloneSimpleExample {
             String matched = transcript != null ? transcript.trim().toLowerCase() : "";
             log.info(String.valueOf("[verify] original: " + cleaned));
             log.info(String.valueOf("[verify] transcript: " + matched));
-            log.info(String.valueOf("[verify] match: " + (cleaned.equals(matched)) ? "YES" : "partial/no match"));
+            log.info("[verify] match: " + (cleaned.equals(matched) ? "YES" : "partial/no match"));
         } catch (Exception e) {
             System.err.println("[stt] failed: " + e.getMessage());
             e.printStackTrace();

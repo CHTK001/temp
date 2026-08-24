@@ -13,6 +13,7 @@ import java.nio.file.Path;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class VoiceCloneDirectExample {
 
     private VoiceCloneDirectExample() {}

@@ -19,6 +19,7 @@ import java.nio.file.Path;
  *
  * @since 4.0.0.42
  */
+@Slf4j
 public final class MattingExample extends BaseExample {
 
     /** 创建 MattingExample 实例 */

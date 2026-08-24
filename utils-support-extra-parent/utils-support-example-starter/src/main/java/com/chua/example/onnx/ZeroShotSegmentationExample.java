@@ -24,6 +24,7 @@ import java.util.Arrays;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class ZeroShotSegmentationExample extends BaseExample {
 
     /** 零样本分割模型列表 */
