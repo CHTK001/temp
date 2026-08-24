@@ -56,17 +56,18 @@ public class SipClientExample {
         String service = kv.getOrDefault("service", "mstsc");
         String host = kv.getOrDefault("host", "127.0.0.1");
         int port = Integer.parseInt(kv.getOrDefault("port", "3389"));
+        boolean encrypt = Boolean.parseBoolean(kv.getOrDefault("encrypt", "false"));
 
         Runtime.getRuntime().addShutdownHook(new Thread(STOP_LATCH::countDown, "sip-client-shutdown-hook"));
 
-        SipClient client = SipClient.tcp(server).token(token);
+        SipClient client = SipClient.tcp(server).token(token).encrypt(encrypt);
         client.onReconnect(() -> log.info("SIP 重连成功，资源已重新绑定"));
         if ("provider".equalsIgnoreCase(mode)) {
             client.service(service).to(host, port);
-            log.info("SIP 服务提供方已启动: 服务[{}] -> {}:{}", service, host, port);
+            log.info("SIP 服务提供方已启动: 服务[{}] -> {}:{} 加密={}", service, host, port, encrypt);
         } else if ("visitor".equalsIgnoreCase(mode)) {
             client.tunnel(service).listen(host, port);
-            log.info("SIP 访问方已启动: {}:{{}} -> 服务[{}]", host, port, service);
+            log.info("SIP 访问方已启动: {}:{} -> 服务[{}] 加密={}", host, port, service, encrypt);
         } else {
             log.error("未知模式: {}（仅支持 provider / visitor）", mode);
             System.exit(1);
