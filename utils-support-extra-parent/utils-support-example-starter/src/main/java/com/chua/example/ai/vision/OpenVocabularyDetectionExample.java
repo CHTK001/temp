@@ -73,7 +73,7 @@ public class OpenVocabularyDetectionExample {
         // 尝试实例化 translator（无参构造）
         boolean instanceOk = false;
         try {
-            Class<?> translatorClass = Class.forName(entry.translatorClassName());
+            Class<?> translatorClass = ReflectUtils.forName(entry.translatorClassName());
             ReflectUtils.instantiate(translatorClass);
             instanceOk = true;
         } catch (Throwable t) {
