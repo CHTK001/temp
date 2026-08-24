@@ -482,6 +482,30 @@
             <artifactId>utils-support-datasearch-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- 文件检索演示 -->
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-filesearch-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- MQTT 演示 -->
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-mqtt-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- Prometheus 指标采集演示 -->
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-prometheus-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- 视频处理演示 -->
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-video-processor-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <!-- OSHI 本机指标采集 -->
         <!-- Syslog 实时日志监听 -->
         <dependency>
@@ -645,10 +669,10 @@
                         <include>**/face/*.java</include>
                         <include>**/classification/*.java</include>
                         <include>**/layout/*.java</include>
-                         <include>**/onnx/*Plate*.java</include>
-                         <include>**/onnx/*MultiModel*.java</include>
-                         <include>**/onnx/AnimeFaceDetectExample.java</include>
-                         <include>**/onnx/Gemma3Example.java</include>
+                        <include>**/onnx/*Plate*.java</include>
+                        <include>**/onnx/*MultiModel*.java</include>
+                        <include>**/onnx/Gemma3Example.java</include>
+                        <include>**/onnx/PocketTtsEdgeCaseExample.java</include>
                         <include>**/onnx/YoloWorldBatchDrawExample.java</include>
                         <include>**/onnx/WebpDecodeExample.java</include>
                         <include>**/onnx/ImageColorizeExample.java</include>
@@ -656,8 +680,31 @@
                         <include>**/onnx/LamaInpaintingExample.java</include>
                         <include>**/onnx/SealInspectionBlackboxExample.java</include>
                         <include>**/onnx/TtsBenchmarkExample.java</include>
-                        <include>**/onnx/PocketTtsEdgeCaseExample.java</include>
+                        <include>**/onnx/SafetyHelmetExample.java</include>
+                        <include>**/onnx/FireSmokeExample.java</include>
+                        <include>**/onnx/ReflectiveClothesExample.java</include>
+                        <include>**/onnx/FaceMaskDetectorExample.java</include>
+                        <include>**/onnx/SealInspectionExample.java</include>
                     </includes>
+                    <!-- 排除引用了已失效 API 的历史遗留示例，修复后应逐个移出本清单 -->
+                    <excludes>
+                        <exclude>**/llama/*.java</exclude>
+                        <exclude>**/flow/FlowTraceExample.java</exclude>
+                        <exclude>**/network/HttpClientExample.java</exclude>
+                        <exclude>**/datasync/DataSyncExample.java</exclude>
+                        <exclude>**/ai/rag/RagChatExample.java</exclude>
+                        <exclude>**/onnx/OcrAngleExample.java</exclude>
+                        <exclude>**/onnx/OcrBatchExample.java</exclude>
+                        <exclude>**/onnx/OcrBigAngleExample.java</exclude>
+                        <exclude>**/onnx/LivenessExample.java</exclude>
+                        <exclude>**/onnx/LaplacianQualitySpiExample.java</exclude>
+                        <exclude>**/onnx/ModelRealVerifyExample.java</exclude>
+                        <exclude>**/onnx/DocLayoutYoloExample.java</exclude>
+                        <exclude>**/onnx/DinoV2Fp16Example.java</exclude>
+                        <exclude>**/onnx/DepthAnythingExample.java</exclude>
+                        <exclude>**/onnx/MiniLMEmbeddingExample.java</exclude>
+                        <exclude>**/onnx/MiniLMRegistryExample.java</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
         </plugins>
