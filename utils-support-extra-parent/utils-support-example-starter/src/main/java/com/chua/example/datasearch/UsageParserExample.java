@@ -123,7 +123,7 @@ public final class UsageParserExample {
      */
     private static boolean runParser(String name, UsageParser parser) {
         try {
-            List<AiUsage> records = parser.parseAll();
+            List<AiUsage> records = parser.streamAll().collectList().block();
             check(records != null, "records 为 null");
             long inputSum = 0L;
             long outputSum = 0L;

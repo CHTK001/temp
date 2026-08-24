@@ -107,6 +107,27 @@ public class DataSyncExample implements Example {
     }
 
     /**
+     * Example 接口实现：根据 args 中的 type 参数执行对应测试。
+     *
+     * @param args 参数映射，支持 type=basic / repeat / direct / all
+     * @return 全部通过返回 {@code true}
+     */
+    @Override
+    public String name() { return "datasync"; }
+
+    @Override
+    public String module() { return "datatask"; }
+
+    @Override
+    public String description() { return "DataSync 数据同步引擎能力自检"; }
+
+    @Override
+    public boolean run(java.util.Map<String, String> args) {
+        String type = args.getOrDefault("type", DEFAULT_TYPE);
+        return runTest(type);
+    }
+
+    /**
      * basic：构造最小 source/sink/mapping，启动 server 后等待调度器执行。
      */
     public static boolean testBasic() {
