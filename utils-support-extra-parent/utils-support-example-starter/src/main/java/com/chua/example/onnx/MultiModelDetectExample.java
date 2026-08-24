@@ -56,6 +56,8 @@ public final class MultiModelDetectExample {
                 "D:/images/1people.png", "D:/images/more car plate.webp"});
         MODEL_IMAGES.put("yolov10n", new String[]{
                 "D:/images/3peoplebeauty.jpg"});
+        MODEL_IMAGES.put("yolov8s-world", new String[]{
+                "D:/images/1people.png", "D:/images/more car plate.webp", "D:/images/fire.webp"});
     }
 
     public static void main(String[] args) throws Exception {
