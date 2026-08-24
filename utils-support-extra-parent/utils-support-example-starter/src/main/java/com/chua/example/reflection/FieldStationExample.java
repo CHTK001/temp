@@ -2,6 +2,7 @@ package com.chua.example.reflection;
 
 import com.chua.common.support.reflection.FieldStation;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * FieldStation 示例：覆盖 camelCase 转换、字段读写、缓存、继承链查找等核心场景。
@@ -279,6 +280,7 @@ public final class FieldStationExample {
      * 继承载体 Bean，用于验证父类字段查找。
      */
     @Data
+    @EqualsAndHashCode(callSuper = false)
     private static class ChildBean extends TestBean {
 
         /** 子级only */

@@ -1,5 +1,6 @@
 package com.chua.example.media;
 
+import com.chua.common.support.reflection.ReflectUtils;
 import com.chua.example.spi.Example;
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,10 +44,8 @@ public class ScreenCaptureExampleSpi implements Example {
         int height = Integer.parseInt(args.getOrDefault("height", "1080"));
         int fps = Integer.parseInt(args.getOrDefault("fps", "30"));
         try {
-            Method m = ScreenCaptureExample.class.getDeclaredMethod(
-                    "runTest", String.class, int.class, int.class, int.class);
-            m.setAccessible(true);
-            Boolean result = (Boolean) m.invoke(null, captureType, width, height, fps);
+            Boolean result = (Boolean) ReflectUtils.invoke(null, "runTest", Boolean.class,
+                    String.class, int.class, int.class, int.class, captureType, width, height, fps);
             return Boolean.TRUE.equals(result);
         } catch (Throwable t) {
             log.error("screen-capture 反射调用失败: {}", t.getMessage(), t);

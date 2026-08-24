@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.lang.reflect.Method;
+import java.lang.invoke.MethodHandle;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -53,8 +53,12 @@ public class AllPipelinesDrawerVerifyExample {
         for (String cls : PIPELINES) {
             try {
                 Class<?> c = ReflectUtils.forName(cls);
-                Method m = ReflectUtils.getMethod(c, "withInitDrawer");
-                Class<?> rt = m.getReturnType();
+                MethodHandle mh = ReflectUtils.findMethodHandle(c, "withInitDrawer", DrawerPipeline.class);
+                if (mh == null) {
+                    log.warn("[FAIL] {} -> 未声明 withInitDrawer", cls);
+                    continue;
+                }
+                Class<?> rt = mh.type().returnType();
                 log.info("[OK] {} -> {}", cls, rt.getSimpleName());
                 if (rt == DrawerPipeline.class || rt.getSimpleName().equals("DrawerPipeline")) {
                     ok++;

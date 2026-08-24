@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import com.chua.common.support.reflection.ReflectUtils;
 import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.image.ImageDetector;
 import com.chua.deeplearning.support.model.DetectionInfo;
@@ -86,9 +87,9 @@ public final class OcrAngleExample {
     /** DescribeDirection */
     private static String describeDirection(Object dr) {
         try {
-            java.lang.reflect.Method gm = dr.getClass().getMethod("getName");
-            java.lang.reflect.Method pm = dr.getClass().getMethod("getProbability");
-            return gm.invoke(dr) + " prob=" + String.format("%.3f", pm.invoke(dr));
+            Object name = ReflectUtils.invoke(dr, "getName", String.class);
+            Object prob = ReflectUtils.invoke(dr, "getProbability", double.class);
+            return name + " prob=" + String.format("%.3f", prob);
         } catch (Exception e) {
             return String.valueOf(dr);
         }
