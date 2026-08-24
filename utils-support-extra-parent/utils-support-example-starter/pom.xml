@@ -174,6 +174,32 @@
             <artifactId>utils-support-models-onnx-image-colorize</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- 安全检测类嵌入式模型，供对应检测 Example 使用 -->
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-models-onnx-safety-helmet</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-models-onnx-fire-smoke</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-models-onnx-reflective-clothes</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-models-onnx-face-mask-detector</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-models-onnx-seal-inspection</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-deeplearning-llama-starter</artifactId>
@@ -631,61 +657,6 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <release>25</release>
-                    <includes>
-                        <include>**/Example.java</include>
-                        <include>**/ExampleRunner.java</include>
-                        <include>**/FlowExample.java</include>
-                        <include>**/FlowEchoNode.java</include>
-                        <include>**/FlowCompleteExample.java</include>
-                        <include>**/SimpleEngineDataSource.java</include>
-                        <include>**/network/rpc/*.java</include>
-                        <include>**/network/yunxiao/*.java</include>
-                        <include>**/lang/document/*.java</include>
-                        <include>**/lang/json/*.java</include>
-                        <include>**/lang/serialize/*.java</include>
-                        <include>**/lang/protobuf/*.java</include>
-                        <include>**/ai/audio/*.java</include>
-                        <include>**/ai/vision/*.java</include>
-                        <include>**/ai/embedding/*.java</include>
-                        <include>**/ai/usage/*.java</include>
-                        <include>**/ai/chat/Qwen*.java</include>
-                        <include>**/ai/chat/AiProxy*.java</include>
-                        <include>**/collection/*.java</include>
-                        <include>**/concurrent/threadflow/*.java</include>
-                        <include>**/concurrent/queue/*.java</include>
-                        <include>**/nativehttp/*.java</include>
-                        <include>**/network/nio/*.java</include>
-                        <include>**/network/perf/*.java</include>
-                        <include>**/network/http/*.java</include>
-                        <include>**/network/proxy/*.java</include>
-                        <include>**/network/scatter/*.java</include>
-                        <include>**/network/sync/*.java</include>
-                        <include>**/network/sip/*.java</include>
-                        <include>**/pipeline/*.java</include>
-                        <include>**/image/*.java</include>
-                        <include>**/ocr/*.java</include>
-                        <include>**/segmentation/*.java</include>
-                        <include>**/reid/*.java</include>
-                        <include>**/face/*.java</include>
-                        <include>**/classification/*.java</include>
-                        <include>**/layout/*.java</include>
-                        <include>**/onnx/*Plate*.java</include>
-                        <include>**/onnx/*MultiModel*.java</include>
-                        <include>**/onnx/Gemma3Example.java</include>
-                        <include>**/onnx/PocketTtsEdgeCaseExample.java</include>
-                        <include>**/onnx/YoloWorldBatchDrawExample.java</include>
-                        <include>**/onnx/WebpDecodeExample.java</include>
-                        <include>**/onnx/ImageColorizeExample.java</include>
-                        <include>**/onnx/DeepfakeDetectionExample.java</include>
-                        <include>**/onnx/LamaInpaintingExample.java</include>
-                        <include>**/onnx/SealInspectionBlackboxExample.java</include>
-                        <include>**/onnx/TtsBenchmarkExample.java</include>
-                        <include>**/onnx/SafetyHelmetExample.java</include>
-                        <include>**/onnx/FireSmokeExample.java</include>
-                        <include>**/onnx/ReflectiveClothesExample.java</include>
-                        <include>**/onnx/FaceMaskDetectorExample.java</include>
-                        <include>**/onnx/SealInspectionExample.java</include>
-                    </includes>
                     <!-- 排除引用了已失效 API 的历史遗留示例，修复后应逐个移出本清单 -->
                     <excludes>
                         <exclude>**/llama/*.java</exclude>
