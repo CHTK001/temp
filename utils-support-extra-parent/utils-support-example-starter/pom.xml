@@ -706,6 +706,8 @@
                         <include>**/network/sync/*.java</include>
                         <include>**/network/sip/*.java</include>
                         <include>**/pipeline/*.java</include>
+                        <include>**/reflection/*.java</include>
+                        <include>**/shmqueue/*.java</include>
                         <include>**/image/*.java</include>
                         <include>**/ocr/*.java</include>
                         <include>**/segmentation/*.java</include>
