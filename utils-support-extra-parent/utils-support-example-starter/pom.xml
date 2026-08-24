@@ -206,6 +206,12 @@
             <artifactId>utils-support-models-onnx-dfine-l-obj2coco</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- RT-DETR v2 文档版面检测（DocLayNet 17 类，169MB fp32），供 RTDetrLayoutExample 使用 -->
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-models-onnx-rtdetr-layout</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-deeplearning-llama-starter</artifactId>
@@ -724,6 +730,7 @@
                         <include>**/onnx/FaceMaskDetectorExample.java</include>
                         <include>**/onnx/SealInspectionExample.java</include>
                         <include>**/onnx/DFineExample.java</include>
+                        <include>**/onnx/RTDetrLayoutExample.java</include>
                                               <include>**/arcsoft/*.java</include>
                           <include>**/datalake/integrated/*.java</include>
                           <include>**/datalake/pipeline/*.java</include>
