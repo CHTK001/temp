@@ -11,7 +11,7 @@ import com.chua.common.support.ai.chat.ChatClient;
  */
 public final class Qwen2FullExample {
 
-    private Qwen2FullVerify() {
+    private Qwen2FullExample() {
     }
 
     public static void main(String[] args) {

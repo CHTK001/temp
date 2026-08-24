@@ -64,7 +64,7 @@ import com.chua.example.spi.Example;
  * @since 4.0.0.42
  */
 @Slf4j
-public $1class TuiDashboardExample implements Example {
+public class TuiDashboardExample implements Example {
 
     /**
      * 程序退出码：成功

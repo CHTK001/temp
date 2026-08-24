@@ -21,6 +21,8 @@ import com.chua.common.support.task.flow.FlowNodeRegistry;
  *
  * @author CH
  * @since 4.0.0.42
+  *
+ * <p>SPI 实现载体：FlowNode 节点实现载体，由 FlowExample 编排运行，无独立 main 入口。</p>
  */
 public class FlowEchoNodeExample implements FlowNode {
 

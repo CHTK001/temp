@@ -12,6 +12,8 @@ import java.util.List;
  *
  * @author CH
  * @since 4.0.0.42
+  *
+ * <p>SPI 实现载体：由 RpcExample 宿主通过 SPI 加载运行，无独立 main 入口。</p>
  */
 public class RpcEchoServiceImplExample implements RpcEchoServiceExample {
 

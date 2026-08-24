@@ -241,7 +241,14 @@ public class RpcExample implements Example {
             }
 
             // 并发压测
-            ThreadPoolExecutor pool = new ThreadPoolExecutor(threads, threads, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(256), new ThreadFactory() { private final AtomicInteger n = new AtomicInteger(1); public Thread newThread(Runnable r) { Thread t = new Thread(r, "rpc-bench-" + n.getAndIncrement()); t.setDaemon(true); return t; } });
+            ThreadPoolExecutor pool = new ThreadPoolExecutor(threads, threads, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(256), new ThreadFactory() {
+                private final AtomicInteger n = new AtomicInteger(1);
+                public Thread newThread(Runnable r) {
+                    Thread t = new Thread(r, "rpc-bench-" + n.getAndIncrement());
+                    t.setDaemon(true);
+                    return t;
+                }
+            });
             CountDownLatch ready = new CountDownLatch(threads);
             CountDownLatch start = new CountDownLatch(1);
             CountDownLatch done = new CountDownLatch(threads);
@@ -629,7 +636,14 @@ public class RpcExample implements Example {
     private static void assertConcurrent(RpcEchoServiceExample echo, String label) throws Exception {
         int threads = 8;
         int perThread = 50;
-        ThreadPoolExecutor pool = new ThreadPoolExecutor(threads, threads, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(256), new ThreadFactory() { private final AtomicInteger n = new AtomicInteger(1); public Thread newThread(Runnable r) { Thread t = new Thread(r, "rpc-bench-" + n.getAndIncrement()); t.setDaemon(true); return t; } });
+        ThreadPoolExecutor pool = new ThreadPoolExecutor(threads, threads, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(256), new ThreadFactory() {
+            private final AtomicInteger n = new AtomicInteger(1);
+            public Thread newThread(Runnable r) {
+                Thread t = new Thread(r, "rpc-bench-" + n.getAndIncrement());
+                t.setDaemon(true);
+                return t;
+            }
+        });
         CountDownLatch ready = new CountDownLatch(threads);
         CountDownLatch start = new CountDownLatch(1);
         AtomicInteger success = new AtomicInteger();

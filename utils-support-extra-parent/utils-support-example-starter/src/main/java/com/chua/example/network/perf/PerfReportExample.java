@@ -33,6 +33,33 @@ public final class PerfReportExample {
     }
 
     /**
+     * 独立入口：输出当前环境信息自演示。
+     *
+     * <p>参数格式 {@code --key=value}：</p>
+     * <ul>
+     *     <li>{@code --server=} 服务器名称（默认 perf-self-check）</li>
+     *     <li>{@code --spi=} SPI 名称（默认 jdk）</li>
+     *     <li>{@code --discovery=} 发现服务类型（默认 static）</li>
+     * </ul>
+     *
+     * @param args 命令行参数
+     */
+    public static void main(String[] args) {
+        java.util.Map<String, String> params = new java.util.LinkedHashMap<>();
+        for (String arg : args) {
+            int idx = arg.indexOf('=');
+            if (arg.startsWith("--") && idx > 2) {
+                params.put(arg.substring(2, idx), arg.substring(idx + 1));
+            }
+        }
+        printEnvironment(
+                params.getOrDefault("server", "perf-self-check"),
+                params.getOrDefault("spi", "jdk"),
+                params.getOrDefault("discovery", "static"));
+        System.exit(0);
+    }
+
+    /**
      * 打印环境信息（每个报告前必打）。
      */
     public static void printEnvironment(String serverName, String spiName, String discoveryType) {

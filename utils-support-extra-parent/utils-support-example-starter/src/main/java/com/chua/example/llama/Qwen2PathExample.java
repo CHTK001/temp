@@ -15,7 +15,7 @@ import java.nio.file.Paths;
  */
 public final class Qwen2PathExample {
 
-    private Qwen2PathDiag() {
+    private Qwen2PathExample() {
     }
 
     public static void main(String[] args) {

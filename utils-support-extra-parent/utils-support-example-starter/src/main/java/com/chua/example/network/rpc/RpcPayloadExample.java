@@ -159,4 +159,52 @@ public class RpcPayloadExample implements Serializable {
     public String toString() {
         return "RpcPayloadExample{name='" + name + "', value=" + value + "}";
     }
+
+    /**
+     * 独立入口：JDK 序列化往返自检。
+     *
+     * <p>构造含嵌套子对象的负载，经 {@code ObjectOutputStream/ObjectInputStream}
+     * 往返后按字段比对，通过 {@code System.exit(0/1)} 表达结果。</p>
+     *
+     * <p>参数格式 {@code --key=value}：</p>
+     * <ul>
+     *   <li>{@code --name=} 负载名称（默认 demo）</li>
+     *   <li>{@code --value=} 数值（默认 42）</li>
+     * </ul>
+     *
+     * @param args 命令行参数
+     * @throws java.io.IOException 序列化失败时抛出
+     */
+    public static void main(String[] args) throws Exception {
+        java.util.Map<String, String> params = new java.util.LinkedHashMap<>();
+        for (String arg : args) {
+            int idx = arg.indexOf('=');
+            if (arg.startsWith("--") && idx > 2) {
+                params.put(arg.substring(2, idx), arg.substring(idx + 1));
+            }
+        }
+        String name = params.getOrDefault("name", "demo");
+        int value = Integer.parseInt(params.getOrDefault("value", "42"));
+
+        RpcPayloadExample source = new RpcPayloadExample(name, value,
+                new RpcPayloadExample(name + "-child", value + 1));
+
+        java.io.ByteArrayOutputStream bos = new java.io.ByteArrayOutputStream();
+        try (java.io.ObjectOutputStream oos = new java.io.ObjectOutputStream(bos)) {
+            oos.writeObject(source);
+        }
+        RpcPayloadExample restored;
+        try (java.io.ObjectInputStream ois =
+                     new java.io.ObjectInputStream(new java.io.ByteArrayInputStream(bos.toByteArray()))) {
+            restored = (RpcPayloadExample) ois.readObject();
+        }
+
+        boolean passed = source.equals(restored);
+        System.out.println("[PASS] 序列化往返一致: " + restored);
+        if (!passed) {
+            System.out.println("[FAIL] 往返后字段不一致");
+            System.exit(1);
+        }
+        System.exit(0);
+    }
 }

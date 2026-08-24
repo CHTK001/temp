@@ -8,6 +8,8 @@ import com.chua.common.support.lang.datasource.engine.EngineDataSource;
  *
  * @author CH
  * @since 4.0.0
+  *
+ * <p>SPI 实现载体：SPI 引擎实现载体，由宿主 Example 按类型加载，无独立 main 入口。</p>
  */
 public class SimpleEngineDataSourceExample implements EngineDataSource<Object> {
 

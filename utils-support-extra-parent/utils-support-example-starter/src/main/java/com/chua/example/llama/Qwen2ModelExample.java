@@ -12,7 +12,7 @@ import com.chua.deeplearning.support.llama.translator.Qwen2ChatTranslator;
  */
 public final class Qwen2ModelExample {
 
-    private Qwen2ModelVerify() {
+    private Qwen2ModelExample() {
     }
 
     public static void main(String[] args) throws Exception {

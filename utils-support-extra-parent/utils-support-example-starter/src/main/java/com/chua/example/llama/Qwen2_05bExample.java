@@ -12,7 +12,7 @@ import com.chua.deeplearning.support.engine.ModelRegistry;
  */
 public final class Qwen2_05bExample {
 
-    private Qwen2_05bVerify() {
+    private Qwen2_05bExample() {
     }
 
     public static void main(String[] args) {

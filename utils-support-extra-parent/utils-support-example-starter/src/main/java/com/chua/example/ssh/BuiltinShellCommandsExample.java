@@ -26,6 +26,8 @@ import java.util.stream.Collectors;
  * @since 4.0.0.42
  * @see com.chua.ssh.support.annotations.ShellMethod
  * @see com.chua.ssh.support.server.SshServer
+  *
+ * <p>SPI 实现载体：@ShellMethod 命令束，由 SshServer 自动扫描注册，无独立 main 入口。</p>
  */
 @ShellMethod("/builtin")
 public class BuiltinShellCommandsExample {

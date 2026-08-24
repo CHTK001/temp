@@ -5,6 +5,8 @@ package com.chua.example.osgi;
  *
  * @author CH
  * @since 4.0.0.42
+  *
+ * <p>SPI 实现载体：由 OSGi 容器注册为服务实现，无独立 main 入口。</p>
  */
 public final class HelloServiceImplExample implements HelloServiceExample {
     /** Greeting */

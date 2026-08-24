@@ -63,7 +63,7 @@ public class MultiModelBatchDrawExample {
         }
         Files.createDirectories(outputRoot);
         System.out.println("===== 多模型批量绘图 =====");
-        System.out.println("输入: " + inputDir + "  输出根: " + outputRoot);
+        log.info("输入: {}, 输出根: {}", inputDir, outputRoot);
 
         try (var files = Files.list(inputDir)) {
             List<Path> images = files
@@ -76,7 +76,7 @@ public class MultiModelBatchDrawExample {
             }
             boolean allOk = true;
             for (String modelId : MODELS) {
-                System.out.println("\n--- 模型: " + modelId + " ---");
+                log.info("--- 模型: {} ---", modelId);
                 for (Path img : images) {
                     try {
                         drawAndSave(modelId, img, outputRoot);

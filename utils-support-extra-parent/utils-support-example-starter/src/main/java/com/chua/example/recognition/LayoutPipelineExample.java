@@ -18,7 +18,7 @@ import java.util.List;
  */
 public final class LayoutPipelineExample {
 
-    private LayoutPipelineVerify() {
+    private LayoutPipelineExample() {
     }
 
     public static void main(String[] args) throws Exception {

@@ -142,7 +142,10 @@ public class LazyExpiringListExample implements Example {
         AtomicInteger loadCount = new AtomicInteger(0);
 
         try (LazyExpiringList<String> list = LazyExpiringList.<String>builder()
-                .loader(() -> { loadCount.incrementAndGet(); return Arrays.asList("a", "b", "c"); })
+                .loader(() -> {
+                    loadCount.incrementAndGet();
+                    return Arrays.asList("a", "b", "c");
+                })
                 .build()) {
 
             // 初始状态 UNLOADED
@@ -176,7 +179,10 @@ public class LazyExpiringListExample implements Example {
         AtomicInteger loadCount = new AtomicInteger(0);
 
         try (LazyExpiringList<String> list = LazyExpiringList.<String>builder()
-                .loader(() -> { loadCount.incrementAndGet(); return Arrays.asList("data"); })
+                .loader(() -> {
+                    loadCount.incrementAndGet();
+                    return Arrays.asList("data");
+                })
                 .ttlMillis(100)
                 .expiryCheckIntervalMillis(50)
                 .build()) {
@@ -216,7 +222,10 @@ public class LazyExpiringListExample implements Example {
         AtomicInteger loadCount = new AtomicInteger(0);
 
         try (LazyExpiringList<String> list = LazyExpiringList.<String>builder()
-                .loader(() -> { loadCount.incrementAndGet(); return Arrays.asList("r" + loadCount.get()); })
+                .loader(() -> {
+                    loadCount.incrementAndGet();
+                    return Arrays.asList("r" + loadCount.get());
+                })
                 .build()) {
 
             // 首次访问触发加载
@@ -325,7 +334,11 @@ public class LazyExpiringListExample implements Example {
         try (LazyExpiringList<String> list = LazyExpiringList.<String>builder()
                 .loader(() -> {
                     loadCount.incrementAndGet();
-                    try { Thread.sleep(50); } catch (InterruptedException ignored) { Thread.currentThread().interrupt(); }
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException ignored) {
+                        Thread.currentThread().interrupt();
+                    }
                     return Arrays.asList("concurrent");
                 })
                 .build()) {
@@ -439,7 +452,10 @@ public class LazyExpiringListExample implements Example {
         AtomicInteger loadCount = new AtomicInteger(0);
 
         try (LazyExpiringList<String> list = LazyExpiringList.<String>builder()
-                .loader(() -> { loadCount.incrementAndGet(); return Arrays.asList("x"); })
+                .loader(() -> {
+                    loadCount.incrementAndGet();
+                    return Arrays.asList("x");
+                })
                 .build()) {
 
             int hc = list.hashCode();
@@ -548,7 +564,9 @@ public class LazyExpiringListExample implements Example {
         List<String> events = new ArrayList<>();
 
         try (LazyExpiringList<String> list = LazyExpiringList.<String>builder()
-                .loader(() -> { throw new RuntimeException("模拟加载失败"); })
+                .loader(() -> {
+                    throw new RuntimeException("模拟加载失败");
+                })
                 .lifecycleListener(e -> events.add(e.getType().name()))
                 .build()) {
 
