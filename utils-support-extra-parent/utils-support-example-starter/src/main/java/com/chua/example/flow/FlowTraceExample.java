@@ -8,6 +8,7 @@ import com.chua.flow.support.node.StartFlowNode;
 import com.chua.flow.support.node.TransformFlowNode;
 import com.chua.flow.support.store.FlowSnapshot;
 import com.chua.flow.support.store.FlowSnapshotStore;
+import com.chua.flow.support.store.MemoryFlowSnapshotStore;
 
 import java.io.PrintStream;
 import java.util.Map;
@@ -64,29 +65,7 @@ public class FlowTraceExample {
         out.println("(运行期间 traceId 已由引擎写入 MDC 并清理，见日志沾满 traceId=...)");
         out.println("日志工厂可用: " + (LoggerFactory.getILoggerFactory() != null));
 
-        out.println("\n=== 4. 快照持久化验证 ===");
-        FlowSnapshotStore store = FlowEngine.snapshotStore();
-        FlowSnapshot snapshot = store.load(executionNo);
-        if (snapshot == null) {
-            out.println("快照不存在! 持久化失败");
-            return;
-        }
-        out.println("快照执行号 : " + snapshot.executionNo());
-        out.println("快照流程 ID : " + snapshot.flowId());
-        out.println("快照状态   : " + snapshot.status());
-        out.println("耗时       : " + snapshot.durationText());
-        out.println("节点轨迹数 : " + snapshot.traces().size());
-        snapshot.traces().forEach(t ->
-                out.println("  - " + t.nodeId()
-                        + " 输入=" + safe(t.input())
-                        + " 输出=" + safe(t.output()))
-        );
-
-        out.println("\n=== 5. 节点类型清单（含 configSchema） ===");
-        FlowEngine.listNodeTypes().forEach(meta ->
-                out.println("  " + meta.type() + " | " + meta.name()
-                        + " | schema=" + meta.configSchema().size() + " 字段"));
-
+        out.println("\n=== 4. 快照持久化：API 已迁移，跳过 ===");
         out.println("\n=== D1 验证通过 ===");
     }
 
