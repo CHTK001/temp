@@ -57,13 +57,13 @@ public final class ImageProcessorApiExample {
     private static boolean hasFluentMethods(ImageProcessors.FluentProcessor fluent) {
         Class<?> type = fluent.getClass();
         try {
-            ReflectUtils.get_method(type, "resize", int.class, int.class);
-            ReflectUtils.get_method(type, "grayscale");
-            ReflectUtils.get_method(type, "rotate", int.class);
-            ReflectUtils.get_method(type, "blur", int.class);
-            ReflectUtils.get_method(type, "brightness", int.class);
-            ReflectUtils.get_method(type, "crop", int.class, int.class, int.class, int.class);
-            ReflectUtils.get_method(type, "flip", String.class);
+            type.getMethod( "resize", int.class, int.class);
+            type.getMethod( "grayscale");
+            type.getMethod( "rotate", int.class);
+            type.getMethod( "blur", int.class);
+            type.getMethod( "brightness", int.class);
+            type.getMethod( "crop", int.class, int.class, int.class, int.class);
+            type.getMethod( "flip", String.class);
             return true;
         } catch (ReflectiveOperationException e) {
             System.out.println("  missing method: " + e.getMessage());

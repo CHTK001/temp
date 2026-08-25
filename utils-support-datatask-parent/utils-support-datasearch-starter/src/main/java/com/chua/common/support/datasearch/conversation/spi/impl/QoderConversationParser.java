@@ -12,27 +12,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Claude Code conversation parser.
+ * Qoder conversation parser.
  *
- * <p>Claude Code persists every session as a JSONL transcript under
- * {@code ~/.claude/projects/<encoded-path>/<sessionId>.jsonl}; user and
- * assistant events carry the chat content. Text blocks are emitted with
- * full content; thinking / tool_use / tool_result blocks are emitted as
- * type markers with empty content.</p>
+ * <p>Qoder CLI persists sessions as Claude-Code-style JSONL transcripts under
+ * {@code ~/.qoder/projects/<project>/<sessionId>.jsonl}: user content is a
+ * plain string while assistant content is an array of typed blocks.</p>
  *
  * @author CH
  * @since 4.0.0.42
  */
-@Spi("claude-code")
-public class ClaudeCodeConversationParser extends AbstractJsonlConversationParser {
+@Spi("qoder")
+public class QoderConversationParser extends AbstractJsonlConversationParser {
 
     private static final Path PROJECTS_DIR = Path.of(
-            System.getProperty("user.home"), ".claude", "projects");
+            System.getProperty("user.home"), ".qoder", "projects");
 
     /**
      * 返回会话文件根目录。
      *
-     * @return {@code ~/.claude/projects}
+     * @return {@code ~/.qoder/projects}
      */
     @Override
     protected Path rootDir() {
@@ -80,7 +78,7 @@ public class ClaudeCodeConversationParser extends AbstractJsonlConversationParse
                     role, message.get("model").toStringValue(),
                     timestamp > 0 ? timestamp : null, node.get("cwd").toStringValue());
         } catch (Exception e) {
-            log.debug("[claude-code] parse failed: {}", e.getMessage());
+            log.debug("[qoder] parse failed: {}", e.getMessage());
             return List.of();
         }
     }
@@ -93,7 +91,7 @@ public class ClaudeCodeConversationParser extends AbstractJsonlConversationParse
         }
         java.util.function.Function<String, ConversationMessage> base =
                 blockType -> ConversationMessage.builder()
-                        .provider("claude-code")
+                        .provider("qoder")
                         .sessionId(sessionId)
                         .messageId(messageId)
                         .role(role)

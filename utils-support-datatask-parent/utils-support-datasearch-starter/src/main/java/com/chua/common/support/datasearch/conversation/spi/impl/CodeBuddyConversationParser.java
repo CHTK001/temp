@@ -7,36 +7,54 @@ import com.chua.common.support.lang.json.JsonNode;
 import com.chua.common.support.spi.annotations.Spi;
 
 import java.nio.file.Path;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Claude Code conversation parser.
+ * Tencent CodeBuddy Code conversation parser.
  *
- * <p>Claude Code persists every session as a JSONL transcript under
- * {@code ~/.claude/projects/<encoded-path>/<sessionId>.jsonl}; user and
- * assistant events carry the chat content. Text blocks are emitted with
- * full content; thinking / tool_use / tool_result blocks are emitted as
- * type markers with empty content.</p>
+ * <p>CodeBuddy Code persists sessions as JSONL transcripts under
+ * {@code ~/.codebuddy/projects/<project>/<sessionId>.jsonl} (CN edition:
+ * {@code ~/.codebuddycn}). Message lines use a flat shape where the content
+ * array blocks are typed {@code input_text} / {@code output_text}:</p>
+ *
+ * <pre>{@code
+ * {
+ *   "id": "...", "timestamp": 1787545195161,
+ *   "type": "message", "role": "user" | "assistant",
+ *   "sessionId": "...", "cwd": "...",
+ *   "content": [ { "type": "input_text", "text": "..." } ]
+ * }
+ * }</pre>
  *
  * @author CH
  * @since 4.0.0.42
  */
-@Spi("claude-code")
-public class ClaudeCodeConversationParser extends AbstractJsonlConversationParser {
+@Spi("codebuddy")
+public class CodeBuddyConversationParser extends AbstractJsonlConversationParser {
 
-    private static final Path PROJECTS_DIR = Path.of(
-            System.getProperty("user.home"), ".claude", "projects");
+    private static final Path PROJECTS_DIR_INTL = Path.of(
+            System.getProperty("user.home"), ".codebuddy", "projects");
+
+    private static final Path PROJECTS_DIR_CN = Path.of(
+            System.getProperty("user.home"), ".codebuddycn", "projects");
 
     /**
-     * 返回会话文件根目录。
+     * 返回会话文件根目录（国际版）。
      *
-     * @return {@code ~/.claude/projects}
+     * @return {@code ~/.codebuddy/projects}
      */
     @Override
     protected Path rootDir() {
-        return PROJECTS_DIR;
+        return PROJECTS_DIR_INTL;
+    }
+
+    /**
+     * 扫描国际版与国内版两个目录。
+     */
+    @Override
+    protected List<Path> rootDirs() {
+        return List.of(PROJECTS_DIR_INTL, PROJECTS_DIR_CN);
     }
 
     /**
@@ -59,28 +77,21 @@ public class ClaudeCodeConversationParser extends AbstractJsonlConversationParse
         }
         try {
             JsonNode node = Json.parse(line);
-            String type = node.get("type").toStringValue();
-            if (!"user".equals(type) && !"assistant".equals(type)) {
+            if (!"message".equals(node.get("type").toStringValue())) {
                 return List.of();
             }
-            JsonNode message = node.get("message");
-            if (message.isMissingValue()) {
+            String role = node.get("role").toStringValue();
+            if (!"user".equals(role) && !"assistant".equals(role)) {
                 return List.of();
             }
-            String role = message.get("role").toStringValue();
-            if (role.isBlank()) {
-                role = type;
-            }
-            long timestamp = parseInstantToMillis(node.get("timestamp").toStringValue());
-            String sessionId = node.get("sessionId").toStringValue();
-            JsonNode id = message.get("id");
-            String messageId = id.isMissingValue() ? "" : id.toStringValue();
-
-            return messagesFromContent(message.get("content"), sessionId, messageId,
-                    role, message.get("model").toStringValue(),
-                    timestamp > 0 ? timestamp : null, node.get("cwd").toStringValue());
+            long timestamp = node.get("timestamp").toLongValue(0L);
+            return messagesFromContent(node.get("content"),
+                    node.get("sessionId").toStringValue(),
+                    node.get("id").toStringValue(),
+                    role, "", timestamp > 0 ? timestamp : null,
+                    node.get("cwd").toStringValue());
         } catch (Exception e) {
-            log.debug("[claude-code] parse failed: {}", e.getMessage());
+            log.debug("[codebuddy] parse failed: {}", e.getMessage());
             return List.of();
         }
     }
@@ -88,12 +99,12 @@ public class ClaudeCodeConversationParser extends AbstractJsonlConversationParse
     private List<ConversationMessage> messagesFromContent(JsonNode content,
             String sessionId, String messageId, String role, String model,
             Long timestamp, String cwd) {
-        if (content.isMissingValue()) {
+        if (content.isMissingValue() || !content.isArray()) {
             return List.of();
         }
         java.util.function.Function<String, ConversationMessage> base =
                 blockType -> ConversationMessage.builder()
-                        .provider("claude-code")
+                        .provider("codebuddy")
                         .sessionId(sessionId)
                         .messageId(messageId)
                         .role(role)
@@ -104,10 +115,6 @@ public class ClaudeCodeConversationParser extends AbstractJsonlConversationParse
                         .build();
 
         List<ConversationMessage> result = new ArrayList<>();
-        if (!content.isArray()) {
-            result.add(base.apply("text").toBuilder().content(content.toStringValue()).build());
-            return result;
-        }
         for (int i = 0; i < content.size(); i++) {
             JsonNode block = content.get(i);
             String blockType = block.get("type").toStringValue();
@@ -121,21 +128,9 @@ public class ClaudeCodeConversationParser extends AbstractJsonlConversationParse
                 case "thinking" -> result.add(base.apply("thinking"));
                 case "tool_use" -> result.add(base.apply("tool_use")
                         .toBuilder().content(block.get("name").toStringValue()).build());
-                case "tool_result" -> result.add(base.apply("tool_result"));
                 default -> result.add(base.apply(blockType));
             }
         }
         return result;
-    }
-
-    private long parseInstantToMillis(String ts) {
-        if (ts == null || ts.isBlank()) {
-            return 0L;
-        }
-        try {
-            return Instant.parse(ts).toEpochMilli();
-        } catch (Exception e) {
-            return 0L;
-        }
     }
 }

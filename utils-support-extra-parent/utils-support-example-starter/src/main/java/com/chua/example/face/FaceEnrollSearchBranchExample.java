@@ -88,23 +88,27 @@ public class FaceEnrollSearchBranchExample {
         String manTop = top1Id(face, manBytes);
         boolean manHit = "man-01".equals(manTop);
         System.out.println((manHit ? "[PASS]" : "[FAIL]") + " A3 真人同图回查 top1=" + manTop);
+        printTopScores(face, manBytes);
         allOk &= manHit;
 
         String animeTop = top1Id(face, animeFace1);
         boolean animeHit = "anime-01".equals(animeTop);
         System.out.println((animeHit ? "[PASS]" : "[FAIL]") + " A4 动漫同图回查 top1=" + animeTop);
+        printTopScores(face, animeFace1);
         allOk &= animeHit;
 
         /* ── ③ 跨域隔离（动漫样本不得命中真人 id，反之亦然）── */
         String anime2Top = top1Id(face, animeFace2);
         boolean isolated1 = !"man-01".equals(anime2Top);
         System.out.println((isolated1 ? "[PASS]" : "[FAIL]") + " A5 动漫样本二检索 top1=" + anime2Top + "（不串真人域）");
+        printTopScores(face, animeFace2);
         allOk &= isolated1;
 
         byte[] selfie = Files.readAllBytes(Path.of("D:\\images\\largest_selfie.jpg"));
         String selfieTop = top1Id(face, selfie);
         boolean isolated2 = !"anime-01".equals(selfieTop);
         System.out.println((isolated2 ? "[PASS]" : "[FAIL]") + " A6 真人自拍检索 top1=" + selfieTop + "（不串动漫域）");
+        printTopScores(face, selfie);
         allOk &= isolated2;
 
         /* ── ④ 多脸场景可视化：检测最大脸并标注落盘 ── */

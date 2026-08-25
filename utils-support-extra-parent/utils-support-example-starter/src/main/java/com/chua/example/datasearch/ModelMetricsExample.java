@@ -1,31 +1,31 @@
 package com.chua.example.datasearch;
 
 import com.chua.common.support.ai.chat.ModelDefinition;
-import com.chua.common.support.datasearch.pricing.spi.AbstractPricingProvider;
-import com.chua.common.support.datasearch.pricing.spi.PricingProvider;
-import com.chua.common.support.reflection.ReflectUtils;
+import com.chua.common.support.datasearch.pricing.spi.AbstractModelMetricsProvider;
+import com.chua.common.support.datasearch.pricing.spi.ModelMetricsProvider;
 
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.ServiceLoader;
 
 /**
- * AI 模型定价提供者（PricingProvider）演示。
+ * AI 模型指标提供者（ModelMetricsProvider）演示。
  *
- * <p>遍历指定或全部 PricingProvider SPI 实现，实测在线抓取结果并与
- * classpath 内置基线对比，输出每家的真实数据样本。</p>
+ * <p>遍历指定或全部 ModelMetricsProvider SPI 实现，实测在线抓取结果并与
+ * classpath 内置基线对比，输出价格、智能指数、速度、延迟等真实数据样本。</p>
  *
  * <p>SPI 多实现场景：通过 {@code --spi=<implName>} 指定要测试的实现，
  * 不传或传 {@code all} 时遍历全部实现。例如：</p>
  *
  * <pre>
- * java PricingProviderExample --spi=amazon
- * java PricingProviderExample
+ * java ModelMetricsExample --spi=amazon
+ * java ModelMetricsExample
  * </pre>
  *
  * @author CH
  * @since 4.0.0.42
  */
-public final class PricingProviderExample {
+public final class ModelMetricsExample {
 
     /** 遍历全部实现的参数值 */
     private static final String SPI_ALL = "all";
@@ -33,8 +33,8 @@ public final class PricingProviderExample {
     /** 参数前缀 */
     private static final String PARAM_PREFIX = "--";
 
-    /** 创建 PricingProviderExample 实例 */
-    private PricingProviderExample() {
+    /** 创建 ModelMetricsExample 实例 */
+    private ModelMetricsExample() {
     }
 
     /**
@@ -42,7 +42,7 @@ public final class PricingProviderExample {
      *
      * <p>参数格式 {@code --key=value} 或 {@code --key value}：</p>
      * <ul>
-     *     <li>{@code --spi=} PricingProvider SPI 名称（默认 all，遍历全部实现）</li>
+     *     <li>{@code --spi=} ModelMetricsProvider SPI 名称（默认 all，遍历全部实现）</li>
      * </ul>
      *
      * @param args 命令行参数
@@ -51,10 +51,10 @@ public final class PricingProviderExample {
         String spiName = parseArgs(args).getOrDefault("spi", SPI_ALL);
         int failures = 0;
         int total = 0;
-        System.out.printf("%-13s %7s %8s   %s%n",
+        System.out.printf("%-18s %7s %8s   %s%n",
                 "PROVIDER", "ONLINE", "BUNDLED", "SAMPLE(first .. last)");
-        for (PricingProvider p : ServiceLoader.load(PricingProvider.class)) {
-            if (!(p instanceof AbstractPricingProvider ap)) {
+        for (ModelMetricsProvider p : ServiceLoader.load(ModelMetricsProvider.class)) {
+            if (!(p instanceof AbstractModelMetricsProvider ap)) {
                 continue;
             }
             String name = p.name();
@@ -67,10 +67,10 @@ public final class PricingProviderExample {
                 check(online != null, "fetchOnlinePricing 返回 null");
                 int bundled = bundledCount(ap);
                 String sample = describe(online);
-                System.out.printf("%-13s %7d %8d   %s%n", name, online.size(), bundled, sample);
+                System.out.printf("%-18s %7d %8d   %s%n", name, online.size(), bundled, sample);
             } catch (Throwable t) {
                 failures++;
-                System.out.printf("%-13s %7s %8d   %s%n", name, "ERR", "-", "[FAIL] " + t.getMessage());
+                System.out.printf("%-18s %7s %8d   %s%n", name, "ERR", "-", "[FAIL] " + t.getMessage());
             }
         }
         System.out.println("[PASS] 实测完成, 共 " + total + " 个实现");
@@ -108,14 +108,15 @@ public final class PricingProviderExample {
     /**
      * 统计 classpath 内置基线 JSON 的条目数。
      *
-     * @param provider 定价提供者
+     * @param provider 模型指标提供者
      * @return 内置条目数，读取失败返回 -1
      */
-    private static int bundledCount(AbstractPricingProvider provider) {
+    private static int bundledCount(AbstractModelMetricsProvider provider) {
         try {
+            Method method = AbstractModelMetricsProvider.class.getDeclaredMethod("readClasspathPricing");
+            method.setAccessible(true);
             @SuppressWarnings("unchecked")
-            List<ModelDefinition> bundled = (List<ModelDefinition>) ReflectUtils.invoke(
-                    provider, "readClasspathPricing");
+            List<ModelDefinition> bundled = (List<ModelDefinition>) method.invoke(provider);
             return bundled == null ? -1 : bundled.size();
         } catch (Throwable t) {
             return -1;
@@ -123,23 +124,42 @@ public final class PricingProviderExample {
     }
 
     /**
-     * 格式化首末两条模型样本。
+     * 格式化首末两条模型样本（含智能/速度/延迟维度）。
      *
-     * @param models 模型定价列表
+     * @param models 模型指标列表
      * @return 样本描述
      */
     private static String describe(List<ModelDefinition> models) {
         if (models.isEmpty()) {
             return "(empty)";
         }
-        ModelDefinition first = models.get(0);
         StringBuilder sb = new StringBuilder();
-        sb.append(first.getId()).append('|').append(first.getInputUnitPrice())
-                .append('|').append(first.getOutputUnitPrice()).append('|').append(first.getCurrency());
+        sb.append(sample(models.get(0)));
         if (models.size() > 1) {
-            ModelDefinition last = models.get(models.size() - 1);
-            sb.append(" .. ").append(last.getId()).append('|').append(last.getInputUnitPrice())
-                    .append('|').append(last.getOutputUnitPrice());
+            sb.append(" .. ").append(sample(models.get(models.size() - 1)));
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 单条模型样本。
+     *
+     * @param m 模型定义
+     * @return 样本文本
+     */
+    private static String sample(ModelDefinition m) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(m.getId()).append("|in=").append(m.getInputUnitPrice())
+                .append("|out=").append(m.getOutputUnitPrice())
+                .append('|').append(m.getCurrency());
+        if (m.getIntelligenceIndex() != null) {
+            sb.append("|intel=").append(m.getIntelligenceIndex());
+        }
+        if (m.getOutputSpeedTokensPerSecond() != null) {
+            sb.append("|spd=").append(m.getOutputSpeedTokensPerSecond());
+        }
+        if (m.getLatencyFirstTokenSeconds() != null) {
+            sb.append("|lat=").append(m.getLatencyFirstTokenSeconds());
         }
         return sb.toString();
     }
