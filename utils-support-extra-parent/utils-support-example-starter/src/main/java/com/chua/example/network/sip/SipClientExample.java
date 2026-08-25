@@ -58,17 +58,18 @@ public class SipClientExample {
         String host = kv.getOrDefault("host", "127.0.0.1");
         int port = Integer.parseInt(kv.getOrDefault("port", "3389"));
         boolean encrypt = Boolean.parseBoolean(kv.getOrDefault("encrypt", "false"));
+        boolean mux = Boolean.parseBoolean(kv.getOrDefault("mux", "false"));
         String allowStr = kv.get("allow");
         java.util.List<String> allow = allowStr == null || allowStr.isEmpty()
                 ? null : java.util.Arrays.asList(allowStr.split(","));
 
         Runtime.getRuntime().addShutdownHook(new Thread(STOP_LATCH::countDown, "sip-client-shutdown-hook"));
 
-        SipClient client = SipClient.tcp(server).token(token).encrypt(encrypt);
+        SipClient client = SipClient.tcp(server).token(token).encrypt(encrypt).mux(mux);
         client.onReconnect(() -> log.info("SIP 重连成功，资源已重新绑定"));
         if ("provider".equalsIgnoreCase(mode)) {
             new SipTunnelService(client, service, host, port, allow).start();
-            log.info("SIP 服务提供方已启动: 服务[{}] -> {}:{} 加密={}", service, host, port, encrypt);
+            log.info("SIP 服务提供方已启动: 服务[{}] -> {}:{} 加密={} 复用={}", service, host, port, encrypt, mux);
         } else if ("visitor".equalsIgnoreCase(mode)) {
             client.tunnel(service).listen(host, port);
             log.info("SIP 访问方已启动: {}:{} -> 服务[{}] 加密={}", host, port, service, encrypt);
