@@ -361,7 +361,13 @@
             <artifactId>utils-support-filestorage-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- WebContainer 瀹炵幇妯″潡锛屼緵 WebContainerExample 鐙珛杩愯 -->
+        <!-- Multipart 解析实现（@Spi("fileupload")），供 HttpServerExampleSpi multipart 上传演示使用 -->
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-multipart-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- WebContainer 实现模块，供 WebContainerExample 独立运行 -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-tomcat-starter</artifactId>
@@ -710,7 +716,6 @@
                         <exclude>**/onnx/TextBsrExample.java</exclude>
                         <exclude>**/concurrent/timewheel/TimeWheelExample.java</exclude>
                         <exclude>**/datalake/**/*.java</exclude>
-                        <exclude>**/datasearch/**/*.java</exclude>
                         <exclude>**/engine/**/*.java</exclude>
                         <exclude>**/filesearch/**/*.java</exclude>
                         <exclude>**/image/**/*.java</exclude>

@@ -674,9 +674,9 @@ public class NioHttpServerExampleSpi implements Example {
                 }
             }
             String sseBody = sb.toString();
-            assertTrue(sseBody.contains("data:event-1"), "SSE 应包含 data:event-1");
-            assertTrue(sseBody.contains("data:event-2"), "SSE 应包含 data:event-2");
-            assertTrue(sseBody.contains("data:event-3"), "SSE 应包含 data:event-3");
+            assertTrue(sseBody.contains("data: event-1"), "SSE 应包含 data: event-1");
+            assertTrue(sseBody.contains("data: event-2"), "SSE 应包含 data: event-2");
+            assertTrue(sseBody.contains("data: event-3"), "SSE 应包含 data: event-3");
             conn.disconnect();
             pass();
             return true;
