@@ -88,6 +88,7 @@ public final class TaskRunnerExample {
         }
         if (TYPE_ALL.equals(type) || "reactive".equals(type)) {
             passed &= timed("asyncExecutionCompletes", TaskRunnerExample::asyncExecutionCompletes);
+            passed &= timed("asyncCancelPropagatesInterruption", TaskRunnerExample::asyncCancelPropagatesInterruption);
             passed &= timed("reactiveExecutionEmitsResult", TaskRunnerExample::reactiveExecutionEmitsResult);
             passed &= timed("watchStreamCarriesLifecycleEvents", TaskRunnerExample::watchStreamCarriesLifecycleEvents);
         }
@@ -503,6 +504,47 @@ public final class TaskRunnerExample {
             return ok;
         } catch (Exception e) {
             return fail("reactiveExecutionEmitsResult", e);
+        }
+    }
+
+    /**
+     * 场景：异步取消 — future.cancel(true) 中断执行线程，
+     * 阻塞任务收到中断，Future 以 CancellationException 收场。
+     *
+     * @return true 表示通过
+     */
+    private static boolean asyncCancelPropagatesInterruption() {
+        var started = new CountDownLatch(1);
+        var interrupted = new AtomicInteger();
+        try {
+            var runner = TaskRunner.of("ex-cancel")
+                    .policy(CompletionPolicy.allSuccess())
+                    .task("long-blocking", ctx -> {
+                        started.countDown();
+                        try {
+                            Thread.sleep(30_000);
+                            return "never";
+                        } catch (InterruptedException e) {
+                            interrupted.incrementAndGet();
+                            Thread.currentThread().interrupt();
+                            throw new IllegalStateException("cancelled", e);
+                        }
+                    });
+            CompletableFuture<RunResult> future = runner.execute(null);
+            // 等任务真正进入阻塞后再取消，确保中断送达执行体
+            if (!started.await(5, TimeUnit.SECONDS)) {
+                return fail("asyncCancelPropagatesInterruption", "任务未按时启动");
+            }
+            future.cancel(true);
+            // 给中断传播留出时间窗
+            for (var i = 0; i < 20 && interrupted.get() == 0; i++) {
+                sleepMillis(100);
+            }
+            var ok = interrupted.get() > 0;
+            print("asyncCancelPropagatesInterruption", ok);
+            return ok;
+        } catch (Exception e) {
+            return fail("asyncCancelPropagatesInterruption", e);
         }
     }
 
