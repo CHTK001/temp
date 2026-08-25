@@ -11,7 +11,7 @@
     </parent>
     <artifactId>utils-support-example-starter</artifactId>
     <name>Utils Support Example Starter</name>
-    <description>示例工程：统一 CRUD 演示</description>
+    <description>绀轰緥宸ョ▼锛氱粺涓€ CRUD 婕旂ず</description>
     <properties>
         <maven.compiler.parameters>true</maven.compiler.parameters>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -63,7 +63,7 @@
             <artifactId>utils-support-common-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- JsonProvider 实现自检（JsonProviderExampleSpi / ForySerializerExampleSpi） -->
+        <!-- JsonProvider 瀹炵幇鑷锛圝sonProviderExampleSpi / ForySerializerExampleSpi锛?-->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-gson-starter</artifactId>
@@ -74,7 +74,7 @@
             <artifactId>utils-support-fory-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- Protobuf 序列化自检（ProtobufSerializerExampleSpi） -->
+        <!-- Protobuf 搴忓垪鍖栬嚜妫€锛圥rotobufSerializerExampleSpi锛?-->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-protobuf-starter</artifactId>
@@ -86,9 +86,9 @@
             <artifactId>utils-support-fastjson-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- com.alibaba:fastjson 2.0.57 为 fastjson2 兼容层，依赖 fastjson2 核心类；
-             父级 dependencyManagement 将 fastjson2 管理为 android 变体（2.0.57.android8，缺 util.Wrapper），
-             此处与 fastjson-starter 保持一致，显式覆盖为标准版 2.0.57 -->
+        <!-- com.alibaba:fastjson 2.0.57 涓?fastjson2 鍏煎灞傦紝渚濊禆 fastjson2 鏍稿績绫伙紱
+             鐖剁骇 dependencyManagement 灏?fastjson2 绠＄悊涓?android 鍙樹綋锛?.0.57.android8锛岀己 util.Wrapper锛夛紝
+             姝ゅ涓?fastjson-starter 淇濇寔涓€鑷达紝鏄惧紡瑕嗙洊涓烘爣鍑嗙増 2.0.57 -->
         <dependency>
             <groupId>com.alibaba.fastjson2</groupId>
             <artifactId>fastjson2</artifactId>
@@ -119,7 +119,7 @@
             <artifactId>utils-support-pdf-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- OpenApiDocumentProvider 烟雾测试 (lang.document.OpenApiExportTestExample) -->
+        <!-- OpenApiDocumentProvider 鐑熼浘娴嬭瘯 (lang.document.OpenApiExportTestExample) -->
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-models-jakarta</artifactId>
@@ -150,31 +150,31 @@
             <artifactId>utils-support-tshark-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- kcp-base 1.6.2(AbstractKcpServer) 静态引用 io.netty.channel.kqueue.KQueue，补齐 netty 4.2 的 kqueue 类 -->
+        <!-- kcp-base 1.6.2(AbstractKcpServer) 闈欐€佸紩鐢?io.netty.channel.kqueue.KQueue锛岃ˉ榻?netty 4.2 鐨?kqueue 绫?-->
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-transport-classes-kqueue</artifactId>
             <version>4.2.15.Final</version>
         </dependency>
-        <!-- ASR (whisper) SPI provider 位于 onnx-starter，供 WhisperAudioExample 使用 -->
+        <!-- ASR (whisper) SPI provider 浣嶄簬 onnx-starter锛屼緵 WhisperAudioExample 浣跨敤 -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-deeplearning-onnx-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- 嵌入式中文对话模型（Gemma-3-270M，uint8 ONNX ~437MB），供 Gemma3Example 使用 -->
+        <!-- 宓屽叆寮忎腑鏂囧璇濇ā鍨嬶紙Gemma-3-270M锛寀int8 ONNX ~437MB锛夛紝渚?Gemma3Example 浣跨敤 -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-models-onnx-gemma-3-270m</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- 嵌入式老照片上色模型（DeOldify ONNX ~830MB），供 ImageColorizeExample 使用 -->
+        <!-- 宓屽叆寮忚€佺収鐗囦笂鑹叉ā鍨嬶紙DeOldify ONNX ~830MB锛夛紝渚?ImageColorizeExample 浣跨敤 -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-models-onnx-image-colorize</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- 安全检测类嵌入式模型，供对应检测 Example 使用 -->
+        <!-- 瀹夊叏妫€娴嬬被宓屽叆寮忔ā鍨嬶紝渚涘搴旀娴?Example 浣跨敤 -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-models-onnx-safety-helmet</artifactId>
@@ -200,13 +200,13 @@
             <artifactId>utils-support-models-onnx-seal-inspection</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- D-FINE-L 目标检测（COCO 80 类，int8 量化嵌入式），供 DFineExample 使用 -->
+        <!-- D-FINE-L 鐩爣妫€娴嬶紙COCO 80 绫伙紝int8 閲忓寲宓屽叆寮忥級锛屼緵 DFineExample 浣跨敤 -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-models-onnx-dfine-l-obj2coco</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- RT-DETR v2 文档版面检测（DocLayNet 17 类，169MB fp32），供 RTDetrLayoutExample 使用 -->
+        <!-- RT-DETR v2 鏂囨。鐗堥潰妫€娴嬶紙DocLayNet 17 绫伙紝169MB fp32锛夛紝渚?RTDetrLayoutExample 浣跨敤 -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-models-onnx-rtdetr-layout</artifactId>
@@ -218,27 +218,27 @@
             <version>${project.version}</version>
                     <optional>true</optional>
         </dependency>
-        <!-- OpenCV ImageProcessor SPI provider（@SpiOrder(50)，rust>opencv>jdk 优先级链） -->
+        <!-- OpenCV ImageProcessor SPI provider锛園SpiOrder(50)锛宺ust>opencv>jdk 浼樺厛绾ч摼锛?-->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-deeplearning-opencv-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- Rust ImageProcessor 原生库（@SpiOrder(100)，rust>opencv>jdk 优先级链） -->
+        <!-- Rust ImageProcessor 鍘熺敓搴擄紙@SpiOrder(100)锛宺ust>opencv>jdk 浼樺厛绾ч摼锛?-->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-native-image</artifactId>
             <version>${project.version}</version>
                     <optional>true</optional>
         </dependency>
-        <!-- 共享内存环形队列示例（ShmQueueExample） -->
+        <!-- 鍏变韩鍐呭瓨鐜舰闃熷垪绀轰緥锛圫hmQueueExample锛?-->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-native-shm-queue</artifactId>
             <version>${project.version}</version>
                     <optional>true</optional>
         </dependency>
-        <!-- 共享内存 + Rust hyper HTTP bridge 示例（ShmHttpServerExample） -->
+        <!-- 鍏变韩鍐呭瓨 + Rust hyper HTTP bridge 绀轰緥锛圫hmHttpServerExample锛?-->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-native-shm-queue-http</artifactId>
@@ -339,19 +339,19 @@
             <artifactId>utils-support-native-video-codec</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- Ngrok 客户端示例 -->
+        <!-- Ngrok 瀹㈡埛绔ず渚?-->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-ngrok-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- FileStorage 预览服务，供 FileStorageExample / FileStorageServer 独立运行 -->
+        <!-- FileStorage 棰勮鏈嶅姟锛屼緵 FileStorageExample / FileStorageServer 鐙珛杩愯 -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-filestorage-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- WebContainer 实现模块，供 WebContainerExample 独立运行 -->
+        <!-- WebContainer 瀹炵幇妯″潡锛屼緵 WebContainerExample 鐙珛杩愯 -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-tomcat-starter</artifactId>
@@ -362,7 +362,7 @@
             <artifactId>utils-support-undertow-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- Engine 实现模块，供 EngineExample 独立运行 -->
+        <!-- Engine 瀹炵幇妯″潡锛屼緵 EngineExample 鐙珛杩愯 -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-nitrite-starter</artifactId>
@@ -438,7 +438,7 @@
             <artifactId>asn-one</artifactId>
             <version>0.6.0</version>
         </dependency>
-        <!-- 爬虫模块，供 SpiderExample / GiteeProjectExample 使用 -->
+        <!-- 鐖櫕妯″潡锛屼緵 SpiderExample / GiteeProjectExample 浣跨敤 -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-spider-starter</artifactId>
@@ -450,31 +450,31 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- 流程编排模块，供 FlowExample 使用 -->
+        <!-- 娴佺▼缂栨帓妯″潡锛屼緵 FlowExample 浣跨敤 -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-flow-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- jsoup HTML 解析，供爬虫示例使用（spider-starter 中为 optional） -->
+        <!-- jsoup HTML 瑙ｆ瀽锛屼緵鐖櫕绀轰緥浣跨敤锛坰pider-starter 涓负 optional锛?-->
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
             <version>${jsoup.version}</version>
         </dependency>
-        <!-- AI Proxy 聊天示例（QwenProxyExample / AiProxyDetectorExample） -->
+        <!-- AI Proxy 鑱婂ぉ绀轰緥锛圦wenProxyExample / AiProxyDetectorExample锛?-->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-openai-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- Playwright Cookie 反代 ChatClient（QwenProxyExample / DoubaoProxyExample，含浏览器驱动） -->
+        <!-- Playwright Cookie 鍙嶄唬 ChatClient锛圦wenProxyExample / DoubaoProxyExample锛屽惈娴忚鍣ㄩ┍鍔級 -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-playwright-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- Kimi 网页版逆向代理 ChatClient（KimiProxyExample，纯 HTTP 无需浏览器）— 临时禁用：artifact 不可用 -->
+        <!-- Kimi 缃戦〉鐗堥€嗗悜浠ｇ悊 ChatClient锛圞imiProxyExample锛岀函 HTTP 鏃犻渶娴忚鍣級鈥?涓存椂绂佺敤锛歛rtifact 涓嶅彲鐢?-->
         <!--
         <dependency>
             <groupId>com.chua</groupId>
@@ -482,7 +482,7 @@
             <version>${project.version}</version>
         </dependency>
         -->
-        <!-- Datalake 示例：覆盖 offset / sink / pipeline / server / subscribe / query -->
+        <!-- Datalake 绀轰緥锛氳鐩?offset / sink / pipeline / server / subscribe / query -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-datalake-sink-starter</artifactId>
@@ -503,7 +503,7 @@
             <artifactId>utils-support-datalake-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- DataSync 数据源/调度集成 -->
+        <!-- DataSync 鏁版嵁婧?璋冨害闆嗘垚 -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-datasync-starter</artifactId>
@@ -514,38 +514,38 @@
             <artifactId>utils-support-datasync-agent-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- DataSearch 用量解析演示 -->
+        <!-- DataSearch 鐢ㄩ噺瑙ｆ瀽婕旂ず -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-datasearch-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- 文件检索演示 -->
+        <!-- 鏂囦欢妫€绱㈡紨绀?-->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-filesearch-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- MQTT 演示 -->
+        <!-- MQTT 婕旂ず -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-mqtt-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- Prometheus 指标采集演示 -->
+        <!-- Prometheus 鎸囨爣閲囬泦婕旂ず -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-prometheus-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- 视频处理演示 -->
+        <!-- 瑙嗛澶勭悊婕旂ず -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-video-processor-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- OSHI 本机指标采集 -->
-        <!-- Syslog 实时日志监听 -->
+        <!-- OSHI 鏈満鎸囨爣閲囬泦 -->
+        <!-- Syslog 瀹炴椂鏃ュ織鐩戝惉 -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-syslog-starter</artifactId>
@@ -565,7 +565,7 @@
             <artifactId>utils-support-milvus-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- 向量存储 SPI 模式切换示例 -->
+        <!-- 鍚戦噺瀛樺偍 SPI 妯″紡鍒囨崲绀轰緥 -->
         <dependency>
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-core</artifactId>
@@ -591,7 +591,7 @@
             <artifactId>grpc-util</artifactId>
             <version>1.73.0</version>
         </dependency>
-        <!-- RPC 四实现示例（RpcExample）：native 实现在 utils-support-common-starter，json/dubbo/sofa 在此三 starter -->
+        <!-- RPC 鍥涘疄鐜扮ず渚嬶紙RpcExample锛夛細native 瀹炵幇鍦?utils-support-common-starter锛宩son/dubbo/sofa 鍦ㄦ涓?starter -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-rpc-json-starter</artifactId>
@@ -602,7 +602,7 @@
             <artifactId>utils-support-rpc-dubbo-starter</artifactId>
             <version>${project.version}</version>
             <exclusions>
-                <!-- dubbo 传递引入 netty-all 4.2.15，与 kcp-netty 1.5.2(基于 netty 4.1.x) 冲突导致 NoSuchMethodError -->
+                <!-- dubbo 浼犻€掑紩鍏?netty-all 4.2.15锛屼笌 kcp-netty 1.5.2(鍩轰簬 netty 4.1.x) 鍐茬獊瀵艰嚧 NoSuchMethodError -->
                 <exclusion>
                     <groupId>io.netty</groupId>
                     <artifactId>netty-all</artifactId>
@@ -614,16 +614,16 @@
             <artifactId>utils-support-rpc-sofa-starter</artifactId>
             <version>${project.version}</version>
             <exclusions>
-                <!-- sofa-rpc-all 传递引入 netty-all 4.2.15，与 kcp-netty 1.5.2(基于 netty 4.1.x) 冲突 -->
+                <!-- sofa-rpc-all 浼犻€掑紩鍏?netty-all 4.2.15锛屼笌 kcp-netty 1.5.2(鍩轰簬 netty 4.1.x) 鍐茬獊 -->
                 <exclusion>
                     <groupId>io.netty</groupId>
                     <artifactId>netty-all</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- SOFA-RPC 内嵌 logback space logger 依赖 logback 1.2.x 的 ContextInitializer.configureByResource(URL)
-             API（1.3+ 已移除）；项目默认解析 slf4j 2.0.x + logback 1.5.x 会 NoSuchMethodError。
-             此处按 sofa-common-log 要求显式对齐 slf4j 1.7.36 + logback 1.2.12（实测 RPC 四实现全通过）。 -->
+        <!-- SOFA-RPC 鍐呭祵 logback space logger 渚濊禆 logback 1.2.x 鐨?ContextInitializer.configureByResource(URL)
+             API锛?.3+ 宸茬Щ闄わ級锛涢」鐩粯璁よВ鏋?slf4j 2.0.x + logback 1.5.x 浼?NoSuchMethodError銆?
+             姝ゅ鎸?sofa-common-log 瑕佹眰鏄惧紡瀵归綈 slf4j 1.7.36 + logback 1.2.12锛堝疄娴?RPC 鍥涘疄鐜板叏閫氳繃锛夈€?-->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -757,7 +757,7 @@
                     <excludes>
                         <exclude>**/com/chua/example/datasearch/UsageParserExample.java</exclude>
                     </excludes>
-                    <!-- 排除引用了已失效 API 的历史遗留示例，修复后应逐个移出本清单 -->
+                    <!-- 鎺掗櫎寮曠敤浜嗗凡澶辨晥 API 鐨勫巻鍙查仐鐣欑ず渚嬶紝淇鍚庡簲閫愪釜绉诲嚭鏈竻鍗?-->
 
                     </configuration>
 
