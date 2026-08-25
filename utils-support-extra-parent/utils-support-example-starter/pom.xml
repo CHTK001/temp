@@ -669,105 +669,35 @@
                     </jvmArgs>
                 </configuration>
             </plugin>
-<plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <release>25</release>
-                    <includes>
-                        <include>**/Example.java</include>
-                        <include>**/ExampleRunner.java</include>
-                        <include>**/FlowExample.java</include>
-                        <include>**/FlowEchoNode.java</include>
-                        <include>**/FlowCompleteExample.java</include>
-                        <include>**/SimpleEngineDataSource.java</include>
-                        <include>**/network/rpc/*.java</include>
-                        <include>**/network/yunxiao/*.java</include>
-                        <include>**/lang/document/*.java</include>
-                        <include>**/lang/json/*.java</include>
-                        <include>**/lang/serialize/*.java</include>
-                        <include>**/lang/protobuf/*.java</include>
-                        <include>**/ai/audio/*.java</include>
-                        <include>**/ai/vision/*.java</include>
-                        <include>**/ai/embedding/*.java</include>
-                        <include>**/ai/usage/*.java</include>
-                        <include>**/ai/chat/Qwen*.java</include>
-                        <include>**/ai/chat/AiProxy*.java</include>
-                        <include>**/collection/*.java</include>
-                        <include>**/concurrent/threadflow/*.java</include>
-                        <include>**/concurrent/queue/*.java</include>
-                        <include>**/nativehttp/*.java</include>
-                        <include>**/network/nio/*.java</include>
-                        <include>**/network/perf/*.java</include>
-                        <include>**/network/http/*.java</include>
-                        <include>**/network/proxy/*.java</include>
-                        <include>**/network/scatter/*.java</include>
-                        <include>**/network/sync/*.java</include>
-                        <include>**/network/sip/*.java</include>
-                        <include>**/pipeline/*.java</include>
-                        <include>**/reflection/*.java</include>
-                        <include>**/shmqueue/*.java</include>
-                        <include>**/image/*.java</include>
-                        <include>**/ocr/*.java</include>
-                        <include>**/segmentation/*.java</include>
-                        <include>**/reid/*.java</include>
-                        <include>**/face/*.java</include>
-                        <include>**/classification/*.java</include>
-                        <include>**/layout/*.java</include>
-                        <include>**/onnx/*Plate*.java</include>
-                        <include>**/onnx/*MultiModel*.java</include>
-                        <include>**/onnx/Gemma3Example.java</include>
-                        <include>**/onnx/YoloWorldBatchDrawExample.java</include>
-                        <include>**/onnx/WebpDecodeExample.java</include>
-                        <include>**/onnx/ImageColorizeExample.java</include>
-                        <include>**/onnx/DeepfakeDetectionExample.java</include>
-                        <include>**/onnx/LamaInpaintingExample.java</include>
-                        <include>**/onnx/SealInspectionBlackboxExample.java</include>
-                        <include>**/onnx/TtsBenchmarkExample.java</include>
-                        <include>**/onnx/SafetyHelmetExample.java</include>
-                        <include>**/onnx/FireSmokeExample.java</include>
-                        <include>**/onnx/ReflectiveClothesExample.java</include>
-                        <include>**/onnx/FaceMaskDetectorExample.java</include>
-                        <include>**/onnx/SealInspectionExample.java</include>
-                        <include>**/onnx/DFineExample.java</include>
-                        <include>**/onnx/RTDetrLayoutExample.java</include>
-                                              <include>**/arcsoft/*.java</include>
-                          <include>**/datalake/integrated/*.java</include>
-                          <include>**/datalake/pipeline/*.java</include>
-                          <include>**/datalake/query/*.java</include>
-                          <include>**/datalake/server/*.java</include>
-                          <include>**/datalake/sink/*.java</include>
-                          <include>**/datalake/subscribe/*.java</include>
-                          <include>**/datasearch/*.java</include>
-                          <include>**/datasource/*.java</include>
-                          <include>**/datasync/*.java</include>
-                          <include>**/engine/*.java</include>
-                          <include>**/filesearch/*.java</include>
-                          <include>**/llama/*.java</include>
-                          <include>**/media/*.java</include>
-                          <include>**/osgi/*.java</include>
-                          <include>**/pytorch/*.java</include>
-                          <include>**/recognition/*.java</include>
-                          <include>**/audio/*.java</include>
-                          <include>**/redis/*.java</include>
-                          <include>**/spi/*.java</include>
-                          <include>**/ssh/*.java</include>
-                          <include>**/taskdistribution/*.java</include>
-                          <include>**/taskbranch/*.java</include>
-                          <include>**/taskrunner/*.java</include>
-                          <include>**/tui/*.java</include>
-                          <include>**/utils/*.java</include>
-                          <include>**/vector/*.java</include>
-</includes>
+                    <!-- 排除引用了已失效 API 的历史遗留示例，修复后应逐个移出本清单 -->
                     <excludes>
-                        <exclude>**/com/chua/example/datasearch/UsageParserExample.java</exclude>
+                        <exclude>**/llama/*.java</exclude>
+                        <exclude>**/flow/FlowTraceExample.java</exclude>
+                        <exclude>**/network/HttpClientExample.java</exclude>
+                        <exclude>**/network/sip/SipClientExample.java</exclude>
+                        <exclude>**/network/sip/SipServerExample.java</exclude>
+                        <exclude>**/datasync/DataSyncExample.java</exclude>
+                        <exclude>**/ai/rag/RagChatExample.java</exclude>
+                        <exclude>**/onnx/OcrAngleExample.java</exclude>
+                        <exclude>**/onnx/OcrBatchExample.java</exclude>
+                        <exclude>**/onnx/OcrBigAngleExample.java</exclude>
+                        <exclude>**/onnx/LivenessExample.java</exclude>
+                        <exclude>**/onnx/LaplacianQualitySpiExample.java</exclude>
+                        <exclude>**/onnx/ModelRealVerifyExample.java</exclude>
+                        <exclude>**/onnx/DocLayoutYoloExample.java</exclude>
+                        <exclude>**/onnx/DinoV2Fp16Example.java</exclude>
+                        <exclude>**/onnx/DepthAnythingExample.java</exclude>
+                        <exclude>**/onnx/MiniLMEmbeddingExample.java</exclude>
+                        <exclude>**/onnx/MiniLMRegistryExample.java</exclude>
+                        <exclude>**/onnx/DFineExample.java</exclude>
+                        <exclude>**/onnx/TextBsrExample.java</exclude>
                     </excludes>
-                    <!-- 鎺掗櫎寮曠敤浜嗗凡澶辨晥 API 鐨勫巻鍙查仐鐣欑ず渚嬶紝淇鍚庡簲閫愪釜绉诲嚭鏈竻鍗?-->
-
-                    </configuration>
-
+                </configuration>
             </plugin>
         </plugins>
     </build>
-</project>
-

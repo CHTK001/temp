@@ -64,7 +64,6 @@ public class FaceAllDetectorsTest {
                         row.append(" | ERR");
                     }
                 }
-                pipeline.close();
                 row.append(String.format(" | %s", anyOk ? "OK" : "NO_DETECT"));
                 if (anyOk) okCount++; else failCount++;
             } catch (Exception e) {
