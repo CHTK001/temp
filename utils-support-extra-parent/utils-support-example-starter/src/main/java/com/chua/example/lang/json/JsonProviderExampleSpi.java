@@ -325,6 +325,7 @@ public class JsonProviderExampleSpi implements Example {
      * 统一门户注解测试实体。
      */
     static class User implements Serializable {
+        private static final long serialVersionUID = 1L;
         @JsonName("user_name")
         /** 名称 */
         private String name;

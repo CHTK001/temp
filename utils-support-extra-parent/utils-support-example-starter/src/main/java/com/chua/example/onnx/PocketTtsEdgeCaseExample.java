@@ -1,10 +1,9 @@
 package com.chua.example.onnx;
 
+import com.chua.common.support.reflection.ReflectUtils;
 import com.chua.deeplearning.support.onnx.audio.tts.PocketTtsTranslator;
 
 import java.io.ByteArrayInputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -294,9 +293,7 @@ public final class PocketTtsEdgeCaseExample {
         try {
             PocketTtsTranslator translator = new PocketTtsTranslator();
             Map<String, String> cache = getConfigCache(translator);
-            Method loadConfig = PocketTtsTranslator.class.getDeclaredMethod("loadConfig", Path.class);
-            loadConfig.setAccessible(true);
-            loadConfig.invoke(translator, tmp);
+            ReflectUtils.invoke(translator, "loadConfig", tmp);
 
             require("custom_encoder.onnx".equals(cache.get("model_files.text_encoder")), "text_encoder");
             require("custom_flow.onnx".equals(cache.get("model_files.flow")), "flow");
@@ -320,9 +317,7 @@ public final class PocketTtsEdgeCaseExample {
         Files.write(tmp, "{\"ref_latents_layout\": \"NTC\"}".getBytes(StandardCharsets.UTF_8));
         try {
             PocketTtsTranslator translator = new PocketTtsTranslator();
-            Method loadConfig = PocketTtsTranslator.class.getDeclaredMethod("loadConfig", Path.class);
-            loadConfig.setAccessible(true);
-            loadConfig.invoke(translator, tmp);
+            ReflectUtils.invoke(translator, "loadConfig", tmp);
             require("NTC".equals(objField(translator, "refLatentsLayout")), "layout 应为 NTC");
         } finally {
             Files.deleteIfExists(tmp);
@@ -331,9 +326,7 @@ public final class PocketTtsEdgeCaseExample {
 
     private static void t19() throws Exception {
         PocketTtsTranslator translator = new PocketTtsTranslator();
-        Method loadConfig = PocketTtsTranslator.class.getDeclaredMethod("loadConfig", Path.class);
-        loadConfig.setAccessible(true);
-        loadConfig.invoke(translator, Path.of("/nonexistent/config.json"));
+        ReflectUtils.invoke(translator, "loadConfig", Path.of("/nonexistent/config.json"));
         require(getConfigCache(translator).isEmpty(), "不存在的 config 不应填充 cache");
         require(intField(translator, "flowSteps") == 4, "flowSteps 应保持默认 4");
     }
@@ -432,74 +425,51 @@ public final class PocketTtsEdgeCaseExample {
 
     @SuppressWarnings("unchecked")
     private static Map<String, String> getConfigCache(PocketTtsTranslator translator) throws Exception {
-        Field field = PocketTtsTranslator.class.getDeclaredField("configCache");
-        field.setAccessible(true);
-        return (Map<String, String>) field.get(translator);
+        return (Map<String, String>) ReflectUtils.getField(translator, "configCache");
     }
 
     private static void invokeFlattenJson(String prefix, String json, Map<String, String> out) throws Exception {
-        Method method = PocketTtsTranslator.class.getDeclaredMethod("flattenJson", String.class, String.class, Map.class);
-        method.setAccessible(true);
-        method.invoke(null, prefix, json, out);
+        ReflectUtils.invoke(null, "flattenJson", prefix, json, out);
     }
 
     private static String invokeConfigStr(PocketTtsTranslator translator, String dotPath, String def) throws Exception {
-        Method method = PocketTtsTranslator.class.getDeclaredMethod("configStr", String.class, String.class);
-        method.setAccessible(true);
-        return (String) method.invoke(translator, dotPath, def);
+        return (String) ReflectUtils.invoke(translator, "configStr", dotPath, def);
     }
 
     private static int invokeConfigInt(PocketTtsTranslator translator, String dotPath, int def) throws Exception {
-        Method method = PocketTtsTranslator.class.getDeclaredMethod("configInt", String.class, int.class);
-        method.setAccessible(true);
+        return (int) ReflectUtils.invoke(translator, "configInt", dotPath, def);
         return (int) method.invoke(translator, dotPath, def);
     }
 
     private static double invokeConfigDouble(PocketTtsTranslator translator, String dotPath, double def) throws Exception {
-        Method method = PocketTtsTranslator.class.getDeclaredMethod("configDouble", String.class, double.class);
-        method.setAccessible(true);
-        return (double) method.invoke(translator, dotPath, def);
+        return (double) ReflectUtils.invoke(translator, "configDouble", dotPath, def);
     }
 
     private static float[] invokeDecodeWavToFloat(byte[] wavBytes) throws Exception {
-        Method method = PocketTtsTranslator.class.getDeclaredMethod("decodeWavToFloat", byte[].class);
-        method.setAccessible(true);
-        return (float[]) method.invoke(null, (Object) wavBytes);
+        return (float[]) ReflectUtils.invoke(null, "decodeWavToFloat", (Object) wavBytes);
     }
 
     private static byte[] invokeToWav(float[] samples, int rate) throws Exception {
-        Method method = PocketTtsTranslator.class.getDeclaredMethod("toWav", float[].class, int.class);
-        method.setAccessible(true);
-        return (byte[]) method.invoke(null, samples, rate);
+        return (byte[]) ReflectUtils.invoke(null, "toWav", samples, rate);
     }
 
     private static String invokeUnquote(String s) throws Exception {
-        Method method = PocketTtsTranslator.class.getDeclaredMethod("unquote", String.class);
-        method.setAccessible(true);
-        return (String) method.invoke(null, s);
+        return (String) ReflectUtils.invoke(null, "unquote", s);
     }
 
     private static int invokeFindValueEnd(String s, int start) throws Exception {
-        Method method = PocketTtsTranslator.class.getDeclaredMethod("findValueEnd", String.class, int.class);
-        method.setAccessible(true);
-        return (int) method.invoke(null, s, start);
+        return (int) ReflectUtils.invoke(null, "findValueEnd", s, start);
     }
 
     private static int intField(Object target, String name) throws Exception {
-        Field f = PocketTtsTranslator.class.getDeclaredField(name);
-        f.setAccessible(true);
-        return f.getInt(target);
+        return (int) ReflectUtils.getField(target, name);
     }
 
     private static double doubleField(Object target, String name) throws Exception {
-        Field f = PocketTtsTranslator.class.getDeclaredField(name);
-        f.setAccessible(true);
-        return f.getDouble(target);
+        return (double) ReflectUtils.getField(target, name);
     }
 
     private static Object objField(Object target, String name) throws Exception {
-        Field f = PocketTtsTranslator.class.getDeclaredField(name);
-        f.setAccessible(true);
-        return f.get(target);
+        return ReflectUtils.getField(target, name);
     }
 }

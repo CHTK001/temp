@@ -496,6 +496,7 @@ public class SerializationBenchmarkExample implements Example {
      */
     @Data
     static class User implements Serializable {
+        private static final long serialVersionUID = 1L;
         /**
          * 姓名
          */
@@ -535,6 +536,7 @@ public class SerializationBenchmarkExample implements Example {
      */
     @Data
     static class UserList implements Serializable {
+        private static final long serialVersionUID = 2L;
         /**
          * 用户列表
          */
@@ -546,6 +548,7 @@ public class SerializationBenchmarkExample implements Example {
      */
     @Data
     static class Address implements Serializable {
+        private static final long serialVersionUID = 3L;
         /**
          * 省份
          */
@@ -581,6 +584,7 @@ public class SerializationBenchmarkExample implements Example {
      */
     @Data
     static class Order implements Serializable {
+        private static final long serialVersionUID = 4L;
         /**
          * 订单号
          */

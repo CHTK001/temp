@@ -43,9 +43,9 @@ public class QwenProxyExample {
     private static final String DEFAULT_MODEL = "qwen3.8-max";
 
     /**
-     * cookie 默认值（测试用）
+     * cookie 默认值（通过命令行参数 --cookie 覆盖）
      */
-    private static final String DEFAULT_COOKIE = "token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImFmMTIxYzQ1LTJhNTQtNDgzZS1hNGIyLTAzNzk0ZDM1MzgyOSIsImxhc3RfcGFzc3dvcmRfY2hhbmdlIjoxNzg2NTA2NjgxLCJleHAiOjE3ODkxMDA2ODl9.uqKQkRZpic98yn_7cgYEj1EtQEK6LVGABzrWH11lFHQ";
+    private static final String DEFAULT_COOKIE = "";
 
     /**
      * 图像生成提示词

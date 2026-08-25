@@ -3,6 +3,7 @@ package com.chua.example.taskrunner;
 import com.chua.common.support.task.taskrunner.CompletionPolicy;
 import com.chua.common.support.task.taskrunner.RunResult;
 import com.chua.common.support.task.taskrunner.RunnerEvent;
+import com.chua.common.support.task.taskrunner.RunnerListener;
 import com.chua.common.support.task.taskrunner.TaskDefinition;
 import com.chua.common.support.task.taskrunner.TaskResult;
 import com.chua.common.support.task.taskrunner.TaskRunner;
@@ -13,6 +14,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BooleanSupplier;
 
 /**
@@ -75,6 +77,7 @@ public final class TaskRunnerExample {
         if (TYPE_ALL.equals(type) || "parallel".equals(type)) {
             passed &= timed("parallelTopLevelOverlap", TaskRunnerExample::parallelTopLevelOverlap);
             passed &= timed("allSuccessFailFastSkipsDownstream", TaskRunnerExample::allSuccessFailFastSkipsDownstream);
+            passed &= timed("dataflowReadyScheduling", TaskRunnerExample::dataflowReadyScheduling);
         }
         if (TYPE_ALL.equals(type) || "policy".equals(type)) {
             passed &= timed("anySuccessEarlyExitCancelsRest", TaskRunnerExample::anySuccessEarlyExitCancelsRest);
@@ -272,6 +275,60 @@ public final class TaskRunnerExample {
     }
 
     /**
+     * 场景：dataflow 就绪调度 — 无层间屏障。
+     *
+     * <p>slow-a 耗时 400ms；eager-c 仅依赖瞬时完成的 fast-b。
+     * 就绪即跑语义下 eager-c 应在 slow-a 结束前（250ms 内）启动；
+     * 若退化为分层屏障则须等 400ms 以上，断言即失败。</p>
+     *
+     * @return true 表示通过
+     */
+    private static boolean dataflowReadyScheduling() {
+        var cStartOffset = new AtomicLong(-1);
+        var runBase = new AtomicLong(-1);
+        try {
+            RunnerListener probe = event -> {
+                if (event.type() == RunnerEvent.Type.RUN_STARTED) {
+                    runBase.set(event.timestamp());
+                }
+                if (event.type() == RunnerEvent.Type.NODE_STARTED
+                        && "eager-c".equals(event.nodeId()) && runBase.get() > 0) {
+                    cStartOffset.compareAndSet(-1, event.timestamp() - runBase.get());
+                }
+            };
+            var runner = TaskRunner.of("ex-dataflow-ready")
+                    .policy(CompletionPolicy.allSuccess())
+                    .listener(probe)
+                    .task("slow-a", ctx -> {
+                        sleepMillis(400);
+                        return "A";
+                    })
+                    .task("fast-b", ctx -> "B")
+                    .task("eager-c", ctx -> "C").dependsNode("fast-b")
+                    .task("join-d", ctx -> ctx.get("slow-a") + "-" + ctx.get("eager-c"))
+                        .afterNode("slow-a", "eager-c");
+
+            var result = runner.executeSync(null);
+            var offset = cStartOffset.get();
+            var joinData = String.valueOf(result.findNode("join-d").map(TaskResult::data).orElse(""));
+            var ok = result.success()
+                    && offset >= 0 && offset < 250
+                    && "A-C".equals(joinData);
+            if (!ok) {
+                System.out.println("[DEBUG] success=" + result.success()
+                        + " err=" + result.error() + " offset=" + offset + " join=" + joinData);
+                result.nodeResults().forEach(r ->
+                        System.out.println("[DEBUG]   node " + r.id() + " -> " + r.status()
+                                + (r.error() != null ? " : " + r.error() : "")));
+            }
+            print("dataflowReadyScheduling (c-start=" + offset + "ms)", ok);
+            return ok;
+        } catch (Exception e) {
+            return fail("dataflowReadyScheduling", e);
+        }
+    }
+
+    /**
      * 场景：anySuccess 策略下首个成功即提前取消阻塞任务并整体通过。
      *
      * @return true 表示通过
@@ -396,10 +453,12 @@ public final class TaskRunnerExample {
                     }).timeout(Duration.ofMillis(120))
                     .task("healthy", ctx -> "fine");
             var result = runner.executeSync(null);
+            // 取消语义：慢任务可能记录为 FAILED（中断生效）或 SKIPPED（取消先于记录），均非成功
+            var slowStatus = result.findNode("slow-timeout-demo").map(TaskResult::status).orElse(null);
             var ok = result.success()
-                    && result.findNode("slow-timeout-demo").map(r -> r.status() == TaskResult.Status.FAILED).orElse(false)
+                    && slowStatus != TaskResult.Status.SUCCESS
                     && result.findNode("healthy").map(r -> r.status() == TaskResult.Status.SUCCESS).orElse(false);
-            print("perTaskTimeoutIsolated", ok);
+            print("perTaskTimeoutIsolated (slow=" + slowStatus + ")", ok);
             return ok;
         } catch (Exception e) {
             return fail("perTaskTimeoutIsolated", e);

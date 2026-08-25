@@ -143,6 +143,7 @@ public final class JsonUnifiedAnnotationExample {
      * 门户注解测试实体。
      */
     static class Order implements Serializable {
+        private static final long serialVersionUID = 1L;
         @JsonName("order_id")
         /** 排序ID */
         private String orderId;

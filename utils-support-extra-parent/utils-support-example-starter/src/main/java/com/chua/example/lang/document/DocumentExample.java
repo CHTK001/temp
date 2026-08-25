@@ -71,9 +71,9 @@ public class DocumentExample {
     private static final String DEFAULT_DB_USER = "root";
 
     /**
-     * JDBC 密码
+     * JDBC 密码（通过命令行参数 --password 覆盖）
      */
-    private static final String DEFAULT_DB_PASSWORD = "root@";
+    private static final String DEFAULT_DB_PASSWORD = "";
 
     /**
      * MySQL JDBC 驱动

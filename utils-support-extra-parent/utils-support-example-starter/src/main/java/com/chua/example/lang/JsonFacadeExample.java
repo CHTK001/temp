@@ -214,6 +214,7 @@ public final class JsonFacadeExample {
      * 测试数据实体。
      */
     static class User implements Serializable {
+        private static final long serialVersionUID = 1L;
         /** 名称 */
         private String name;
         /** 年龄 */

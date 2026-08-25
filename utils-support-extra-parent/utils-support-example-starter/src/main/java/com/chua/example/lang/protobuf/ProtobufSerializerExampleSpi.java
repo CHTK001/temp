@@ -274,6 +274,7 @@ public class ProtobufSerializerExampleSpi implements Example {
      */
     @lombok.Data
     public static class User implements Serializable {
+        private static final long serialVersionUID = 1L;
         /**
          * 用户名
          */
@@ -315,6 +316,7 @@ public class ProtobufSerializerExampleSpi implements Example {
      */
     @lombok.Data
     public static class Order implements Serializable {
+        private static final long serialVersionUID = 2L;
         /**
          * 订单ID
          */

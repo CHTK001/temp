@@ -2,6 +2,7 @@ package com.chua.example.engine;
 
 import com.chua.common.support.lang.datasource.engine.Engine;
 import com.chua.common.support.lang.datasource.page.Page;
+import com.chua.common.support.reflection.ReflectUtils;
 import com.chua.common.support.utils.CommandLine;
 import com.chua.datasource.support.engine.FileEngine;
 import com.chua.datasource.support.engine.InMemoryEngine;
@@ -20,7 +21,6 @@ import com.chua.tablesaw.support.engine.TablesawEngine;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.BufferedWriter;
-import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -100,9 +100,9 @@ public class EngineExample {
     private static final String DEFAULT_MYSQL_USER = "root";
 
     /**
-     * MySQL 默认密码
+     * MySQL 默认密码（通过环境变量 mysql.password 覆盖）
      */
-    private static final String DEFAULT_MYSQL_PASSWORD = "123456";
+    private static final String DEFAULT_MYSQL_PASSWORD = "";
 
     /**
      * Neo4j 默认 URI
@@ -115,9 +115,9 @@ public class EngineExample {
     private static final String DEFAULT_NEO4J_USER = "neo4j";
 
     /**
-     * Neo4j 默认密码
+     * Neo4j 默认密码（通过环境变量 neo4j.password 覆盖）
      */
-    private static final String DEFAULT_NEO4J_PASSWORD = "neo4j123";
+    private static final String DEFAULT_NEO4J_PASSWORD = "";
 
     /**
      * Lucene 默认索引路径
@@ -208,8 +208,8 @@ public class EngineExample {
     private static void assertContains(String label, List<?> list, Object expected) {
         boolean contains = list.stream().anyMatch(item -> {
             try {
-                Method m = item.getClass().getMethod("name");
-                return Objects.equals(m.invoke(item), expected);
+                Object name = ReflectUtils.getField(item, "name");
+                return Objects.equals(name, expected);
             } catch (Exception e) {
                 return false;
             }
