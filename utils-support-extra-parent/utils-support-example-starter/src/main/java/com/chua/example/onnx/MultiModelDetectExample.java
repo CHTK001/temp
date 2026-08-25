@@ -63,6 +63,10 @@ public final class MultiModelDetectExample {
                 "D:/images/1people.png", "D:/images/3peoplebeauty.jpg"});
         MODEL_IMAGES.put("safety-helmet", new String[]{
                 "D:/images/1people.png", "D:/images/more car plate.webp"});
+        MODEL_IMAGES.put("rtdetr-layout", new String[]{
+                "D:/images/paper-real-full.png", "D:/images/document.webp"});
+        MODEL_IMAGES.put("dfine-l-obj2coco", new String[]{
+                "D:/images/1people.png", "D:/images/more car plate.webp"});
     }
 
     public static void main(String[] args) throws Exception {
