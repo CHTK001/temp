@@ -42,7 +42,7 @@ public class SipClientExample {
     /**
      * 默认认证令牌（与 SipConfig 默认值一致）
      */
-    private static final String DEFAULT_TOKEN = "chua-sip-default-token";
+    private static final String DEFAULT_TOKEN = "";
 
     /**
      * 常驻入口。
