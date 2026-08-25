@@ -717,7 +717,6 @@
                         <include>**/onnx/*Plate*.java</include>
                         <include>**/onnx/*MultiModel*.java</include>
                         <include>**/onnx/Gemma3Example.java</include>
-                        <include>**/onnx/PocketTtsEdgeCaseExample.java</include>
                         <include>**/onnx/YoloWorldBatchDrawExample.java</include>
                         <include>**/onnx/WebpDecodeExample.java</include>
                         <include>**/onnx/ImageColorizeExample.java</include>
