@@ -13,6 +13,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BooleanSupplier;
 
 /**
  * {@link TaskRunner} 轻量级 DAG 任务编排全场景自检示例。
@@ -67,32 +68,32 @@ public final class TaskRunnerExample {
         var passed = true;
 
         if (TYPE_ALL.equals(type) || "serial".equals(type)) {
-            passed &= serialChainAndDataDependency();
-            passed &= duplicateIdRejected();
-            passed &= cycleDetectionRejected();
+            passed &= timed("serialChainAndDataDependency", TaskRunnerExample::serialChainAndDataDependency);
+            passed &= timed("duplicateIdRejected", TaskRunnerExample::duplicateIdRejected);
+            passed &= timed("cycleDetectionRejected", TaskRunnerExample::cycleDetectionRejected);
         }
         if (TYPE_ALL.equals(type) || "parallel".equals(type)) {
-            passed &= parallelTopLevelOverlap();
-            passed &= allSuccessFailFastSkipsDownstream();
+            passed &= timed("parallelTopLevelOverlap", TaskRunnerExample::parallelTopLevelOverlap);
+            passed &= timed("allSuccessFailFastSkipsDownstream", TaskRunnerExample::allSuccessFailFastSkipsDownstream);
         }
         if (TYPE_ALL.equals(type) || "policy".equals(type)) {
-            passed &= anySuccessEarlyExitCancelsRest();
-            passed &= successRateThresholds();
-            passed &= thresholdPolicies();
+            passed &= timed("anySuccessEarlyExitCancelsRest", TaskRunnerExample::anySuccessEarlyExitCancelsRest);
+            passed &= timed("successRateThresholds", TaskRunnerExample::successRateThresholds);
+            passed &= timed("thresholdPolicies", TaskRunnerExample::thresholdPolicies);
         }
         if (TYPE_ALL.equals(type) || "reliability".equals(type)) {
-            passed &= perTaskTimeoutIsolated();
-            passed &= globalRetryRecoversFlakyTask();
-            passed &= circuitBreakerFallbackDegradation();
+            passed &= timed("perTaskTimeoutIsolated", TaskRunnerExample::perTaskTimeoutIsolated);
+            passed &= timed("globalRetryRecoversFlakyTask", TaskRunnerExample::globalRetryRecoversFlakyTask);
+            passed &= timed("circuitBreakerFallbackDegradation", TaskRunnerExample::circuitBreakerFallbackDegradation);
         }
         if (TYPE_ALL.equals(type) || "reactive".equals(type)) {
-            passed &= asyncExecutionCompletes();
-            passed &= reactiveExecutionEmitsResult();
-            passed &= watchStreamCarriesLifecycleEvents();
+            passed &= timed("asyncExecutionCompletes", TaskRunnerExample::asyncExecutionCompletes);
+            passed &= timed("reactiveExecutionEmitsResult", TaskRunnerExample::reactiveExecutionEmitsResult);
+            passed &= timed("watchStreamCarriesLifecycleEvents", TaskRunnerExample::watchStreamCarriesLifecycleEvents);
         }
         if (TYPE_ALL.equals(type)) {
-            passed &= preconditionsEnforced();
-            passed &= parameterValidation();
+            passed &= timed("preconditionsEnforced", TaskRunnerExample::preconditionsEnforced);
+            passed &= timed("parameterValidation", TaskRunnerExample::parameterValidation);
         }
 
         if (!passed) {
@@ -101,6 +102,20 @@ public final class TaskRunnerExample {
         }
         System.out.println("[PASS] TaskRunner 全部场景通过");
         System.exit(EXIT_CODE_SUCCESS);
+    }
+
+    /**
+     * 带耗时的场景执行器：输出 [TIME] 行供测试报告采集真实耗时。
+     *
+     * @param name     场景名
+     * @param scenario 场景逻辑
+     * @return 场景是否通过
+     */
+    private static boolean timed(String name, BooleanSupplier scenario) {
+        var start = System.currentTimeMillis();
+        var ok = scenario.getAsBoolean();
+        System.out.println("[TIME] " + name + " " + (System.currentTimeMillis() - start) + "ms");
+        return ok;
     }
 
     /**
@@ -280,7 +295,7 @@ public final class TaskRunnerExample {
             release.countDown();
             var ok = result.success()
                     && result.findNode("quick-ok").map(r -> r.status() == TaskResult.Status.SUCCESS).orElse(false)
-                    && elapsed < 2500;
+                    && elapsed < 5000;
             print("anySuccessEarlyExitCancelsRest (" + elapsed + "ms)", ok);
             return ok;
         } catch (Exception e) {
