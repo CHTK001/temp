@@ -55,19 +55,12 @@ public class SyncExampleSpi implements Example {
 
     /**
      * 独立入口：{@code java ... SyncExampleSpi --example=sync --mode=throughput --protocol=tcp --messages=1000}
+     * <p>已迁移至 {@link SyncExample}，此处一行委托保持旧入口兼容。</p>
      *
      * @param args 命令行参数
      */
     public static void main(String[] args) {
-        Map<String, String> map = new java.util.HashMap<>();
-        for (String arg : args) {
-            if (arg.startsWith("--")) {
-                String kv = arg.substring(2);
-                int eq = kv.indexOf('=');
-                map.put(eq > 0 ? kv.substring(0, eq) : kv, eq > 0 ? kv.substring(eq + 1) : "");
-            }
-        }
-        new SyncExampleSpi().run(map);
+        SyncExample.main(args);
     }
 
     @Override

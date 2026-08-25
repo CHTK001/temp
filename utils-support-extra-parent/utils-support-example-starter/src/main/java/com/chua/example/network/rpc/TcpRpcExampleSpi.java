@@ -161,12 +161,12 @@ public class TcpRpcExampleSpi implements Example {
     }
 
     /**
-     * 独立入口：{@code java ... TcpRpcExampleSpi}
+     * 独立入口：委托 {@link TcpRpcExample#main(String[])} 执行完整流程。
      *
      * @param args 参数
      */
     public static void main(String[] args) {
-        new TcpRpcExampleSpi().run(Map.of());
+        TcpRpcExample.main(args);
     }
 
     /**
