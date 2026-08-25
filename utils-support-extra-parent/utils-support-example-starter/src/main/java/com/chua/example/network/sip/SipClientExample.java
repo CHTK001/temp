@@ -1,6 +1,7 @@
 package com.chua.example.network.sip;
 
 import com.chua.common.support.network.sip.SipClient;
+import com.chua.common.support.network.sip.SipTunnelService;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
@@ -57,13 +58,16 @@ public class SipClientExample {
         String host = kv.getOrDefault("host", "127.0.0.1");
         int port = Integer.parseInt(kv.getOrDefault("port", "3389"));
         boolean encrypt = Boolean.parseBoolean(kv.getOrDefault("encrypt", "false"));
+        String allowStr = kv.get("allow");
+        java.util.List<String> allow = allowStr == null || allowStr.isEmpty()
+                ? null : java.util.Arrays.asList(allowStr.split(","));
 
         Runtime.getRuntime().addShutdownHook(new Thread(STOP_LATCH::countDown, "sip-client-shutdown-hook"));
 
         SipClient client = SipClient.tcp(server).token(token).encrypt(encrypt);
         client.onReconnect(() -> log.info("SIP 重连成功，资源已重新绑定"));
         if ("provider".equalsIgnoreCase(mode)) {
-            client.service(service).to(host, port);
+            new SipTunnelService(client, service, host, port, allow).start();
             log.info("SIP 服务提供方已启动: 服务[{}] -> {}:{} 加密={}", service, host, port, encrypt);
         } else if ("visitor".equalsIgnoreCase(mode)) {
             client.tunnel(service).listen(host, port);
