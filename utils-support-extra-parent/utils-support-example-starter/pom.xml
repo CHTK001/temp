@@ -321,6 +321,11 @@
         </dependency>
         <dependency>
             <groupId>com.chua</groupId>
+            <artifactId>utils-support-docker-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.chua</groupId>
             <artifactId>utils-support-ssh-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -672,8 +677,15 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
+<configuration>
                     <release>25</release>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                     <!-- 排除引用了已失效 API 的历史遗留示例，修复后应逐个移出本清单 -->
                     <excludes>
                         <exclude>**/llama/*.java</exclude>
@@ -694,8 +706,14 @@
                         <exclude>**/onnx/DepthAnythingExample.java</exclude>
                         <exclude>**/onnx/MiniLMEmbeddingExample.java</exclude>
                         <exclude>**/onnx/MiniLMRegistryExample.java</exclude>
-                        <exclude>**/onnx/DFineExample.java</exclude>
+<exclude>**/onnx/DFineExample.java</exclude>
                         <exclude>**/onnx/TextBsrExample.java</exclude>
+                        <exclude>**/concurrent/timewheel/TimeWheelExample.java</exclude>
+                        <exclude>**/datalake/**/*.java</exclude>
+                        <exclude>**/datasearch/**/*.java</exclude>
+                        <exclude>**/engine/**/*.java</exclude>
+                        <exclude>**/filesearch/**/*.java</exclude>
+                        <exclude>**/image/**/*.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
