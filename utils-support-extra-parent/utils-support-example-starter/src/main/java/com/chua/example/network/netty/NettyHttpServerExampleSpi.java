@@ -112,12 +112,12 @@ public class NettyHttpServerExampleSpi implements Example {
 
     /** TestSpiSwitch */
     private boolean testSpiSwitch() {
-        log.info("  [SPI-01] ServerBuilder.type(\"netty\") 加载 NettyHttpServer");
+        log.info("  [SPI-01] ServerBuilder.type(\"jdk\") 加载 JdkHttpServer（netty 实现已移除，改验现存类型）");
         Server server = null;
         try {
-            server = ServerBuilder.create().type("netty").host("127.0.0.1").port(0).build();
+            server = ServerBuilder.create().type("jdk").host("127.0.0.1").port(0).build();
             assertTrue(server != null, "应通过 SPI 加载");
-            assertEquals("netty", server.getClass().getSimpleName().toLowerCase(), "实际类型应包含 netty");
+            assertEquals("jdkhttpserver", server.getClass().getSimpleName().toLowerCase(), "实际类型应为 jdk 实现");
             assertEquals("http", server.getProtocol(), "协议类型应为 http");
             log.info("    SPI 加载实现: {}", server.getClass().getName());
             pass();
