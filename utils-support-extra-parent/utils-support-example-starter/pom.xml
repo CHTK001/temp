@@ -693,33 +693,7 @@
                         </path>
                     </annotationProcessorPaths>
                     <!-- 排除引用了已失效 API 的历史遗留示例，修复后应逐个移出本清单 -->
-                    <excludes>
-                        <exclude>**/llama/*.java</exclude>
-                        <exclude>**/flow/FlowTraceExample.java</exclude>
-                        <exclude>**/network/HttpClientExample.java</exclude>
-                        <exclude>**/network/sip/SipClientExample.java</exclude>
-                        <exclude>**/network/sip/SipServerExample.java</exclude>
-                        <exclude>**/datasync/DataSyncExample.java</exclude>
-                        <exclude>**/ai/rag/RagChatExample.java</exclude>
-                        <exclude>**/onnx/OcrAngleExample.java</exclude>
-                        <exclude>**/onnx/OcrBatchExample.java</exclude>
-                        <exclude>**/onnx/OcrBigAngleExample.java</exclude>
-                        <exclude>**/onnx/LivenessExample.java</exclude>
-                        <exclude>**/onnx/LaplacianQualitySpiExample.java</exclude>
-                        <exclude>**/onnx/ModelRealVerifyExample.java</exclude>
-                        <exclude>**/onnx/DocLayoutYoloExample.java</exclude>
-                        <exclude>**/onnx/DinoV2Fp16Example.java</exclude>
-                        <exclude>**/onnx/DepthAnythingExample.java</exclude>
-                        <exclude>**/onnx/MiniLMEmbeddingExample.java</exclude>
-                        <exclude>**/onnx/MiniLMRegistryExample.java</exclude>
-<exclude>**/onnx/DFineExample.java</exclude>
-                        <exclude>**/onnx/TextBsrExample.java</exclude>
-                        <exclude>**/concurrent/timewheel/TimeWheelExample.java</exclude>
-                        <exclude>**/datalake/**/*.java</exclude>
-                        <exclude>**/engine/**/*.java</exclude>
-                        <exclude>**/filesearch/**/*.java</exclude>
-                        <exclude>**/image/**/*.java</exclude>
-                    </excludes>
+                    
                 </configuration>
             </plugin>
         </plugins>

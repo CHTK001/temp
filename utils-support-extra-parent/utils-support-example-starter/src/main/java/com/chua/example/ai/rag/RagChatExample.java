@@ -90,6 +90,51 @@ public class RagChatExample implements Example {
      */
     private static final List<String> COMMANDS = List.of("upload", "query", "search", "list", "delete", "reindex");
 
+    /**
+     * SPI 路由名。
+     *
+     * @return 示例名称
+     */
+    @Override
+    public String name() {
+        return "rag-chat";
+    }
+
+    /**
+     * 所属模块。
+     *
+     * @return 模块标识
+     */
+    @Override
+    public String module() {
+        return "rag";
+    }
+
+    /**
+     * 展示描述。
+     *
+     * @return 一行说明
+     */
+    @Override
+    public String description() {
+        return "RAG 对话示例：upload/query/search/list/delete/reindex";
+    }
+
+    /**
+     * Runner 自检入口：将参数转换为命令行后委托 main。
+     *
+     * @param args 参数键值对
+     * @return 执行完成即视为通过
+     */
+    @Override
+    public boolean run(Map<String, String> args) {
+        String[] cli = args.entrySet().stream()
+                .map(e -> "--" + e.getKey() + "=" + e.getValue())
+                .toArray(String[]::new);
+        main(cli);
+        return true;
+    }
+
     /** Main */
     public static void main(String[] args) {
         CommandLine cli = CommandLine.parse(args)
