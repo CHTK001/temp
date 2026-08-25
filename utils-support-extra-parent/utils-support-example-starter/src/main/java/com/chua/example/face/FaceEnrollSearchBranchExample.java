@@ -149,4 +149,30 @@ public class FaceEnrollSearchBranchExample {
         }
         return hits.get(0).bestId();
     }
+
+    /**
+     * 打印 top3 检索命中及相似度分值（报告量化用）。
+     *
+     * @param face  人脸管线
+     * @param image 待检图像字节
+     */
+    private static void printTopScores(FacePipeline face, byte[] image) {
+        List<FaceIdentifyHit> hits = face.identifyPipeline(image);
+        if (hits == null || hits.isEmpty()) {
+            System.out.println("[INFO]   （无检出人脸）");
+            return;
+        }
+        for (FaceIdentifyHit hit : hits) {
+            List<com.chua.deeplearning.support.face.FaceSearchHit> sh = hit.hits();
+            int n = Math.min(3, sh == null ? 0 : sh.size());
+            StringBuilder sb = new StringBuilder("[INFO]   top" + n + ": ");
+            for (int i = 0; i < n; i++) {
+                sb.append(String.format("%s=%.4f", sh.get(i).id(), sh.get(i).score()));
+                if (i < n - 1) {
+                    sb.append(", ");
+                }
+            }
+            System.out.println(sb);
+        }
+    }
 }
