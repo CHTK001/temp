@@ -367,9 +367,9 @@ public final class TreeUtilsExample {
             var kidIds = root1.children.stream().map(n -> n.id).toList();
             Node node2 = TreeUtils.findById(roots, "2", idOf(), kidsOf());
             var grandKidIds = node2.children.stream().map(n -> n.id).toList();
-            var ok = rootIds.equals(List.of("1")) || rootIds.equals(List.of("1"))
-                            && kidIds.equals(List.of("3", "2"))
-                            && grandKidIds.equals(List.of("5", "4"));
+            var ok = rootIds.equals(List.of("1"))
+                    && kidIds.equals(List.of("3", "2"))
+                    && grandKidIds.equals(List.of("5", "4"));
             print("sortTreeRecursive", ok);
             return ok;
         } catch (Exception e) {
