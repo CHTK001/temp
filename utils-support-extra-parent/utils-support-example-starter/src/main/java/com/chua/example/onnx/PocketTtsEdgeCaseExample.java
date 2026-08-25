@@ -293,7 +293,7 @@ public final class PocketTtsEdgeCaseExample {
         try {
             PocketTtsTranslator translator = new PocketTtsTranslator();
             Map<String, String> cache = getConfigCache(translator);
-            ReflectUtils.invoke(translator, "loadConfig", tmp);
+            ReflectUtils.invoke(translator, "loadConfig", void.class, tmp);
 
             require("custom_encoder.onnx".equals(cache.get("model_files.text_encoder")), "text_encoder");
             require("custom_flow.onnx".equals(cache.get("model_files.flow")), "flow");
@@ -317,7 +317,7 @@ public final class PocketTtsEdgeCaseExample {
         Files.write(tmp, "{\"ref_latents_layout\": \"NTC\"}".getBytes(StandardCharsets.UTF_8));
         try {
             PocketTtsTranslator translator = new PocketTtsTranslator();
-            ReflectUtils.invoke(translator, "loadConfig", tmp);
+            ReflectUtils.invoke(translator, "loadConfig", void.class, tmp);
             require("NTC".equals(objField(translator, "refLatentsLayout")), "layout 应为 NTC");
         } finally {
             Files.deleteIfExists(tmp);
@@ -326,7 +326,7 @@ public final class PocketTtsEdgeCaseExample {
 
     private static void t19() throws Exception {
         PocketTtsTranslator translator = new PocketTtsTranslator();
-        ReflectUtils.invoke(translator, "loadConfig", Path.of("/nonexistent/config.json"));
+        ReflectUtils.invoke(translator, "loadConfig", void.class, Path.of("/nonexistent/config.json"));
         require(getConfigCache(translator).isEmpty(), "不存在的 config 不应填充 cache");
         require(intField(translator, "flowSteps") == 4, "flowSteps 应保持默认 4");
     }
@@ -429,36 +429,35 @@ public final class PocketTtsEdgeCaseExample {
     }
 
     private static void invokeFlattenJson(String prefix, String json, Map<String, String> out) throws Exception {
-        ReflectUtils.invoke(null, "flattenJson", prefix, json, out);
+        ReflectUtils.invoke(null, "flattenJson", void.class, prefix, json, out);
     }
 
     private static String invokeConfigStr(PocketTtsTranslator translator, String dotPath, String def) throws Exception {
-        return (String) ReflectUtils.invoke(translator, "configStr", dotPath, def);
+        return (String) ReflectUtils.invoke(translator, "configStr", String.class, dotPath, def);
     }
 
     private static int invokeConfigInt(PocketTtsTranslator translator, String dotPath, int def) throws Exception {
-        return (int) ReflectUtils.invoke(translator, "configInt", dotPath, def);
-        return (int) method.invoke(translator, dotPath, def);
+        return (int) ReflectUtils.invoke(translator, "configInt", int.class, dotPath, def);
     }
 
     private static double invokeConfigDouble(PocketTtsTranslator translator, String dotPath, double def) throws Exception {
-        return (double) ReflectUtils.invoke(translator, "configDouble", dotPath, def);
+        return (double) ReflectUtils.invoke(translator, "configDouble", double.class, dotPath, def);
     }
 
     private static float[] invokeDecodeWavToFloat(byte[] wavBytes) throws Exception {
-        return (float[]) ReflectUtils.invoke(null, "decodeWavToFloat", (Object) wavBytes);
+        return (float[]) ReflectUtils.invokeStatic(PocketTtsEdgeCaseExample.class, "decodeWavToFloat", float[].class, new Class<?>[]{byte[].class}, wavBytes);
     }
 
     private static byte[] invokeToWav(float[] samples, int rate) throws Exception {
-        return (byte[]) ReflectUtils.invoke(null, "toWav", samples, rate);
+        return (byte[]) ReflectUtils.invokeStatic(PocketTtsEdgeCaseExample.class, "toWav", byte[].class, new Class<?>[]{float[].class, int.class}, samples, rate);
     }
 
     private static String invokeUnquote(String s) throws Exception {
-        return (String) ReflectUtils.invoke(null, "unquote", s);
+        return (String) ReflectUtils.invokeStatic(PocketTtsEdgeCaseExample.class, "unquote", String.class, new Class<?>[]{String.class}, s);
     }
 
     private static int invokeFindValueEnd(String s, int start) throws Exception {
-        return (int) ReflectUtils.invoke(null, "findValueEnd", s, start);
+        return (int) ReflectUtils.invokeStatic(PocketTtsEdgeCaseExample.class, "findValueEnd", int.class, new Class<?>[]{String.class, int.class}, s, start);
     }
 
     private static int intField(Object target, String name) throws Exception {
