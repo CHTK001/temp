@@ -19,6 +19,7 @@ import com.chua.common.support.vector.VectorStorageProvider;
 import com.chua.jvector.support.configuration.JVectorStorageProperties;
 import com.chua.openai.support.OpenAiChatClient;
 import com.chua.openai.support.OpenAiEmbeddingClient;
+import com.chua.example.spi.Example;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -58,7 +59,7 @@ import java.util.Map;
  * @since 4.0.0.42
  */
 @Slf4j
-public class RagChatExample {
+public class RagChatExample implements com.chua.example.spi.Example {
 
     /**
      * 默认工作目录：./
