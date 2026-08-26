@@ -847,7 +847,8 @@ public class HttpServerExampleSpi implements Example {
             setting.setHost("127.0.0.1");
             setting.setPort(0);
             setting.getSsl().setSelfSignedAuto(true);
-            Server s = ServiceProvider.of(Server.class).getNewExtension(serverType, setting);
+            Server s = "vertx-http".equals(serverType)
+                    ? newVertxServer(setting) : ServiceProvider.of(Server.class).getNewExtension(serverType, setting);
             server = s;
             ((ConfigServer) server).registerMapping("/echo", (req, resp) -> resp.setResult("ssl-ok"));
             server.start();
@@ -894,7 +895,8 @@ public class HttpServerExampleSpi implements Example {
             setting.setHost("127.0.0.1");
             setting.setPort(0);
             setting.setMaxConcurrency(1);
-            Server s = ServiceProvider.of(Server.class).getNewExtension(serverType, setting);
+            Server s = "vertx-http".equals(serverType)
+                    ? newVertxServer(setting) : ServiceProvider.of(Server.class).getNewExtension(serverType, setting);
             server = s;
             ((ConfigServer) server).registerMapping("/slow", (req, resp) -> {
                 try {
@@ -939,8 +941,8 @@ public class HttpServerExampleSpi implements Example {
 
     /** TestWebSocketUpgrade */
     private boolean testWebSocketUpgrade() {
-        log.info("  [FUNC-22] WebSocket 升级（nio / aio 实现支持）");
-        if (!"nio".equals(serverType) && !"aio".equals(serverType)) {
+        log.info("  [FUNC-22] WebSocket 升级（nio / aio / vertx-http 实现支持）");
+        if (!"nio".equals(serverType) && !"aio".equals(serverType) && !"vertx-http".equals(serverType)) {
             log.info("    跳过：当前类型 {} 不支持 WebSocket 升级", serverType);
             return true;
         }
@@ -953,6 +955,13 @@ public class HttpServerExampleSpi implements Example {
                 aio.getSetting().setPort(0);
                 aio.onSubscribe("chat", (req, resp) -> resp.setResult("echo:" + req.getBodyString()));
                 server = aio;
+            } else if ("vertx-http".equals(serverType)) {
+                com.chua.vertx.support.server.VertxHttpServer vx =
+                        new com.chua.vertx.support.server.VertxHttpServer(ServerSetting.defaults());
+                vx.getSetting().setHost("127.0.0.1");
+                vx.getSetting().setPort(0);
+                vx.onSubscribe("chat", (req, resp) -> resp.setResult("echo:" + req.getBodyString()));
+                server = vx;
             } else {
                 NioHttpServer nio = new NioHttpServer(ServerSetting.defaults());
                 nio.getSetting().setHost("127.0.0.1");
@@ -1257,7 +1266,19 @@ public class HttpServerExampleSpi implements Example {
 
     /** 创建Server */
     private Server createServer() {
+        if ("vertx-http".equals(serverType)) {
+            // 直接构造，避免 ServerBuilder SPI 解析在精简 classpath 下失败
+            return newVertxServer(ServerSetting.defaults());
+        }
         return ServerBuilder.create().type(serverType).host("127.0.0.1").port(0).build();
+    }
+
+    /** 直接构造 Vert.x 服务器（绕过 SPI 解析） */
+    private Server newVertxServer(ServerSetting setting) {
+        com.chua.vertx.support.server.VertxHttpServer vx =
+                new com.chua.vertx.support.server.VertxHttpServer(setting);
+        vx.getSetting().setHost("127.0.0.1");
+        return vx;
     }
 
     /** 开始Server */

@@ -69,6 +69,22 @@ public final class MultiModelDetectExample {
                 "D:/images/1people.png", "D:/images/more car plate.webp"});
         MODEL_IMAGES.put("yolo-face-detector", new String[]{
                 "D:/images/1people.png", "D:/images/3peoplebeauty.jpg", "D:/images/largest_selfie.jpg"});
+        MODEL_IMAGES.put("yolo11-odd", new String[]{
+                "D:/images/more car plate.webp"});
+        MODEL_IMAGES.put("yolo26n", new String[]{
+                "D:/images/1people.png", "D:/images/more car plate.webp"});
+        MODEL_IMAGES.put("yolo26-obb", new String[]{
+                "D:/images/more car plate.webp"});
+        MODEL_IMAGES.put("yolov10m", new String[]{
+                "D:/images/1people.png", "D:/images/more car plate.webp"});
+        MODEL_IMAGES.put("yolov2-coco", new String[]{
+                "D:/images/1people.png", "D:/images/more car plate.webp"});
+        MODEL_IMAGES.put("yolov8m-world", new String[]{
+                "D:/images/1people.png"});
+        MODEL_IMAGES.put("yolov8l-world", new String[]{
+                "D:/images/1people.png"});
+        MODEL_IMAGES.put("grounding-dino", new String[]{
+                "D:/images/1people.png"});
     }
 
     public static void main(String[] args) throws Exception {
