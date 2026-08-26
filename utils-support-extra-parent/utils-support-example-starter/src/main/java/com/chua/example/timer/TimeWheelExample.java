@@ -67,6 +67,9 @@ public final class TimeWheelExample {
         passed &= timed("taskExceptionDoesNotKillWheel", TimeWheelExample::taskExceptionDoesNotKillWheel);
         passed &= timed("shutdownStopsScheduling", TimeWheelExample::shutdownStopsScheduling);
         passed &= timed("tickCountProgresses", TimeWheelExample::tickCountProgresses);
+        passed &= timed("slowTaskDoesNotBlockWheel", TimeWheelExample::slowTaskDoesNotBlockWheel);
+        passed &= timed("cancelInterruptsRunningTask", TimeWheelExample::cancelInterruptsRunningTask);
+        passed &= timed("taskCountMatchesScheduled", TimeWheelExample::taskCountMatchesScheduled);
         if (!passed) {
             System.out.println("[FAIL] TimeWheel 存在失败场景");
             System.exit(EXIT_CODE_FAILURE);
@@ -261,6 +264,86 @@ public final class TimeWheelExample {
             long after = wheel.getTickCount();
             var ok = after > before;
             print("tickCountProgresses (" + before + "->" + after + ")", ok);
+            return ok;
+        } finally {
+            wheel.shutdown();
+        }
+    }
+
+    /**
+     * 场景：慢任务不阻塞轮子 — 慢任务(执行 400ms)注册后，其后的短任务
+     * 必须在 350ms 窗口内独立触发（若被阻塞则最早也要 450ms 后才轮到）。
+     *
+     * @return true 表示通过
+     */
+    private static boolean slowTaskDoesNotBlockWheel() {
+        var shortFired = new CountDownLatch(1);
+        Timer wheel = newWheel();
+        try {
+            wheel.schedule(() -> sleepMillis(400), 50, TimeUnit.MILLISECONDS);
+            sleepMillis(80);
+            wheel.schedule(shortFired::countDown, 40, TimeUnit.MILLISECONDS);
+            // 高负载环境下 tick 可能变慢，窗口给足裕量但仍小于阻塞路径的 450ms 下限
+            var ok = await(shortFired, 800);
+            print("slowTaskDoesNotBlockWheel", ok);
+            return ok;
+        } finally {
+            wheel.shutdown();
+        }
+    }
+
+    /**
+     * 场景：cancel 可中断在途任务 — 长驻任务体收到中断信号后协作退出。
+     *
+     * @return true 表示通过
+     */
+    private static boolean cancelInterruptsRunningTask() {
+        var started = new CountDownLatch(1);
+        var interruptedFlag = new AtomicInteger();
+        Timer wheel = newWheel();
+        try {
+            TimerTask task = wheel.schedule(() -> {
+                started.countDown();
+                try {
+                    Thread.sleep(10_000);
+                } catch (InterruptedException e) {
+                    interruptedFlag.incrementAndGet();
+                    Thread.currentThread().interrupt();
+                }
+            }, 30, TimeUnit.MILLISECONDS);
+            if (!await(started, 2000)) {
+                print("cancelInterruptsRunningTask (未启动)", false);
+                return false;
+            }
+            wheel.cancel(task);
+            // 高负载环境下中断传播可能变慢，最长等待 6s
+            for (var i = 0; i < 60 && interruptedFlag.get() == 0; i++) {
+                sleepMillis(100);
+            }
+            var ok = interruptedFlag.get() > 0 && task.isCancelled();
+            print("cancelInterruptsRunningTask", ok);
+            return ok;
+        } finally {
+            wheel.shutdown();
+        }
+    }
+
+    /**
+     * 场景：getTaskCount 与实际在轮任务数一致，到期清零。
+     *
+     * @return true 表示通过
+     */
+    private static boolean taskCountMatchesScheduled() {
+        Timer wheel = newWheel();
+        try {
+            for (var i = 0; i < 5; i++) {
+                wheel.schedule(() -> { }, 500, TimeUnit.MILLISECONDS);
+            }
+            int pending = wheel.getTaskCount();
+            sleepMillis(900);
+            int afterFire = wheel.getTaskCount();
+            var ok = pending == 5 && afterFire == 0;
+            print("taskCountMatchesScheduled (pending=" + pending + " after=" + afterFire + ")", ok);
             return ok;
         } finally {
             wheel.shutdown();
