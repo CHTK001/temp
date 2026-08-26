@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BooleanSupplier;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * {@link TaskRunner} 轻量级 DAG 任务编排全场景自检示例。
@@ -35,6 +36,7 @@ import java.util.function.BooleanSupplier;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class TaskRunnerExample {
 
     /**
@@ -118,7 +120,7 @@ public final class TaskRunnerExample {
     private static boolean timed(String name, BooleanSupplier scenario) {
         var start = System.currentTimeMillis();
         var ok = scenario.getAsBoolean();
-        System.out.println("[TIME] " + name + " " + (System.currentTimeMillis() - start) + "ms");
+        log.info("[TIME] " + name + " " + (System.currentTimeMillis() - start) + "ms");
         return ok;
     }
 

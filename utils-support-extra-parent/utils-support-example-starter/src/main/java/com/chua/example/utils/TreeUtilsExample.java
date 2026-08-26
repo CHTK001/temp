@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.BooleanSupplier;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * {@link TreeUtils} 全场景自检示例。
@@ -21,6 +22,7 @@ import java.util.function.BooleanSupplier;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class TreeUtilsExample {
 
     /**
@@ -152,7 +154,7 @@ public final class TreeUtilsExample {
     private static boolean timed(String name, BooleanSupplier scenario) {
         long start = System.currentTimeMillis();
         boolean ok = scenario.getAsBoolean();
-        System.out.println("[TIME] " + name + " " + (System.currentTimeMillis() - start) + "ms");
+        log.info("[TIME] " + name + " " + (System.currentTimeMillis() - start) + "ms");
         return ok;
     }
 

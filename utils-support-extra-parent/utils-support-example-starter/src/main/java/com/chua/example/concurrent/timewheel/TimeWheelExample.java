@@ -57,6 +57,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @Slf4j
 public class TimeWheelExample {
+    private TimeWheelExample() { }
+
 
     /** 退出码：成功 */
     private static final int EXIT_CODE_SUCCESS = 0;
