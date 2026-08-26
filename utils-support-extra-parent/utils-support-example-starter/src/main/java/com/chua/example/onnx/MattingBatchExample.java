@@ -42,6 +42,7 @@ public final class MattingBatchExample {
         String models = "matting-u2netp";
         String inputDir = DEFAULT_INPUT_DIR;
         String outputDir = DEFAULT_OUTPUT_DIR;
+        boolean skipExisting = true;
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.startsWith("--models=")) {
@@ -50,6 +51,8 @@ public final class MattingBatchExample {
                 inputDir = arg.substring("--dir=".length());
             } else if (arg.startsWith("--out=")) {
                 outputDir = arg.substring("--out=".length());
+            } else if (arg.startsWith("--overwrite=")) {
+                skipExisting = !Boolean.parseBoolean(arg.substring("--overwrite=".length()));
             }
         }
 
@@ -79,9 +82,14 @@ public final class MattingBatchExample {
             for (Path img : images) {
                 String name = img.getFileName().toString();
                 String base = name.replaceAll("\\.[^.]+$", "");
+                Path target = outDir.resolve(base + "_matte.png");
+                if (skipExisting && Files.exists(target)) {
+                    ok++;
+                    continue;
+                }
                 try {
                     byte[] result = service.matte(Files.readAllBytes(img));
-                    Files.write(outDir.resolve(base + "_matte.png"), result);
+                    Files.write(target, result);
                     ok++;
                 } catch (Exception e) {
                     fail++;
