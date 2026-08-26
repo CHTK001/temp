@@ -1,0 +1,296 @@
+package com.chua.example.timer;
+
+import com.chua.common.support.task.timer.Timer;
+import com.chua.common.support.task.timer.TimerTask;
+
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BooleanSupplier;
+
+/**
+ * 哈希时间轮 {@link Timer} / {@link TimerTask} 全场景自检示例。
+ *
+ * <p>覆盖单次调度、多任务并发触发、固定周期重复执行与取消、取消阻止执行、
+ * 任务异常不影响时间轮存活、shutdown 立即停止调度、tick 计数推进。</p>
+ *
+ * <h2>用法</h2>
+ * <pre>
+ *   java TimeWheelExample            # 运行全部自检
+ * </pre>
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
+public final class TimeWheelExample {
+
+    /**
+     * 退出码：成功
+     */
+    private static final int EXIT_CODE_SUCCESS = 0;
+
+    /**
+     * 退出码：失败
+     */
+    private static final int EXIT_CODE_FAILURE = 1;
+
+    /**
+     * 时间轮槽位数
+     */
+    private static final int WHEEL_SLOTS = 64;
+
+    /**
+     * tick 间隔毫秒
+     */
+    private static final long TICK_MILLIS = 50L;
+
+    /**
+     * 防止实例化工具类。
+     */
+    private TimeWheelExample() {
+    }
+
+    // ==================== main ====================
+
+    /**
+     * 独立入口：运行全部场景，任一失败以退出码 1 结束。
+     *
+     * @param args 命令行参数（未使用）
+     */
+    public static void main(String[] args) {
+        var passed = true;
+        passed &= timed("singleShotFiresOnTime", TimeWheelExample::singleShotFiresOnTime);
+        passed &= timed("multipleTasksAllFire", TimeWheelExample::multipleTasksAllFire);
+        passed &= timed("periodicFiresThenCancelStops", TimeWheelExample::periodicFiresThenCancelStops);
+        passed &= timed("cancelPreventsExecution", TimeWheelExample::cancelPreventsExecution);
+        passed &= timed("taskExceptionDoesNotKillWheel", TimeWheelExample::taskExceptionDoesNotKillWheel);
+        passed &= timed("shutdownStopsScheduling", TimeWheelExample::shutdownStopsScheduling);
+        passed &= timed("tickCountProgresses", TimeWheelExample::tickCountProgresses);
+        if (!passed) {
+            System.out.println("[FAIL] TimeWheel 存在失败场景");
+            System.exit(EXIT_CODE_FAILURE);
+        }
+        System.out.println("[PASS] TimeWheel 全部场景通过");
+        System.exit(EXIT_CODE_SUCCESS);
+    }
+
+    /**
+     * 创建标准测试时间轮。
+     *
+     * @return 时间轮实例
+     */
+    private static Timer newWheel() {
+        return Timer.newTimer(WHEEL_SLOTS, TICK_MILLIS, TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * 在时限内等待闩锁归零。
+     *
+     * @param latch          目标闩锁
+     * @param timeoutMillis  最长等待毫秒
+     * @return true 表示及时归零
+     */
+    private static boolean await(CountDownLatch latch, long timeoutMillis) {
+        try {
+            return latch.await(timeoutMillis, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return false;
+        }
+    }
+
+    /**
+     * 固定时长睡眠（测试专用）。
+     *
+     * @param millis 毫秒数
+     */
+    private static void sleepMillis(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    // ==================== 场景 ====================
+
+    /**
+     * 场景：单次任务在到期后按时触发（100ms 延迟，2s 观察窗）。
+     *
+     * @return true 表示通过
+     */
+    private static boolean singleShotFiresOnTime() {
+        var fired = new CountDownLatch(1);
+        Timer wheel = newWheel();
+        try {
+            wheel.schedule(fired::countDown, 100, TimeUnit.MILLISECONDS);
+            var ok = await(fired, 2000);
+            print("singleShotFiresOnTime", ok);
+            return ok;
+        } finally {
+            wheel.shutdown();
+        }
+    }
+
+    /**
+     * 场景：多个不同延迟任务全部触发且互不影响。
+     *
+     * @return true 表示通过
+     */
+    private static boolean multipleTasksAllFire() {
+        var counter = new AtomicInteger();
+        var allDone = new CountDownLatch(3);
+        Timer wheel = newWheel();
+        try {
+            List<Integer> delays = List.of(60, 120, 240);
+            for (var delay : delays) {
+                wheel.schedule(() -> {
+                    counter.incrementAndGet();
+                    allDone.countDown();
+                }, delay, TimeUnit.MILLISECONDS);
+            }
+            var ok = await(allDone, 2000) && counter.get() == 3;
+            print("multipleTasksAllFire (" + counter.get() + "/3)", ok);
+            return ok;
+        } finally {
+            wheel.shutdown();
+        }
+    }
+
+    /**
+     * 场景：固定周期任务重复触发，cancel 后停止增长。
+     *
+     * @return true 表示通过
+     */
+    private static boolean periodicFiresThenCancelStops() {
+        var counter = new AtomicInteger();
+        Timer wheel = newWheel();
+        try {
+            TimerTask periodic = wheel.scheduleAtFixedRate(counter::incrementAndGet,
+                    50, 100, TimeUnit.MILLISECONDS);
+            // 等待至少 3 次触发（initial 50 + 3*100 ≈ 350ms，留裕量到 600ms）
+            sleepMillis(600);
+            int countBeforeCancel = counter.get();
+            if (countBeforeCancel < 3) {
+                print("periodicFiresThenCancelStops (触发不足: " + countBeforeCancel + ")", false);
+                return false;
+            }
+            wheel.cancel(periodic);
+            int countAtCancel = counter.get();
+            sleepMillis(400);
+            int countAfterWait = counter.get();
+            var ok = countAfterWait == countAtCancel || countAfterWait == countAtCancel + 1;
+            print("periodicFiresThenCancelStops (before=" + countBeforeCancel
+                    + " after=" + countAfterWait + ")", ok);
+            return ok;
+        } finally {
+            wheel.shutdown();
+        }
+    }
+
+    /**
+     * 场景：取消阻止执行 — 已取消的任务不再触发。
+     *
+     * @return true 表示通过
+     */
+    private static boolean cancelPreventsExecution() {
+        var counter = new AtomicInteger();
+        Timer wheel = newWheel();
+        try {
+            TimerTask doomed = wheel.schedule(counter::incrementAndGet,
+                    150, TimeUnit.MILLISECONDS);
+            wheel.cancel(doomed);
+            sleepMillis(500);
+            var ok = counter.get() == 0 && doomed.isCancelled();
+            print("cancelPreventsExecution", ok);
+            return ok;
+        } finally {
+            wheel.shutdown();
+        }
+    }
+
+    /**
+     * 场景：任务抛异常不杀死时间轮 — 异常任务之后的正常任务仍能触发。
+     *
+     * @return true 表示通过
+     */
+    private static boolean taskExceptionDoesNotKillWheel() {
+        var survivor = new CountDownLatch(1);
+        Timer wheel = newWheel();
+        try {
+            wheel.schedule(() -> {
+                throw new IllegalStateException("业务异常模拟");
+            }, 50, TimeUnit.MILLISECONDS);
+            // 异常任务之后注册的新任务必须照常触发
+            sleepMillis(120);
+            wheel.schedule(survivor::countDown, 50, TimeUnit.MILLISECONDS);
+            var ok = await(survivor, 2000) && wheel.isRunning();
+            print("taskExceptionDoesNotKillWheel", ok);
+            return ok;
+        } finally {
+            wheel.shutdown();
+        }
+    }
+
+    /**
+     * 场景：shutdown 立即生效 — isRunning 变 false 且拒绝新任务。
+     *
+     * @return true 表示通过
+     */
+    private static boolean shutdownStopsScheduling() {
+        Timer wheel = newWheel();
+        wheel.schedule(() -> { }, 10_000, TimeUnit.MILLISECONDS);
+        wheel.shutdown();
+        TimerTask rejected = wheel.schedule(() -> { }, 10_000, TimeUnit.MILLISECONDS);
+        var ok = !wheel.isRunning() && rejected == null;
+        print("shutdownStopsScheduling", ok);
+        return ok;
+    }
+
+    /**
+     * 场景：tick 计数随时间推进。
+     *
+     * @return true 表示通过
+     */
+    private static boolean tickCountProgresses() {
+        Timer wheel = newWheel();
+        try {
+            long before = wheel.getTickCount();
+            sleepMillis(300);
+            long after = wheel.getTickCount();
+            var ok = after > before;
+            print("tickCountProgresses (" + before + "->" + after + ")", ok);
+            return ok;
+        } finally {
+            wheel.shutdown();
+        }
+    }
+
+    // ==================== 辅助 ====================
+
+    /**
+     * 带耗时的场景执行器：输出 [场景名 (耗时ms)] 前缀。
+     *
+     * @param name     场景名
+     * @param scenario 场景逻辑
+     * @return 场景是否通过
+     */
+    private static boolean timed(String name, BooleanSupplier scenario) {
+        long start = System.currentTimeMillis();
+        boolean ok = scenario.getAsBoolean();
+        System.out.println((ok ? "[PASS] " : "[FAIL] ") + name
+                + " (" + (System.currentTimeMillis() - start) + "ms)");
+        return ok;
+    }
+
+    /**
+     * 输出单场景结果标记。
+     *
+     * @param name 场景名
+     * @param ok   是否通过
+     */
+    private static void print(String name, boolean ok) {
+        System.out.println((ok ? "[PASS] " : "[FAIL] ") + name);
+    }
+}
