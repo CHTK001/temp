@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
  * <h2>用法</h2>
  * <pre>
  *   # 自检：计算多个句子的嵌入并校验维度 + 余弦相似度排序
- *   java MiniLMEmbeddingExample
+ *   java MiniLmEmbeddingExample
  * </pre>
  *
  * @author CH
@@ -35,7 +35,7 @@ public class MiniLmEmbeddingExample {
 
     /** Main */
     public static void main(String[] args) {
-        MiniLMEmbeddingExample example = new MiniLMEmbeddingExample();
+        MiniLmEmbeddingExample example = new MiniLmEmbeddingExample();
         boolean passed = example.runSelfTest();
         System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
     }
