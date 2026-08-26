@@ -1,21 +1,20 @@
 package com.chua.example.onnx;
 
-import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.ai.chat.ModelDefinition;
 
 import java.util.List;
 
 /**
- * 本地 AI 能力示例公共基类。
+ * 通用 AI 示例抽象基类，供子类复用。
  *
- * <p>提供模型列表打印与计时工具，各能力 Example 复用。</p>
+ * <p>提供模型列表、连接、耗时统计，供各 Example 复用。</p>
  *
  * @author CH
  * @since 4.0.0.42
  */
-@Slf4j
 public abstract class BaseExample {
 
+    /** 模块级日志器（基类手写以避免子类 Lombok 继承歧义） */
     protected static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(BaseExample.class);
 
     /**

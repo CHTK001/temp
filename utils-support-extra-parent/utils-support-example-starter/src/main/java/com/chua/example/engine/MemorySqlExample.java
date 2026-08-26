@@ -1,6 +1,7 @@
 package com.chua.example.engine;
 
-import com.chua.common.support.utils.CommandLine;
+import com.chua.common.support.lang.cmd.CliOption;
+import com.chua.common.support.lang.cmd.CommandLine;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.LinkedHashMap;
@@ -69,15 +70,20 @@ public class MemorySqlExample {
      * @param args 支持 --mode=sql|reactor|all 或 -m sql|reactor|all
      */
     public static void main(String[] args) {
-        CommandLine cli = CommandLine.parse(args)
-                .program("MemorySqlExample")
-                .register("mode", "m", "运行模式：sql|reactor|all", MODE_ALL);
+        var cli = CommandLine.builder()
+                .programName("MemorySqlExample")
+                .option(CliOption.of("mode", "m", "运行模式：sql|reactor|all"))
+                .build();
+        CommandLine.Result result = cli.parse(args);
 
-        if (cli.isHelp()) {
-            cli.help();
+        if (result.has("help")) {
+            cli.printHelp();
             return;
         }
-        var mode = cli.getOrDefault("mode", MODE_ALL);
+        var mode = result.getString("mode");
+        if (mode == null || mode.isBlank()) {
+            mode = MODE_ALL;
+        }
 
         if (MODE_SQL.equals(mode) || MODE_ALL.equals(mode)) {
             runSyncScenarios();
@@ -169,10 +175,10 @@ public class MemorySqlExample {
     private static void check(String scene, Object expected, Object actual) {
         var pass = expected == null ? actual == null : expected.equals(actual);
         if (pass) {
-            System.out.println("[PASS] " + scene + " => " + actual);
+            log.info("[PASS] " + scene + " => " + actual);
         } else {
             failed++;
-            System.out.println("[FAIL] " + scene + " expected=" + expected + " actual=" + actual);
+            log.info("[FAIL] " + scene + " expected=" + expected + " actual=" + actual);
         }
     }
 
@@ -184,10 +190,10 @@ public class MemorySqlExample {
      */
     private static void mark(String scene, boolean pass) {
         if (pass) {
-            System.out.println("[PASS] " + scene);
+            log.info("[PASS] " + scene);
         } else {
             failed++;
-            System.out.println("[FAIL] " + scene);
+            log.info("[FAIL] " + scene);
         }
     }
 
