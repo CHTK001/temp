@@ -71,7 +71,7 @@
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-webhook-starter</artifactId>
-            <version>`${project.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <!-- JsonProvider 瀹炵幇鑷锛圝sonProviderExampleSpi / ForySerializerExampleSpi锛?-->
         <dependency>
