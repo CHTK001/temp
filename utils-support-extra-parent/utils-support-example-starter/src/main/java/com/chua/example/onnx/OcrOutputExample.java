@@ -29,6 +29,8 @@ import java.util.List;
  */
 @Slf4j
 public class OcrOutputExample {
+    private OcrOutputExample() { }
+
 
     /**
      * 主入口。

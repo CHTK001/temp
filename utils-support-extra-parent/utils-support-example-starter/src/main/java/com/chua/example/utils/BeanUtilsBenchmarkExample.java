@@ -22,6 +22,8 @@ import java.util.Map;
  */
 @Slf4j
 public class BeanUtilsBenchmarkExample {
+    private BeanUtilsBenchmarkExample() { }
+
 
     /**
      * 默认基准迭代次数

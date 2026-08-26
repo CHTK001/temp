@@ -319,9 +319,13 @@ public class PipelineWalExample implements Example {
                     .forEach(p -> {
                         try {
                             Files.deleteIfExists(p);
-                        } catch (Exception ignored) {}
+                        } catch (Exception ignored) {
+            log.warn("Caught: {}", ignored.getMessage());
+        }
                     });
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+            log.warn("Caught: {}", ignored.getMessage());
+        }
     }
 
     @Override

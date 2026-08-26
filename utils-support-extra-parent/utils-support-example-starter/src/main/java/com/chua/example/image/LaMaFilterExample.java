@@ -23,6 +23,8 @@ import com.chua.image.support.filter.lama.LaMaImageUtils;
  */
 @Slf4j
 public class LaMaFilterExample {
+    private LaMaFilterExample() { }
+
 
     /** Main */
     public static void main(String[] args) {

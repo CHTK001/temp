@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * {@link LocalFileUploadProvider} 本地文件上传提供者示例 — 由同名单元测试改写。
@@ -23,6 +24,7 @@ import java.util.Arrays;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class LocalFileUploadProviderExample {
 
     /**

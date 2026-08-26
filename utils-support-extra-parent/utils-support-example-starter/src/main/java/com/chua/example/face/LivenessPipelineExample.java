@@ -15,6 +15,8 @@ import java.nio.file.Path;
  */
 @Slf4j
 public class LivenessPipelineExample {
+    private LivenessPipelineExample() { }
+
 
     public static void main(String[] args) throws Exception {
         try {

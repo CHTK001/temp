@@ -12,6 +12,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 印章检测黑盒批处理示例：G:/images 全量图片 → seal-inspection 检测 →
@@ -27,6 +28,7 @@ import java.util.List;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class SealInspectionBlackboxExample {
 
     private SealInspectionBlackboxExample() {
@@ -107,7 +109,7 @@ public final class SealInspectionBlackboxExample {
                 if (!filtered.isEmpty()) {
                     filesWithDet++;
                     totalDet += filtered.size();
-                    System.out.println(f.getName() + " -> " + filtered.size() + " 目标(≥" + threshold + ")");
+                    log.info(f.getName() + " -> " + filtered.size() + " 目标(≥" + threshold + ")");
                     for (DetectionInfo d : filtered) {
                         System.out.printf("  %s conf=%.2f [%f,%f,%f,%f]%n",
                                 d.label(), d.confidence(), d.x(), d.y(), d.width(), d.height());
@@ -131,11 +133,11 @@ public final class SealInspectionBlackboxExample {
         }
 
         long dt = System.currentTimeMillis() - t0;
-        System.out.println("===== 黑盒汇总 " + dir + " (阈值 " + threshold + ") =====");
+        log.info("===== 黑盒汇总 " + dir + " (阈值 " + threshold + ") =====");
         System.out.println("总文件: " + files.length + "  成功: " + pass
                 + "  失败: " + fail + "  无法解码: " + noImage);
-        System.out.println("含印章文件数: " + filesWithDet + "  总印章数: " + totalDet);
-        System.out.println("耗时: " + dt + "ms  输出: " + outDir);
+        log.info("含印章文件数: " + filesWithDet + "  总印章数: " + totalDet);
+        log.info("耗时: " + dt + "ms  输出: " + outDir);
 
         if (fail > 0) {
             System.err.println("[FAIL] 有文件未通过: " + String.join(", ", fails));

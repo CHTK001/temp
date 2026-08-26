@@ -28,6 +28,8 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class MultiModelBatchDrawExample {
+    private MultiModelBatchDrawExample() { }
+
 
     /** 默认输入目录 */
     private static final String DEFAULT_INPUT = "G:\\images";
@@ -62,7 +64,7 @@ public class MultiModelBatchDrawExample {
             return false;
         }
         Files.createDirectories(outputRoot);
-        System.out.println("===== 多模型批量绘图 =====");
+        log.info("===== 多模型批量绘图 =====");
         log.info("输入: {}, 输出根: {}", inputDir, outputRoot);
 
         try (var files = Files.list(inputDir)) {

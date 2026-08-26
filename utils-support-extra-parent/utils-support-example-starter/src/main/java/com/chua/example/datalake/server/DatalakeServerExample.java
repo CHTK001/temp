@@ -19,6 +19,8 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class DatalakeServerExample {
+    private DatalakeServerExample() { }
+
 
     /**
      * 默认能力点

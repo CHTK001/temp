@@ -31,6 +31,8 @@ import org.slf4j.LoggerFactory;
  * @since 4.0.0.42
  */
 public class FlowTraceExample {
+    private FlowTraceExample() { }
+
 
     /**
      * 入口。

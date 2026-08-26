@@ -5,6 +5,7 @@ import com.chua.example.spi.Example;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * JsonProvider 驱动型示例 — 同名 SPI {@link JsonProviderExampleSpi} 的独立 main 入口。
@@ -27,6 +28,7 @@ import java.util.Map;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class JsonProviderExample {
 
     private JsonProviderExample() {

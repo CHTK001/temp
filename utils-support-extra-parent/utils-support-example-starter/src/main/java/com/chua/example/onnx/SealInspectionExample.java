@@ -35,6 +35,8 @@ public final class SealInspectionExample extends BaseExample {
             try {
                 thr = Float.parseFloat(args[3]);
             } catch (Exception ignored) {
+            log.warn("Caught: {}", ignored.getMessage());
+        
             }
         }
         if (model == null) {

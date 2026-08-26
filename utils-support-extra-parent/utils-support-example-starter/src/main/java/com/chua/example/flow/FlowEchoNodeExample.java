@@ -4,6 +4,7 @@ import com.chua.common.support.task.flow.FlowContext;
 import com.chua.common.support.task.flow.FlowNode;
 import com.chua.common.support.task.flow.FlowProps;
 import com.chua.common.support.task.flow.FlowNodeRegistry;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 自定义流程节点 — echo 回显。
@@ -24,6 +25,7 @@ import com.chua.common.support.task.flow.FlowNodeRegistry;
   *
  * <p>SPI 实现载体：FlowNode 节点实现载体，由 FlowExample 编排运行，无独立 main 入口。</p>
  */
+@Slf4j
 public class FlowEchoNodeExample implements FlowNode {
 
     /**
@@ -61,7 +63,7 @@ public class FlowEchoNodeExample implements FlowNode {
     public static void main(String[] args) {
         FlowEchoNodeExample node = new FlowEchoNodeExample();
         boolean ok = "echo".equals(node.type());
-        System.out.println("node type=" + node.type() + " -> " + (ok ? "PASS" : "FAIL"));
+        log.info("node type=" + node.type() + " -> " + (ok ? "PASS" : "FAIL"));
         System.exit(ok ? 0 : 1);
     }
 }

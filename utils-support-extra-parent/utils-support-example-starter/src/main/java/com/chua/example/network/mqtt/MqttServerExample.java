@@ -21,6 +21,8 @@ import java.util.Map;
  */
 @Slf4j
 public class MqttServerExample {
+    private MqttServerExample() { }
+
 
     /**
      * 主入口：驱动 {@link MqttServerExampleSpi} 全量演示，失败以退出码 1 结束。

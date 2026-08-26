@@ -56,6 +56,8 @@ import java.util.List;
  */
 @Slf4j
 public class VideoCodecExample {
+    private VideoCodecExample() { }
+
 
     /**
      * 默认编码器类型

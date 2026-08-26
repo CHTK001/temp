@@ -20,6 +20,7 @@ import java.lang.reflect.Type;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Json 静态门面示例：演示默认 Jackson 实现的 SPI 自动发现、全局实现替换、
@@ -31,6 +32,7 @@ import java.util.Map;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class JsonFacadeExample {
 
     private JsonFacadeExample() {
@@ -44,7 +46,7 @@ public final class JsonFacadeExample {
      */
     public static void main(String[] args) {
         try {
-            System.out.println("===== Json门面 场景1: 默认实现为 Jackson =====");
+            log.info("===== Json门面 场景1: 默认实现为 Jackson =====");
             if (!(Json.getImplementation() instanceof JacksonJsonProvider)) {
                 System.out.println("[FAIL] 默认实现: 门面实现应由 SPI 发现为 JacksonJsonProvider");
                 System.exit(1);
@@ -85,7 +87,7 @@ public final class JsonFacadeExample {
             }
             System.out.println("[PASS] 默认实现: fromJson 往返 age=18");
 
-            System.out.println("===== Json门面 场景2: SPI 名称注册 =====");
+            log.info("===== Json门面 场景2: SPI 名称注册 =====");
             JsonProvider byName = ServiceProvider.of(JsonProvider.class).getExtension("jackson");
             if (byName == null) {
                 System.out.println("[FAIL] SPI名称注册: 名称 jackson 应可发现实现");
@@ -98,7 +100,7 @@ public final class JsonFacadeExample {
             }
             System.out.println("[PASS] SPI名称注册: jackson 实现类型正确");
 
-            System.out.println("===== Json门面 场景3: 桩实现全局替换 =====");
+            log.info("===== Json门面 场景3: 桩实现全局替换 =====");
             JsonProvider stub = new StubJsonProvider();
             Json.setImplementation(stub);
             if (Json.getImplementation() != stub) {
@@ -126,7 +128,7 @@ public final class JsonFacadeExample {
             }
             Json.setImplementation(new JacksonJsonProvider());
 
-            System.out.println("===== Json门面 场景4: setImplementation(null) 拒绝 =====");
+            log.info("===== Json门面 场景4: setImplementation(null) 拒绝 =====");
             try {
                 Json.setImplementation(null);
                 System.out.println("[FAIL] null拒绝: setImplementation(null) 应抛 IllegalArgumentException");
@@ -140,7 +142,7 @@ public final class JsonFacadeExample {
             }
             System.out.println("[PASS] null拒绝: 全局实现仍为 JacksonJsonProvider");
 
-            System.out.println("===== Json门面 场景5: TypeReference 泛型反序列化 =====");
+            log.info("===== Json门面 场景5: TypeReference 泛型反序列化 =====");
             String listJson = "[{\"name\":\"a\",\"age\":1},{\"name\":\"b\",\"age\":2}]";
             List<User> users = Json.fromJson(listJson, new TypeReference<List<User>>() {
             });
@@ -165,7 +167,7 @@ public final class JsonFacadeExample {
             }
             System.out.println("[PASS] TypeReference: users[1].age=2");
 
-            System.out.println("===== Json门面 场景6: 常用静态方法 =====");
+            log.info("===== Json门面 场景6: 常用静态方法 =====");
             JsonObject obj = Json.getJsonObject("{\"k\":\"v\"}");
             if (!"v".equals(obj.get("k"))) {
                 System.out.println("[FAIL] 常用静态方法: getJsonObject 的 k 应为 v");

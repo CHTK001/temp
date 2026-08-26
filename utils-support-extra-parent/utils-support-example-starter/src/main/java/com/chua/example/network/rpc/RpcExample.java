@@ -770,6 +770,8 @@ public class RpcExample implements Example {
             try {
                 client.close();
             } catch (Exception ignored) {
+            log.warn("Caught: {}", ignored.getMessage());
+        
             }
         }
     }
@@ -784,6 +786,8 @@ public class RpcExample implements Example {
             try {
                 server.close();
             } catch (Exception ignored) {
+            log.warn("Caught: {}", ignored.getMessage());
+        
             }
         }
     }

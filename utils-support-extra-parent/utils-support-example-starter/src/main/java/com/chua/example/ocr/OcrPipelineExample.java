@@ -17,6 +17,8 @@ import java.util.stream.Stream;
  */
 @Slf4j
 public class OcrPipelineExample {
+    private OcrPipelineExample() { }
+
 
     /**
      * 输出目录

@@ -5,6 +5,7 @@ import com.chua.common.support.shmqueue.ShmQueueException;
 
 import java.util.ArrayList;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * ShmQueue 抽象 API 层示例：覆盖单条收发、顺序性、队列满、数据过大、超时、attach、大批量等场景。
@@ -25,6 +26,7 @@ import java.util.List;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class ShmQueueExample {
 
     /**
@@ -140,7 +142,7 @@ public final class ShmQueueExample {
             for (int i = 0; i < count; i++) {
                 ShmQueue.Message msg = q.recv();
                 if (bytesToInt(msg.bytes()) != i) {
-                    System.out.println("  fail order at index=" + i);
+                    log.info("  fail order at index=" + i);
                     return false;
                 }
             }
@@ -167,7 +169,7 @@ public final class ShmQueueExample {
             } catch (ShmQueueException e) {
                 fullCaught = e.getCode() == ShmQueue.ERR_QUEUE_FULL;
                 if (!fullCaught) {
-                    System.out.println("  fail unexpected code=" + e.getCode());
+                    log.info("  fail unexpected code=" + e.getCode());
                 }
             }
             return fullCaught;
@@ -191,7 +193,7 @@ public final class ShmQueueExample {
             } catch (ShmQueueException e) {
                 caught = e.getCode() == ShmQueue.ERR_DATA_TOO_LARGE;
                 if (!caught) {
-                    System.out.println("  fail unexpected code=" + e.getCode());
+                    log.info("  fail unexpected code=" + e.getCode());
                 }
             }
             return caught;
@@ -215,7 +217,7 @@ public final class ShmQueueExample {
             } catch (ShmQueueException e) {
                 timeoutCaught = e.getCode() == ShmQueue.ERR_TIMEOUT;
                 if (!timeoutCaught) {
-                    System.out.println("  fail unexpected code=" + e.getCode());
+                    log.info("  fail unexpected code=" + e.getCode());
                 }
             }
             long elapsedMs = (System.nanoTime() - start) / 1_000_000L;
@@ -223,10 +225,10 @@ public final class ShmQueueExample {
                 return false;
             }
             if (elapsedMs < 40 || elapsedMs >= 2000) {
-                System.out.println("  fail elapsed=" + elapsedMs + "ms out of range");
+                log.info("  fail elapsed=" + elapsedMs + "ms out of range");
                 return false;
             }
-            System.out.println("  ok elapsed=" + elapsedMs + "ms");
+            log.info("  ok elapsed=" + elapsedMs + "ms");
             return true;
         } catch (Throwable t) {
             return detail("recv-timeout", t);
@@ -269,7 +271,7 @@ public final class ShmQueueExample {
             for (int i = 0; i < count; i++) {
                 ShmQueue.Message m = q.recv();
                 if (m.type() != 0xAB || bytesToInt(m.bytes()) != sent.get(i)) {
-                    System.out.println("  fail burst at index=" + i);
+                    log.info("  fail burst at index=" + i);
                     return false;
                 }
             }

@@ -29,6 +29,8 @@ import java.util.concurrent.atomic.LongAdder;
  */
 @Slf4j
 public class VertxHttpProxyPerfExample {
+    private VertxHttpProxyPerfExample() { }
+
 
     /** Main */
     public static void main(String[] args) throws Exception {
@@ -105,18 +107,24 @@ public class VertxHttpProxyPerfExample {
                 try {
                     proxy.stop();
                 } catch (Exception ignored) {
+            log.warn("Caught: {}", ignored.getMessage());
+        
                 }
             }
             if (backend != null) {
                 try {
                     backend.close();
                 } catch (Exception ignored) {
+            log.warn("Caught: {}", ignored.getMessage());
+        
                 }
             }
             if (vertx != null) {
                 try {
                     vertx.close();
                 } catch (Exception ignored) {
+            log.warn("Caught: {}", ignored.getMessage());
+        
                 }
             }
         }

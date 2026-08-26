@@ -2,6 +2,7 @@ package com.chua.example.onnx;
 
 import com.chua.deeplearning.support.engine.ModelRegistry;
 import com.chua.deeplearning.support.onnx.colorize.ImageColorizeTranslator;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 老照片上色（image-colorize）冒烟示例：校验模型注册与 Translator 可实例化。
@@ -16,6 +17,7 @@ import com.chua.deeplearning.support.onnx.colorize.ImageColorizeTranslator;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class ImageColorizeExample {
 
     private ImageColorizeExample() {
@@ -39,7 +41,7 @@ public final class ImageColorizeExample {
                     + "（请确认已引入 utils-support-models-onnx-image-colorize）");
             System.exit(1);
         }
-        System.out.println("[OK] 嵌入式权重已解析: " + weights);
+        log.info("[OK] 嵌入式权重已解析: " + weights);
         try {
             new ImageColorizeTranslator();
         } catch (Exception e) {
@@ -73,7 +75,7 @@ public final class ImageColorizeExample {
                     System.err.println("[FAIL] 上色结果过小: " + size + " 字节");
                     System.exit(1);
                 }
-                System.out.println("[OK] 上色完成 -> " + outPath + " (" + (size / 1024) + " KB)");
+                log.info("[OK] 上色完成 -> " + outPath + " (" + (size / 1024) + " KB)");
                 System.out.println("[PASS] 推理链路完整");
                 System.exit(0);
             } catch (Exception e) {

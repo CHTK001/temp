@@ -37,6 +37,8 @@ import java.util.Map;
  */
 @Slf4j
 public class FaceEnrollSearchBranchExample {
+    private FaceEnrollSearchBranchExample() { }
+
 
     /** 输出根目录。 */
     private static final String OUTPUT_DIR = "D:\\images\\output\\face-branch\\";
@@ -135,7 +137,7 @@ public class FaceEnrollSearchBranchExample {
             allOk = false;
         }
 
-        System.out.println(allOk ? "[RESULT] ALL PASS" : "[RESULT] HAS FAILURE");
+        log.info(allOk ? "[RESULT] ALL PASS" : "[RESULT] HAS FAILURE");
         return allOk;
     }
 
@@ -163,7 +165,7 @@ public class FaceEnrollSearchBranchExample {
     private static void printTopScores(FacePipeline face, byte[] image) {
         List<FaceIdentifyHit> hits = face.identifyPipeline(image);
         if (hits == null || hits.isEmpty()) {
-            System.out.println("[INFO]   （无检出人脸）");
+            log.info("[INFO]   （无检出人脸）");
             return;
         }
         for (FaceIdentifyHit hit : hits) {
@@ -176,7 +178,7 @@ public class FaceEnrollSearchBranchExample {
                     sb.append(", ");
                 }
             }
-            System.out.println(sb);
+            log.info(sb);
         }
     }
 }

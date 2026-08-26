@@ -7,6 +7,7 @@ import com.chua.common.support.datasearch.pricing.spi.ModelMetricsProvider;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.ServiceLoader;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * AI 模型指标提供者（ModelMetricsProvider）演示。
@@ -25,6 +26,7 @@ import java.util.ServiceLoader;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class ModelMetricsExample {
 
     /** 遍历全部实现的参数值 */

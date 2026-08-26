@@ -451,14 +451,20 @@ public class RagChatExample implements com.chua.example.spi.Example {
             try {
                 ragClient.close();
             } catch (Exception ignored) {
+            log.warn("Caught: {}", ignored.getMessage());
+        
             }
             try {
                 embeddingClient.close();
             } catch (Exception ignored) {
+            log.warn("Caught: {}", ignored.getMessage());
+        
             }
             try {
                 vectorStorage.close();
             } catch (Exception ignored) {
+            log.warn("Caught: {}", ignored.getMessage());
+        
             }
         }
     }

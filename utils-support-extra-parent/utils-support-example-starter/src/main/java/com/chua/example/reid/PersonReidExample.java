@@ -23,6 +23,8 @@ import java.util.stream.Stream;
  */
 @Slf4j
 public class PersonReidExample {
+    private PersonReidExample() { }
+
 
     /** 成功退出码 */
     private static final int EXIT_CODE_SUCCESS = 0;

@@ -2,6 +2,7 @@ package com.chua.example.onnx;
 
 import com.chua.deeplearning.support.onnx.classification.EfficientNetLite0ClassificationTranslator;
 import com.chua.deeplearning.support.engine.ModelRegistry;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * DeepFake 检测（deepfake-detector）冒烟示例：校验模型注册与复用的
@@ -17,6 +18,7 @@ import com.chua.deeplearning.support.engine.ModelRegistry;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class DeepfakeDetectionExample {
 
     private DeepfakeDetectionExample() {

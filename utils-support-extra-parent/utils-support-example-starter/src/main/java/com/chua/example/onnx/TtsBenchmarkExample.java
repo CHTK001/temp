@@ -9,6 +9,7 @@ import javax.sound.sampled.AudioSystem;
 import java.io.ByteArrayInputStream;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * TTS 引擎 RTF（Real-Time Factor）与内存占用基准示例。
@@ -28,6 +29,7 @@ import java.lang.management.MemoryMXBean;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class TtsBenchmarkExample {
 
     private static final MemoryMXBean MEMORY_BEAN = ManagementFactory.getMemoryMXBean();
@@ -104,7 +106,7 @@ public final class TtsBenchmarkExample {
         boolean doMms = hasMms && ("mms".equals(engine) || "both".equals(engine));
         boolean doPocket = hasPocket && ("pocket".equals(engine) || "both".equals(engine));
         if (!doMms && !doPocket) {
-            System.out.println("[SKIP] 未配置 mms-tts.model.dir / pocket-tts.model.dir，跳过基准");
+            log.info("[SKIP] 未配置 mms-tts.model.dir / pocket-tts.model.dir，跳过基准");
             System.exit(0);
             return;
         }
@@ -171,7 +173,7 @@ public final class TtsBenchmarkExample {
     }
 
     private static void compare(TtsSynthesizer mms, TtsSynthesizer pocket, String text) throws Exception {
-        System.out.println("\n========== TTS Engine Comparison ==========");
+        log.info("\n========== TTS Engine Comparison ==========");
         BenchmarkResult m = single("MMS-TTS", mms, text);
         BenchmarkResult p = single("PocketTTS", pocket, text);
         System.out.printf("%-20s %-15s %-15s%n", "Metric", "MMS-TTS", "PocketTTS");
@@ -241,6 +243,8 @@ public final class TtsBenchmarkExample {
                 return frames / format.getFrameRate();
             }
         } catch (Exception ignored) {
+            log.warn("Caught: {}", ignored.getMessage());
+        
         }
         return 0;
     }

@@ -2,6 +2,7 @@ package com.chua.example.onnx;
 
 import com.chua.deeplearning.support.engine.ModelRegistry;
 import com.chua.deeplearning.support.onnx.inpainting.LamaInpaintingTranslator;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * LaMa 图像修复（lama-inpainting）冒烟示例：校验模型注册与 Translator 可实例化。
@@ -16,6 +17,7 @@ import com.chua.deeplearning.support.onnx.inpainting.LamaInpaintingTranslator;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class LamaInpaintingExample {
 
     private LamaInpaintingExample() {

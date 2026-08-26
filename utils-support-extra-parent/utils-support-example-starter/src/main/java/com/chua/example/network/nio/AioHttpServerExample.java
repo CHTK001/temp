@@ -38,6 +38,8 @@ import java.net.http.HttpResponse;
  */
 @Slf4j
 public class AioHttpServerExample {
+    private AioHttpServerExample() { }
+
 
     /**
      * 默认监听端口

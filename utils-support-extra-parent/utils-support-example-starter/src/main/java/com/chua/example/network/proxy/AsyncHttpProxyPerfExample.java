@@ -30,6 +30,8 @@ import java.util.concurrent.atomic.LongAdder;
  */
 @Slf4j
 public class AsyncHttpProxyPerfExample {
+    private AsyncHttpProxyPerfExample() { }
+
 
     /** log */
 /** Main */

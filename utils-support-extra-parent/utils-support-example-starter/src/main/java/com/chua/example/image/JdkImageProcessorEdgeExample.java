@@ -9,6 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * JdkImageProcessor edge 操作示例：验证 JDK AWT 实现的 Sobel 边缘检测各方向输出。
@@ -20,6 +21,7 @@ import java.util.Map;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class JdkImageProcessorEdgeExample {
 
     /** 私有构造，防止实例化 */
@@ -41,7 +43,7 @@ public final class JdkImageProcessorEdgeExample {
         System.out.println("[PASS] jdk-processor-ready name=" + processor.name());
 
         byte[] input = buildEdgeTestImagePng();
-        System.out.println("[input] generated png " + input.length + " B");
+        log.info("[input] generated png " + input.length + " B");
 
         String[] directions = {"both", "h", "v"};
         for (String direction : directions) {
@@ -78,19 +80,19 @@ public final class JdkImageProcessorEdgeExample {
             byte[] result = processor.process(input, "edge", params);
             long elapsed = (System.nanoTime() - start) / 1_000_000L;
             if (result == null || result.length == 0) {
-                System.out.println("  fail edge[direction=" + label + "] empty-result");
+                log.info("  fail edge[direction=" + label + "] empty-result");
                 return false;
             }
             BufferedImage img = ImageIO.read(new ByteArrayInputStream(result));
             if (img == null) {
-                System.out.println("  fail edge[direction=" + label + "] invalid-image");
+                log.info("  fail edge[direction=" + label + "] invalid-image");
                 return false;
             }
             System.out.println("  ok edge[direction=" + label + "] " + result.length + " B "
                     + img.getWidth() + "x" + img.getHeight() + " " + elapsed + "ms");
             return true;
         } catch (IOException | RuntimeException e) {
-            System.out.println("  fail edge[direction=" + label + "] exception: " + e.getMessage());
+            log.info("  fail edge[direction=" + label + "] exception: " + e.getMessage());
             return false;
         }
     }

@@ -12,6 +12,8 @@ import java.util.Map;
  */
 @Slf4j
 public class RpcProbeExample {
+    private RpcProbeExample() { }
+
     public static void main(String[] args) {
         log.info("[RpcProbeExample] 直接运行 RpcExample（绕过 ExampleRunner 静态扫描）...");
         boolean ok = new RpcExample().run(Map.of());

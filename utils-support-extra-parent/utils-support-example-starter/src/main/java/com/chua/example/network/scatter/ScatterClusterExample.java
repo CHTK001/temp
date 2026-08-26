@@ -23,6 +23,8 @@ import java.util.Map;
  */
 @Slf4j
 public class ScatterClusterExample {
+    private ScatterClusterExample() { }
+
 
     /** 默认执行模式：仅 seed 引导互发现最小场景。 */
     private static final String DEFAULT_MODE = "seed";

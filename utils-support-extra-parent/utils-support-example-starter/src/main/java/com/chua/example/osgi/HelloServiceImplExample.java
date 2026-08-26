@@ -1,5 +1,7 @@
 package com.chua.example.osgi;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * OSGi 集成测试服务实现。
  *
@@ -8,6 +10,7 @@ package com.chua.example.osgi;
   *
  * <p>SPI 实现载体：由 OSGi 容器注册为服务实现，无独立 main 入口。</p>
  */
+@Slf4j
 public final class HelloServiceImplExample implements HelloServiceExample {
     /** Greeting */
     private final String greeting;
@@ -40,7 +43,7 @@ public final class HelloServiceImplExample implements HelloServiceExample {
         HelloServiceImplExample svc = new HelloServiceImplExample(
                 args.length > 0 ? args[0] : "default");
         boolean ok = svc.greet() != null && !svc.greet().isEmpty();
-        System.out.println("greet=" + svc.greet() + " -> " + (ok ? "PASS" : "FAIL"));
+        log.info("greet=" + svc.greet() + " -> " + (ok ? "PASS" : "FAIL"));
         System.exit(ok ? 0 : 1);
     }
 }

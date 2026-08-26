@@ -5,6 +5,7 @@ import com.chua.common.support.ai.chat.pricing.ModelPricingProvider;
 import com.chua.common.support.spi.annotations.Extension;
 
 import java.math.BigDecimal;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 示例用的模型定价提供器，仅内置 {@code openai/gpt-4} 一种定价，其他模型返回 null。
@@ -15,6 +16,7 @@ import java.math.BigDecimal;
  * <p>SPI 实现载体：SPI 服务实现载体，由 ExampleRunner 按类型加载，无独立 main 入口。</p>
  */
 @Extension("openai")
+@Slf4j
 public class ExampleModelPricingProviderExample implements ModelPricingProvider {
 
     @Override
@@ -41,7 +43,7 @@ public class ExampleModelPricingProviderExample implements ModelPricingProvider 
         ExampleModelPricingProviderExample provider = new ExampleModelPricingProviderExample();
         ModelDefinition hit = provider.getModelPricing("openai", "gpt-4");
         boolean ok = hit != null && provider.getModelPricing("other", "x") == null;
-        System.out.println("pricing hit=" + (hit != null) + " -> " + (ok ? "PASS" : "FAIL"));
+        log.info("pricing hit=" + (hit != null) + " -> " + (ok ? "PASS" : "FAIL"));
         System.exit(ok ? 0 : 1);
     }
 }

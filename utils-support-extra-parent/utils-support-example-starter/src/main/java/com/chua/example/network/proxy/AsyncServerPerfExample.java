@@ -27,6 +27,8 @@ import java.util.concurrent.atomic.LongAdder;
  */
 @Slf4j
 public class AsyncServerPerfExample {
+    private AsyncServerPerfExample() { }
+
 
     /** Main */
     public static void main(String[] args) throws Exception {

@@ -25,6 +25,7 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * {@link ScatterDiscoveryExampleSpi} 的同名独立主示例（驱动型）。
@@ -43,6 +44,7 @@ import java.util.Objects;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class ScatterDiscoveryExample {
 
     /** 日志 */
@@ -341,6 +343,8 @@ public final class ScatterDiscoveryExample {
             try {
                 c.close();
             } catch (Exception ignored) {
+            log.warn("Caught: {}", ignored.getMessage());
+        
             }
         }
     }

@@ -19,6 +19,8 @@ import java.util.stream.Stream;
  */
 @Slf4j
 public class FaceCoreExample {
+    private FaceCoreExample() { }
+
 
     private static final int EXIT_CODE_SUCCESS = 0;
     private static final int EXIT_CODE_FAILURE = 1;

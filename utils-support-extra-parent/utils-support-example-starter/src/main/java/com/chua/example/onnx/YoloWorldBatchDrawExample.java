@@ -9,6 +9,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * YOLOv8s-World 开放词表检测 + DrawerPipeline 批量标注示例。
@@ -24,6 +25,7 @@ import java.util.List;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public class YoloWorldBatchDrawExample {
 
     private YoloWorldBatchDrawExample() {
@@ -47,13 +49,13 @@ public class YoloWorldBatchDrawExample {
         Path in = Path.of(inputDir);
         Path outRoot = Path.of(outputDir);
         Files.createDirectories(outRoot);
-        System.out.println("输入: " + in);
-        System.out.println("输出: " + outRoot);
+        log.info("输入: " + in);
+        log.info("输出: " + outRoot);
 
         ImageDetector detector;
         try {
             detector = ImageDetector.create("yolov8s-world");
-            System.out.println("detector: " + detector);
+            log.info("detector: " + detector);
         } catch (Exception e) {
             System.err.println("[FAIL] 创建 detector 失败: " + e.getMessage());
             e.printStackTrace();
@@ -98,7 +100,7 @@ public class YoloWorldBatchDrawExample {
                         f.getName().replaceAll("\\.[^.]+$", "") + ".png").toPath(), drawn);
                 ok++;
             } catch (Throwable e) {
-                System.out.println("失败 " + f.getName() + ": " + e.getMessage());
+                log.info("失败 " + f.getName() + ": " + e.getMessage());
                 e.printStackTrace();
                 fail++;
             }

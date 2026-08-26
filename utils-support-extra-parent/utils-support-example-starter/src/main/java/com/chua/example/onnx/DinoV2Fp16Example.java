@@ -66,6 +66,8 @@ public final class DinoV2Fp16Example {
                 try {
                     ac.close();
                 } catch (Exception ignore) {
+            log.warn("Caught: {}", ignore.getMessage());
+        
                 }
             }
         }

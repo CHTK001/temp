@@ -23,6 +23,8 @@ import java.util.stream.Stream;
  */
 @Slf4j
 public class LayoutPipelineExample {
+    private LayoutPipelineExample() { }
+
 
     /**
      * 输出目录（按模型名）

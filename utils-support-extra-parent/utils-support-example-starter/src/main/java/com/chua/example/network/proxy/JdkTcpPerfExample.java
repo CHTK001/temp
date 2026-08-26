@@ -22,6 +22,8 @@ import java.util.concurrent.atomic.LongAdder;
  */
 @Slf4j
 public class JdkTcpPerfExample {
+    private JdkTcpPerfExample() { }
+
 
     /** Main */
     public static void main(String[] args) throws Exception {
@@ -96,6 +98,8 @@ public class JdkTcpPerfExample {
                 try {
                     server.stop();
                 } catch (Exception ignored) {
+            log.warn("Caught: {}", ignored.getMessage());
+        
                 }
             }
         }

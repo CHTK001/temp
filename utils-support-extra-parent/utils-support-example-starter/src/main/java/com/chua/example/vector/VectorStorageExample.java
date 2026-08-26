@@ -6,6 +6,7 @@ import com.chua.common.support.vector.VectorStorage;
 import com.chua.common.support.vector.VectorStorageBuilder;
 
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 向量存储基础功能示例（main 入口）— 由 {@code VectorStorageTest} 改写，
@@ -20,6 +21,7 @@ import java.util.List;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class VectorStorageExample {
 
     /**

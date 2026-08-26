@@ -5,6 +5,7 @@ import com.chua.common.support.lang.view.TableViewParser;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * TableViewParser 示例：验证默认框线模式与无边框模式的渲染行为。
@@ -20,7 +21,10 @@ import java.util.Map;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public class TableViewParserExample {
+    private TableViewParserExample() { }
+
 
     /**
      * 主入口，逐场景自检，任一失败以退出码 1 结束。

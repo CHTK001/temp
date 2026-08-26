@@ -23,6 +23,8 @@ import java.util.List;
  */
 @Slf4j
 public class ScatterNodeExample {
+    private ScatterNodeExample() { }
+
 
     public static void main(String[] args) throws Exception {
         if (args.length < 3) {

@@ -15,6 +15,7 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * {@link Socks5ProxyExampleSpi} 的同名独立主示例（驱动型）。
@@ -34,6 +35,7 @@ import java.util.Map;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class Socks5ProxyExample {
 
     /** 日志 */
@@ -341,6 +343,8 @@ public final class Socks5ProxyExample {
             try {
                 c.close();
             } catch (Exception ignored) {
+            log.warn("Caught: {}", ignored.getMessage());
+        
             }
         }
     }
@@ -434,6 +438,8 @@ public final class Socks5ProxyExample {
                     Socket client = serverSocket.accept();
                     Thread.ofVirtual().start(() -> echo(client));
                 } catch (IOException ignored) {
+            log.warn("Caught: {}", ignored.getMessage());
+        
                 }
             }
         }
@@ -454,6 +460,8 @@ public final class Socks5ProxyExample {
                     out.flush();
                 }
             } catch (IOException ignored) {
+            log.warn("Caught: {}", ignored.getMessage());
+        
             }
         }
 
@@ -463,6 +471,8 @@ public final class Socks5ProxyExample {
             try {
                 serverSocket.close();
             } catch (IOException ignored) {
+            log.warn("Caught: {}", ignored.getMessage());
+        
             }
         }
     }

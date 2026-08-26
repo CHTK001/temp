@@ -7,6 +7,7 @@ import com.chua.common.support.spi.ServiceProvider;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * AI 工具用量解析器（UsageParser）演示。
@@ -25,6 +26,7 @@ import java.util.Map;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class UsageParserExample {
 
     /** 遍历全部实现的参数值 */

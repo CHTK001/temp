@@ -14,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class FeatureDimensionExample {
+    private FeatureDimensionExample() { }
+
 
     /**
      * 期望维度映射：模型ID → 预期特征维度

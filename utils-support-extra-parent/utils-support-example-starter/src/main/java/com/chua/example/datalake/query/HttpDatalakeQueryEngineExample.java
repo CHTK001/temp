@@ -18,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class HttpDatalakeQueryEngineExample {
+    private HttpDatalakeQueryEngineExample() { }
+
 
     /**
      * 默认能力点

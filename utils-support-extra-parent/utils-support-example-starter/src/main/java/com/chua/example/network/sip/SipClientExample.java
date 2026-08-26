@@ -33,6 +33,8 @@ import java.util.concurrent.CountDownLatch;
  */
 @Slf4j
 public class SipClientExample {
+    private SipClientExample() { }
+
 
     /**
      * 常驻锁存器，阻止主线程退出

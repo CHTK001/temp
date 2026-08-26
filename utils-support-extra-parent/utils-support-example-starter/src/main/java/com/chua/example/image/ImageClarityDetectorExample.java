@@ -21,6 +21,8 @@ import java.nio.file.Paths;
  */
 @Slf4j
 public class ImageClarityDetectorExample {
+    private ImageClarityDetectorExample() { }
+
 
     /** 默认图片目录 */
     private static final String DEFAULT_IMAGE_DIR = "D:\\images";

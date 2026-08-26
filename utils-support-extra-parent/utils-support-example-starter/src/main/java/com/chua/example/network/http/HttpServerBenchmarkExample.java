@@ -260,6 +260,8 @@ public final class HttpServerBenchmarkExample {
                 try {
                     server.close();
                 } catch (Exception ignored) {
+            log.warn("Caught: {}", ignored.getMessage());
+        
                 }
             }
             if (pool != null) {

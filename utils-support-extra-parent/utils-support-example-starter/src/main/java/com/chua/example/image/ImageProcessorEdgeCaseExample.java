@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * ImageProcessor edge 操作全实现示例：SPI 发现全部可用实现并逐一验证 edge 各方向。
@@ -26,6 +27,7 @@ import java.util.Map;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class ImageProcessorEdgeCaseExample {
 
     /** 私有构造，防止实例化 */
@@ -41,7 +43,7 @@ public final class ImageProcessorEdgeCaseExample {
     public static void main(String[] args) throws IOException {
         byte[] input = buildEdgeTestImagePng();
         List<ImageProcessor> impls = discoverProcessors();
-        System.out.println("[input] generated png " + input.length + " B");
+        log.info("[input] generated png " + input.length + " B");
 
         if (impls.isEmpty()) {
             System.out.println("[FAIL] processor-discovery");
@@ -80,10 +82,10 @@ public final class ImageProcessorEdgeCaseExample {
             ImageProcessor proxy = ImageProcessors.getProcessor();
             if (proxy != null && proxy.available()) {
                 result.add(proxy);
-                System.out.println("  discovered spi-proxy: " + proxy.name());
+                log.info("  discovered spi-proxy: " + proxy.name());
             }
         } catch (RuntimeException e) {
-            System.out.println("  spi-proxy discovery skipped: " + e.getMessage());
+            log.info("  spi-proxy discovery skipped: " + e.getMessage());
         }
     }
 
@@ -97,10 +99,10 @@ public final class ImageProcessorEdgeCaseExample {
             JdkImageProcessor jdk = new JdkImageProcessor();
             if (jdk.available() && !containsName(result, jdk.name())) {
                 result.add(jdk);
-                System.out.println("  discovered jdk: " + jdk.name());
+                log.info("  discovered jdk: " + jdk.name());
             }
         } catch (RuntimeException | LinkageError e) {
-            System.out.println("  jdk processor skipped: " + e.getMessage());
+            log.info("  jdk processor skipped: " + e.getMessage());
         }
     }
 
@@ -113,15 +115,15 @@ public final class ImageProcessorEdgeCaseExample {
         try {
             RustImageProcessor rust = new RustImageProcessor();
             if (!rust.available()) {
-                System.out.println("[SKIP] rust-unavailable");
+                log.info("[SKIP] rust-unavailable");
                 return;
             }
             if (!containsName(result, rust.name())) {
                 result.add(rust);
-                System.out.println("  discovered rust: " + rust.name());
+                log.info("  discovered rust: " + rust.name());
             }
         } catch (RuntimeException | LinkageError e) {
-            System.out.println("[SKIP] rust-unavailable (" + e.getMessage() + ")");
+            log.info("[SKIP] rust-unavailable (" + e.getMessage() + ")");
         }
     }
 
@@ -139,7 +141,7 @@ public final class ImageProcessorEdgeCaseExample {
         int skipCount = 0;
         for (ImageProcessor processor : impls) {
             if ("rust".equals(processor.name()) && !processor.available()) {
-                System.out.println("[SKIP] rust-unavailable");
+                log.info("[SKIP] rust-unavailable");
                 skipCount++;
                 continue;
             }
@@ -151,7 +153,7 @@ public final class ImageProcessorEdgeCaseExample {
                 }
             }
         }
-        System.out.println("  total pass=" + passCount + " fail=" + failCount + " skip=" + skipCount);
+        log.info("  total pass=" + passCount + " fail=" + failCount + " skip=" + skipCount);
         return failCount;
     }
 
@@ -174,19 +176,19 @@ public final class ImageProcessorEdgeCaseExample {
             byte[] result = processor.process(input, "edge", params);
             long elapsed = (System.nanoTime() - start) / 1_000_000L;
             if (result == null || result.length == 0) {
-                System.out.println("  fail edge[" + label + "] empty-result");
+                log.info("  fail edge[" + label + "] empty-result");
                 return false;
             }
             BufferedImage img = ImageIO.read(new ByteArrayInputStream(result));
             if (img == null) {
-                System.out.println("  fail edge[" + label + "] invalid-image");
+                log.info("  fail edge[" + label + "] invalid-image");
                 return false;
             }
             System.out.println("  ok edge[" + label + "] " + result.length + " B "
                     + img.getWidth() + "x" + img.getHeight() + " " + elapsed + "ms");
             return true;
         } catch (IOException | RuntimeException e) {
-            System.out.println("  fail edge[" + label + "] exception: " + e.getMessage());
+            log.info("  fail edge[" + label + "] exception: " + e.getMessage());
             return false;
         }
     }

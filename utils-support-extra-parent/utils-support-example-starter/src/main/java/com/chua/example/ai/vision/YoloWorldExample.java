@@ -30,6 +30,8 @@ import java.util.List;
  */
 @Slf4j
 public class YoloWorldExample {
+    private YoloWorldExample() { }
+
 
     /** 默认图片路径 */
     private static final String DEFAULT_PATH = "D:\\images";

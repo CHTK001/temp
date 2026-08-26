@@ -33,6 +33,8 @@ import java.util.function.BooleanSupplier;
  */
 @Slf4j
 public class CommonUtilsExample {
+    private CommonUtilsExample() { }
+
 
     /**
      * 主入口。

@@ -2,6 +2,7 @@ package com.chua.example.engine;
 
 import com.chua.common.support.lang.datasource.dialect.Dialect;
 import com.chua.common.support.lang.datasource.engine.EngineDataSource;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 简化的 EngineDataSource 实现，构造时不连接任何后端，仅用于单元测试与示例代码。
@@ -11,6 +12,7 @@ import com.chua.common.support.lang.datasource.engine.EngineDataSource;
   *
  * <p>SPI 实现载体：SPI 引擎实现载体，由宿主 Example 按类型加载，无独立 main 入口。</p>
  */
+@Slf4j
 public class SimpleEngineDataSourceExample implements EngineDataSource<Object> {
 
     /** 名称 */
@@ -106,7 +108,7 @@ public class SimpleEngineDataSourceExample implements EngineDataSource<Object> {
         SimpleEngineDataSourceExample ds = new SimpleEngineDataSourceExample(url);
         ds.setSource(new Object());
         boolean ok = url.equals(ds.url()) && ds.getSource() != null;
-        System.out.println("datasource url ok=" + ok + " -> " + (ok ? "PASS" : "FAIL"));
+        log.info("datasource url ok=" + ok + " -> " + (ok ? "PASS" : "FAIL"));
         System.exit(ok ? 0 : 1);
     }
 }

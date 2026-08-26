@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * {@link Branch} 轻量惰性分支工具示例 — 由单元测试改写。
@@ -22,6 +23,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class BranchExample {
 
     /**

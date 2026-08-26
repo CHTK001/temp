@@ -23,6 +23,8 @@ import java.util.Map;
  */
 @Slf4j
 public class SyncExample {
+    private SyncExample() { }
+
 
     /**
      * 主入口：解析参数并驱动 {@link SyncExampleSpi#run(Map)}，失败以退出码 1 结束。

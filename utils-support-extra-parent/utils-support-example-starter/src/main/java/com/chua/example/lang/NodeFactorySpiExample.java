@@ -11,6 +11,7 @@ import com.chua.common.support.lang.json.JsonProvider;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 节点工厂 SPI 示例：演示 {@link JsonProvider} 的节点工厂方法
@@ -24,6 +25,7 @@ import java.util.Map;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class NodeFactorySpiExample {
 
     private NodeFactorySpiExample() {
@@ -37,7 +39,7 @@ public final class NodeFactorySpiExample {
      */
     public static void main(String[] args) {
         try {
-            System.out.println("===== 节点工厂 场景1: 默认实现返回通用节点类型 =====");
+            log.info("===== 节点工厂 场景1: 默认实现返回通用节点类型 =====");
             if (!(Json.createJsonObject() instanceof JsonObject)) {
                 System.out.println("[FAIL] 通用节点: Json.createJsonObject 应返回 JsonObject");
                 System.exit(1);
@@ -79,7 +81,7 @@ public final class NodeFactorySpiExample {
             }
             System.out.println("[PASS] 通用节点: JsonNode.valueOf -> JsonNode");
 
-            System.out.println("===== 节点工厂 场景2: 切换实现后返回节点子类 =====");
+            log.info("===== 节点工厂 场景2: 切换实现后返回节点子类 =====");
             Json.setImplementation(new StubNodeProvider());
             if (!(Json.createJsonObject() instanceof StubJsonObject)) {
                 System.out.println("[FAIL] 实现切换: Json.createJsonObject 应返回 StubJsonObject");
@@ -133,7 +135,7 @@ public final class NodeFactorySpiExample {
             }
             System.out.println("[PASS] 实现切换: 构建路径 Json.buildArray -> StubJsonNode");
 
-            System.out.println("===== 节点工厂 场景3: Json5 门面共享节点工厂 =====");
+            log.info("===== 节点工厂 场景3: Json5 门面共享节点工厂 =====");
             if (!(Json5.getJsonObject("{\"a\":1}") instanceof StubJsonObject)) {
                 System.out.println("[FAIL] Json5共享: Json5.getJsonObject 应返回 StubJsonObject");
                 System.exit(1);

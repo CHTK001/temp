@@ -26,6 +26,8 @@ import java.util.List;
  */
 @Slf4j
 public class OpenVocabularyDetectionExample {
+    private OpenVocabularyDetectionExample() { }
+
 
     /**
      * 需要验证注册的模型列表（modelId, 期望 translator 类后缀）
@@ -91,6 +93,8 @@ public class OpenVocabularyDetectionExample {
                     java.nio.file.StandardOpenOption.CREATE,
                     java.nio.file.StandardOpenOption.APPEND);
         } catch (Exception ignore) {
+            log.warn("Caught: {}", ignore.getMessage());
+        
         }
         return ok;
     }

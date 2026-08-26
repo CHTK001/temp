@@ -21,6 +21,8 @@ import java.util.Map;
  */
 @Slf4j
 public class VoiceCloneExample extends BaseExample {
+    private VoiceCloneExample() { }
+
 
     /** 默认合成文本 */
     private static final String DEFAULT_TEXT = "今天天气不错，适合出门散步。";

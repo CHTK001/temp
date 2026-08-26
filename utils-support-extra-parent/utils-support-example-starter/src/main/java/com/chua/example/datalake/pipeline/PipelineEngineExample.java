@@ -35,6 +35,8 @@ import java.util.Map;
  */
 @Slf4j
 public class PipelineEngineExample {
+    private PipelineEngineExample() { }
+
 
     /**
      * 默认能力点类型

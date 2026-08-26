@@ -18,6 +18,8 @@ import com.chua.tui.support.widgets.MemoryWidget;
  */
 @Slf4j
 public class TuiLauncherExample {
+    private TuiLauncherExample() { }
+
     /** Main */
     public static void main(String[] args) throws Exception {
         SystemMonitorService monitorService = new SystemMonitorService();

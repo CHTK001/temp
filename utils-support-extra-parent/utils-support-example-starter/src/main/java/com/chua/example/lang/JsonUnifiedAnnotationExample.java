@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 统一门户注解示例：演示 {@link JsonName} / {@link JsonIgnore} / {@link JsonFormat}
@@ -22,6 +23,7 @@ import java.util.Map;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class JsonUnifiedAnnotationExample {
 
     private JsonUnifiedAnnotationExample() {
@@ -36,7 +38,7 @@ public final class JsonUnifiedAnnotationExample {
     @SuppressWarnings("unchecked")
     public static void main(String[] args) {
         try {
-            System.out.println("===== 统一注解 场景1: 默认 Jackson 实现识别门户注解 =====");
+            log.info("===== 统一注解 场景1: 默认 Jackson 实现识别门户注解 =====");
             LocalDateTime time = LocalDateTime.of(2026, 8, 15, 12, 30, 0);
             String json = Json.toJson(new Order("A001", "secret", time, 99.5));
             if (!json.contains("\"order_id\":\"A001\"")) {
@@ -78,7 +80,7 @@ public final class JsonUnifiedAnnotationExample {
             }
             System.out.println("[PASS] 注解适配: 反序列化普通字段 amount=99.5");
 
-            System.out.println("===== 统一注解 场景2: JsonBeanMapper 桥接器 =====");
+            log.info("===== 统一注解 场景2: JsonBeanMapper 桥接器 =====");
             LocalDateTime bridgeTime = LocalDateTime.of(2026, 8, 15, 12, 30, 0);
             Order source = new Order("A002", "secret", bridgeTime, 10.0);
             Object mapped = JsonBeanMapper.toMap(source);
@@ -104,7 +106,7 @@ public final class JsonUnifiedAnnotationExample {
             }
             System.out.println("[PASS] 桥接器: @JsonFormat 时间格式化 -> 2026-08-15 12:30:00");
 
-            System.out.println("----- 统一注解 场景2: fromMap 反向填充 -----");
+            log.info("----- 统一注解 场景2: fromMap 反向填充 -----");
             Map<String, Object> fillSource = new LinkedHashMap<>();
             fillSource.put("order_id", "A003");
             fillSource.put("internal", "secret");

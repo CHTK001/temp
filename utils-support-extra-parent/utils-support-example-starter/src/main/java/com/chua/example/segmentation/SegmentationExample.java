@@ -18,6 +18,8 @@ import java.util.stream.Stream;
  */
 @Slf4j
 public class SegmentationExample {
+    private SegmentationExample() { }
+
 
     /** 输出根目录 */
     private static final String OUTPUT_ROOT = "D:\\images\\output\\";

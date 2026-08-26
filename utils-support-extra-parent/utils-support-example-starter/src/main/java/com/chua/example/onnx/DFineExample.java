@@ -9,6 +9,7 @@ import com.chua.deeplearning.support.onnx.detr.DFineTranslator;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * D-FINE-L 目标检测示例（Objects365 预训练 -> COCO 80 类对齐，57.3 AP，int8 量化嵌入式）。
@@ -26,12 +27,15 @@ import java.nio.file.Path;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class DFineExample {
 
     static {
         try {
             nu.pattern.OpenCV.loadShared();
         } catch (Throwable ignored) {
+            log.warn("Caught: {}", ignored.getMessage());
+        
         }
     }
 
@@ -68,11 +72,11 @@ public final class DFineExample {
                      new DjlModelFactory("dfine-l-obj2coco", weights, DFineTranslator::new)) {
             Image img = ImageFactory.getInstance().fromFile(Path.of(imagePath));
             DetectedObjects result = factory.predict(img);
-            System.out.println(result);
+            log.info(result);
             img.drawBoundingBoxes(result);
             Path out = Path.of(outPath);
             img.save(Files.newOutputStream(out), "png");
-            System.out.println("[saved] " + out);
+            log.info("[saved] " + out);
             System.out.println("[PASS]");
             System.exit(0);
         } catch (Exception e) {

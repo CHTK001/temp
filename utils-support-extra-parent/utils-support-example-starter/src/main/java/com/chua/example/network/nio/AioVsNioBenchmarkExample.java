@@ -39,6 +39,8 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 @Slf4j
 public class AioVsNioBenchmarkExample {
+    private AioVsNioBenchmarkExample() { }
+
 
     /**
      * 基准路由路径

@@ -26,6 +26,8 @@ import java.util.concurrent.CountDownLatch;
  */
 @Slf4j
 public class SipServerExample {
+    private SipServerExample() { }
+
 
     /**
      * 日志对象

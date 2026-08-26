@@ -21,6 +21,8 @@ import java.util.Map;
  */
 @Slf4j
 public class HttpServerExample {
+    private HttpServerExample() { }
+
 
     /**
      * 主入口：驱动 {@link HttpServerExampleSpi} 全量演示，失败以退出码 1 结束。

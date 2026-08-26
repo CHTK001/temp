@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * ImageProcessor 性能基准示例 — jdk 实现与 rust 原生实现逐操作对比计时。
@@ -39,7 +40,10 @@ import java.util.Map;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public class ImageProcessorBenchmarkExample {
+    private ImageProcessorBenchmarkExample() { }
+
 
     /**
      * 默认测试图边长（像素）
@@ -81,7 +85,7 @@ public class ImageProcessorBenchmarkExample {
         }
         List<ImageProcessor> impls = buildImpls();
         if (impls.size() < 2) {
-            System.out.println("[INFO] 仅执行 jdk 组");
+            log.info("[INFO] 仅执行 jdk 组");
         }
         runBenchmark(impls, image, size, iterations);
     }
@@ -108,12 +112,12 @@ public class ImageProcessorBenchmarkExample {
         try {
             RustImageProcessor rust = new RustImageProcessor();
             if (!rust.available()) {
-                System.out.println("[SKIP] rust-unavailable");
+                log.info("[SKIP] rust-unavailable");
                 return;
             }
             impls.add(rust);
         } catch (RuntimeException | LinkageError e) {
-            System.out.println("[SKIP] rust-unavailable (" + e.getMessage() + ")");
+            log.info("[SKIP] rust-unavailable (" + e.getMessage() + ")");
         }
     }
 
@@ -127,11 +131,11 @@ public class ImageProcessorBenchmarkExample {
      * @param iterations 每操作测量迭代次数
      */
     private static void runBenchmark(List<ImageProcessor> impls, byte[] image, int size, int iterations) {
-        System.out.println("===== ImageProcessor 基准示例 (jdk vs rust) =====");
-        System.out.println("测试图: " + size + "x" + size + " PNG, " + image.length + " bytes");
-        System.out.println("预热: " + WARMUP_ITERATIONS + " 次/操作, 测量: " + iterations + " 次/操作");
+        log.info("===== ImageProcessor 基准示例 (jdk vs rust) =====");
+        log.info("测试图: " + size + "x" + size + " PNG, " + image.length + " bytes");
+        log.info("预热: " + WARMUP_ITERATIONS + " 次/操作, 测量: " + iterations + " 次/操作");
         List<OpCase> ops = buildOps(size);
-        System.out.println("[PERF] " + "-".repeat(56));
+        log.info("[PERF] " + "-".repeat(56));
         System.out.printf(Locale.ROOT, "[PERF] %-20s %-6s %8s %12s%n", "op", "impl", "iter", "avg-ms");
         for (ImageProcessor impl : impls) {
             long sumNanos = 0L;
@@ -145,7 +149,7 @@ public class ImageProcessorBenchmarkExample {
             }
             printSummary(impl.name(), successOps, ops.size(), sumNanos, iterations);
         }
-        System.out.println("[PERF] " + "-".repeat(56));
+        log.info("[PERF] " + "-".repeat(56));
     }
 
     /**

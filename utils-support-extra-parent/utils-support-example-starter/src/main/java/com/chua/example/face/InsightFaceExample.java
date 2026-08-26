@@ -25,6 +25,8 @@ import java.util.List;
  */
 @Slf4j
 public class InsightFaceExample {
+    private InsightFaceExample() { }
+
 
     /** 输出根目录 */
     private static final String OUTPUT_ROOT = "D:\\images\\output\\";

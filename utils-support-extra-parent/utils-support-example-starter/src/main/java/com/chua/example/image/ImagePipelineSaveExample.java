@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * ImagePipeline 落地示例：现场生成测试图并保存各处理步骤的结果图片。
@@ -24,6 +25,7 @@ import java.util.Map;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class ImagePipelineSaveExample {
 
     /** 输出子目录名，位于 java.io.tmpdir/test-output 下 */
@@ -44,7 +46,7 @@ public final class ImagePipelineSaveExample {
         try {
             Files.createDirectories(outDir);
             byte[] input = buildTestImagePng();
-            System.out.println("[input] generated png " + input.length + " B");
+            log.info("[input] generated png " + input.length + " B");
             boolean saved = saveAll(outDir, input);
             if (!saved) {
                 System.out.println("[FAIL] pipeline-save -> " + outDir);
@@ -70,10 +72,10 @@ public final class ImagePipelineSaveExample {
             Path target = outDir.resolve(entry.getKey());
             Files.write(target, entry.getValue());
             if (!isDecodable(target)) {
-                System.out.println("  write failed: " + entry.getKey());
+                log.info("  write failed: " + entry.getKey());
                 return false;
             }
-            System.out.println("  saved " + entry.getKey() + " " + entry.getValue().length + " B");
+            log.info("  saved " + entry.getKey() + " " + entry.getValue().length + " B");
         }
         return true;
     }
@@ -164,7 +166,7 @@ public final class ImagePipelineSaveExample {
         try (var paths = Files.walk(outDir)) {
             paths.sorted(Comparator.reverseOrder()).forEach(ImagePipelineSaveExample::deleteQuietly);
         } catch (IOException e) {
-            System.out.println("  cleanup skipped: " + e.getMessage());
+            log.info("  cleanup skipped: " + e.getMessage());
         }
     }
 
@@ -177,7 +179,7 @@ public final class ImagePipelineSaveExample {
         try {
             Files.deleteIfExists(path);
         } catch (IOException e) {
-            System.out.println("  cleanup skipped: " + path.getFileName());
+            log.info("  cleanup skipped: " + path.getFileName());
         }
     }
 }

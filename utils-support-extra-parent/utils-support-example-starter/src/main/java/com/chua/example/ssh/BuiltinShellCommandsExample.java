@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 内置 Shell 命令实现，包含常用的 Unix-like 命令。
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
  * <p>SPI 实现载体：@ShellMethod 命令束，由 SshServer 自动扫描注册，无独立 main 入口。</p>
  */
 @ShellMethod("/builtin")
+@Slf4j
 public class BuiltinShellCommandsExample {
 
     /** 当前工作目录，每个线程独立的上下文 */
@@ -241,6 +243,8 @@ public class BuiltinShellCommandsExample {
                             try {
                                 Files.delete(p);
                             } catch (IOException ignored) {
+            log.warn("Caught: {}", ignored.getMessage());
+        
                             }
                         });
                 result.append("已删除: ").append(target).append(System.lineSeparator());
@@ -479,7 +483,7 @@ public class BuiltinShellCommandsExample {
         BuiltinShellCommandsExample cmds = new BuiltinShellCommandsExample();
         String pwd = cmds.pwd(new String[0]);
         boolean ok = pwd != null && !pwd.isEmpty();
-        System.out.println("pwd=" + pwd + " -> " + (ok ? "PASS" : "FAIL"));
+        log.info("pwd=" + pwd + " -> " + (ok ? "PASS" : "FAIL"));
         System.exit(ok ? 0 : 1);
     }
 }

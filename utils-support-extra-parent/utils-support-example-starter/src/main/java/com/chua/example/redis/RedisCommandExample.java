@@ -25,6 +25,8 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class RedisCommandExample {
+    private RedisCommandExample() { }
+
 
     /**
      * 默认 Redis 主机

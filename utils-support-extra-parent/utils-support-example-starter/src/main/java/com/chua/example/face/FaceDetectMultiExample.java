@@ -23,6 +23,8 @@ import java.util.stream.Stream;
  */
 @Slf4j
 public class FaceDetectMultiExample {
+    private FaceDetectMultiExample() { }
+
 
     /**
      * 输出根目录

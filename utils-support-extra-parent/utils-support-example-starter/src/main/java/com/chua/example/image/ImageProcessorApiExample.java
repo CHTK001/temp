@@ -2,6 +2,7 @@ package com.chua.example.image;
 
 import com.chua.common.support.image.ImageProcessor;
 import com.chua.common.support.image.ImageProcessors;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * ImageProcessor API 示例：默认处理器获取与 FluentProcessor 链式 API 存在性自检。
@@ -14,6 +15,7 @@ import com.chua.common.support.image.ImageProcessors;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class ImageProcessorApiExample {
 
     /** 私有构造，防止实例化 */
@@ -66,7 +68,7 @@ public final class ImageProcessorApiExample {
             type.getMethod( "flip", String.class);
             return true;
         } catch (ReflectiveOperationException e) {
-            System.out.println("  missing method: " + e.getMessage());
+            log.info("  missing method: " + e.getMessage());
             return false;
         }
     }

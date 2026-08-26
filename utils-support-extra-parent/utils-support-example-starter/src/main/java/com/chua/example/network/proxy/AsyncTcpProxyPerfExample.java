@@ -31,6 +31,8 @@ import java.util.concurrent.atomic.LongAdder;
  */
 @Slf4j
 public class AsyncTcpProxyPerfExample {
+    private AsyncTcpProxyPerfExample() { }
+
 
     /** 单次 echo 载荷（64B） */
     private static final byte[] PAYLOAD = new byte[64];

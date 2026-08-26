@@ -3,6 +3,7 @@ package com.chua.example.reflection;
 import com.chua.common.support.reflection.FieldStation;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * FieldStation 示例：覆盖 camelCase 转换、字段读写、缓存、继承链查找等核心场景。
@@ -22,6 +23,7 @@ import lombok.EqualsAndHashCode;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class FieldStationExample {
 
     /**

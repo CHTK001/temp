@@ -33,6 +33,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @Slf4j
 public class SubscriberExample {
+    private SubscriberExample() { }
+
 
     /**
      * 退出码：成功

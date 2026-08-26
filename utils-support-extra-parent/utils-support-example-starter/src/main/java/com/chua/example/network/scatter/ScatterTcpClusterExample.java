@@ -34,6 +34,8 @@ import java.util.function.BooleanSupplier;
  */
 @Slf4j
 public class ScatterTcpClusterExample {
+    private ScatterTcpClusterExample() { }
+
 
     /** 默认基础端口。 */
     private static final int DEFAULT_BASE_PORT = 29100;

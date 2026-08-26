@@ -43,6 +43,8 @@ import java.nio.ByteBuffer;
  */
 @Slf4j
 public class ScreenCaptureExample {
+    private ScreenCaptureExample() { }
+
 
     /**
      * 默认采集器类型

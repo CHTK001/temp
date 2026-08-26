@@ -31,7 +31,9 @@ public final class ReflectiveClothesExample extends BaseExample {
         String outPath = args.length > 1 ? args[1] : null;
         float thr = 0.50f;
         if (args.length > 2) {
-            try { thr = Float.parseFloat(args[2]); } catch (Exception ignored) {}
+            try { thr = Float.parseFloat(args[2]); } catch (Exception ignored) {
+            log.warn("Caught: {}", ignored.getMessage());
+        }
         }
         if (imagePath == null) {
             printModels("reflective", "onnx", ModelRegistry.getAll().stream()

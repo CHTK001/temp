@@ -17,6 +17,8 @@ import java.util.List;
  */
 @Slf4j
 public class FaceAllExample {
+    private FaceAllExample() { }
+
 
     /**
      * 程序退出码：成功

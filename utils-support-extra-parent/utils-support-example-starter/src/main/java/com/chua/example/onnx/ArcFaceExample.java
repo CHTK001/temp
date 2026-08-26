@@ -14,6 +14,8 @@ import java.nio.file.Paths;
  */
 @Slf4j
 public class ArcFaceExample extends BaseExample {
+    private ArcFaceExample() { }
+
 
     /** Main */
     public static void main(String[] args) throws Exception {

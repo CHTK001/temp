@@ -21,6 +21,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Json5 门面示例：演示 JSON5 语法（单引号 / 注释 / 尾随逗号 / 未加引号键名）经 SPI 默认实现解析，
@@ -32,6 +33,7 @@ import java.util.Map;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class Json5Example {
 
     private Json5Example() {
@@ -49,7 +51,7 @@ public final class Json5Example {
                     "  name: 'chua', // 单行注释\n" +
                     "  age: 18,\n" +
                     "}";
-            System.out.println("===== Json5 场景1: JSON5 语法解析 =====");
+            log.info("===== Json5 场景1: JSON5 语法解析 =====");
             User user = Json5.fromJson(json5, User.class);
             if (user == null) {
                 System.out.println("[FAIL] Json5语法解析: fromJson 返回 null");
@@ -89,7 +91,7 @@ public final class Json5Example {
             }
             System.out.println("[PASS] Json5语法解析: validate 通过合法 JSON");
 
-            System.out.println("===== Json5 场景2: 注释预处理与列表 =====");
+            log.info("===== Json5 场景2: 注释预处理与列表 =====");
             String listJson5 = "[\n" +
                     "  // 注释\n" +
                     "  {\"name\":\"a\",\"age\":1},\n" +
@@ -129,7 +131,7 @@ public final class Json5Example {
             }
             System.out.println("[PASS] 注释预处理: getJsonArray 长度 -> 2");
 
-            System.out.println("===== Json5 场景3: 与 Json 门面统一切换 =====");
+            log.info("===== Json5 场景3: 与 Json 门面统一切换 =====");
             if (Json.getImplementation() != Json5.getImplementation()) {
                 System.out.println("[FAIL] 统一切换: 默认实现应一致");
                 System.exit(1);
@@ -165,7 +167,7 @@ public final class Json5Example {
             System.out.println("[PASS] 统一切换: 经 Json 切换后 Json5 门面跟随");
 
             Json.setImplementation(new JacksonJsonProvider());
-            System.out.println("===== Json5 场景4: 序列化与字节数组 =====");
+            log.info("===== Json5 场景4: 序列化与字节数组 =====");
             String json = Json5.toJson(new User("chua", 18));
             if (!json.contains("\"name\":\"chua\"")) {
                 System.out.println("[FAIL] 序列化: 输出应包含 \"name\":\"chua\", 实际 " + json);
@@ -191,7 +193,7 @@ public final class Json5Example {
             }
             System.out.println("[PASS] 序列化: fromJson(bytes,charset) 指定 UTF-8 解析");
 
-            System.out.println("===== Json5 场景5: SPI 一致性 =====");
+            log.info("===== Json5 场景5: SPI 一致性 =====");
             JsonProvider byName = ServiceProvider.of(JsonProvider.class).getExtension("jackson");
             if (byName == null) {
                 System.out.println("[FAIL] SPI一致性: 名称 jackson 应可发现实现");

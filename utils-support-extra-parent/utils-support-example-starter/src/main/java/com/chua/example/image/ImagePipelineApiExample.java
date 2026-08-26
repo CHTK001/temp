@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * ImagePipeline API 示例：验证默认全关闭、灰度化、二值化与形态学操作的输出正确性。
@@ -18,6 +19,7 @@ import java.io.IOException;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class ImagePipelineApiExample {
 
     /** 私有构造，防止实例化 */
@@ -89,7 +91,7 @@ public final class ImagePipelineApiExample {
                 int g = (rgb >> 8) & 0xFF;
                 int b = rgb & 0xFF;
                 if (Math.abs(r - g) > 2 || Math.abs(g - b) > 2) {
-                    System.out.println("  non-gray pixel at (" + x + "," + y + "): " + r + "," + g + "," + b);
+                    log.info("  non-gray pixel at (" + x + "," + y + "): " + r + "," + g + "," + b);
                     return false;
                 }
             }
@@ -112,7 +114,7 @@ public final class ImagePipelineApiExample {
             for (int x = 0; x < img.getWidth(); x += 4) {
                 int val = img.getRGB(x, y) & 0xFF;
                 if (val != 0 && val != 255) {
-                    System.out.println("  non-binary pixel at (" + x + "," + y + "): " + val);
+                    log.info("  non-binary pixel at (" + x + "," + y + "): " + val);
                     return false;
                 }
             }

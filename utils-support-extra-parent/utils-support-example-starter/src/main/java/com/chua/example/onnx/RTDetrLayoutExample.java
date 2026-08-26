@@ -15,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * RT-DETR v2 文档版面检测示例。
@@ -27,10 +28,13 @@ import java.util.List;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class RTDetrLayoutExample {
 
     static {
-        try { nu.pattern.OpenCV.loadShared(); } catch (Throwable ignored) {}
+        try { nu.pattern.OpenCV.loadShared(); } catch (Throwable ignored) {
+            log.warn("Caught: {}", ignored.getMessage());
+        }
     }
 
     private static final Color[] COLORS = {

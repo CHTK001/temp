@@ -20,6 +20,8 @@ import java.util.List;
  */
 @Slf4j
 public class MathUtilsExample {
+    private MathUtilsExample() { }
+
 
     public static void main(String[] args) {
         // 1) 钟状图采样：N(0,1) 默认 100 点

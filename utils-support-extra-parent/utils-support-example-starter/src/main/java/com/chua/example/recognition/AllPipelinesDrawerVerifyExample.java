@@ -22,6 +22,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @Slf4j
 public class AllPipelinesDrawerVerifyExample {
+    private AllPipelinesDrawerVerifyExample() { }
+
 
     /** 参与自检的 Pipeline 全限定类名列表 */
     private static final List<String> PIPELINES = List.of(

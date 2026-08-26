@@ -25,6 +25,8 @@ import java.util.function.BooleanSupplier;
  */
 @Slf4j
 public class MathUtilsAdvancedExample {
+    private MathUtilsAdvancedExample() { }
+
 
     /**
      * 数值断言允许的默认误差

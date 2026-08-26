@@ -34,7 +34,9 @@ public final class DocLayoutYoloExample {
             out = translator.translate(imageBytes);
         } finally {
             if (translator instanceof AutoCloseable ac) {
-                try { ac.close(); } catch (Exception ignore) {}
+                try { ac.close(); } catch (Exception ignore) {
+            log.warn("Caught: {}", ignore.getMessage());
+        }
             }
         }
         long cost = System.currentTimeMillis() - t0;

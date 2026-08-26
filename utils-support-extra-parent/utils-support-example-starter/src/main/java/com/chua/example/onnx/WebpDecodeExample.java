@@ -4,6 +4,7 @@ import javax.imageio.ImageIO;
 import java.io.ByteArrayInputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * WebP 解码探测示例：验证当前 JVM 的 ImageIO 是否能解码 WebP。
@@ -18,6 +19,7 @@ import java.nio.file.Path;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class WebpDecodeExample {
 
     private WebpDecodeExample() {

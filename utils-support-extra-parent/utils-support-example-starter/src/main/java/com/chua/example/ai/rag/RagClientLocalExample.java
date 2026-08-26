@@ -18,6 +18,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * {@link RagClient} 文档管理链路本地示例 — 由集成测试改写。
@@ -38,6 +39,7 @@ import java.util.List;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class RagClientLocalExample {
 
     /**
@@ -263,7 +265,7 @@ public final class RagClientLocalExample {
      */
     private static boolean testRemoteChatQuery(Path tempDir, Options options) {
         if (!options.remote()) {
-            System.out.println("[SKIP] remote-disabled 远端问答依赖外部 LLM 服务，加 --remote 启用");
+            log.info("[SKIP] remote-disabled 远端问答依赖外部 LLM 服务，加 --remote 启用");
             return true;
         }
         try {

@@ -37,6 +37,8 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class ShmQueueExample {
+    private ShmQueueExample() { }
+
 
     /**
      * 自检消息条数

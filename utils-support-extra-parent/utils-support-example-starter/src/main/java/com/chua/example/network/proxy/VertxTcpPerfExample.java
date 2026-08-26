@@ -24,6 +24,8 @@ import java.util.concurrent.atomic.LongAdder;
  */
 @Slf4j
 public class VertxTcpPerfExample {
+    private VertxTcpPerfExample() { }
+
 
     /** Main */
     public static void main(String[] args) throws Exception {
@@ -98,6 +100,8 @@ public class VertxTcpPerfExample {
                 try {
                     server.stop();
                 } catch (Exception ignored) {
+            log.warn("Caught: {}", ignored.getMessage());
+        
                 }
             }
         }

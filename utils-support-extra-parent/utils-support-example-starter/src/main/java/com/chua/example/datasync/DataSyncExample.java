@@ -176,6 +176,8 @@ public class DataSyncExample implements Example {
             try {
                 server.stop();
             } catch (Exception ignored) {
+            log.warn("Caught: {}", ignored.getMessage());
+        
             }
         }
 
@@ -227,6 +229,8 @@ public class DataSyncExample implements Example {
                 try {
                     server.stop();
                 } catch (Exception ignored) {
+            log.warn("Caught: {}", ignored.getMessage());
+        
                 }
             }
             log.info("第 {} 轮 接收: {}", (i + 1), received.get());
@@ -252,6 +256,8 @@ public class DataSyncExample implements Example {
             try {
                 executor.stop();
             } catch (Exception ignored) {
+            log.warn("Caught: {}", ignored.getMessage());
+        
             }
         }
         return true;

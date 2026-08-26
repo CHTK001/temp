@@ -20,6 +20,8 @@ import java.util.Map;
  */
 @Slf4j
 public class FeatureDimensionInferenceExample {
+    private FeatureDimensionInferenceExample() { }
+
 
     /**
      * 生成合成测试图（512×512 白底 + 红色圆形）。

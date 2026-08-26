@@ -20,6 +20,8 @@ import java.util.stream.Stream;
  */
 @Slf4j
 public class DepthAnythingOrtExample {
+    private DepthAnythingOrtExample() { }
+
 
     /** 默认图片目录 */
     private static final String DEFAULT_INPUT_DIR = "D:/images";

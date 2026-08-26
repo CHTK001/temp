@@ -20,6 +20,8 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class IdUtilsBenchmarkExample {
+    private IdUtilsBenchmarkExample() { }
+
 
     /**
      * 默认基准迭代次数

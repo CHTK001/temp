@@ -29,6 +29,8 @@ import java.util.stream.Stream;
  */
 @Slf4j
 public class AnimeFaceDetectExample {
+    private AnimeFaceDetectExample() { }
+
 
     /**
      * 输出根目录

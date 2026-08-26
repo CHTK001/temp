@@ -2,6 +2,7 @@ package com.chua.example.network.rpc;
 
 import java.io.Serializable;
 import java.util.Objects;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * RPC 复杂对象传输用例负载 — 验证 native / json / dubbo / sofa 四框架的对象序列化往返。
@@ -16,6 +17,7 @@ import java.util.Objects;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public class RpcPayloadExample implements Serializable {
 
     /**

@@ -26,6 +26,8 @@ import java.util.Map;
  */
 @Slf4j
 public class VideoProcessorSpiExample {
+    private VideoProcessorSpiExample() { }
+
 
     /** 帮助参数 */
     private static final String PARAM_HELP = "help";
@@ -60,7 +62,7 @@ public class VideoProcessorSpiExample {
         }
 
         if (params.containsKey(PARAM_HELP)) {
-            System.out.println("用法: java VideoProcessorSpiExample --input <file> [--output dir] [--type rust]");
+            log.info("用法: java VideoProcessorSpiExample --input <file> [--output dir] [--type rust]");
             System.exit(0);
             return;
         }

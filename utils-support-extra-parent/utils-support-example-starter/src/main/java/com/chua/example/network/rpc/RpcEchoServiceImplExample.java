@@ -2,6 +2,7 @@ package com.chua.example.network.rpc;
 
 import java.util.ArrayList;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * {@link RpcEchoServiceExample} 的本地实现 — {@link RpcExample} 的服务端注册对象。
@@ -15,6 +16,7 @@ import java.util.List;
   *
  * <p>SPI 实现载体：由 RpcExample 宿主通过 SPI 加载运行，无独立 main 入口。</p>
  */
+@Slf4j
 public class RpcEchoServiceImplExample implements RpcEchoServiceExample {
 
     /**
@@ -122,7 +124,7 @@ public class RpcEchoServiceImplExample implements RpcEchoServiceExample {
         boolean ok = "echo:hi".equals(svc.echo("hi"))
                 && svc.add(1, 2) == 3
                 && svc.echoPayload(null) == null;
-        System.out.println("rpc service -> " + (ok ? "PASS" : "FAIL"));
+        log.info("rpc service -> " + (ok ? "PASS" : "FAIL"));
         System.exit(ok ? 0 : 1);
     }
 }

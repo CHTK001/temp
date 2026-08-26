@@ -22,6 +22,8 @@ import java.nio.file.Path;
  */
 @Slf4j
 public class HlsTranscodeExample {
+    private HlsTranscodeExample() { }
+
 
     /** Main */
     public static void main(String[] args) throws Exception {

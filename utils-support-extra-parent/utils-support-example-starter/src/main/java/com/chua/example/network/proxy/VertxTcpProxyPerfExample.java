@@ -48,6 +48,8 @@ public class VertxTcpProxyPerfExample {
                         Socket socket = serverSocket.accept();
                         pool.submit(() -> handle(socket));
                     } catch (IOException ignored) {
+            log.warn("Caught: {}", ignored.getMessage());
+        
                     }
                 }
             });
@@ -70,6 +72,8 @@ public class VertxTcpProxyPerfExample {
                     out.flush();
                 }
             } catch (IOException ignored) {
+            log.warn("Caught: {}", ignored.getMessage());
+        
             }
         }
 
@@ -84,6 +88,8 @@ public class VertxTcpProxyPerfExample {
             try {
                 serverSocket.close();
             } catch (IOException ignored) {
+            log.warn("Caught: {}", ignored.getMessage());
+        
             }
             pool.shutdownNow();
         }
@@ -165,6 +171,8 @@ public class VertxTcpProxyPerfExample {
                 try {
                     proxy.stop();
                 } catch (Exception ignored) {
+            log.warn("Caught: {}", ignored.getMessage());
+        
                 }
             }
             if (backend != null) {

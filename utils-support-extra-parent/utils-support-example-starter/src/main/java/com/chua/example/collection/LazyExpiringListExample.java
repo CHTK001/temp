@@ -355,6 +355,8 @@ public class LazyExpiringListExample implements Example {
                         String val = list.get(0);
                         result.compareAndSet(null, val);
                     } catch (Exception ignored) {
+            log.warn("Caught: {}", ignored.getMessage());
+        
                     } finally {
                         doneLatch.countDown();
                     }

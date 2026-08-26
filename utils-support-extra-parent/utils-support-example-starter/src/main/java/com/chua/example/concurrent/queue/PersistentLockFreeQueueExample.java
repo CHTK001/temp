@@ -36,6 +36,8 @@ import java.nio.file.Path;
  */
 @Slf4j
 public class PersistentLockFreeQueueExample {
+    private PersistentLockFreeQueueExample() { }
+
 
     /**
      * 测试写入元素数

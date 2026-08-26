@@ -1,6 +1,7 @@
 package com.chua.example.onnx;
 
 import com.chua.deeplearning.support.onnx.text.gemma3.Gemma3Translator;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 嵌入式中文对话模型（Gemma-3-270M，uint8 ONNX）冒烟示例。
@@ -18,6 +19,7 @@ import com.chua.deeplearning.support.onnx.text.gemma3.Gemma3Translator;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class Gemma3Example {
 
     /**
@@ -44,9 +46,9 @@ public final class Gemma3Example {
         }
 
         try (Gemma3Translator translator = new Gemma3Translator()) {
-            System.out.println("[Gemma3] 提示词: " + prompt);
+            log.info("[Gemma3] 提示词: " + prompt);
             String reply = translator.chat(prompt);
-            System.out.println("[Gemma3] 回复: " + reply);
+            log.info("[Gemma3] 回复: " + reply);
             if (reply == null || reply.isBlank()) {
                 System.err.println("[FAIL] 回复为空");
                 System.exit(1);

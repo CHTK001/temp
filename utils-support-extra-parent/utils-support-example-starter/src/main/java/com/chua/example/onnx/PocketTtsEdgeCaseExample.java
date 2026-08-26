@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * PocketTtsTranslator 边缘行为冒烟示例（自原单元测试整体迁移）。
@@ -36,6 +37,7 @@ import java.util.Map;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class PocketTtsEdgeCaseExample {
 
     private static final List<String> FAILURES = new ArrayList<>();
@@ -89,7 +91,7 @@ public final class PocketTtsEdgeCaseExample {
         System.out.println("===== 汇总 通过=" + passed + " 跳过=" + SKIPPED.size()
                 + " 失败=" + FAILURES.size() + " =====");
         for (String s : SKIPPED) {
-            System.out.println("  [SKIP] " + s);
+            log.info("  [SKIP] " + s);
         }
         for (String f : FAILURES) {
             System.out.println("  [FAIL] " + f);

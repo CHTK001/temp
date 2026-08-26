@@ -23,6 +23,8 @@ import java.util.function.BooleanSupplier;
  */
 @Slf4j
 public class IdUtilsIdExample {
+    private IdUtilsIdExample() { }
+
 
     /**
      * 主入口，依次执行四组自检，任一失败以退出码 1 结束。

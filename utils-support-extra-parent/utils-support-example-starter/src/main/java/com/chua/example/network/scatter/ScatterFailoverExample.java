@@ -16,6 +16,8 @@ import java.util.List;
  */
 @Slf4j
 public class ScatterFailoverExample {
+    private ScatterFailoverExample() { }
+
 
     public static void main(String[] args) throws Exception {
         log.info("===== Scatter 故障测试：掉线剔除 + 恢复重连（新 API） =====");

@@ -30,6 +30,8 @@ import java.util.Map;
  */
 @Slf4j
 public class YunxiaoClientExample {
+    private YunxiaoClientExample() { }
+
 
     /** 远端开关参数名。 */
     private static final String PARAM_REMOTE = "remote";
