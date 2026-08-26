@@ -91,7 +91,7 @@ public class MemorySqlExample {
             log.error("[FAIL] memory-sql 场景失败数: {}", failed);
             System.exit(1);
         }
-        System.out.println("[PASS] memory-sql all scenarios covered");
+        log.info("[PASS] memory-sql all scenarios covered");
         System.exit(0);
     }
 
