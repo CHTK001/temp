@@ -61,6 +61,12 @@ public class SipClientExample {
         int port = Integer.parseInt(kv.getOrDefault("port", "3389"));
         boolean encrypt = Boolean.parseBoolean(kv.getOrDefault("encrypt", "false"));
         boolean mux = Boolean.parseBoolean(kv.getOrDefault("mux", "false"));
+        String tokenFile = kv.get("token-file");
+        if (tokenFile != null && !tokenFile.isEmpty()) { System.setProperty("sip.token.file", tokenFile); }
+        String maxFrameMs = kv.get("max-frame-ms");
+        if (maxFrameMs != null) { System.setProperty("sip.minFrameIntervalNs", String.valueOf((long)(Double.parseDouble(maxFrameMs) * 1_000_000))); }
+        String maxAuth = kv.get("max-auth-per-min");
+        if (maxAuth != null) { System.setProperty("sip.maxAuthPerIpPerMin", maxAuth); }
         String allowStr = kv.get("allow");
         java.util.List<String> allow = allowStr == null || allowStr.isEmpty()
                 ? null : java.util.Arrays.asList(allowStr.split(","));

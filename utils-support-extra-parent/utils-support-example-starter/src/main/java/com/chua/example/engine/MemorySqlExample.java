@@ -70,17 +70,13 @@ public class MemorySqlExample {
      * @param args 支持 --mode=sql|reactor|all 或 -m sql|reactor|all
      */
     public static void main(String[] args) {
-        var cli = CommandLine.builder()
-                .programName("MemorySqlExample")
-                .option(CliOption.of("mode", "m", "运行模式：sql|reactor|all"))
-                .build();
-        CommandLine.Result result = cli.parse(args);
-
-        if (result.has("help")) {
-            cli.printHelp();
+        var cli = CommandLine.parse(args)
+                .register("mode", "m", "mode: sql|reactor|all", MODE_ALL);
+        if (cli.isHelp()) {
+            cli.help();
             return;
         }
-        var mode = result.getString("mode");
+        var mode = cli.get("mode");
         if (mode == null || mode.isBlank()) {
             mode = MODE_ALL;
         }
