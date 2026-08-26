@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
  * @since 4.0.0.42
  */
 @Slf4j
-public class MiniLMEmbeddingExample {
+public class MiniLmEmbeddingExample {
 
     /**
      * 程序退出码：成功

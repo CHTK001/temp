@@ -3,6 +3,7 @@ package com.chua.example.network.netty;
 import com.chua.common.support.network.server.Server;
 import com.chua.common.support.network.server.ServerBuilder;
 import com.chua.common.support.network.server.ServerSetting;
+import com.chua.common.support.network.server.handler.ServerHandler;
 import com.chua.common.support.network.server.http.ConfigServer;
 import com.chua.example.network.perf.PerfReportExample;
 import com.chua.example.spi.Example;
@@ -365,6 +366,24 @@ public class NettyHttpServerExampleSpi implements Example {
     /** Fail */
     private static void fail(String msg) {
         log.info("  \u2717 失败: {}", msg);
+    }
+
+    /**
+     * 启动一个 jdk 类型的 Server，注册路由后启动并返回。Server 构建失败时返回 null。
+     *
+     * @param path    路由路径
+     * @param handler 请求处理器
+     * @return 已启动的 Server；构建失败时返回 null
+     */
+    private static Server startServer(String path, ServerHandler handler) {
+        Server server = ServerBuilder.create().type("jdk").host("127.0.0.1").port(0).build();
+        if (server instanceof ConfigServer cs) {
+            cs.registerMapping(path, handler);
+        }
+        if (server != null) {
+            server.start();
+        }
+        return server;
     }
 
     /** 关闭Quietly */
