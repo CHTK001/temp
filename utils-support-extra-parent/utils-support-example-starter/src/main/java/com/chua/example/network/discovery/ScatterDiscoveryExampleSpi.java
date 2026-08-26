@@ -7,7 +7,7 @@ import com.chua.common.support.network.server.Server;
 import com.chua.common.support.network.server.ServerBuilder;
 import com.chua.common.support.network.server.ServerSetting;
 import com.chua.common.support.network.server.filter.discovery.ServiceDiscoveryServerFilter;
-import com.chua.common.support.network.server.filter.proxy.ReverseProxyServerFilter;
+import com.chua.common.support.network.server.filter.proxy.ReverseProxyServer;
 import com.chua.common.support.network.server.proxy.DiscoveryProxyTargetResolver;
 import com.chua.common.support.network.server.proxy.TcpProxyServer;
 import com.chua.example.spi.Example;
@@ -160,7 +160,7 @@ public class ScatterDiscoveryExampleSpi implements Example {
         ServiceDiscovery sd = null;
         Server backendA = null;
         Server backendB = null;
-        Server proxy = null;
+        ReverseProxyServer proxy = null;
         try {
             // 真实后端:order 组两个 http 节点(setBody byte[] 与反向代理已验证路径一致;
             // 后端注册 /api/echo 与代理转发路径一致,避免路径前缀未剥离导致 404)
@@ -184,15 +184,13 @@ public class ScatterDiscoveryExampleSpi implements Example {
             Thread.sleep(100);
 
             // 代理:只路由 order 组(ServerBuilder 链式,内部维护 ServerSetting)
-            proxy = ServerBuilder.create().type("jdk-http").host("127.0.0.1").port(0).build();
-            ServiceDiscoveryServerFilter df = new ServiceDiscoveryServerFilter(sd);
-            df.addRoute("/api/**", "/api");
-            df.setScatterId("order");
-            df.setProtocol("http");
-            df.setBalance("weight");
-            proxy.addFilter(df);
-            proxy.addFilter(new ReverseProxyServerFilter(30));
-            proxy.start();
+            proxy = new ReverseProxyServer(0)
+                    .discovery(sd)
+                    .route("/api/**", "/api")
+                    .scatterId("order")
+                    .protocol("http")
+                    .balance("weight")
+                    .start();
 
             HttpClient client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
             int orderHit = 0;

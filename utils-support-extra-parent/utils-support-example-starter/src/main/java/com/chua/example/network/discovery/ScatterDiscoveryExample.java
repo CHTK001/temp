@@ -7,7 +7,7 @@ import com.chua.common.support.network.server.Server;
 import com.chua.common.support.network.server.ServerBuilder;
 import com.chua.common.support.network.server.ServerSetting;
 import com.chua.common.support.network.server.filter.discovery.ServiceDiscoveryServerFilter;
-import com.chua.common.support.network.server.filter.proxy.ReverseProxyServerFilter;
+import com.chua.common.support.network.server.filter.proxy.ReverseProxyServer;
 import com.chua.common.support.network.server.http.ConfigServer;
 import com.chua.common.support.network.server.impl.JdkTcpServer;
 import com.chua.common.support.network.server.proxy.DiscoveryProxyTargetResolver;
@@ -165,7 +165,7 @@ public final class ScatterDiscoveryExample {
         LOG.info("  [SCATTER-03] HTTP 代理按 scatterId 路由");
         Server backendA = null;
         Server backendB = null;
-        Server proxy = null;
+        ReverseProxyServer proxy = null;
         ServiceDiscovery sd = null;
         try {
             backendA = echoHttpServer(portHttpA, "order-A");
@@ -180,15 +180,13 @@ public final class ScatterDiscoveryExample {
                     .protocol("http").host("127.0.0.1").port(portUser).weight(1).build());
             Thread.sleep(100);
 
-            proxy = ServerBuilder.create().type("jdk-http").host("127.0.0.1").port(0).build();
-            ServiceDiscoveryServerFilter df = new ServiceDiscoveryServerFilter(sd);
-            df.addRoute("/api/**", "/api");
-            df.setScatterId("order");
-            df.setProtocol("http");
-            df.setBalance("weight");
-            proxy.addFilter(df);
-            proxy.addFilter(new ReverseProxyServerFilter(30));
-            proxy.start();
+            proxy = new ReverseProxyServer(0)
+                    .discovery(sd)
+                    .route("/api/**", "/api")
+                    .scatterId("order")
+                    .protocol("http")
+                    .balance("weight")
+                    .start();
 
             HttpClient client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
             for (int i = 0; i < 10; i++) {
