@@ -6,6 +6,7 @@ import com.chua.common.support.task.message.MessageRequest;
 import com.chua.common.support.task.message.MessageResponse;
 
 import java.util.function.BooleanSupplier;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Webhook 消息渠道 {@link MessagePush}（SPI 名 "webhook"）自检示例。
@@ -21,6 +22,7 @@ import java.util.function.BooleanSupplier;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class MessageHookExample {
 
     private static final int EXIT_CODE_SUCCESS = 0;
@@ -30,7 +32,7 @@ public final class MessageHookExample {
     }
 
     private static void print(String name, boolean ok) {
-        System.out.println((ok ? "[PASS] " : "[FAIL] ") + name);
+        log.info((ok ? "[PASS] " : "[FAIL] ") + name);
     }
 
     /**
@@ -41,7 +43,7 @@ public final class MessageHookExample {
      * @return 恒为 false
      */
     private static boolean fail(String name, Exception e) {
-        System.out.println("[FAIL] " + name + " 异常: " + e);
+        log.info("[FAIL] " + name + " 异常: " + e);
         return false;
     }
 
@@ -113,10 +115,10 @@ public final class MessageHookExample {
         passed &= timed("unreachableFailsGracefully",
                 MessageHookExample::unreachableFailsGracefully);
         if (!passed) {
-            System.out.println("[FAIL] MessageHook 存在失败场景");
+            log.info("[FAIL] MessageHook 存在失败场景");
             System.exit(EXIT_CODE_FAILURE);
         }
-        System.out.println("[PASS] MessageHook 全部场景通过");
+        log.info("[PASS] MessageHook 全部场景通过");
         System.exit(EXIT_CODE_SUCCESS);
     }
 
@@ -130,7 +132,7 @@ public final class MessageHookExample {
     private static boolean timed(String name, BooleanSupplier scenario) {
         long start = System.currentTimeMillis();
         boolean ok = scenario.getAsBoolean();
-        System.out.println("[TIME] " + name + " " + (System.currentTimeMillis() - start) + "ms");
+        log.info("[TIME] " + name + " " + (System.currentTimeMillis() - start) + "ms");
         return ok;
     }
 }
