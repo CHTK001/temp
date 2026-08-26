@@ -719,6 +719,8 @@
                         <exclude>**/onnx/TextBsrExample.java</exclude>
                         <exclude>**/taskasync/AsyncDeduplicateExample.java</exclude>
                         <exclude>**/taskretry/RetryExample.java</exclude>
+                        <exclude>**/taskloader/LoaderExample.java</exclude>
+                        <exclude>**/ai/rag/HttpClientExample.java</exclude>
 </excludes>
                     
                 </configuration>
