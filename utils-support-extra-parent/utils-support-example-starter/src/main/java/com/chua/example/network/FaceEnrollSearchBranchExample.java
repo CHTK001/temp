@@ -178,7 +178,7 @@ public class FaceEnrollSearchBranchExample {
                     sb.append(", ");
                 }
             }
-            log.info(sb);
+            log.info(sb.toString());
         }
     }
 }
