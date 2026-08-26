@@ -73,8 +73,12 @@ public final class LoaderExample {
             threads[idx] = new Thread(() -> results[idx] = loader.get());
             threads[idx].start();
         }
-        for (var t : threads) {
-            t.join(2000);
+        try {
+            for (var t : threads) {
+                t.join(2000);
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
         long distinct = java.util.Arrays.stream(results).distinct().count();
         boolean ok = creations.get() == 1 && distinct == 1;
