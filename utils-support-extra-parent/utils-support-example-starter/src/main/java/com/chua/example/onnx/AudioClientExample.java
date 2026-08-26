@@ -29,15 +29,28 @@ public final class AudioClientExample extends BaseExample {
 
     /** Main */
     public static void main(String[] args) {
-        if (args.length == 0) {
-            printModels("audio", "whisper", AudioClient.create("whisper", "").models());
-            printModels("audio", "onnx", AudioClient.create("onnx", "").models());
-            return;
+        String provider = "whisper";
+        String model = null;
+        String audioPath = null;
+        String language = null;
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+            if (arg.startsWith("--provider=")) {
+                provider = arg.substring("--provider=".length());
+            } else if (arg.startsWith("--model=")) {
+                model = arg.substring("--model=".length());
+            } else if (arg.startsWith("--audio=")) {
+                audioPath = arg.substring("--audio=".length());
+            } else if (arg.startsWith("--lang=")) {
+                language = arg.substring("--lang=".length());
+            } else if (i == 0) {
+                provider = arg;
+            } else if (i == 1) {
+                model = arg;
+            } else if (i == 2) {
+                audioPath = arg;
+            }
         }
-        String provider = args[0];
-        String model = args.length > 1 ? args[1] : null;
-        String audioPath = args.length > 2 ? args[2] : null;
-
         AudioClient client = AudioClient.create(provider, "");
         if (model == null) {
             printModels("audio", provider, client.models());
@@ -45,6 +58,9 @@ public final class AudioClientExample extends BaseExample {
             return;
         }
         client.model(model);
+        if (language != null && !language.isBlank()) {
+            client.language(language);
+        }
         if (audioPath == null) {
             log.info("[audio] 需要音频文件路径");
             client.close();
