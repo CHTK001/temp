@@ -41,7 +41,7 @@ public final class WebpDecodeExample {
             byte[] b = Files.readAllBytes(Path.of(n));
             try {
                 var img = ImageIO.read(new ByteArrayInputStream(b));
-                System.out.println(n + " ImageIO: "
+                log.info(n + " ImageIO: "
                         + (img == null ? "null" : img.getWidth() + "x" + img.getHeight()));
                 if (img != null) {
                     ok++;
@@ -55,7 +55,7 @@ public final class WebpDecodeExample {
         if (ok != args.length) {
             System.exit(1);
         }
-        System.out.println("[PASS] " + ok + "/" + args.length + " 解码成功");
+        log.info("[PASS] " + ok + "/" + args.length + " 解码成功");
         System.exit(0);
     }
 }

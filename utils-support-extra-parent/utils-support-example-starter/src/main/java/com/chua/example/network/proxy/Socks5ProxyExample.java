@@ -64,7 +64,7 @@ public final class Socks5ProxyExample {
         } finally {
             backend.close();
         }
-        System.out.println(passed ? "[PASS] socks5-proxy" : "[FAIL] socks5-proxy");
+        log.info(passed ? "[PASS] socks5-proxy" : "[FAIL] socks5-proxy");
         if (!passed) {
             System.exit(1);
         }

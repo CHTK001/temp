@@ -40,7 +40,7 @@ public final class LamaInpaintingExample {
             System.err.println("[FAIL] LamaInpaintingTranslator 创建失败: " + e.getMessage());
             System.exit(1);
         }
-        System.out.println("[PASS] lama-inpainting 已注册且 Translator 创建成功");
+        log.info("[PASS] lama-inpainting 已注册且 Translator 创建成功");
         System.exit(0);
     }
 }

@@ -48,165 +48,165 @@ public final class JsonFacadeExample {
         try {
             log.info("===== Json门面 场景1: 默认实现为 Jackson =====");
             if (!(Json.getImplementation() instanceof JacksonJsonProvider)) {
-                System.out.println("[FAIL] 默认实现: 门面实现应由 SPI 发现为 JacksonJsonProvider");
+                log.info("[FAIL] 默认实现: 门面实现应由 SPI 发现为 JacksonJsonProvider");
                 System.exit(1);
             }
-            System.out.println("[PASS] 默认实现: 门面实现为 SPI 发现的 JacksonJsonProvider");
+            log.info("[PASS] 默认实现: 门面实现为 SPI 发现的 JacksonJsonProvider");
             JsonProvider spiDefault = ServiceProvider.of(JsonProvider.class).getDefault();
             if (spiDefault == null) {
-                System.out.println("[FAIL] 默认实现: SPI getDefault 应返回 @SpiDefault 实现");
+                log.info("[FAIL] 默认实现: SPI getDefault 应返回 @SpiDefault 实现");
                 System.exit(1);
             }
-            System.out.println("[PASS] 默认实现: SPI getDefault 非空");
+            log.info("[PASS] 默认实现: SPI getDefault 非空");
             if (!(spiDefault instanceof JacksonJsonProvider)) {
-                System.out.println("[FAIL] 默认实现: SPI 默认实现应为 JacksonJsonProvider");
+                log.info("[FAIL] 默认实现: SPI 默认实现应为 JacksonJsonProvider");
                 System.exit(1);
             }
-            System.out.println("[PASS] 默认实现: SPI 默认实现为 JacksonJsonProvider");
+            log.info("[PASS] 默认实现: SPI 默认实现为 JacksonJsonProvider");
             if (Json.getMapper() == null) {
-                System.out.println("[FAIL] 默认实现: Jackson 实现下 getMapper 不应为 null");
+                log.info("[FAIL] 默认实现: Jackson 实现下 getMapper 不应为 null");
                 System.exit(1);
             }
-            System.out.println("[PASS] 默认实现: getMapper 仅在 Jackson 实现下可用");
+            log.info("[PASS] 默认实现: getMapper 仅在 Jackson 实现下可用");
             User source = new User("chua", 18);
             String json = Json.toJson(source);
             if (!json.contains("\"name\"")) {
-                System.out.println("[FAIL] 默认实现: toJson 应输出 name 字段, 实际 " + json);
+                log.info("[FAIL] 默认实现: toJson 应输出 name 字段, 实际 " + json);
                 System.exit(1);
             }
-            System.out.println("[PASS] 默认实现: toJson 输出 name 字段");
+            log.info("[PASS] 默认实现: toJson 输出 name 字段");
             User parsed = Json.fromJson(json, User.class);
             if (!"chua".equals(parsed.getName())) {
-                System.out.println("[FAIL] 默认实现: 反序列化 name 应为 chua");
+                log.info("[FAIL] 默认实现: 反序列化 name 应为 chua");
                 System.exit(1);
             }
-            System.out.println("[PASS] 默认实现: fromJson 往返 name=chua");
+            log.info("[PASS] 默认实现: fromJson 往返 name=chua");
             if (parsed.getAge() != 18) {
-                System.out.println("[FAIL] 默认实现: 反序列化 age 应为 18");
+                log.info("[FAIL] 默认实现: 反序列化 age 应为 18");
                 System.exit(1);
             }
-            System.out.println("[PASS] 默认实现: fromJson 往返 age=18");
+            log.info("[PASS] 默认实现: fromJson 往返 age=18");
 
             log.info("===== Json门面 场景2: SPI 名称注册 =====");
             JsonProvider byName = ServiceProvider.of(JsonProvider.class).getExtension("jackson");
             if (byName == null) {
-                System.out.println("[FAIL] SPI名称注册: 名称 jackson 应可发现实现");
+                log.info("[FAIL] SPI名称注册: 名称 jackson 应可发现实现");
                 System.exit(1);
             }
-            System.out.println("[PASS] SPI名称注册: 名称 jackson 发现实现");
+            log.info("[PASS] SPI名称注册: 名称 jackson 发现实现");
             if (!(byName instanceof JacksonJsonProvider)) {
-                System.out.println("[FAIL] SPI名称注册: jackson 实现应为 JacksonJsonProvider");
+                log.info("[FAIL] SPI名称注册: jackson 实现应为 JacksonJsonProvider");
                 System.exit(1);
             }
-            System.out.println("[PASS] SPI名称注册: jackson 实现类型正确");
+            log.info("[PASS] SPI名称注册: jackson 实现类型正确");
 
             log.info("===== Json门面 场景3: 桩实现全局替换 =====");
             JsonProvider stub = new StubJsonProvider();
             Json.setImplementation(stub);
             if (Json.getImplementation() != stub) {
-                System.out.println("[FAIL] 桩替换: setImplementation 后门面应返回同一实例");
+                log.info("[FAIL] 桩替换: setImplementation 后门面应返回同一实例");
                 System.exit(1);
             }
-            System.out.println("[PASS] 桩替换: 门面实现切换为桩实例");
+            log.info("[PASS] 桩替换: 门面实现切换为桩实例");
             if (!"{\"provider\":\"stub\"}".equals(Json.toJson(new User("chua", 18)))) {
-                System.out.println("[FAIL] 桩替换: toJson 未委托到桩实现");
+                log.info("[FAIL] 桩替换: toJson 未委托到桩实现");
                 System.exit(1);
             }
-            System.out.println("[PASS] 桩替换: toJson 委托到桩实现");
+            log.info("[PASS] 桩替换: toJson 委托到桩实现");
             User stubUser = Json.fromJson("{}", User.class);
             if (!"stub".equals(stubUser.getName())) {
-                System.out.println("[FAIL] 桩替换: fromJson 未委托到桩实现");
+                log.info("[FAIL] 桩替换: fromJson 未委托到桩实现");
                 System.exit(1);
             }
-            System.out.println("[PASS] 桩替换: fromJson 委托到桩实现 name=stub");
+            log.info("[PASS] 桩替换: fromJson 委托到桩实现 name=stub");
             try {
                 Json.getMapper();
-                System.out.println("[FAIL] 桩替换: 非 Jackson 实现下 getMapper 应抛 UnsupportedOperationException");
+                log.info("[FAIL] 桩替换: 非 Jackson 实现下 getMapper 应抛 UnsupportedOperationException");
                 System.exit(1);
             } catch (UnsupportedOperationException e) {
-                System.out.println("[PASS] 桩替换: 非 Jackson 实现下 getMapper 抛出 UnsupportedOperationException");
+                log.info("[PASS] 桩替换: 非 Jackson 实现下 getMapper 抛出 UnsupportedOperationException");
             }
             Json.setImplementation(new JacksonJsonProvider());
 
             log.info("===== Json门面 场景4: setImplementation(null) 拒绝 =====");
             try {
                 Json.setImplementation(null);
-                System.out.println("[FAIL] null拒绝: setImplementation(null) 应抛 IllegalArgumentException");
+                log.info("[FAIL] null拒绝: setImplementation(null) 应抛 IllegalArgumentException");
                 System.exit(1);
             } catch (IllegalArgumentException e) {
-                System.out.println("[PASS] null拒绝: setImplementation(null) 抛出 IllegalArgumentException");
+                log.info("[PASS] null拒绝: setImplementation(null) 抛出 IllegalArgumentException");
             }
             if (!(Json.getImplementation() instanceof JacksonJsonProvider)) {
-                System.out.println("[FAIL] null拒绝: 全局实现不应被破坏");
+                log.info("[FAIL] null拒绝: 全局实现不应被破坏");
                 System.exit(1);
             }
-            System.out.println("[PASS] null拒绝: 全局实现仍为 JacksonJsonProvider");
+            log.info("[PASS] null拒绝: 全局实现仍为 JacksonJsonProvider");
 
             log.info("===== Json门面 场景5: TypeReference 泛型反序列化 =====");
             String listJson = "[{\"name\":\"a\",\"age\":1},{\"name\":\"b\",\"age\":2}]";
             List<User> users = Json.fromJson(listJson, new TypeReference<List<User>>() {
             });
             if (users == null) {
-                System.out.println("[FAIL] TypeReference: fromJson 返回 null");
+                log.info("[FAIL] TypeReference: fromJson 返回 null");
                 System.exit(1);
             }
-            System.out.println("[PASS] TypeReference: fromJson 非空");
+            log.info("[PASS] TypeReference: fromJson 非空");
             if (users.size() != 2) {
-                System.out.println("[FAIL] TypeReference: 列表长度应为 2, 实际 " + users.size());
+                log.info("[FAIL] TypeReference: 列表长度应为 2, 实际 " + users.size());
                 System.exit(1);
             }
-            System.out.println("[PASS] TypeReference: 列表长度 -> 2");
+            log.info("[PASS] TypeReference: 列表长度 -> 2");
             if (!"a".equals(users.get(0).getName())) {
-                System.out.println("[FAIL] TypeReference: users[0].name 应为 a");
+                log.info("[FAIL] TypeReference: users[0].name 应为 a");
                 System.exit(1);
             }
-            System.out.println("[PASS] TypeReference: users[0].name=a");
+            log.info("[PASS] TypeReference: users[0].name=a");
             if (users.get(1).getAge() != 2) {
-                System.out.println("[FAIL] TypeReference: users[1].age 应为 2");
+                log.info("[FAIL] TypeReference: users[1].age 应为 2");
                 System.exit(1);
             }
-            System.out.println("[PASS] TypeReference: users[1].age=2");
+            log.info("[PASS] TypeReference: users[1].age=2");
 
             log.info("===== Json门面 场景6: 常用静态方法 =====");
             JsonObject obj = Json.getJsonObject("{\"k\":\"v\"}");
             if (!"v".equals(obj.get("k"))) {
-                System.out.println("[FAIL] 常用静态方法: getJsonObject 的 k 应为 v");
+                log.info("[FAIL] 常用静态方法: getJsonObject 的 k 应为 v");
                 System.exit(1);
             }
-            System.out.println("[PASS] 常用静态方法: getJsonObject 解析 k=v");
+            log.info("[PASS] 常用静态方法: getJsonObject 解析 k=v");
             JsonArray array = Json.getJsonArray("[1,2,3]");
             if (array.size() != 3) {
-                System.out.println("[FAIL] 常用静态方法: getJsonArray 长度应为 3, 实际 " + array.size());
+                log.info("[FAIL] 常用静态方法: getJsonArray 长度应为 3, 实际 " + array.size());
                 System.exit(1);
             }
-            System.out.println("[PASS] 常用静态方法: getJsonArray 长度 -> 3");
+            log.info("[PASS] 常用静态方法: getJsonArray 长度 -> 3");
             if (!Json.isJson("{\"a\":1}")) {
-                System.out.println("[FAIL] 常用静态方法: isJson 应识别合法 JSON");
+                log.info("[FAIL] 常用静态方法: isJson 应识别合法 JSON");
                 System.exit(1);
             }
-            System.out.println("[PASS] 常用静态方法: isJson 识别合法 JSON");
+            log.info("[PASS] 常用静态方法: isJson 识别合法 JSON");
             if (Json.isJson("plain text")) {
-                System.out.println("[FAIL] 常用静态方法: isJson 应拒绝纯文本");
+                log.info("[FAIL] 常用静态方法: isJson 应拒绝纯文本");
                 System.exit(1);
             }
-            System.out.println("[PASS] 常用静态方法: isJson 拒绝纯文本");
+            log.info("[PASS] 常用静态方法: isJson 拒绝纯文本");
             if (!Json.validate("{\"a\":1}")) {
-                System.out.println("[FAIL] 常用静态方法: validate 应通过合法 JSON");
+                log.info("[FAIL] 常用静态方法: validate 应通过合法 JSON");
                 System.exit(1);
             }
-            System.out.println("[PASS] 常用静态方法: validate 通过合法 JSON");
+            log.info("[PASS] 常用静态方法: validate 通过合法 JSON");
             if (Json.validate("not json")) {
-                System.out.println("[FAIL] 常用静态方法: validate 应拒绝非法 JSON");
+                log.info("[FAIL] 常用静态方法: validate 应拒绝非法 JSON");
                 System.exit(1);
             }
-            System.out.println("[PASS] 常用静态方法: validate 拒绝非法 JSON");
+            log.info("[PASS] 常用静态方法: validate 拒绝非法 JSON");
             byte[] bytes = Json.toJsonByte(new User("c", 3));
             if (!"c".equals(Json.fromJson(bytes, User.class).getName())) {
-                System.out.println("[FAIL] 常用静态方法: toJsonByte/fromJson 字节往返失败");
+                log.info("[FAIL] 常用静态方法: toJsonByte/fromJson 字节往返失败");
                 System.exit(1);
             }
-            System.out.println("[PASS] 常用静态方法: toJsonByte/fromJson 字节往返 name=c");
-            System.out.println("[PASS] Json门面 全部场景执行完成");
+            log.info("[PASS] 常用静态方法: toJsonByte/fromJson 字节往返 name=c");
+            log.info("[PASS] Json门面 全部场景执行完成");
         } finally {
             Json.setImplementation(new JacksonJsonProvider());
         }

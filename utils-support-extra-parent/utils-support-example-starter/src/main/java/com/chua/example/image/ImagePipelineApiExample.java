@@ -34,28 +34,28 @@ public final class ImagePipelineApiExample {
      */
     public static void main(String[] args) throws IOException {
         if (!checkDefaultKeepsSize()) {
-            System.out.println("[FAIL] pipeline-default-size");
+            log.info("[FAIL] pipeline-default-size");
             System.exit(1);
         }
-        System.out.println("[PASS] pipeline-default-size");
+        log.info("[PASS] pipeline-default-size");
 
         if (!checkGrayscalePixels()) {
-            System.out.println("[FAIL] pipeline-grayscale-gray-pixels");
+            log.info("[FAIL] pipeline-grayscale-gray-pixels");
             System.exit(1);
         }
-        System.out.println("[PASS] pipeline-grayscale-gray-pixels");
+        log.info("[PASS] pipeline-grayscale-gray-pixels");
 
         if (!checkBinarizePixels()) {
-            System.out.println("[FAIL] pipeline-binarize-black-white");
+            log.info("[FAIL] pipeline-binarize-black-white");
             System.exit(1);
         }
-        System.out.println("[PASS] pipeline-binarize-black-white");
+        log.info("[PASS] pipeline-binarize-black-white");
 
         if (!checkMorphologicalOpsKeepSize()) {
-            System.out.println("[FAIL] pipeline-morphological-size");
+            log.info("[FAIL] pipeline-morphological-size");
             System.exit(1);
         }
-        System.out.println("[PASS] pipeline-morphological-size");
+        log.info("[PASS] pipeline-morphological-size");
     }
 
     /**

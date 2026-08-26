@@ -64,7 +64,7 @@ public class TableViewParserExample {
         String empty = new TableViewParser().setBorderless(true).render(List.of());
         verify("空数据返回占位文本", "(empty)".equals(empty));
 
-        System.out.println("[PASS] TableViewParser 全部场景通过");
+        log.info("[PASS] TableViewParser 全部场景通过");
     }
 
     /**
@@ -85,9 +85,9 @@ public class TableViewParserExample {
      */
     private static void verify(String name, boolean condition) {
         if (!condition) {
-            System.out.println("[FAIL] " + name);
+            log.info("[FAIL] " + name);
             System.exit(1);
         }
-        System.out.println("[PASS] " + name);
+        log.info("[PASS] " + name);
     }
 }

@@ -43,25 +43,25 @@ public final class JsonProviderExample {
         Map<String, String> params = parseArgs(args);
         Example example = discover("json-provider");
         if (example == null || !"json".equals(example.module())) {
-            System.out.println("[FAIL] spi-discovery: getExtension(json-provider) 应命中且 module=json");
+            log.info("[FAIL] spi-discovery: getExtension(json-provider) 应命中且 module=json");
             System.exit(1);
         }
-        System.out.println("[PASS] spi-discovery: " + example.getClass().getSimpleName()
+        log.info("[PASS] spi-discovery: " + example.getClass().getSimpleName()
                 + " module=" + example.module());
         boolean passed = example.run(params);
         if (!passed) {
-            System.out.println("[FAIL] run-all: JsonProvider 三实现自检矩阵未全部通过");
+            log.info("[FAIL] run-all: JsonProvider 三实现自检矩阵未全部通过");
             System.exit(1);
         }
-        System.out.println("[PASS] run-all: JsonProvider 自检矩阵通过 type=" + params.getOrDefault("type", "all"));
+        log.info("[PASS] run-all: JsonProvider 自检矩阵通过 type=" + params.getOrDefault("type", "all"));
         Map<String, String> single = new LinkedHashMap<>();
         single.put("type", "gson");
         if (!example.run(single)) {
-            System.out.println("[FAIL] run-single: 指定 --type=gson 单实现自检未通过");
+            log.info("[FAIL] run-single: 指定 --type=gson 单实现自检未通过");
             System.exit(1);
         }
-        System.out.println("[PASS] run-single: --type=gson 单实现自检通过");
-        System.out.println("[PASS] JsonProviderExample 全部场景执行完成");
+        log.info("[PASS] run-single: --type=gson 单实现自检通过");
+        log.info("[PASS] JsonProviderExample 全部场景执行完成");
     }
 
     /**

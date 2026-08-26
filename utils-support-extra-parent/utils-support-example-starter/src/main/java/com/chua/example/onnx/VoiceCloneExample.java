@@ -59,11 +59,11 @@ public class VoiceCloneExample extends BaseExample {
         }
 
         if (passed) {
-            System.out.println("[PASS] 文本=" + text);
+            log.info("[PASS] 文本=" + text);
             System.exit(0);
             return;
         }
-        System.out.println("[FAIL] TTS/STT 能力自检未通过");
+        log.info("[FAIL] TTS/STT 能力自检未通过");
         System.exit(1);
     }
 }

@@ -41,7 +41,7 @@ public final class DeepfakeDetectionExample {
             System.err.println("[FAIL] EfficientNetLite0ClassificationTranslator 创建失败: " + e.getMessage());
             System.exit(1);
         }
-        System.out.println("[PASS] deepfake-detector 已注册且 Translator 创建成功");
+        log.info("[PASS] deepfake-detector 已注册且 Translator 创建成功");
         System.exit(0);
     }
 }

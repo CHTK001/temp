@@ -158,20 +158,20 @@ public final class IdUtilsUuidv7Example {
     private static void verifyNotNull() {
         String id = IdUtils.uuidv7();
         if (id == null || id.isEmpty()) {
-            System.out.println("[FAIL] uuidv7 返回空值");
+            log.info("[FAIL] uuidv7 返回空值");
             System.exit(1);
         }
-        System.out.println("[PASS] uuidv7 非空校验通过");
+        log.info("[PASS] uuidv7 非空校验通过");
     }
 
     /** 校验 uuidv7() 符合 RFC 9562 格式（对应 testUuidv7Format） */
     private static void verifyFormat() {
         String id = IdUtils.uuidv7();
         if (!id.matches(UUIDV7_REGEX)) {
-            System.out.println("[FAIL] UUIDv7 格式不符合 RFC 9562: " + id);
+            log.info("[FAIL] UUIDv7 格式不符合 RFC 9562: " + id);
             System.exit(1);
         }
-        System.out.println("[PASS] UUIDv7 格式符合 RFC 9562");
+        log.info("[PASS] UUIDv7 格式符合 RFC 9562");
     }
 
     /** 校验跨毫秒时间戳非递减（对应 testUuidv7IsMonotonic，200 次、间隔 1ms） */
@@ -187,21 +187,21 @@ public final class IdUtilsUuidv7Example {
             long previous = timestamps.get(i - 1);
             long current = timestamps.get(i);
             if (current < previous) {
-                System.out.println("[FAIL] UUIDv7 时间戳应非递减: " + previous + " > " + current);
+                log.info("[FAIL] UUIDv7 时间戳应非递减: " + previous + " > " + current);
                 System.exit(1);
             }
         }
-        System.out.println("[PASS] 200 个跨毫秒时间戳全部非递减");
+        log.info("[PASS] 200 个跨毫秒时间戳全部非递减");
     }
 
     /** 校验 createUuidv7() 同样产出合法 UUIDv7（对应 testCreateUuidv7SameAsUuidv7） */
     private static void verifyCreateUuidv7Format() {
         String id = IdUtils.createUuidv7();
         if (!id.matches(UUIDV7_REGEX)) {
-            System.out.println("[FAIL] createUuidv7 格式不符合 RFC 9562: " + id);
+            log.info("[FAIL] createUuidv7 格式不符合 RFC 9562: " + id);
             System.exit(1);
         }
-        System.out.println("[PASS] createUuidv7 与 uuidv7 格式一致");
+        log.info("[PASS] createUuidv7 与 uuidv7 格式一致");
     }
 
     /** 校验批量生成唯一率（对应 testUuidv7Uniqueness，1000 次去重数 >= 950，容忍同毫秒极小碰撞） */
@@ -211,10 +211,10 @@ public final class IdUtilsUuidv7Example {
             unique.add(IdUtils.uuidv7());
         }
         if (unique.size() < 950) {
-            System.out.println("[FAIL] UUIDv7 唯一性不足，去重数: " + unique.size());
+            log.info("[FAIL] UUIDv7 唯一性不足，去重数: " + unique.size());
             System.exit(1);
         }
-        System.out.println("[PASS] 1000 次生成去重数 " + unique.size() + " >= 950");
+        log.info("[PASS] 1000 次生成去重数 " + unique.size() + " >= 950");
     }
 
     /** 提取 UUIDv7 的 Unix 毫秒时间戳（去连字符后前 12 位 hex） */

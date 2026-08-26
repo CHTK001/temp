@@ -34,10 +34,10 @@ public class HttpServerExample {
         log.info("[HTTP-SERVER] 启动参数 {}", parsed);
         boolean passed = new HttpServerExampleSpi().run(parsed);
         if (!passed) {
-            System.out.println("[FAIL] http-server 演示未全部通过");
+            log.info("[FAIL] http-server 演示未全部通过");
             System.exit(1);
         }
-        System.out.println("[PASS] http-server 演示全部通过");
+        log.info("[PASS] http-server 演示全部通过");
     }
 
     /**

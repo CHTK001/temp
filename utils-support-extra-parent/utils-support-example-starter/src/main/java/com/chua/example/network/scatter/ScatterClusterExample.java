@@ -40,10 +40,10 @@ public class ScatterClusterExample {
         log.info("[SCATTER-CLUSTER] 启动 mode={}", parsed.get("mode"));
         boolean passed = new ScatterClusterExampleSpi().run(parsed);
         if (!passed) {
-            System.out.println("[FAIL] scatter-cluster seed 引导互发现场景");
+            log.info("[FAIL] scatter-cluster seed 引导互发现场景");
             System.exit(1);
         }
-        System.out.println("[PASS] scatter-cluster seed 引导互发现场景");
+        log.info("[PASS] scatter-cluster seed 引导互发现场景");
     }
 
     /**

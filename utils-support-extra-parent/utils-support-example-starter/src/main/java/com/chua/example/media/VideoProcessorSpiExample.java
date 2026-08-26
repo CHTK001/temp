@@ -69,13 +69,13 @@ public class VideoProcessorSpiExample {
 
         String input = params.get(PARAM_INPUT);
         if (input == null || input.isBlank()) {
-            System.out.println("[FAIL] 缺少 --input 参数");
+            log.info("[FAIL] 缺少 --input 参数");
             System.exit(1);
             return;
         }
         Path inputPath = Path.of(input);
         if (!Files.isRegularFile(inputPath)) {
-            System.out.println("[FAIL] 输入文件不存在: " + inputPath.toAbsolutePath());
+            log.info("[FAIL] 输入文件不存在: " + inputPath.toAbsolutePath());
             System.exit(1);
             return;
         }
@@ -93,7 +93,7 @@ public class VideoProcessorSpiExample {
         } catch (Exception e) {
             log.warn("输出目录创建失败: {}", e.getMessage());
         }
-        System.out.println("[PASS] 参数与环境校验通过（处理器执行由宿主环境提供）");
+        log.info("[PASS] 参数与环境校验通过（处理器执行由宿主环境提供）");
         System.exit(0);
     }
 }

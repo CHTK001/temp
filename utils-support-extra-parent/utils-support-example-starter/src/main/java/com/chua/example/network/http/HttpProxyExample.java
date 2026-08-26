@@ -34,10 +34,10 @@ public class HttpProxyExample {
         log.info("[HTTP-PROXY] 启动参数 {}", parsed);
         boolean passed = new HttpProxyExampleSpi().run(parsed);
         if (!passed) {
-            System.out.println("[FAIL] http-proxy 演示未全部通过");
+            log.info("[FAIL] http-proxy 演示未全部通过");
             System.exit(1);
         }
-        System.out.println("[PASS] http-proxy 演示全部通过");
+        log.info("[PASS] http-proxy 演示全部通过");
     }
 
     /**

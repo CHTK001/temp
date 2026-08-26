@@ -103,10 +103,10 @@ public final class TaskRunnerExample {
         }
 
         if (!passed) {
-            System.out.println("[FAIL] TaskRunner 存在失败场景");
+            log.info("[FAIL] TaskRunner 存在失败场景");
             System.exit(EXIT_CODE_FAILURE);
         }
-        System.out.println("[PASS] TaskRunner 全部场景通过");
+        log.info("[PASS] TaskRunner 全部场景通过");
         System.exit(EXIT_CODE_SUCCESS);
     }
 
@@ -317,10 +317,10 @@ public final class TaskRunnerExample {
                     && offset >= 0 && offset < 250
                     && "A-C".equals(joinData);
             if (!ok) {
-                System.out.println("[DEBUG] success=" + result.success()
+                log.info("[DEBUG] success=" + result.success()
                         + " err=" + result.error() + " offset=" + offset + " join=" + joinData);
                 result.nodeResults().forEach(r ->
-                        System.out.println("[DEBUG]   node " + r.id() + " -> " + r.status()
+                        log.info("[DEBUG]   node " + r.id() + " -> " + r.status()
                                 + (r.error() != null ? " : " + r.error() : "")));
             }
             print("dataflowReadyScheduling (c-start=" + offset + "ms)", ok);
@@ -721,7 +721,7 @@ public final class TaskRunnerExample {
      * @param ok   是否通过
      */
     private static void print(String name, boolean ok) {
-        System.out.println((ok ? "[PASS] " : "[FAIL] ") + name);
+        log.info((ok ? "[PASS] " : "[FAIL] ") + name);
     }
 
     /**
@@ -732,7 +732,7 @@ public final class TaskRunnerExample {
      * @return 恒为 false
      */
     private static boolean fail(String name, Exception e) {
-        System.out.println("[FAIL] " + name + " 异常: " + e);
+        log.info("[FAIL] " + name + " 异常: " + e);
         return false;
     }
 
@@ -744,7 +744,7 @@ public final class TaskRunnerExample {
      * @return 恒为 false
      */
     private static boolean fail(String name, String msg) {
-        System.out.println("[FAIL] " + name + ": " + msg);
+        log.info("[FAIL] " + name + ": " + msg);
         return false;
     }
 

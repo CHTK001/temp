@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.BooleanSupplier;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 备份/恢复 {@link DefaultDailyBackupStrategy} + {@link DefaultBackupRestore} 往返自检示例。
@@ -28,6 +29,7 @@ import java.util.function.BooleanSupplier;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class BackupRoundTripExample {
 
     /**
@@ -59,7 +61,7 @@ public final class BackupRoundTripExample {
      * @param ok   是否通过
      */
     private static void print(String name, boolean ok) {
-        System.out.println((ok ? "[PASS] " : "[FAIL] ") + name);
+        log.info((ok ? "[PASS] " : "[FAIL] ") + name);
     }
 
     /**
@@ -70,7 +72,7 @@ public final class BackupRoundTripExample {
      * @return 恒为 false
      */
     private static boolean fail(String name, Exception e) {
-        System.out.println("[FAIL] " + name + " 异常: " + e);
+        log.info("[FAIL] " + name + " 异常: " + e);
         return false;
     }
 
@@ -110,7 +112,7 @@ public final class BackupRoundTripExample {
                 && Files.exists(backupDir.resolve("archive"))
                 && Files.exists(result.getBackupPath());
         if (!ok) {
-            System.out.println("[DBG] result=" + result);
+            log.info("[DBG] result=" + result);
         }
         print("dailyBackupExecutes", ok);
         return ok;
@@ -221,10 +223,10 @@ public final class BackupRoundTripExample {
             cleanupTestRoot();
         }
         if (!passed) {
-            System.out.println("[FAIL] Backup 存在失败场景");
+            log.info("[FAIL] Backup 存在失败场景");
             System.exit(EXIT_CODE_FAILURE);
         }
-        System.out.println("[PASS] Backup 全部场景通过");
+        log.info("[PASS] Backup 全部场景通过");
         System.exit(EXIT_CODE_SUCCESS);
     }
 
@@ -238,7 +240,7 @@ public final class BackupRoundTripExample {
     private static boolean timed(String name, BooleanSupplier scenario) {
         long start = System.currentTimeMillis();
         boolean ok = scenario.getAsBoolean();
-        System.out.println("[TIME] " + name + " " + (System.currentTimeMillis() - start) + "ms");
+        log.info("[TIME] " + name + " " + (System.currentTimeMillis() - start) + "ms");
         return ok;
     }
 

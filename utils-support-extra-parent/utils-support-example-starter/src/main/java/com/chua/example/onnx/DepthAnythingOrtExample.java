@@ -60,11 +60,11 @@ public class DepthAnythingOrtExample {
         }
 
         if (imageCount > 0) {
-            System.out.println("[PASS] depth 模型发现完成，图片数=" + imageCount);
+            log.info("[PASS] depth 模型发现完成，图片数=" + imageCount);
             System.exit(0);
             return;
         }
-        System.out.println("[FAIL] 输入目录中未找到图片: " + inputDir.toAbsolutePath());
+        log.info("[FAIL] 输入目录中未找到图片: " + inputDir.toAbsolutePath());
         System.exit(1);
     }
 }

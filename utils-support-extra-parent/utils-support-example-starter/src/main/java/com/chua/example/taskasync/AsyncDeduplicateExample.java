@@ -8,6 +8,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BooleanSupplier;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 异步流 {@link AsyncFlow} 与幂等去重器 {@link MemoryDeduplicator} 全场景自检示例。
@@ -23,6 +24,7 @@ import java.util.function.BooleanSupplier;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class AsyncDeduplicateExample {
 
     /**
@@ -48,7 +50,7 @@ public final class AsyncDeduplicateExample {
      * @param ok   是否通过
      */
     private static void print(String name, boolean ok) {
-        System.out.println((ok ? "[PASS] " : "[FAIL] ") + name);
+        log.info((ok ? "[PASS] " : "[FAIL] ") + name);
     }
 
     /**
@@ -59,7 +61,7 @@ public final class AsyncDeduplicateExample {
      * @return 恒为 false
      */
     private static boolean fail(String name, Exception e) {
-        System.out.println("[FAIL] " + name + " 异常: " + e);
+        log.info("[FAIL] " + name + " 异常: " + e);
         return false;
     }
 
@@ -140,10 +142,10 @@ public final class AsyncDeduplicateExample {
         passed &= timed("dedupExecutesOnceOnly", AsyncDeduplicateExample::dedupExecutesOnceOnly);
         passed &= timed("ttlExpiryAllowsReprocess", AsyncDeduplicateExample::ttlExpiryAllowsReprocess);
         if (!passed) {
-            System.out.println("[FAIL] Async/Deduplicate 存在失败场景");
+            log.info("[FAIL] Async/Deduplicate 存在失败场景");
             System.exit(EXIT_CODE_FAILURE);
         }
-        System.out.println("[PASS] Async/Deduplicate 全部场景通过");
+        log.info("[PASS] Async/Deduplicate 全部场景通过");
         System.exit(EXIT_CODE_SUCCESS);
     }
 
@@ -157,7 +159,7 @@ public final class AsyncDeduplicateExample {
     private static boolean timed(String name, BooleanSupplier scenario) {
         long start = System.currentTimeMillis();
         boolean ok = scenario.getAsBoolean();
-        System.out.println("[TIME] " + name + " " + (System.currentTimeMillis() - start) + "ms");
+        log.info("[TIME] " + name + " " + (System.currentTimeMillis() - start) + "ms");
         return ok;
     }
 }

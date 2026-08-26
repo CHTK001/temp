@@ -134,7 +134,7 @@ public final class SealInspectionBlackboxExample {
 
         long dt = System.currentTimeMillis() - t0;
         log.info("===== 黑盒汇总 " + dir + " (阈值 " + threshold + ") =====");
-        System.out.println("总文件: " + files.length + "  成功: " + pass
+        log.info("总文件: " + files.length + "  成功: " + pass
                 + "  失败: " + fail + "  无法解码: " + noImage);
         log.info("含印章文件数: " + filesWithDet + "  总印章数: " + totalDet);
         log.info("耗时: " + dt + "ms  输出: " + outDir);
@@ -143,7 +143,7 @@ public final class SealInspectionBlackboxExample {
             System.err.println("[FAIL] 有文件未通过: " + String.join(", ", fails));
             System.exit(1);
         }
-        System.out.println("[PASS]");
+        log.info("[PASS]");
         System.exit(0);
     }
 
@@ -180,7 +180,7 @@ public final class SealInspectionBlackboxExample {
             if (!overlap) {
                 out.add(d);
             } else {
-                System.out.println("  人脸过滤: 剔除 " + d.label()
+                log.info("  人脸过滤: 剔除 " + d.label()
                         + " [" + d.x() + "," + d.y() + "," + d.width() + "," + d.height() + "] 与人脸重叠");
             }
         }

@@ -36,10 +36,10 @@ public class SyncExample {
         log.info("[SYNC] 自检启动 params={}", parsed);
         boolean passed = new SyncExampleSpi().run(parsed);
         if (!passed) {
-            System.out.println("[FAIL] sync 全子类自检");
+            log.info("[FAIL] sync 全子类自检");
             System.exit(1);
         }
-        System.out.println("[PASS] sync 全子类自检");
+        log.info("[PASS] sync 全子类自检");
     }
 
     /**

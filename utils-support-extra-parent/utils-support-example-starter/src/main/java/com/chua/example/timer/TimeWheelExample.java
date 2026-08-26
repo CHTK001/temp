@@ -73,10 +73,10 @@ public final class TimeWheelExample {
         passed &= timed("cancelInterruptsRunningTask", TimeWheelExample::cancelInterruptsRunningTask);
         passed &= timed("taskCountMatchesScheduled", TimeWheelExample::taskCountMatchesScheduled);
         if (!passed) {
-            System.out.println("[FAIL] TimeWheel 存在失败场景");
+            log.info("[FAIL] TimeWheel 存在失败场景");
             System.exit(EXIT_CODE_FAILURE);
         }
-        System.out.println("[PASS] TimeWheel 全部场景通过");
+        log.info("[PASS] TimeWheel 全部场景通过");
         System.exit(EXIT_CODE_SUCCESS);
     }
 
@@ -364,7 +364,7 @@ public final class TimeWheelExample {
     private static boolean timed(String name, BooleanSupplier scenario) {
         long start = System.currentTimeMillis();
         boolean ok = scenario.getAsBoolean();
-        System.out.println((ok ? "[PASS] " : "[FAIL] ") + name
+        log.info((ok ? "[PASS] " : "[FAIL] ") + name
                 + " (" + (System.currentTimeMillis() - start) + "ms)");
         return ok;
     }
@@ -376,6 +376,6 @@ public final class TimeWheelExample {
      * @param ok   是否通过
      */
     private static void print(String name, boolean ok) {
-        System.out.println((ok ? "[PASS] " : "[FAIL] ") + name);
+        log.info((ok ? "[PASS] " : "[FAIL] ") + name);
     }
 }

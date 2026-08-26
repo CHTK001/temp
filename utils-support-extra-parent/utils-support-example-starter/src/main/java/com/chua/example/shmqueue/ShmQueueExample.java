@@ -44,50 +44,50 @@ public final class ShmQueueExample {
         if (!probeNative()) {
             return;
         }
-        System.out.println("[PASS] native-ready");
+        log.info("[PASS] native-ready");
         if (!runCreateAndSendRecv()) {
-            System.out.println("[FAIL] create-send-recv");
+            log.info("[FAIL] create-send-recv");
             System.exit(1);
         } else {
-            System.out.println("[PASS] create-send-recv");
+            log.info("[PASS] create-send-recv");
         }
         if (!runOrderPreserved()) {
-            System.out.println("[FAIL] order-preserved");
+            log.info("[FAIL] order-preserved");
             System.exit(1);
         } else {
-            System.out.println("[PASS] order-preserved");
+            log.info("[PASS] order-preserved");
         }
         if (!runQueueFull()) {
-            System.out.println("[FAIL] queue-full-error-code");
+            log.info("[FAIL] queue-full-error-code");
             System.exit(1);
         } else {
-            System.out.println("[PASS] queue-full-error-code");
+            log.info("[PASS] queue-full-error-code");
         }
         if (!runDataTooLarge()) {
-            System.out.println("[FAIL] data-too-large-error-code");
+            log.info("[FAIL] data-too-large-error-code");
             System.exit(1);
         } else {
-            System.out.println("[PASS] data-too-large-error-code");
+            log.info("[PASS] data-too-large-error-code");
         }
         if (!runRecvTimeout()) {
-            System.out.println("[FAIL] recv-timeout-boundary");
+            log.info("[FAIL] recv-timeout-boundary");
             System.exit(1);
         } else {
-            System.out.println("[PASS] recv-timeout-boundary");
+            log.info("[PASS] recv-timeout-boundary");
         }
         if (!runAttachExisting()) {
-            System.out.println("[FAIL] attach-existing");
+            log.info("[FAIL] attach-existing");
             System.exit(1);
         } else {
-            System.out.println("[PASS] attach-existing");
+            log.info("[PASS] attach-existing");
         }
         if (!runLargeBurst()) {
-            System.out.println("[FAIL] large-burst-5000");
+            log.info("[FAIL] large-burst-5000");
             System.exit(1);
         } else {
-            System.out.println("[PASS] large-burst-5000");
+            log.info("[PASS] large-burst-5000");
         }
-        System.out.println("[PASS] shm-queue 全部 7 个场景通过");
+        log.info("[PASS] shm-queue 全部 7 个场景通过");
     }
 
     /**
@@ -104,7 +104,7 @@ public final class ShmQueueExample {
         try (ShmQueue q = ShmQueue.create(name, 2, 64, ShmQueue.Mode.SPIN)) {
             return q != null;
         } catch (Throwable t) {
-            System.out.println("[SKIP] native-unavailable " + t.getClass().getSimpleName()
+            log.info("[SKIP] native-unavailable " + t.getClass().getSimpleName()
                     + ": " + t.getMessage());
             return false;
         }
@@ -289,7 +289,7 @@ public final class ShmQueueExample {
      * @return 固定返回 false
      */
     private static boolean detail(String scene, Throwable t) {
-        System.out.println("  fail " + scene + " exception: "
+        log.info("  fail " + scene + " exception: "
                 + t.getClass().getSimpleName() + ": " + t.getMessage());
         return false;
     }

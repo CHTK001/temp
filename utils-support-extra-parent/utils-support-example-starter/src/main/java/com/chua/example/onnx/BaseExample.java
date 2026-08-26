@@ -13,6 +13,7 @@ import java.util.List;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public abstract class BaseExample {
 
     protected static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(BaseExample.class);

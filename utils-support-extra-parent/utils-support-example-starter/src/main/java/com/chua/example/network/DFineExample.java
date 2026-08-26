@@ -77,7 +77,7 @@ public final class DFineExample {
             Path out = Path.of(outPath);
             img.save(Files.newOutputStream(out), "png");
             log.info("[saved] " + out);
-            System.out.println("[PASS]");
+            log.info("[PASS]");
             System.exit(0);
         } catch (Exception e) {
             System.err.println("[FAIL] " + e.getMessage());

@@ -4,6 +4,7 @@ import com.chua.common.support.task.loader.SingletonLoader;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BooleanSupplier;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 惰性加载器 {@link SingletonLoader} 全场景自检示例。
@@ -14,6 +15,7 @@ import java.util.function.BooleanSupplier;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class LoaderExample {
 
     private static final int EXIT_CODE_SUCCESS = 0;
@@ -23,13 +25,13 @@ public final class LoaderExample {
     }
 
     private static void print(String name, boolean ok) {
-        System.out.println((ok ? "[PASS] " : "[FAIL] ") + name);
+        log.info((ok ? "[PASS] " : "[FAIL] ") + name);
     }
 
     private static boolean timed(String name, BooleanSupplier scenario) {
         long start = System.currentTimeMillis();
         boolean ok = scenario.getAsBoolean();
-        System.out.println("[TIME] " + name + " " + (System.currentTimeMillis() - start) + "ms");
+        log.info("[TIME] " + name + " " + (System.currentTimeMillis() - start) + "ms");
         return ok;
     }
 
@@ -105,13 +107,13 @@ public final class LoaderExample {
             passed &= timed("concurrentGetCreatesOnce", LoaderExample::concurrentGetCreatesOnce);
             passed &= timed("nullSupplierRejected", LoaderExample::nullSupplierRejected);
             if (!passed) {
-                System.out.println("[FAIL] Loader 存在失败场景");
+                log.info("[FAIL] Loader 存在失败场景");
                 System.exit(EXIT_CODE_FAILURE);
             }
-            System.out.println("[PASS] Loader 全部场景通过");
+            log.info("[PASS] Loader 全部场景通过");
             System.exit(EXIT_CODE_SUCCESS);
         } catch (Exception e) {
-            System.out.println("[FAIL] 未预期异常: " + e);
+            log.info("[FAIL] 未预期异常: " + e);
             System.exit(EXIT_CODE_FAILURE);
         }
     }

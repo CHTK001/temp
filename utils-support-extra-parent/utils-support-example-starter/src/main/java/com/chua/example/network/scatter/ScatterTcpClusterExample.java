@@ -68,17 +68,17 @@ public class ScatterTcpClusterExample {
         log.info("[SCATTER-TCP] 基础端口=" + basePort);
         boolean discoverOk = runSeedDiscoveryScene(basePort);
         if (!discoverOk) {
-            System.out.println("[FAIL] 场景1: TCP 双节点 seed 服务发现同步");
+            log.info("[FAIL] 场景1: TCP 双节点 seed 服务发现同步");
             System.exit(1);
         } else {
-            System.out.println("[PASS] 场景1: TCP 双节点 seed 服务发现同步");
+            log.info("[PASS] 场景1: TCP 双节点 seed 服务发现同步");
         }
         boolean removeOk = runHeartbeatRemoveScene(basePort);
         if (!removeOk) {
-            System.out.println("[FAIL] 场景2: 心跳失败计数强制剔除下线节点");
+            log.info("[FAIL] 场景2: 心跳失败计数强制剔除下线节点");
             System.exit(1);
         } else {
-            System.out.println("[PASS] 场景2: 心跳失败计数强制剔除下线节点");
+            log.info("[PASS] 场景2: 心跳失败计数强制剔除下线节点");
         }
         log.info("[SCATTER-TCP] 全部场景通过");
     }

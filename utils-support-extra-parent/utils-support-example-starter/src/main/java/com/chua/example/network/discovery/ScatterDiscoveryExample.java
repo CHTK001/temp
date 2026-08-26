@@ -84,7 +84,7 @@ public final class ScatterDiscoveryExample {
         if ("all".equals(mode) || "tcp".equals(mode)) {
             passed &= testTcpProxyRoute(portTcp);
         }
-        System.out.println(passed ? "[PASS] scatter-discovery" : "[FAIL] scatter-discovery");
+        log.info(passed ? "[PASS] scatter-discovery" : "[FAIL] scatter-discovery");
         if (!passed) {
             System.exit(1);
         }

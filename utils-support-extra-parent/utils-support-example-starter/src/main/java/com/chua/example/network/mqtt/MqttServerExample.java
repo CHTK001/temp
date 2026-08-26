@@ -34,10 +34,10 @@ public class MqttServerExample {
         log.info("[MQTT-SERVER] 启动参数 {}", parsed);
         boolean passed = new MqttServerExampleSpi().run(parsed);
         if (!passed) {
-            System.out.println("[FAIL] mqtt-server 演示未全部通过");
+            log.info("[FAIL] mqtt-server 演示未全部通过");
             System.exit(1);
         }
-        System.out.println("[PASS] mqtt-server 演示全部通过");
+        log.info("[PASS] mqtt-server 演示全部通过");
     }
 
     /**

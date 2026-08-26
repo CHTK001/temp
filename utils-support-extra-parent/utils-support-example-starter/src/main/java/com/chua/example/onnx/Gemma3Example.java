@@ -53,7 +53,7 @@ public final class Gemma3Example {
                 System.err.println("[FAIL] 回复为空");
                 System.exit(1);
             }
-            System.out.println("[PASS]");
+            log.info("[PASS]");
             System.exit(0);
         } catch (Exception e) {
             System.err.println("[FAIL] " + e.getMessage());

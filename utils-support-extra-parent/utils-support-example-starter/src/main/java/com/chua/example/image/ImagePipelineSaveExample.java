@@ -49,10 +49,10 @@ public final class ImagePipelineSaveExample {
             log.info("[input] generated png " + input.length + " B");
             boolean saved = saveAll(outDir, input);
             if (!saved) {
-                System.out.println("[FAIL] pipeline-save -> " + outDir);
+                log.info("[FAIL] pipeline-save -> " + outDir);
                 System.exit(1);
             }
-            System.out.println("[PASS] pipeline-save -> " + outDir);
+            log.info("[PASS] pipeline-save -> " + outDir);
         } finally {
             cleanup(outDir);
         }

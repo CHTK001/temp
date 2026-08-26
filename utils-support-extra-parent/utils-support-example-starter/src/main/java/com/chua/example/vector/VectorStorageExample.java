@@ -61,15 +61,15 @@ public final class VectorStorageExample {
             passed &= testRemoveSingle(storage);
             passed &= testClear(storage);
         } catch (Exception e) {
-            System.out.println("[FAIL] VectorStorage 示例异常: " + e.getMessage());
+            log.info("[FAIL] VectorStorage 示例异常: " + e.getMessage());
             System.exit(EXIT_CODE_FAILURE);
             return;
         }
         if (!passed) {
-            System.out.println("[FAIL] VectorStorage 存在失败场景");
+            log.info("[FAIL] VectorStorage 存在失败场景");
             System.exit(EXIT_CODE_FAILURE);
         } else {
-            System.out.println("[PASS] VectorStorage 全部场景通过");
+            log.info("[PASS] VectorStorage 全部场景通过");
         }
         System.exit(EXIT_CODE_SUCCESS);
     }
@@ -204,7 +204,7 @@ public final class VectorStorageExample {
      * @param ok   是否通过
      */
     private static void print(String name, boolean ok) {
-        System.out.println((ok ? "[PASS] " : "[FAIL] ") + name);
+        log.info((ok ? "[PASS] " : "[FAIL] ") + name);
     }
 
     /**
@@ -215,7 +215,7 @@ public final class VectorStorageExample {
      * @return 恒为 false
      */
     private static boolean fail(String name, Exception e) {
-        System.out.println("[FAIL] " + name + ": " + e.getMessage());
+        log.info("[FAIL] " + name + ": " + e.getMessage());
         return false;
     }
 }

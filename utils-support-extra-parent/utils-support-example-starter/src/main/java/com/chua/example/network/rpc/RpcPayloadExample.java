@@ -202,9 +202,9 @@ public class RpcPayloadExample implements Serializable {
         }
 
         boolean passed = source.equals(restored);
-        System.out.println("[PASS] 序列化往返一致: " + restored);
+        log.info("[PASS] 序列化往返一致: " + restored);
         if (!passed) {
-            System.out.println("[FAIL] 往返后字段不一致");
+            log.info("[FAIL] 往返后字段不一致");
             System.exit(1);
         }
         System.exit(0);

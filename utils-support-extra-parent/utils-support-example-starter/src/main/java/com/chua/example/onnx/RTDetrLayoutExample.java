@@ -107,9 +107,9 @@ public final class RTDetrLayoutExample {
 
             File outFile = new File(outPath);
             ImageIO.write(orig, "png", outFile);
-            System.out.println("[saved] " + outFile.getAbsolutePath()
+            log.info("[saved] " + outFile.getAbsolutePath()
                     + " (" + colorIdx + " boxes)");
-            System.out.println("[PASS]");
+            log.info("[PASS]");
             System.exit(0);
         } catch (Exception e) {
             System.err.println("[FAIL] " + e.getMessage());

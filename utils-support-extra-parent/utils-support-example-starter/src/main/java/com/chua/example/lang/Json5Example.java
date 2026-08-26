@@ -54,42 +54,42 @@ public final class Json5Example {
             log.info("===== Json5 场景1: JSON5 语法解析 =====");
             User user = Json5.fromJson(json5, User.class);
             if (user == null) {
-                System.out.println("[FAIL] Json5语法解析: fromJson 返回 null");
+                log.info("[FAIL] Json5语法解析: fromJson 返回 null");
                 System.exit(1);
             }
-            System.out.println("[PASS] Json5语法解析: fromJson 反序列化非空");
+            log.info("[PASS] Json5语法解析: fromJson 反序列化非空");
             if (!"chua".equals(user.getName())) {
-                System.out.println("[FAIL] Json5语法解析: name 应为 chua, 实际 " + user.getName());
+                log.info("[FAIL] Json5语法解析: name 应为 chua, 实际 " + user.getName());
                 System.exit(1);
             }
-            System.out.println("[PASS] Json5语法解析: 未加引号键名 + 单引号值 -> name=chua");
+            log.info("[PASS] Json5语法解析: 未加引号键名 + 单引号值 -> name=chua");
             if (user.getAge() != 18) {
-                System.out.println("[FAIL] Json5语法解析: age 应为 18, 实际 " + user.getAge());
+                log.info("[FAIL] Json5语法解析: age 应为 18, 实际 " + user.getAge());
                 System.exit(1);
             }
-            System.out.println("[PASS] Json5语法解析: 尾随逗号容忍 -> age=18");
+            log.info("[PASS] Json5语法解析: 尾随逗号容忍 -> age=18");
             Map<String, Object> map = Json5.fromJson(json5);
             if (!"chua".equals(map.get("name"))) {
-                System.out.println("[FAIL] Json5语法解析: map.name 应为 chua, 实际 " + map.get("name"));
+                log.info("[FAIL] Json5语法解析: map.name 应为 chua, 实际 " + map.get("name"));
                 System.exit(1);
             }
-            System.out.println("[PASS] Json5语法解析: fromJson 到 Map -> name=chua");
+            log.info("[PASS] Json5语法解析: fromJson 到 Map -> name=chua");
             JsonObject jsonObject = Json5.getJsonObject(json5);
             if (!"chua".equals(jsonObject.get("name"))) {
-                System.out.println("[FAIL] Json5语法解析: jsonObject.name 应为 chua");
+                log.info("[FAIL] Json5语法解析: jsonObject.name 应为 chua");
                 System.exit(1);
             }
-            System.out.println("[PASS] Json5语法解析: getJsonObject -> name=chua");
+            log.info("[PASS] Json5语法解析: getJsonObject -> name=chua");
             if (!Json5.isJson5(json5)) {
-                System.out.println("[FAIL] Json5语法解析: isJson5 应识别 JSON5 文档");
+                log.info("[FAIL] Json5语法解析: isJson5 应识别 JSON5 文档");
                 System.exit(1);
             }
-            System.out.println("[PASS] Json5语法解析: isJson5 识别成功");
+            log.info("[PASS] Json5语法解析: isJson5 识别成功");
             if (!Json5.validate("{\"a\":1}")) {
-                System.out.println("[FAIL] Json5语法解析: validate 应通过合法 JSON");
+                log.info("[FAIL] Json5语法解析: validate 应通过合法 JSON");
                 System.exit(1);
             }
-            System.out.println("[PASS] Json5语法解析: validate 通过合法 JSON");
+            log.info("[PASS] Json5语法解析: validate 通过合法 JSON");
 
             log.info("===== Json5 场景2: 注释预处理与列表 =====");
             String listJson5 = "[\n" +
@@ -99,118 +99,118 @@ public final class Json5Example {
                     "]";
             String clean = Json5.preprocessJson5(listJson5);
             if (clean.contains("//")) {
-                System.out.println("[FAIL] 注释预处理: preprocessJson5 未去除单行注释");
+                log.info("[FAIL] 注释预处理: preprocessJson5 未去除单行注释");
                 System.exit(1);
             }
-            System.out.println("[PASS] 注释预处理: 单行注释被剔除");
+            log.info("[PASS] 注释预处理: 单行注释被剔除");
             List<User> users = Json5.fromJsonList(clean, User.class);
             if (users == null) {
-                System.out.println("[FAIL] 注释预处理: fromJsonList 返回 null");
+                log.info("[FAIL] 注释预处理: fromJsonList 返回 null");
                 System.exit(1);
             }
-            System.out.println("[PASS] 注释预处理: fromJsonList 非空");
+            log.info("[PASS] 注释预处理: fromJsonList 非空");
             if (users.size() != 2) {
-                System.out.println("[FAIL] 注释预处理: 列表长度应为 2, 实际 " + users.size());
+                log.info("[FAIL] 注释预处理: 列表长度应为 2, 实际 " + users.size());
                 System.exit(1);
             }
-            System.out.println("[PASS] 注释预处理: 尾随逗号列表长度 -> 2");
+            log.info("[PASS] 注释预处理: 尾随逗号列表长度 -> 2");
             if (!"a".equals(users.get(0).getName())) {
-                System.out.println("[FAIL] 注释预处理: users[0].name 应为 a");
+                log.info("[FAIL] 注释预处理: users[0].name 应为 a");
                 System.exit(1);
             }
-            System.out.println("[PASS] 注释预处理: users[0].name=a");
+            log.info("[PASS] 注释预处理: users[0].name=a");
             if (users.get(1).getAge() != 2) {
-                System.out.println("[FAIL] 注释预处理: users[1].age 应为 2");
+                log.info("[FAIL] 注释预处理: users[1].age 应为 2");
                 System.exit(1);
             }
-            System.out.println("[PASS] 注释预处理: users[1].age=2");
+            log.info("[PASS] 注释预处理: users[1].age=2");
             JsonArray array = Json5.getJsonArray(clean);
             if (array.size() != 2) {
-                System.out.println("[FAIL] 注释预处理: JsonArray 长度应为 2, 实际 " + array.size());
+                log.info("[FAIL] 注释预处理: JsonArray 长度应为 2, 实际 " + array.size());
                 System.exit(1);
             }
-            System.out.println("[PASS] 注释预处理: getJsonArray 长度 -> 2");
+            log.info("[PASS] 注释预处理: getJsonArray 长度 -> 2");
 
             log.info("===== Json5 场景3: 与 Json 门面统一切换 =====");
             if (Json.getImplementation() != Json5.getImplementation()) {
-                System.out.println("[FAIL] 统一切换: 默认实现应一致");
+                log.info("[FAIL] 统一切换: 默认实现应一致");
                 System.exit(1);
             }
-            System.out.println("[PASS] 统一切换: 默认实现一致");
+            log.info("[PASS] 统一切换: 默认实现一致");
             if (!(Json5.getImplementation() instanceof JacksonJsonProvider)) {
-                System.out.println("[FAIL] 统一切换: 默认实现应为 JacksonJsonProvider");
+                log.info("[FAIL] 统一切换: 默认实现应为 JacksonJsonProvider");
                 System.exit(1);
             }
-            System.out.println("[PASS] 统一切换: 默认实现为 JacksonJsonProvider");
+            log.info("[PASS] 统一切换: 默认实现为 JacksonJsonProvider");
             JsonProvider stub = new StubJsonProvider();
             Json5.setImplementation(stub);
             if (Json.getImplementation() != stub) {
-                System.out.println("[FAIL] 统一切换: Json5.setImplementation 后 Json 门面应跟随");
+                log.info("[FAIL] 统一切换: Json5.setImplementation 后 Json 门面应跟随");
                 System.exit(1);
             }
-            System.out.println("[PASS] 统一切换: 经 Json5 切换后 Json 门面跟随");
+            log.info("[PASS] 统一切换: 经 Json5 切换后 Json 门面跟随");
             if (!"{\"provider\":\"stub\"}".equals(Json5.toJson(new User("chua", 18)))) {
-                System.out.println("[FAIL] 统一切换: Json5.toJson 未委托到桩实现");
+                log.info("[FAIL] 统一切换: Json5.toJson 未委托到桩实现");
                 System.exit(1);
             }
-            System.out.println("[PASS] 统一切换: Json5.toJson 委托到桩实现");
+            log.info("[PASS] 统一切换: Json5.toJson 委托到桩实现");
             if (!"{\"provider\":\"stub\"}".equals(Json.toJson(new User("chua", 18)))) {
-                System.out.println("[FAIL] 统一切换: Json.toJson 未跟随桩实现");
+                log.info("[FAIL] 统一切换: Json.toJson 未跟随桩实现");
                 System.exit(1);
             }
-            System.out.println("[PASS] 统一切换: Json.toJson 输出与桩一致");
+            log.info("[PASS] 统一切换: Json.toJson 输出与桩一致");
             Json.setImplementation(stub);
             if (Json5.getImplementation() != stub) {
-                System.out.println("[FAIL] 统一切换: Json.setImplementation 后 Json5 门面应跟随");
+                log.info("[FAIL] 统一切换: Json.setImplementation 后 Json5 门面应跟随");
                 System.exit(1);
             }
-            System.out.println("[PASS] 统一切换: 经 Json 切换后 Json5 门面跟随");
+            log.info("[PASS] 统一切换: 经 Json 切换后 Json5 门面跟随");
 
             Json.setImplementation(new JacksonJsonProvider());
             log.info("===== Json5 场景4: 序列化与字节数组 =====");
             String json = Json5.toJson(new User("chua", 18));
             if (!json.contains("\"name\":\"chua\"")) {
-                System.out.println("[FAIL] 序列化: 输出应包含 \"name\":\"chua\", 实际 " + json);
+                log.info("[FAIL] 序列化: 输出应包含 \"name\":\"chua\", 实际 " + json);
                 System.exit(1);
             }
-            System.out.println("[PASS] 序列化: toJson 字段名输出正确");
+            log.info("[PASS] 序列化: toJson 字段名输出正确");
             byte[] bytes = Json5.toJsonByte(new User("c", 3));
             User roundTrip = Json5.fromJson(bytes, User.class);
             if (!"c".equals(roundTrip.getName())) {
-                System.out.println("[FAIL] 序列化: 字节反序列化 name 应为 c");
+                log.info("[FAIL] 序列化: 字节反序列化 name 应为 c");
                 System.exit(1);
             }
-            System.out.println("[PASS] 序列化: toJsonByte/fromJson 往返 name=c");
+            log.info("[PASS] 序列化: toJsonByte/fromJson 往返 name=c");
             if (roundTrip.getAge() != 3) {
-                System.out.println("[FAIL] 序列化: 字节反序列化 age 应为 3");
+                log.info("[FAIL] 序列化: 字节反序列化 age 应为 3");
                 System.exit(1);
             }
-            System.out.println("[PASS] 序列化: toJsonByte/fromJson 往返 age=3");
+            log.info("[PASS] 序列化: toJsonByte/fromJson 往返 age=3");
             JsonObject obj = Json5.fromJson("{\"k\":\"v\"}".getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8);
             if (!"v".equals(obj.get("k"))) {
-                System.out.println("[FAIL] 序列化: fromJson(bytes,charset) 的 k 应为 v");
+                log.info("[FAIL] 序列化: fromJson(bytes,charset) 的 k 应为 v");
                 System.exit(1);
             }
-            System.out.println("[PASS] 序列化: fromJson(bytes,charset) 指定 UTF-8 解析");
+            log.info("[PASS] 序列化: fromJson(bytes,charset) 指定 UTF-8 解析");
 
             log.info("===== Json5 场景5: SPI 一致性 =====");
             JsonProvider byName = ServiceProvider.of(JsonProvider.class).getExtension("jackson");
             if (byName == null) {
-                System.out.println("[FAIL] SPI一致性: 名称 jackson 应可发现实现");
+                log.info("[FAIL] SPI一致性: 名称 jackson 应可发现实现");
                 System.exit(1);
             }
-            System.out.println("[PASS] SPI一致性: 名称 jackson 发现实现");
+            log.info("[PASS] SPI一致性: 名称 jackson 发现实现");
             if (!(byName instanceof JacksonJsonProvider)) {
-                System.out.println("[FAIL] SPI一致性: jackson 实现应为 JacksonJsonProvider");
+                log.info("[FAIL] SPI一致性: jackson 实现应为 JacksonJsonProvider");
                 System.exit(1);
             }
-            System.out.println("[PASS] SPI一致性: jackson 实现类型正确");
+            log.info("[PASS] SPI一致性: jackson 实现类型正确");
             if (!(Json5.getImplementation() instanceof JacksonJsonProvider)) {
-                System.out.println("[FAIL] SPI一致性: Json5 默认实现应为 JacksonJsonProvider");
+                log.info("[FAIL] SPI一致性: Json5 默认实现应为 JacksonJsonProvider");
                 System.exit(1);
             }
-            System.out.println("[PASS] SPI一致性: Json5 门面默认实现正确");
-            System.out.println("[PASS] Json5 全部场景执行完成");
+            log.info("[PASS] SPI一致性: Json5 门面默认实现正确");
+            log.info("[PASS] Json5 全部场景执行完成");
         } finally {
             Json.setImplementation(new JacksonJsonProvider());
         }

@@ -58,7 +58,7 @@ public class DockerClientExample {
             log.info("\n--- 3. 版本信息 ---");
             try {
                 var version = docker.version();
-                System.out.println("PASS: 版本=" + version.getVersion()
+                log.info("PASS: 版本=" + version.getVersion()
                         + ", API=" + version.getApiVersion()
                         + ", OS=" + version.getOperatingSystem());
             } catch (Exception e) {
@@ -71,7 +71,7 @@ public class DockerClientExample {
                 List<Container> containers = docker.container().list().all(true).execSync();
                 log.info("PASS: 共 " + containers.size() + " 个容器");
                 for (Container c : containers) {
-                    System.out.println("  - [" + c.getState() + "] " + c.getId().substring(0, 12)
+                    log.info("  - [" + c.getState() + "] " + c.getId().substring(0, 12)
                             + " " + String.join(",", c.getNames()));
                 }
             } catch (Exception e) {

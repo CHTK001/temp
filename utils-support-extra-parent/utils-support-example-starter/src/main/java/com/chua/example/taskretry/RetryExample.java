@@ -51,7 +51,7 @@ public final class RetryExample {
     private static boolean timed(String name, BooleanSupplier scenario) {
         long start = System.currentTimeMillis();
         boolean ok = scenario.getAsBoolean();
-        System.out.println("[TIME] " + name + " " + (System.currentTimeMillis() - start) + "ms");
+        log.info("[TIME] " + name + " " + (System.currentTimeMillis() - start) + "ms");
         return ok;
     }
 
@@ -62,7 +62,7 @@ public final class RetryExample {
      * @param ok   是否通过
      */
     private static void print(String name, boolean ok) {
-        System.out.println((ok ? "[PASS] " : "[FAIL] ") + name);
+        log.info((ok ? "[PASS] " : "[FAIL] ") + name);
     }
 
     /**
@@ -73,7 +73,7 @@ public final class RetryExample {
      * @return 恒为 false
      */
     private static boolean fail(String name, Exception e) {
-        System.out.println("[FAIL] " + name + " 异常: " + e);
+        log.info("[FAIL] " + name + " 异常: " + e);
         return false;
     }
 
@@ -187,10 +187,10 @@ public final class RetryExample {
         passed &= timed("nonMatchingExceptionSkipsRetry", RetryExample::nonMatchingExceptionSkipsRetry);
         passed &= timed("immediateSuccessNoRetry", RetryExample::immediateSuccessNoRetry);
         if (!passed) {
-            System.out.println("[FAIL] Retry 存在失败场景");
+            log.info("[FAIL] Retry 存在失败场景");
             System.exit(EXIT_CODE_FAILURE);
         }
-        System.out.println("[PASS] Retry 全部场景通过");
+        log.info("[PASS] Retry 全部场景通过");
         System.exit(EXIT_CODE_SUCCESS);
     }
 }

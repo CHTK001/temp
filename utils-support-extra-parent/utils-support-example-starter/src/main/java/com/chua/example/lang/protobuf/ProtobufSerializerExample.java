@@ -40,22 +40,22 @@ public final class ProtobufSerializerExample {
         Map<String, String> params = parseArgs(args);
         Example example = discover("protobuf-serializer");
         if (example == null || !"protobuf".equals(example.module())) {
-            System.out.println("[FAIL] spi-discovery: 应发现 protobuf-serializer 且 module=protobuf");
+            log.info("[FAIL] spi-discovery: 应发现 protobuf-serializer 且 module=protobuf");
             System.exit(1);
         }
-        System.out.println("[PASS] spi-discovery: " + example.getClass().getSimpleName()
+        log.info("[PASS] spi-discovery: " + example.getClass().getSimpleName()
                 + " module=" + example.module());
         if (!example.run(new LinkedHashMap<>())) {
-            System.out.println("[FAIL] run-empty: 空参数自检未通过");
+            log.info("[FAIL] run-empty: 空参数自检未通过");
             System.exit(1);
         }
-        System.out.println("[PASS] run-empty: 空参数自检通过");
+        log.info("[PASS] run-empty: 空参数自检通过");
         if (!example.run(params)) {
-            System.out.println("[FAIL] run-args: 携带自定义参数自检未通过 params=" + params);
+            log.info("[FAIL] run-args: 携带自定义参数自检未通过 params=" + params);
             System.exit(1);
         }
-        System.out.println("[PASS] run-args: 携带参数自检通过 params=" + params);
-        System.out.println("[PASS] ProtobufSerializerExample 全部场景执行完成");
+        log.info("[PASS] run-args: 携带参数自检通过 params=" + params);
+        log.info("[PASS] ProtobufSerializerExample 全部场景执行完成");
     }
 
     /**

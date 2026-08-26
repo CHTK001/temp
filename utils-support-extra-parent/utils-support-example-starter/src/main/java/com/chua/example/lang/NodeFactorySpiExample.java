@@ -41,117 +41,117 @@ public final class NodeFactorySpiExample {
         try {
             log.info("===== 节点工厂 场景1: 默认实现返回通用节点类型 =====");
             if (!(Json.createJsonObject() instanceof JsonObject)) {
-                System.out.println("[FAIL] 通用节点: Json.createJsonObject 应返回 JsonObject");
+                log.info("[FAIL] 通用节点: Json.createJsonObject 应返回 JsonObject");
                 System.exit(1);
             }
-            System.out.println("[PASS] 通用节点: Json.createJsonObject -> JsonObject");
+            log.info("[PASS] 通用节点: Json.createJsonObject -> JsonObject");
             if (!(JsonObject.create() instanceof JsonObject)) {
-                System.out.println("[FAIL] 通用节点: JsonObject.create 应返回 JsonObject");
+                log.info("[FAIL] 通用节点: JsonObject.create 应返回 JsonObject");
                 System.exit(1);
             }
-            System.out.println("[PASS] 通用节点: JsonObject.create -> JsonObject");
+            log.info("[PASS] 通用节点: JsonObject.create -> JsonObject");
             if (!(Json.createJsonObject(Map.of("a", 1)) instanceof JsonObject)) {
-                System.out.println("[FAIL] 通用节点: Json.createJsonObject(Map) 应返回 JsonObject");
+                log.info("[FAIL] 通用节点: Json.createJsonObject(Map) 应返回 JsonObject");
                 System.exit(1);
             }
-            System.out.println("[PASS] 通用节点: Json.createJsonObject(Map) -> JsonObject");
+            log.info("[PASS] 通用节点: Json.createJsonObject(Map) -> JsonObject");
             if (!(Json.createJsonArray() instanceof JsonArray)) {
-                System.out.println("[FAIL] 通用节点: Json.createJsonArray 应返回 JsonArray");
+                log.info("[FAIL] 通用节点: Json.createJsonArray 应返回 JsonArray");
                 System.exit(1);
             }
-            System.out.println("[PASS] 通用节点: Json.createJsonArray -> JsonArray");
+            log.info("[PASS] 通用节点: Json.createJsonArray -> JsonArray");
             if (!(JsonArray.of() instanceof JsonArray)) {
-                System.out.println("[FAIL] 通用节点: JsonArray.of 应返回 JsonArray");
+                log.info("[FAIL] 通用节点: JsonArray.of 应返回 JsonArray");
                 System.exit(1);
             }
-            System.out.println("[PASS] 通用节点: JsonArray.of -> JsonArray");
+            log.info("[PASS] 通用节点: JsonArray.of -> JsonArray");
             if (!(Json.createJsonArray(List.of(1, 2)) instanceof JsonArray)) {
-                System.out.println("[FAIL] 通用节点: Json.createJsonArray(Collection) 应返回 JsonArray");
+                log.info("[FAIL] 通用节点: Json.createJsonArray(Collection) 应返回 JsonArray");
                 System.exit(1);
             }
-            System.out.println("[PASS] 通用节点: Json.createJsonArray(Collection) -> JsonArray");
+            log.info("[PASS] 通用节点: Json.createJsonArray(Collection) -> JsonArray");
             if (!(Json.createJsonNode("v") instanceof JsonNode)) {
-                System.out.println("[FAIL] 通用节点: Json.createJsonNode 应返回 JsonNode");
+                log.info("[FAIL] 通用节点: Json.createJsonNode 应返回 JsonNode");
                 System.exit(1);
             }
-            System.out.println("[PASS] 通用节点: Json.createJsonNode -> JsonNode");
+            log.info("[PASS] 通用节点: Json.createJsonNode -> JsonNode");
             if (!(JsonNode.valueOf("v") instanceof JsonNode)) {
-                System.out.println("[FAIL] 通用节点: JsonNode.valueOf 应返回 JsonNode");
+                log.info("[FAIL] 通用节点: JsonNode.valueOf 应返回 JsonNode");
                 System.exit(1);
             }
-            System.out.println("[PASS] 通用节点: JsonNode.valueOf -> JsonNode");
+            log.info("[PASS] 通用节点: JsonNode.valueOf -> JsonNode");
 
             log.info("===== 节点工厂 场景2: 切换实现后返回节点子类 =====");
             Json.setImplementation(new StubNodeProvider());
             if (!(Json.createJsonObject() instanceof StubJsonObject)) {
-                System.out.println("[FAIL] 实现切换: Json.createJsonObject 应返回 StubJsonObject");
+                log.info("[FAIL] 实现切换: Json.createJsonObject 应返回 StubJsonObject");
                 System.exit(1);
             }
-            System.out.println("[PASS] 实现切换: 门面委托 Json.createJsonObject -> StubJsonObject");
+            log.info("[PASS] 实现切换: 门面委托 Json.createJsonObject -> StubJsonObject");
             if (!(Json.createJsonArray() instanceof StubJsonArray)) {
-                System.out.println("[FAIL] 实现切换: Json.createJsonArray 应返回 StubJsonArray");
+                log.info("[FAIL] 实现切换: Json.createJsonArray 应返回 StubJsonArray");
                 System.exit(1);
             }
-            System.out.println("[PASS] 实现切换: 门面委托 Json.createJsonArray -> StubJsonArray");
+            log.info("[PASS] 实现切换: 门面委托 Json.createJsonArray -> StubJsonArray");
             if (!(Json.createJsonNode("v") instanceof StubJsonNode)) {
-                System.out.println("[FAIL] 实现切换: Json.createJsonNode 应返回 StubJsonNode");
+                log.info("[FAIL] 实现切换: Json.createJsonNode 应返回 StubJsonNode");
                 System.exit(1);
             }
-            System.out.println("[PASS] 实现切换: 门面委托 Json.createJsonNode -> StubJsonNode");
+            log.info("[PASS] 实现切换: 门面委托 Json.createJsonNode -> StubJsonNode");
             if (!(JsonObject.create() instanceof StubJsonObject)) {
-                System.out.println("[FAIL] 实现切换: JsonObject.create 应返回 StubJsonObject");
+                log.info("[FAIL] 实现切换: JsonObject.create 应返回 StubJsonObject");
                 System.exit(1);
             }
-            System.out.println("[PASS] 实现切换: 静态工厂 JsonObject.create -> StubJsonObject");
+            log.info("[PASS] 实现切换: 静态工厂 JsonObject.create -> StubJsonObject");
             if (!(JsonArray.of() instanceof StubJsonArray)) {
-                System.out.println("[FAIL] 实现切换: JsonArray.of 应返回 StubJsonArray");
+                log.info("[FAIL] 实现切换: JsonArray.of 应返回 StubJsonArray");
                 System.exit(1);
             }
-            System.out.println("[PASS] 实现切换: 静态工厂 JsonArray.of -> StubJsonArray");
+            log.info("[PASS] 实现切换: 静态工厂 JsonArray.of -> StubJsonArray");
             if (!(JsonNode.valueOf("v") instanceof StubJsonNode)) {
-                System.out.println("[FAIL] 实现切换: JsonNode.valueOf 应返回 StubJsonNode");
+                log.info("[FAIL] 实现切换: JsonNode.valueOf 应返回 StubJsonNode");
                 System.exit(1);
             }
-            System.out.println("[PASS] 实现切换: 静态工厂 JsonNode.valueOf -> StubJsonNode");
+            log.info("[PASS] 实现切换: 静态工厂 JsonNode.valueOf -> StubJsonNode");
             JsonObject obj = Json.getJsonObject("{\"child\":{\"k\":1}}");
             if (!(obj.getJsonObject("child") instanceof StubJsonObject)) {
-                System.out.println("[FAIL] 实现切换: 嵌套导航 Map 包装应走节点工厂返回 StubJsonObject");
+                log.info("[FAIL] 实现切换: 嵌套导航 Map 包装应走节点工厂返回 StubJsonObject");
                 System.exit(1);
             }
-            System.out.println("[PASS] 实现切换: 嵌套导航 getJsonObject(child) -> StubJsonObject");
+            log.info("[PASS] 实现切换: 嵌套导航 getJsonObject(child) -> StubJsonObject");
             if (!(Json.parse("{\"a\":1}") instanceof StubJsonNode)) {
-                System.out.println("[FAIL] 实现切换: Json.parse 应返回 StubJsonNode");
+                log.info("[FAIL] 实现切换: Json.parse 应返回 StubJsonNode");
                 System.exit(1);
             }
-            System.out.println("[PASS] 实现切换: 解析路径 Json.parse -> StubJsonNode");
+            log.info("[PASS] 实现切换: 解析路径 Json.parse -> StubJsonNode");
             if (!(Json.build() instanceof StubJsonNode)) {
-                System.out.println("[FAIL] 实现切换: Json.build 应返回 StubJsonNode");
+                log.info("[FAIL] 实现切换: Json.build 应返回 StubJsonNode");
                 System.exit(1);
             }
-            System.out.println("[PASS] 实现切换: 构建路径 Json.build -> StubJsonNode");
+            log.info("[PASS] 实现切换: 构建路径 Json.build -> StubJsonNode");
             if (!(Json.buildArray() instanceof StubJsonNode)) {
-                System.out.println("[FAIL] 实现切换: Json.buildArray 应返回 StubJsonNode");
+                log.info("[FAIL] 实现切换: Json.buildArray 应返回 StubJsonNode");
                 System.exit(1);
             }
-            System.out.println("[PASS] 实现切换: 构建路径 Json.buildArray -> StubJsonNode");
+            log.info("[PASS] 实现切换: 构建路径 Json.buildArray -> StubJsonNode");
 
             log.info("===== 节点工厂 场景3: Json5 门面共享节点工厂 =====");
             if (!(Json5.getJsonObject("{\"a\":1}") instanceof StubJsonObject)) {
-                System.out.println("[FAIL] Json5共享: Json5.getJsonObject 应返回 StubJsonObject");
+                log.info("[FAIL] Json5共享: Json5.getJsonObject 应返回 StubJsonObject");
                 System.exit(1);
             }
-            System.out.println("[PASS] Json5共享: Json5.getJsonObject -> StubJsonObject");
+            log.info("[PASS] Json5共享: Json5.getJsonObject -> StubJsonObject");
             if (!(Json5.getJsonArray("[1,2]") instanceof StubJsonArray)) {
-                System.out.println("[FAIL] Json5共享: Json5.getJsonArray 应返回 StubJsonArray");
+                log.info("[FAIL] Json5共享: Json5.getJsonArray 应返回 StubJsonArray");
                 System.exit(1);
             }
-            System.out.println("[PASS] Json5共享: Json5.getJsonArray -> StubJsonArray");
+            log.info("[PASS] Json5共享: Json5.getJsonArray -> StubJsonArray");
             if (Json.getImplementation() != Json5.getImplementation()) {
-                System.out.println("[FAIL] Json5共享: Json 与 Json5 门面实现应一致");
+                log.info("[FAIL] Json5共享: Json 与 Json5 门面实现应一致");
                 System.exit(1);
             }
-            System.out.println("[PASS] Json5共享: Json 与 Json5 实现一致");
-            System.out.println("[PASS] 节点工厂 全部场景执行完成");
+            log.info("[PASS] Json5共享: Json 与 Json5 实现一致");
+            log.info("[PASS] 节点工厂 全部场景执行完成");
         } finally {
             Json.setImplementation(new JacksonJsonProvider());
         }

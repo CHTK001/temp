@@ -66,10 +66,10 @@ public class YunxiaoClientExample {
             scene = "远端链路";
         }
         if (!passed) {
-            System.out.println("[FAIL] yunxiao " + scene);
+            log.info("[FAIL] yunxiao " + scene);
             System.exit(1);
         }
-        System.out.println("[PASS] yunxiao " + scene);
+        log.info("[PASS] yunxiao " + scene);
     }
 
     /**

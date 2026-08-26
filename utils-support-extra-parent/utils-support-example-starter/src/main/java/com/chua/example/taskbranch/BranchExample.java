@@ -67,10 +67,10 @@ public final class BranchExample {
         passed &= afterBranchResetsScopeAndPassesResult();
         passed &= sequentialWhensAreIndependentGuards();
         if (!passed) {
-            System.out.println("[FAIL] Branch 存在失败场景");
+            log.info("[FAIL] Branch 存在失败场景");
             System.exit(EXIT_CODE_FAILURE);
         } else {
-            System.out.println("[PASS] Branch 全部场景通过");
+            log.info("[PASS] Branch 全部场景通过");
         }
         System.exit(EXIT_CODE_SUCCESS);
     }
@@ -324,7 +324,7 @@ public final class BranchExample {
             print(name, ok);
             return ok;
         } catch (AssertionError e) {
-            System.out.println("[FAIL] " + name + ": " + e.getMessage());
+            log.info("[FAIL] " + name + ": " + e.getMessage());
             return false;
         }
     }
@@ -362,7 +362,7 @@ public final class BranchExample {
             print(name, true);
             return true;
         } catch (AssertionError e) {
-            System.out.println("[FAIL] " + name + ": " + e.getMessage());
+            log.info("[FAIL] " + name + ": " + e.getMessage());
             return false;
         }
     }
@@ -475,7 +475,7 @@ public final class BranchExample {
      * @param ok   是否通过
      */
     private static void print(String name, boolean ok) {
-        System.out.println((ok ? "[PASS] " : "[FAIL] ") + name);
+        log.info((ok ? "[PASS] " : "[FAIL] ") + name);
     }
 
     /**
@@ -486,7 +486,7 @@ public final class BranchExample {
      * @return 恒为 false
      */
     private static boolean fail(String name, Exception e) {
-        System.out.println("[FAIL] " + name + ": " + e.getMessage());
+        log.info("[FAIL] " + name + ": " + e.getMessage());
         return false;
     }
 

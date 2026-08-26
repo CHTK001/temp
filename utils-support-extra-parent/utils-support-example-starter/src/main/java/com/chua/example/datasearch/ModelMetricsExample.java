@@ -75,9 +75,9 @@ public final class ModelMetricsExample {
                 System.out.printf("%-18s %7s %8d   %s%n", name, "ERR", "-", "[FAIL] " + t.getMessage());
             }
         }
-        System.out.println("[PASS] 实测完成, 共 " + total + " 个实现");
+        log.info("[PASS] 实测完成, 共 " + total + " 个实现");
         if (failures > 0) {
-            System.out.println("[FAIL] 异常实现数: " + failures);
+            log.info("[FAIL] 异常实现数: " + failures);
             System.exit(1);
             return;
         }

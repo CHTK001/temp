@@ -39,78 +39,78 @@ public final class FieldStationExample {
      */
     public static void main(String[] args) {
         if (!runCamelCaseRead()) {
-            System.out.println("[FAIL] camelCase-read");
+            log.info("[FAIL] camelCase-read");
             System.exit(1);
         } else {
-            System.out.println("[PASS] camelCase-read");
+            log.info("[PASS] camelCase-read");
         }
         if (!runAlreadyLowerCase()) {
-            System.out.println("[FAIL] already-lowercase");
+            log.info("[FAIL] already-lowercase");
             System.exit(1);
         } else {
-            System.out.println("[PASS] already-lowercase");
+            log.info("[PASS] already-lowercase");
         }
         if (!runSetPascalCase()) {
-            System.out.println("[FAIL] set-pascal-case");
+            log.info("[FAIL] set-pascal-case");
             System.exit(1);
         } else {
-            System.out.println("[PASS] set-pascal-case");
+            log.info("[PASS] set-pascal-case");
         }
         if (!runSetCamelCase()) {
-            System.out.println("[FAIL] set-camel-case");
+            log.info("[FAIL] set-camel-case");
             System.exit(1);
         } else {
-            System.out.println("[PASS] set-camel-case");
+            log.info("[PASS] set-camel-case");
         }
         if (!runGetNonExistent()) {
-            System.out.println("[FAIL] get-non-existent");
+            log.info("[FAIL] get-non-existent");
             System.exit(1);
         } else {
-            System.out.println("[PASS] get-non-existent");
+            log.info("[PASS] get-non-existent");
         }
         if (!runSetNonExistent()) {
-            System.out.println("[FAIL] set-non-existent");
+            log.info("[FAIL] set-non-existent");
             System.exit(1);
         } else {
-            System.out.println("[PASS] set-non-existent");
+            log.info("[PASS] set-non-existent");
         }
         if (!runSetNull()) {
-            System.out.println("[FAIL] set-null");
+            log.info("[FAIL] set-null");
             System.exit(1);
         } else {
-            System.out.println("[PASS] set-null");
+            log.info("[PASS] set-null");
         }
         if (!runInheritedRead()) {
-            System.out.println("[FAIL] inherited-read");
+            log.info("[FAIL] inherited-read");
             System.exit(1);
         } else {
-            System.out.println("[PASS] inherited-read");
+            log.info("[PASS] inherited-read");
         }
         if (!runInheritedWrite()) {
-            System.out.println("[FAIL] inherited-write");
+            log.info("[FAIL] inherited-write");
             System.exit(1);
         } else {
-            System.out.println("[PASS] inherited-write");
+            log.info("[PASS] inherited-write");
         }
         if (!runOfNull()) {
-            System.out.println("[FAIL] of-null");
+            log.info("[FAIL] of-null");
             System.exit(1);
         } else {
-            System.out.println("[PASS] of-null");
+            log.info("[PASS] of-null");
         }
         if (!runOfClass()) {
-            System.out.println("[FAIL] of-class");
+            log.info("[FAIL] of-class");
             System.exit(1);
         } else {
-            System.out.println("[PASS] of-class");
+            log.info("[PASS] of-class");
         }
         if (!runCacheEffectiveness()) {
-            System.out.println("[FAIL] cache-effectiveness");
+            log.info("[FAIL] cache-effectiveness");
             System.exit(1);
         } else {
-            System.out.println("[PASS] cache-effectiveness");
+            log.info("[PASS] cache-effectiveness");
         }
-        System.out.println("[PASS] field-station 全部 12 个场景通过");
+        log.info("[PASS] field-station 全部 12 个场景通过");
     }
 
     /**

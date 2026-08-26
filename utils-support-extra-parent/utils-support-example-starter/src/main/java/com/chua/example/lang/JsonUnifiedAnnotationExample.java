@@ -42,69 +42,69 @@ public final class JsonUnifiedAnnotationExample {
             LocalDateTime time = LocalDateTime.of(2026, 8, 15, 12, 30, 0);
             String json = Json.toJson(new Order("A001", "secret", time, 99.5));
             if (!json.contains("\"order_id\":\"A001\"")) {
-                System.out.println("[FAIL] 注解适配: 应使用 @JsonName 指定的字段名 order_id, 实际 " + json);
+                log.info("[FAIL] 注解适配: 应使用 @JsonName 指定的字段名 order_id, 实际 " + json);
                 System.exit(1);
             }
-            System.out.println("[PASS] 注解适配: @JsonName 重命名 -> order_id");
+            log.info("[PASS] 注解适配: @JsonName 重命名 -> order_id");
             if (json.contains("internal")) {
-                System.out.println("[FAIL] 注解适配: 被 @JsonIgnore 标记的字段不应序列化, 实际 " + json);
+                log.info("[FAIL] 注解适配: 被 @JsonIgnore 标记的字段不应序列化, 实际 " + json);
                 System.exit(1);
             }
-            System.out.println("[PASS] 注解适配: @JsonIgnore 字段被排除");
+            log.info("[PASS] 注解适配: @JsonIgnore 字段被排除");
             if (!json.contains("\"createTime\":\"2026-08-15 12:30:00\"")) {
-                System.out.println("[FAIL] 注解适配: 应使用 @JsonFormat 格式化时间, 实际 " + json);
+                log.info("[FAIL] 注解适配: 应使用 @JsonFormat 格式化时间, 实际 " + json);
                 System.exit(1);
             }
-            System.out.println("[PASS] 注解适配: @JsonFormat 时间格式 yyyy-MM-dd HH:mm:ss");
+            log.info("[PASS] 注解适配: @JsonFormat 时间格式 yyyy-MM-dd HH:mm:ss");
             Order order = Json.fromJson(
                     "{\"order_id\":\"A001\",\"internal\":\"x\",\"createTime\":\"2026-08-15 12:30:00\",\"amount\":99.5}",
                     Order.class);
             if (!"A001".equals(order.getOrderId())) {
-                System.out.println("[FAIL] 注解适配: 反序列化 orderId 应为 A001");
+                log.info("[FAIL] 注解适配: 反序列化 orderId 应为 A001");
                 System.exit(1);
             }
-            System.out.println("[PASS] 注解适配: 反序列化 @JsonName 字段 -> A001");
+            log.info("[PASS] 注解适配: 反序列化 @JsonName 字段 -> A001");
             if (order.getInternal() != null) {
-                System.out.println("[FAIL] 注解适配: 反序列化后 @JsonIgnore 字段应为 null");
+                log.info("[FAIL] 注解适配: 反序列化后 @JsonIgnore 字段应为 null");
                 System.exit(1);
             }
-            System.out.println("[PASS] 注解适配: 反序列化 @JsonIgnore 字段为 null");
+            log.info("[PASS] 注解适配: 反序列化 @JsonIgnore 字段为 null");
             if (!time.equals(order.getCreateTime())) {
-                System.out.println("[FAIL] 注解适配: 反序列化 createTime 应为 " + time);
+                log.info("[FAIL] 注解适配: 反序列化 createTime 应为 " + time);
                 System.exit(1);
             }
-            System.out.println("[PASS] 注解适配: 反序列化 @JsonFormat 时间还原");
+            log.info("[PASS] 注解适配: 反序列化 @JsonFormat 时间还原");
             if (Math.abs(order.getAmount() - 99.5) > 0.001) {
-                System.out.println("[FAIL] 注解适配: 反序列化 amount 应为 99.5");
+                log.info("[FAIL] 注解适配: 反序列化 amount 应为 99.5");
                 System.exit(1);
             }
-            System.out.println("[PASS] 注解适配: 反序列化普通字段 amount=99.5");
+            log.info("[PASS] 注解适配: 反序列化普通字段 amount=99.5");
 
             log.info("===== 统一注解 场景2: JsonBeanMapper 桥接器 =====");
             LocalDateTime bridgeTime = LocalDateTime.of(2026, 8, 15, 12, 30, 0);
             Order source = new Order("A002", "secret", bridgeTime, 10.0);
             Object mapped = JsonBeanMapper.toMap(source);
             if (!(mapped instanceof Map)) {
-                System.out.println("[FAIL] 桥接器: toMap 应返回 Map 类型");
+                log.info("[FAIL] 桥接器: toMap 应返回 Map 类型");
                 System.exit(1);
             }
-            System.out.println("[PASS] 桥接器: toMap 返回 Map");
+            log.info("[PASS] 桥接器: toMap 返回 Map");
             Map<String, Object> map = (Map<String, Object>) mapped;
             if (!"A002".equals(map.get("order_id"))) {
-                System.out.println("[FAIL] 桥接器: map.order_id 应为 A002");
+                log.info("[FAIL] 桥接器: map.order_id 应为 A002");
                 System.exit(1);
             }
-            System.out.println("[PASS] 桥接器: @JsonName 字段名 -> order_id=A002");
+            log.info("[PASS] 桥接器: @JsonName 字段名 -> order_id=A002");
             if (map.containsKey("internal")) {
-                System.out.println("[FAIL] 桥接器: @JsonIgnore 字段不应出现在 Map 中");
+                log.info("[FAIL] 桥接器: @JsonIgnore 字段不应出现在 Map 中");
                 System.exit(1);
             }
-            System.out.println("[PASS] 桥接器: @JsonIgnore 字段被排除");
+            log.info("[PASS] 桥接器: @JsonIgnore 字段被排除");
             if (!"2026-08-15 12:30:00".equals(map.get("createTime"))) {
-                System.out.println("[FAIL] 桥接器: map.createTime 应按 @JsonFormat 格式化为字符串");
+                log.info("[FAIL] 桥接器: map.createTime 应按 @JsonFormat 格式化为字符串");
                 System.exit(1);
             }
-            System.out.println("[PASS] 桥接器: @JsonFormat 时间格式化 -> 2026-08-15 12:30:00");
+            log.info("[PASS] 桥接器: @JsonFormat 时间格式化 -> 2026-08-15 12:30:00");
 
             log.info("----- 统一注解 场景2: fromMap 反向填充 -----");
             Map<String, Object> fillSource = new LinkedHashMap<>();
@@ -114,28 +114,28 @@ public final class JsonUnifiedAnnotationExample {
             fillSource.put("amount", 20.0);
             Order restored = JsonBeanMapper.fromMap(fillSource, Order.class);
             if (!"A003".equals(restored.getOrderId())) {
-                System.out.println("[FAIL] 反向填充: orderId 应为 A003");
+                log.info("[FAIL] 反向填充: orderId 应为 A003");
                 System.exit(1);
             }
-            System.out.println("[PASS] 反向填充: @JsonName 字段映射 -> A003");
+            log.info("[PASS] 反向填充: @JsonName 字段映射 -> A003");
             if (restored.getInternal() != null) {
-                System.out.println("[FAIL] 反向填充: @JsonIgnore 字段不应被注入");
+                log.info("[FAIL] 反向填充: @JsonIgnore 字段不应被注入");
                 System.exit(1);
             }
-            System.out.println("[PASS] 反向填充: @JsonIgnore 字段保持 null");
+            log.info("[PASS] 反向填充: @JsonIgnore 字段保持 null");
             LocalDateTime expected = LocalDateTime.parse("2026-08-15 12:30:00",
                     DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             if (!expected.equals(restored.getCreateTime())) {
-                System.out.println("[FAIL] 反向填充: createTime 应解析为 " + expected);
+                log.info("[FAIL] 反向填充: createTime 应解析为 " + expected);
                 System.exit(1);
             }
-            System.out.println("[PASS] 反向填充: @JsonFormat 时间字符串解析还原");
+            log.info("[PASS] 反向填充: @JsonFormat 时间字符串解析还原");
             if (Math.abs(restored.getAmount() - 20.0) > 0.001) {
-                System.out.println("[FAIL] 反向填充: amount 应为 20.0");
+                log.info("[FAIL] 反向填充: amount 应为 20.0");
                 System.exit(1);
             }
-            System.out.println("[PASS] 反向填充: 普通字段 amount=20.0");
-            System.out.println("[PASS] 统一注解 全部场景执行完成");
+            log.info("[PASS] 反向填充: 普通字段 amount=20.0");
+            log.info("[PASS] 统一注解 全部场景执行完成");
         } finally {
             Json.setImplementation(new com.chua.common.support.lang.json.JacksonJsonProvider());
         }

@@ -37,10 +37,10 @@ public final class JdkImageProcessorEdgeExample {
     public static void main(String[] args) throws IOException {
         JdkImageProcessor processor = new JdkImageProcessor();
         if (!processor.available()) {
-            System.out.println("[FAIL] jdk-processor-unavailable");
+            log.info("[FAIL] jdk-processor-unavailable");
             System.exit(1);
         }
-        System.out.println("[PASS] jdk-processor-ready name=" + processor.name());
+        log.info("[PASS] jdk-processor-ready name=" + processor.name());
 
         byte[] input = buildEdgeTestImagePng();
         log.info("[input] generated png " + input.length + " B");
@@ -48,17 +48,17 @@ public final class JdkImageProcessorEdgeExample {
         String[] directions = {"both", "h", "v"};
         for (String direction : directions) {
             if (!runEdge(processor, input, direction)) {
-                System.out.println("[FAIL] jdk-edge-" + direction);
+                log.info("[FAIL] jdk-edge-" + direction);
                 System.exit(1);
             }
-            System.out.println("[PASS] jdk-edge-" + direction);
+            log.info("[PASS] jdk-edge-" + direction);
         }
 
         if (!runEdge(processor, input, null)) {
-            System.out.println("[FAIL] jdk-edge-default");
+            log.info("[FAIL] jdk-edge-default");
             System.exit(1);
         }
-        System.out.println("[PASS] jdk-edge-default");
+        log.info("[PASS] jdk-edge-default");
     }
 
     /**
@@ -88,7 +88,7 @@ public final class JdkImageProcessorEdgeExample {
                 log.info("  fail edge[direction=" + label + "] invalid-image");
                 return false;
             }
-            System.out.println("  ok edge[direction=" + label + "] " + result.length + " B "
+            log.info("  ok edge[direction=" + label + "] " + result.length + " B "
                     + img.getWidth() + "x" + img.getHeight() + " " + elapsed + "ms");
             return true;
         } catch (IOException | RuntimeException e) {

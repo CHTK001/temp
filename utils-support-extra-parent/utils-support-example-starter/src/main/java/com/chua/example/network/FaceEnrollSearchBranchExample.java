@@ -77,39 +77,39 @@ public class FaceEnrollSearchBranchExample {
         Map<String, Object> meta = new HashMap<>();
         meta.put("domain", "real");
         boolean manEnrolled = face.enrollPipeline("man-01", manBytes, meta);
-        System.out.println((manEnrolled ? "[PASS]" : "[FAIL]") + " A1 入库真人 man-01: " + manEnrolled);
+        log.info((manEnrolled ? "[PASS]" : "[FAIL]") + " A1 入库真人 man-01: " + manEnrolled);
         allOk &= manEnrolled;
 
         Map<String, Object> meta2 = new HashMap<>();
         meta2.put("domain", "anime");
         boolean animeEnrolled = face.enrollPipeline("anime-01", animeFace1, meta2);
-        System.out.println((animeEnrolled ? "[PASS]" : "[FAIL]") + " A2 入库动漫 anime-01: " + animeEnrolled);
+        log.info((animeEnrolled ? "[PASS]" : "[FAIL]") + " A2 入库动漫 anime-01: " + animeEnrolled);
         allOk &= animeEnrolled;
 
         /* ── ② 同图回查（top1 命中本人）── */
         String manTop = top1Id(face, manBytes);
         boolean manHit = "man-01".equals(manTop);
-        System.out.println((manHit ? "[PASS]" : "[FAIL]") + " A3 真人同图回查 top1=" + manTop);
+        log.info((manHit ? "[PASS]" : "[FAIL]") + " A3 真人同图回查 top1=" + manTop);
         printTopScores(face, manBytes);
         allOk &= manHit;
 
         String animeTop = top1Id(face, animeFace1);
         boolean animeHit = "anime-01".equals(animeTop);
-        System.out.println((animeHit ? "[PASS]" : "[FAIL]") + " A4 动漫同图回查 top1=" + animeTop);
+        log.info((animeHit ? "[PASS]" : "[FAIL]") + " A4 动漫同图回查 top1=" + animeTop);
         printTopScores(face, animeFace1);
         allOk &= animeHit;
 
         /* ── ③ 跨域隔离（动漫样本不得命中真人 id，反之亦然）── */
         String anime2Top = top1Id(face, animeFace2);
         boolean isolated1 = !"man-01".equals(anime2Top);
-        System.out.println((isolated1 ? "[PASS]" : "[FAIL]") + " A5 动漫样本二检索 top1=" + anime2Top + "（不串真人域）");
+        log.info((isolated1 ? "[PASS]" : "[FAIL]") + " A5 动漫样本二检索 top1=" + anime2Top + "（不串真人域）");
         printTopScores(face, animeFace2);
         allOk &= isolated1;
 
         byte[] selfie = Files.readAllBytes(Path.of("D:\\images\\largest_selfie.jpg"));
         String selfieTop = top1Id(face, selfie);
         boolean isolated2 = !"anime-01".equals(selfieTop);
-        System.out.println((isolated2 ? "[PASS]" : "[FAIL]") + " A6 真人自拍检索 top1=" + selfieTop + "（不串动漫域）");
+        log.info((isolated2 ? "[PASS]" : "[FAIL]") + " A6 真人自拍检索 top1=" + selfieTop + "（不串动漫域）");
         printTopScores(face, selfie);
         allOk &= isolated2;
 
@@ -128,12 +128,12 @@ public class FaceEnrollSearchBranchExample {
                     .target(scene).boxes(boxes, labels).done();
             Path out = Path.of(OUTPUT_DIR + "anime.jpg");
             Files.write(out, drawn);
-            System.out.println("[PASS] A7 多脸场景最大脸检测: "
+            log.info("[PASS] A7 多脸场景最大脸检测: "
                     + Math.round(largest.box().width()) + "x"
                     + Math.round(largest.box().height())
                     + " -> " + out);
         } else {
-            System.out.println("[FAIL] A7 多脸场景最大脸检测: 无检出");
+            log.info("[FAIL] A7 多脸场景最大脸检测: 无检出");
             allOk = false;
         }
 

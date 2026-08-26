@@ -137,10 +137,10 @@ public final class TreeUtilsExample {
         passed &= timed("flattenPreOrder", TreeUtilsExample::flattenPreOrder);
         passed &= timed("depthCalculation", TreeUtilsExample::depthCalculation);
         if (!passed) {
-            System.out.println("[FAIL] TreeUtils 存在失败场景");
+            log.info("[FAIL] TreeUtils 存在失败场景");
             System.exit(EXIT_CODE_FAILURE);
         }
-        System.out.println("[PASS] TreeUtils 全部场景通过");
+        log.info("[PASS] TreeUtils 全部场景通过");
         System.exit(EXIT_CODE_SUCCESS);
     }
 
@@ -438,7 +438,7 @@ public final class TreeUtilsExample {
      * @param ok   是否通过
      */
     private static void print(String name, boolean ok) {
-        System.out.println((ok ? "[PASS] " : "[FAIL] ") + name);
+        log.info((ok ? "[PASS] " : "[FAIL] ") + name);
     }
 
     /**
@@ -449,7 +449,7 @@ public final class TreeUtilsExample {
      * @return 恒为 false
      */
     private static boolean fail(String name, Exception e) {
-        System.out.println("[FAIL] " + name + " 异常: " + e);
+        log.info("[FAIL] " + name + " 异常: " + e);
         return false;
     }
 
@@ -461,7 +461,7 @@ public final class TreeUtilsExample {
      * @return 恒为 false
      */
     private static boolean fail(String name, String msg) {
-        System.out.println("[FAIL] " + name + ": " + msg);
+        log.info("[FAIL] " + name + ": " + msg);
         return false;
     }
 }

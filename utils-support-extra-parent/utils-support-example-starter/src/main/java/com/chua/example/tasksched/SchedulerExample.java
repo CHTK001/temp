@@ -13,6 +13,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BooleanSupplier;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 调度器全场景自检示例：Cron 表达式解析、三种触发器的触发时间推算、
@@ -26,6 +27,7 @@ import java.util.function.BooleanSupplier;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class SchedulerExample {
 
     /**
@@ -51,7 +53,7 @@ public final class SchedulerExample {
      * @param ok   是否通过
      */
     private static void print(String name, boolean ok) {
-        System.out.println((ok ? "[PASS] " : "[FAIL] ") + name);
+        log.info((ok ? "[PASS] " : "[FAIL] ") + name);
     }
 
     /**
@@ -62,7 +64,7 @@ public final class SchedulerExample {
      * @return 恒为 false
      */
     private static boolean fail(String name, Exception e) {
-        System.out.println("[FAIL] " + name + " 异常: " + e);
+        log.info("[FAIL] " + name + " 异常: " + e);
         return false;
     }
 
@@ -182,10 +184,10 @@ public final class SchedulerExample {
         passed &= timed("fixedIntervalTriggers", SchedulerExample::fixedIntervalTriggers);
         passed &= timed("providerLifecycle", SchedulerExample::providerLifecycle);
         if (!passed) {
-            System.out.println("[FAIL] Scheduler 存在失败场景");
+            log.info("[FAIL] Scheduler 存在失败场景");
             System.exit(EXIT_CODE_FAILURE);
         }
-        System.out.println("[PASS] Scheduler 全部场景通过");
+        log.info("[PASS] Scheduler 全部场景通过");
         System.exit(EXIT_CODE_SUCCESS);
     }
 
@@ -199,7 +201,7 @@ public final class SchedulerExample {
     private static boolean timed(String name, BooleanSupplier scenario) {
         long start = System.currentTimeMillis();
         boolean ok = scenario.getAsBoolean();
-        System.out.println("[TIME] " + name + " " + (System.currentTimeMillis() - start) + "ms");
+        log.info("[TIME] " + name + " " + (System.currentTimeMillis() - start) + "ms");
         return ok;
     }
 }

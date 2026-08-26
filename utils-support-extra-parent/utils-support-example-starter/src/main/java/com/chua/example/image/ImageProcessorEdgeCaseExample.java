@@ -46,17 +46,17 @@ public final class ImageProcessorEdgeCaseExample {
         log.info("[input] generated png " + input.length + " B");
 
         if (impls.isEmpty()) {
-            System.out.println("[FAIL] processor-discovery");
+            log.info("[FAIL] processor-discovery");
             System.exit(1);
         }
-        System.out.println("[PASS] processor-discovery count=" + impls.size());
+        log.info("[PASS] processor-discovery count=" + impls.size());
 
         int failCount = runAllEdges(input, impls);
         if (failCount > 0) {
-            System.out.println("[FAIL] edge-all-implementations failedCases=" + failCount);
+            log.info("[FAIL] edge-all-implementations failedCases=" + failCount);
             System.exit(1);
         }
-        System.out.println("[PASS] edge-all-implementations");
+        log.info("[PASS] edge-all-implementations");
     }
 
     /**
@@ -184,7 +184,7 @@ public final class ImageProcessorEdgeCaseExample {
                 log.info("  fail edge[" + label + "] invalid-image");
                 return false;
             }
-            System.out.println("  ok edge[" + label + "] " + result.length + " B "
+            log.info("  ok edge[" + label + "] " + result.length + " B "
                     + img.getWidth() + "x" + img.getHeight() + " " + elapsed + "ms");
             return true;
         } catch (IOException | RuntimeException e) {

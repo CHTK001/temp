@@ -48,7 +48,7 @@ public final class ImageColorizeExample {
             System.err.println("[FAIL] ImageColorizeTranslator 创建失败: " + e.getMessage());
             System.exit(1);
         }
-        System.out.println("[PASS] image-colorize 嵌入式权重就绪且 Translator 创建成功");
+        log.info("[PASS] image-colorize 嵌入式权重就绪且 Translator 创建成功");
 
         // 真实推理模式：--input=<灰度图> [--output=<彩色输出>]
         String input = null;
@@ -76,7 +76,7 @@ public final class ImageColorizeExample {
                     System.exit(1);
                 }
                 log.info("[OK] 上色完成 -> " + outPath + " (" + (size / 1024) + " KB)");
-                System.out.println("[PASS] 推理链路完整");
+                log.info("[PASS] 推理链路完整");
                 System.exit(0);
             } catch (Exception e) {
                 System.err.println("[FAIL] 推理失败: " + e.getMessage());

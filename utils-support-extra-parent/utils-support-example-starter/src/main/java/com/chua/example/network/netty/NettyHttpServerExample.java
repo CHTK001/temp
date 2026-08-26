@@ -34,10 +34,10 @@ public class NettyHttpServerExample {
         log.info("[NETTY-HTTP] 启动参数 {}", parsed);
         boolean passed = new NettyHttpServerExampleSpi().run(parsed);
         if (!passed) {
-            System.out.println("[FAIL] netty-http 演示未全部通过");
+            log.info("[FAIL] netty-http 演示未全部通过");
             System.exit(1);
         }
-        System.out.println("[PASS] netty-http 演示全部通过");
+        log.info("[PASS] netty-http 演示全部通过");
     }
 
     /**

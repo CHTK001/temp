@@ -88,13 +88,13 @@ public final class PocketTtsEdgeCaseExample {
         gated("synthesize.emptyTextThrows", PocketTtsEdgeCaseExample::t25);
         gated("synthesize.withRefAudio", PocketTtsEdgeCaseExample::t26);
 
-        System.out.println("===== 汇总 通过=" + passed + " 跳过=" + SKIPPED.size()
+        log.info("===== 汇总 通过=" + passed + " 跳过=" + SKIPPED.size()
                 + " 失败=" + FAILURES.size() + " =====");
         for (String s : SKIPPED) {
             log.info("  [SKIP] " + s);
         }
         for (String f : FAILURES) {
-            System.out.println("  [FAIL] " + f);
+            log.info("  [FAIL] " + f);
         }
         System.exit(FAILURES.isEmpty() ? 0 : 1);
     }
@@ -108,10 +108,10 @@ public final class PocketTtsEdgeCaseExample {
         try {
             check.run();
             passed++;
-            System.out.println("[PASS] " + name);
+            log.info("[PASS] " + name);
         } catch (Throwable t) {
             FAILURES.add(name + " -> " + t);
-            System.out.println("[FAIL] " + name + " -> " + t);
+            log.info("[FAIL] " + name + " -> " + t);
         }
     }
 

@@ -131,7 +131,7 @@ public final class TtsBenchmarkExample {
                 compare(mms::synthesize, pocket::synthesize, text);
             }
             if (failures == 0) {
-                System.out.println("[PASS]");
+                log.info("[PASS]");
             } else {
                 System.err.println("[FAIL] " + failures + " 个引擎基准未达标");
                 code = 1;
@@ -180,7 +180,7 @@ public final class TtsBenchmarkExample {
         System.out.printf("%-20s %-15.4f %-15.4f%n", "RTF", m.rtf(), p.rtf());
         System.out.printf("%-20s %-15.2f %-15.2f%n", "Audio Duration (s)", m.audioDuration(), p.audioDuration());
         System.out.printf("%-20s %-15d %-15d%n", "WAV Size (bytes)", m.wavSize(), p.wavSize());
-        System.out.println((p.rtf() < m.rtf()
+        log.info((p.rtf() < m.rtf()
                 ? "\n✅ PocketTTS 快 " + String.format("%.1fx", m.rtf() / p.rtf())
                 : "\n✅ MMS-TTS 快 " + String.format("%.1fx", p.rtf() / m.rtf())));
     }

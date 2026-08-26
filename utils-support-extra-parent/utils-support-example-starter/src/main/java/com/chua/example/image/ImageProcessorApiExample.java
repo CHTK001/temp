@@ -30,24 +30,24 @@ public final class ImageProcessorApiExample {
     public static void main(String[] args) {
         ImageProcessor processor = ImageProcessors.getProcessor();
         if (processor == null) {
-            System.out.println("[FAIL] processor-discovery");
+            log.info("[FAIL] processor-discovery");
             System.exit(1);
         }
-        System.out.println("[PASS] processor-discovery name=" + processor.name());
+        log.info("[PASS] processor-discovery name=" + processor.name());
 
         byte[] placeholder = {0x00, 0x01, 0x02};
         ImageProcessors.FluentProcessor fluent = ImageProcessors.from(placeholder);
         if (fluent == null) {
-            System.out.println("[FAIL] fluent-create");
+            log.info("[FAIL] fluent-create");
             System.exit(1);
         }
-        System.out.println("[PASS] fluent-create");
+        log.info("[PASS] fluent-create");
 
         if (!hasFluentMethods(fluent)) {
-            System.out.println("[FAIL] fluent-chain-methods");
+            log.info("[FAIL] fluent-chain-methods");
             System.exit(1);
         }
-        System.out.println("[PASS] fluent-chain-methods");
+        log.info("[PASS] fluent-chain-methods");
     }
 
     /**

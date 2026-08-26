@@ -54,7 +54,7 @@ public final class UsageParserExample {
         String spiName = params.getOrDefault("spi", SPI_ALL);
         Map<String, UsageParser> parsers = resolveParsers(spiName);
         if (parsers.isEmpty()) {
-            System.out.println("[FAIL] 未找到任何 UsageParser 实现: spi=" + spiName);
+            log.info("[FAIL] 未找到任何 UsageParser 实现: spi=" + spiName);
             System.exit(1);
             return;
         }
@@ -66,11 +66,11 @@ public final class UsageParserExample {
             }
         }
         if (failures > 0) {
-            System.out.println("[FAIL] 失败实现数: " + failures);
+            log.info("[FAIL] 失败实现数: " + failures);
             System.exit(1);
             return;
         }
-        System.out.println("[PASS] 全部通过, 共 " + parsers.size() + " 个实现");
+        log.info("[PASS] 全部通过, 共 " + parsers.size() + " 个实现");
         System.exit(0);
     }
 
@@ -140,7 +140,7 @@ public final class UsageParserExample {
             System.out.printf("%-15s %-9d %-14d %-14d%n", name, records.size(), inputSum, outputSum);
             return true;
         } catch (Exception e) {
-            System.out.println("[FAIL] " + name + ": " + e.getMessage());
+            log.info("[FAIL] " + name + ": " + e.getMessage());
             return false;
         }
     }
