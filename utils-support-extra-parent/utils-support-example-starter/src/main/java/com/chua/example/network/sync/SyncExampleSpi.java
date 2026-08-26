@@ -99,6 +99,11 @@ public class SyncExampleSpi implements Example {
      * @param threads  并发线程数
      * @return 是否通过（全部响应收满即通过）
      */
+    private static String buildClientUrl(String protocol, int port) {
+        String scheme = "websocket".equals(protocol) ? "ws" : protocol;
+        return scheme + "://127.0.0.1:" + port;
+    }
+
     private boolean rpcThroughput(String protocol, int messages, int threads, int clients) {
         int port = freePort();
         SyncServer server = null;
@@ -123,7 +128,7 @@ public class SyncExampleSpi implements Example {
                 }
             });
             server.start();
-            String serverUrl = protocol + "://127.0.0.1:" + port;
+            String serverUrl = buildClientUrl(protocol, port);
 
             // 创建 N 个独立客户端连接
             CountDownLatch clientGot = new CountDownLatch(messages);
@@ -231,7 +236,7 @@ public class SyncExampleSpi implements Example {
             });
             server.start();
 
-            String serverUrl = protocol + "://127.0.0.1:" + port;
+            String serverUrl = buildClientUrl(protocol, port);
             client = ServiceProvider.of(SyncClient.class).getNewExtension(protocol, serverUrl);
             if (client == null) {
                 log.warn("  [{}] SyncClient 未注册，无法测吞吐", protocol);
@@ -328,7 +333,7 @@ public class SyncExampleSpi implements Example {
             server.start();
 
             // 客户端订阅：接收服务端下行广播（Tcp/Udp/Kcp 订阅为精确匹配）
-            String serverUrl = protocol + "://127.0.0.1:" + port;
+            String serverUrl = buildClientUrl(protocol, port);
             client = ServiceProvider.of(SyncClient.class).getNewExtension(protocol, serverUrl);
             if (client == null) {
                 log.warn("  [{}] SyncClient 未注册，跳过", protocol);
