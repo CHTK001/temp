@@ -60,6 +60,9 @@ public class MemorySqlExample {
     /** 响应式模式标识 */
     private static final String MODE_REACTOR = "reactor";
 
+    /** 文件引擎模式标识 */
+    private static final String MODE_FILE = "file";
+
     /** 失败计数：任一断言失败即非零退出 */
     private static int failed;
 
@@ -85,6 +88,9 @@ public class MemorySqlExample {
         }
         if (MODE_REACTOR.equals(mode) || MODE_ALL.equals(mode)) {
             runReactorScenarios();
+        }
+        if (MODE_FILE.equals(mode) || MODE_ALL.equals(mode)) {
+            runFileScenarios();
         }
 
         if (failed > 0) {
@@ -156,6 +162,52 @@ public class MemorySqlExample {
                 .blockLast();
 
         reactor.execute("DELETE FROM r_emp WHERE id IN (9, 10, 11)").block();
+    }
+
+    /**
+     * 文件引擎 SQL 场景组：JSON 加载 → SQL CRUD → 自动持久化回读验证。
+     *
+     * @throws java.io.IOException 临时文件 IO 异常
+     */
+    private static void runFileScenarios() {
+        try {
+            var dir = java.nio.file.Paths.get(
+                    System.getProperty("java.io.tmpdir"), "test-output", "memory-sql-file");
+            java.nio.file.Files.createDirectories(dir);
+            var json = dir.resolve("emp.json");
+            java.nio.file.Files.writeString(json, "[{\"id\":1,\"name\":\"Alice\",\"age\":20},"
+                    + "{\"id\":2,\"name\":\"Bob\",\"age\":30},{\"id\":3,\"name\":\"Cathy\",\"age\":25}]");
+
+            var engine = new com.chua.datasource.support.engine.FileEngine();
+            engine.load("emp", json.toString());
+
+            check("file COUNT(*)", 3,
+                    engine.querySql("SELECT COUNT(*) FROM emp").get(0).get("cnt"));
+            check("file WHERE 参数", "Bob", first(engine.querySql(
+                    "SELECT name FROM emp WHERE age > ? AND age < ?", 21, 31), "name"));
+            check("file INSERT", 1,
+                    engine.executeSql("INSERT INTO emp (id, name, age) VALUES (?, ?, ?)", 9, "Zoe", 45));
+            check("file UPDATE", 1,
+                    engine.executeSql("UPDATE emp SET age = ? WHERE name = 'Alice'", 99));
+            check("file DELETE", 2,
+                    engine.executeSql("DELETE FROM emp WHERE id IN (?, ?)", 2, 9));
+
+            /* 重新加载同一文件，验证 DML 已自动持久化落盘 */
+            var reloaded = new com.chua.datasource.support.engine.FileEngine();
+            reloaded.load("emp", json.toString());
+            check("file 持久化回读 COUNT", 2,
+                    reloaded.querySql("SELECT COUNT(*) FROM emp").get(0).get("cnt"));
+            check("file 持久化回读 UPDATE 值", 99,
+                    reloaded.querySql("SELECT age FROM emp WHERE name = 'Alice'").get(0).get("age"));
+
+            try (var paths = java.nio.file.Files.walk(dir)) {
+                paths.sorted(java.util.Comparator.reverseOrder())
+                        .forEach(pp -> { try { java.nio.file.Files.deleteIfExists(pp); } catch (Exception ignored) { } });
+            }
+        } catch (java.io.IOException e) {
+            failed++;
+            System.out.println("[FAIL] file 场景 IO 异常: " + e.getMessage());
+        }
     }
 
     /* ==================== 断言输出辅助 ==================== */
