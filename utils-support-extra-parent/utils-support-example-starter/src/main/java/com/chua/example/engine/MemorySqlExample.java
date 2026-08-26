@@ -200,6 +200,32 @@ public class MemorySqlExample {
             check("file 持久化回读 UPDATE 值", 99,
                     reloaded.querySql("SELECT age FROM emp WHERE name = 'Alice'").get(0).get("age"));
 
+            /* 响应式文件引擎：同一文件走 FileReactorEngine SQL 路径 */
+            var rxEng = new com.chua.datasource.support.engine.FileReactorEngine();
+            rxEng.getDelegate().load("emp", json.toString());
+
+            var rxRow = rxEng.query("SELECT COUNT(*) FROM emp").blockFirst();
+            check("file-reactor COUNT", 2,
+                    rxRow != null ? ((Number) rxRow.get("cnt")).intValue() : null);
+
+            var rxAlice = rxEng.query("SELECT name FROM emp WHERE name = 'Alice'", Emp.class)
+                    .blockFirst();
+            check("file-reactor typed", "Alice",
+                    rxAlice != null ? rxAlice.getName() : null);
+
+            var rxIns = rxEng.execute(
+                    "INSERT INTO emp (id, name, age) VALUES (?, ?, ?)", 88, "Rex", 10).block();
+            check("file-reactor execute", 1, rxIns);
+
+            var rxBat = rxEng.batch(
+                    "INSERT INTO emp (id, name, age) VALUES (?, ?, ?)",
+                    List.of(new Object[]{89, "R2", 11}, new Object[]{90, "R3", 12}))
+                    .collectList().block();
+            check("file-reactor batch", List.of(1, 1), rxBat);
+
+            check("file-reactor DELETE", 3,
+                    rxEng.execute("DELETE FROM emp WHERE id IN (88,89,90)").block());
+
             try (var paths = java.nio.file.Files.walk(dir)) {
                 paths.sorted(java.util.Comparator.reverseOrder())
                         .forEach(pp -> { try { java.nio.file.Files.deleteIfExists(pp); } catch (Exception ignored) { } });
