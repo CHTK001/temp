@@ -6,6 +6,7 @@ import com.chua.common.support.task.retry.RetryFlow;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BooleanSupplier;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * {@link RetryFlow} 重试流全场景自检示例。
@@ -21,6 +22,7 @@ import java.util.function.BooleanSupplier;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class RetryExample {
 
     /**

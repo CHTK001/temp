@@ -138,11 +138,9 @@ public class NettyHttpServerExampleSpi implements Example {
         log.info("  [FUNC-01] GET /echo 回显");
         Server server = null;
         try {
-            server = ServerBuilder.create().type("netty").host("127.0.0.1").port(0).build();
-            ((ConfigServer) server).registerMapping("/echo", (req, resp) -> {
+            server = startServer("/echo", (req, resp) -> {
                 resp.setResult("netty-http-echo");
             });
-            server.start();
             int port = server.getPort();
 
             HttpClient client = HttpClient.newHttpClient();
@@ -168,11 +166,9 @@ public class NettyHttpServerExampleSpi implements Example {
         log.info("  [FUNC-02] POST /echo 回显请求体");
         Server server = null;
         try {
-            server = ServerBuilder.create().type("netty").host("127.0.0.1").port(0).build();
-            ((ConfigServer) server).registerMapping("/echo", (req, resp) -> {
+            server = startServer("/echo", (req, resp) -> {
                 resp.setResult(req.getBodyString());
             });
-            server.start();
             int port = server.getPort();
 
             HttpClient client = HttpClient.newHttpClient();
@@ -202,14 +198,12 @@ public class NettyHttpServerExampleSpi implements Example {
         log.info("  │ 代理路径 : HttpClient -> NettyHttpServer (Netty 4.2.15 NIO + virtual-thread 业务)");
         Server server = null;
         try {
-            server = ServerBuilder.create().type("netty").host("127.0.0.1").port(0).build();
             byte[] payload = new byte[payloadSize];
             Arrays.fill(payload, (byte) 'A');
             String body = new String(payload, StandardCharsets.UTF_8);
-            ((ConfigServer) server).registerMapping("/echo", (req, resp) -> {
+            server = startServer("/echo", (req, resp) -> {
                 resp.setResult(body);
             });
-            server.start();
             int port = server.getPort();
 
             PerfReportExample.SweepRow row = runPerfInner(concurrency, connections, requestsPerConn, port);
@@ -234,14 +228,12 @@ public class NettyHttpServerExampleSpi implements Example {
         log.info("  │ 代理路径 : HttpClient -> NettyHttpServer (Netty 4.2.15 NIO + virtual-thread 业务)");
         Server server = null;
         try {
-            server = ServerBuilder.create().type("netty").host("127.0.0.1").port(0).build();
             byte[] payload = new byte[payloadSize];
             Arrays.fill(payload, (byte) 'A');
             String body = new String(payload, StandardCharsets.UTF_8);
-            ((ConfigServer) server).registerMapping("/echo", (req, resp) -> {
+            server = startServer("/echo", (req, resp) -> {
                 resp.setResult(body);
             });
-            server.start();
             int port = server.getPort();
 
             List<PerfReportExample.SweepRow> rows = new ArrayList<>();
