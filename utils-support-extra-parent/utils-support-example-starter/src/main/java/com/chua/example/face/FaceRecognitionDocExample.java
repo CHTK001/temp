@@ -3,34 +3,28 @@ package com.chua.example.face;
 import com.chua.deeplearning.support.face.FacePipeline;
 
 /**
- * 人脸识别完整能力配置示例 — Builder 组件必填/选填标注。
+ * 人脸识别完整能力配置示例。
  *
- * <p>运行方式：{@code java com.chua.example.face.FaceRecognitionDocExample}
- *
- * <h3>组件清单</h3>
+ * <h3>组件说明</h3>
  * <pre>
- *   ★ 必填   detector       人脸检测器          （build 必需）
- *   ★ 必填   feature        特征提取器          （build 必需）
- *   ★ 必填   vectorStorage  向量库              （build 必需，默认 FileVectorStorage）
- *   ○ 选填   liveness       活体检测器          （不设则跳过活体判断）
- *   ○ 选填   quality        质量评估器          （不设则不做过滤）
- *   ○ 选填   topK           检索条数            （默认 5）
- *   ○ 选填   requireLive    是否要求活体通过    （默认 true）
- *   ○ 选填   livenessThreshold  活体分阈值      （默认 0.5）
- *   ● 高级   anime          动漫人脸检测        （仅二次元场景）
- *   ● 高级   superResolution 超分辨率           （模糊脸增强）
- *   ● 高级   restorer       图像修复            （瑕疵修复）
- *   ● 高级   attribute      属性分类            （年龄/性别/种族）
- *   ● 高级   emotion        表情分类            （喜怒哀乐）
- *   ● 高级   landmark       关键点提取          （人脸 68/98 点）
- *   ● 高级   deepfake       深伪检测            （真假人脸判断）
- *   ● 高级   cropPadding    检测框裁切扩展像素  （默认 0）
- *   ● 高级   minFaceArea    最小脸面积阈值      （默认 0 不过滤）
- *   ● 高级   minConfidence  最小检测置信度      （默认 0 不过滤）
- *   ● 高级   sigmoidRecognize  特征 sigmoid     （默认 true）
+ *   detector       人脸检测器：从图片中定位所有人脸位置/大小/置信度
+ *   feature        特征提取器：将人脸裁切图转为固定维度向量（如 512/1024维）
+ *   vectorStorage  向量库：存储人脸特征向量，支持检索（File/Milvus/JVector）
+ *   liveness       活体检测：区分真人脸与打印照片/屏幕翻拍/深伪视频
+ *   landmark       关键点提取：定位人脸五官 68/98 个坐标点
+ *   emotion        表情分类：识别喜怒哀乐等 7 类基本情绪
+ *   deepfake       深伪检测：判断人脸是否为 AI 生成或换脸伪造
+ *   superResolution 超分辨率：将低分辨率/模糊人脸放大并增强清晰度
+ *   restorer       图像修复：去除人脸遮挡/疤痕/噪声等瑕疵
+ *   quality        质量评估：对裁切的人脸图片打分（模糊度/光照/角度）
  * </pre>
  *
- * @since 4.0.0.42
+ * <h3>配置示例</h3>
+ * <pre>
+ *   ★ 必填   detector, feature, vectorStorage（缺一不可）
+ *   ○ 选填   liveness（不设则跳过活体判断）
+ *   ● 可选   landmark/emotion/deepfake 等按需叠加
+ * </pre>
  */
 public class FaceRecognitionDocExample {
     private FaceRecognitionDocExample() { }
@@ -38,30 +32,28 @@ public class FaceRecognitionDocExample {
     public static void main(String[] args) throws Exception {
         System.out.println("===== 最小配置（仅必填）=====");
         FacePipeline minimal = FacePipeline.builder()
-                .detector("faceplugin-face-detect-slim")   // ★ 必填
-                .feature("faceplugin-face-feature")         // ★ 必填
-                .build();                                    // ★ vectorStorage 自动创建
-        System.out.println("  detect: " + (minimal.detectLargest(null) != null));
+                .detector("faceplugin-face-detect-slim")   // ★ 人脸检测：从图中定位所有脸
+                .feature("faceplugin-face-feature")         // ★ 特征提取：人脸→512维向量
+                .build();                                    // ★ 向量库：自动创建 FileVectorStorage
+        minimal.detectLargest(null);
 
-        System.out.println("\n===== 完整配置（必填 + 选填 + 高级）=====");
+        System.out.println("\n===== 完整配置（必填 + 选填 + 可选）=====");
         FacePipeline full = FacePipeline.builder()
-                // ★ 必填
-                .detector("faceplugin-face-detect-slim")
-                .feature("faceplugin-face-feature")
-                .topK(10)
-                // ○ 选填
-                .liveness("face-liveness-flrgb")
-                .requireLive(true)
-                .livenessThreshold(0.6f)
-                .cropPadding(10)
-                .minFaceArea(0.01f)
-                .minConfidence(0.7f)
-                // ● 高级
-                .landmark("faceplugin-face-landmark")
-                .attribute("age-race-gender")
-                .emotion("emotion-ferplus")
-                .deepfake("deepfake-detector")
-                // .quality(...)    // 质量评估（需传入 FaceQualityAssessor 实例）
+                // ★ 必填 —— 三项缺一不可
+                .detector("faceplugin-face-detect-slim")   // 人脸检测：从图中定位所有脸
+                .feature("faceplugin-face-feature")         // 特征提取：人脸→向量
+                .topK(10)                                   // 向量库检索返回条数
+
+                // ○ 选填 —— 不设则跳过对应流程
+                .liveness("face-liveness-flrgb")            // 活体检测：真人vs照片/屏幕
+                .requireLive(true)                          // 活体必须通过才算有效
+                .livenessThreshold(0.6f)                    // 活体分阈值
+                .minConfidence(0.7f)                        // 最低检测置信度过滤
+
+                // ● 可选 —— 按需叠加
+                .landmark("faceplugin-face-landmark")       // 关键点：定位五官坐标
+                .emotion("emotion-ferplus")                 // 表情分类：喜怒哀乐
+                .deepfake("deepfake-detector")              // 深伪检测：AI伪造判断
                 .build();
         System.out.println("  pipeline ready");
     }
