@@ -61,6 +61,7 @@ public class SipClientExample {
         int port = Integer.parseInt(kv.getOrDefault("port", "3389"));
         boolean encrypt = Boolean.parseBoolean(kv.getOrDefault("encrypt", "false"));
         boolean mux = Boolean.parseBoolean(kv.getOrDefault("mux", "false"));
+        String dataPlane = kv.getOrDefault("data-plane", "relay");
         String tokenFile = kv.get("token-file");
         if (tokenFile != null && !tokenFile.isEmpty()) { System.setProperty("sip.token.file", tokenFile); }
         String maxFrameMs = kv.get("max-frame-ms");
@@ -73,14 +74,14 @@ public class SipClientExample {
 
         Runtime.getRuntime().addShutdownHook(new Thread(STOP_LATCH::countDown, "sip-client-shutdown-hook"));
 
-        SipClient client = SipClient.tcp(server).token(token).encrypt(encrypt).mux(mux);
+        SipClient client = SipClient.tcp(server).token(token).encrypt(encrypt).mux(mux).dataPlaneMode(dataPlane);
         client.onReconnect(() -> log.info("SIP 重连成功，资源已重新绑定"));
         if ("provider".equalsIgnoreCase(mode)) {
             new SipTunnelService(client, service, host, port, allow).start();
-            log.info("SIP 服务提供方已启动: 服务[{}] -> {}:{} 加密={} 复用={}", service, host, port, encrypt, mux);
+            log.info("SIP 服务提供方已启动: 服务[{}] -> {}:{} 加密={} 复用={} 直连={}", service, host, port, encrypt, mux, "direct".equals(dataPlane));
         } else if ("visitor".equalsIgnoreCase(mode)) {
             client.tunnel(service).listen(host, port);
-            log.info("SIP 访问方已启动: {}:{} -> 服务[{}] 加密={}", host, port, service, encrypt);
+            log.info("SIP 访问方已启动: {}:{} -> 服务[{}] 加密={} 直连={}", host, port, service, encrypt, "direct".equals(dataPlane));
         } else {
             log.error("未知模式: {}（仅支持 provider / visitor）", mode);
             System.exit(1);
