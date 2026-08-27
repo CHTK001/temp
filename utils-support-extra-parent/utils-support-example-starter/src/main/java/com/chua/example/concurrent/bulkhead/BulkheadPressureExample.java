@@ -20,7 +20,7 @@ public final class BulkheadPressureExample {
     private static final int EXIT_CODE_SUCCESS = 0;
     private static final int EXIT_CODE_FAILURE = 1;
 
-    private BulkheadExample() {
+    private BulkheadPressureExample() {
     }
 
     private static boolean timed(String name, Runnable scenario) {
