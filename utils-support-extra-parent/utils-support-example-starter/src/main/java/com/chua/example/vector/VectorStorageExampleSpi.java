@@ -486,6 +486,8 @@ public class VectorStorageExampleSpi implements Example {
         boolean passed = true;
         passed &= testVectorAutoDetect();
         passed &= testVectorForceCpu();
+        passed &= testVectorRequireGpuThrows();
+        passed &= testVectorExplicitBackend();
         passed &= testVectorRuntimeDetector();
         return passed;
     }
@@ -530,9 +532,51 @@ public class VectorStorageExampleSpi implements Example {
         }
     }
 
+    /** TestVectorrequireGpu抛异常 */
+    private boolean testVectorRequireGpuThrows() {
+        log.info("  [TC-V03] vector requireGpu=true 无 GPU 应抛异常");
+        try {
+            com.chua.vector.support.configuration.VectorStorageProperties props =
+                    new com.chua.vector.support.configuration.VectorStorageProperties().requireGpu(true);
+            VectorStorage s = VectorStorageProvider.of("vector").dimension(DIM)
+                    .properties(props).build();
+            log.info("  ✗ 预期抛 RuntimeException，未抛出");
+            s.close();
+            return false;
+        } catch (RuntimeException e) {
+            String msg = e.getMessage() != null ? e.getMessage().substring(0, Math.min(80, e.getMessage().length())) : "null";
+            log.info("  ✓ 正确抛出: {}", msg);
+            return true;
+        } catch (Exception e) {
+            fail("requireGpu 异常类型不对: " + e.getClass().getSimpleName());
+            return false;
+        }
+    }
+
+    /** TestVector显式指定backend */
+    private boolean testVectorExplicitBackend() {
+        log.info("  [TC-V04] vector backend=JVECTOR 显式指定");
+        try {
+            com.chua.vector.support.configuration.VectorStorageProperties props =
+                    new com.chua.vector.support.configuration.VectorStorageProperties()
+                            .backend(com.chua.vector.support.configuration.VectorStorageProperties.Backend.JVECTOR);
+            VectorStorage s = VectorStorageProvider.of("vector").dimension(DIM)
+                    .algorithm(VectorCompareAlgorithm.cosine())
+                    .properties(props).build();
+            assertEquals("explicit-jvector", DIM, s.dimension());
+            seedJVector(s, "vec-explicit");
+            s.close();
+            pass();
+            return true;
+        } catch (Exception e) {
+            fail("vector 显式 backend 异常: " + e.getMessage());
+            return false;
+        }
+    }
+
     /** TestVectorRuntimeDetector */
     private boolean testVectorRuntimeDetector() {
-        log.info("  [TC-V03] RuntimeDetector SPI 收集与排序");
+        log.info("  [TC-V05] RuntimeDetector SPI 收集与排序");
         try {
             List<com.chua.common.support.vector.RuntimeDetector> detectors =
                     com.chua.common.support.spi.ServiceProvider

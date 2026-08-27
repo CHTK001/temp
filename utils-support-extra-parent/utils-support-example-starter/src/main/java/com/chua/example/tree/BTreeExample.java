@@ -36,6 +36,7 @@ public final class BTreeExample {
         passed &= timed("bplusDelete", BTreeExample::bplusDelete);
         passed &= timed("bplusLargeScale", BTreeExample::bplusLargeScale);
         passed &= timed("bplusPerf", BTreeExample::bplusPerf);
+        passed &= timed("btreePerf", BTreeExample::btreePerf);
         passed &= timed("bplusToBinaryAndBack", BTreeExample::bplusToBinaryAndBack);
         passed &= timed("btreePutAndGet", BTreeExample::btreePutAndGet);
         passed &= timed("btreeRangeQuery", BTreeExample::btreeRangeQuery);
@@ -237,8 +238,6 @@ public final class BTreeExample {
             return fail("bplusToBinaryAndBack", e);
         }
     }
-
-    // ==================== B 树测试 ====================
 
     private static boolean btreePutAndGet() {
         try {
