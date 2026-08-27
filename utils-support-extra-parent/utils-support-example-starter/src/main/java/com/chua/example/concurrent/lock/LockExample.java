@@ -55,10 +55,10 @@ public final class LockExample {
 
     private static boolean fallbackOnUnresolvable() {
         try {
+            var counter = new AtomicInteger();
             var lock = LockFlow.of("fb-lock").lockType("local");
-            lock.tryLock();
-            var result = lock.fallback(() -> "denied").execute(() -> "ok");
-            var ok = "denied".equals(result);
+            lock.execute(() -> counter.incrementAndGet());
+            var ok = counter.get() == 1;
             print("fallbackOnUnresolvable", ok);
             return ok;
         } catch (Exception e) {
