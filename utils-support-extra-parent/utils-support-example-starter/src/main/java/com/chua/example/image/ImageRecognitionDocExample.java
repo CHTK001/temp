@@ -1,6 +1,6 @@
 package com.chua.example.image;
 
-import com.chua.deeplearning.support.image.ImageSearcher;
+import com.chua.common.support.image.ImagePipeline;
 
 /**
  * 图片检索 — 完整处理流程图 + Builder 配置标注。
@@ -42,9 +42,9 @@ public class ImageRecognitionDocExample {
 
     public static void main(String[] args) throws Exception {
         System.out.println("===== 图片检索 — Builder 配置 =====");
-        ImageSearcher searcher = ImageSearcher.builder()
-                .featureExtractor("image-feature-resnet")   // ★ 特征提取：图片→向量
-                .build();                                     // ★ 向量库自动创建
+        ImagePipeline searcher = ImagePipeline.builder()
+                .grayscale(true)   // ★ 灰度化预处理
+                .build();                                     // ★ 管线自动构建
 
         System.out.println("  pipeline ready");
     }

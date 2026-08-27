@@ -41,7 +41,7 @@ public class SshServerExample {
                 .port(port)
                 .password(password)
                 .build();
-        server.registerBean(new DeployShellCommands());
+        server.registerBean(new DeployShellCommandsExample());
         server.start();
 
         List<String> cmds = server.getCommandNames();

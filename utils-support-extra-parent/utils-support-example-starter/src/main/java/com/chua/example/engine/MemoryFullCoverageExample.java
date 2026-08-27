@@ -142,7 +142,7 @@ public class MemoryFullCoverageExample {
         ck("lam-im combo", 1, e.query(Emp.class).eq(Emp::getCity, "Beijing").gt(Emp::getAge, 22).list().size());
         ck("lam-im update多列", 1, e.update(Emp.class).set(Emp::getAge, 99).set(Emp::getCity, "Tokyo")
                 .eq(Emp::getId, 1).update());
-        ck("lam-im update readback", "Tokyo", name(e.query(Emp.class).eq(Emp::getId, 1).one()));
+        ck("lam-im update readback", "Tokyo", city(e.query(Emp.class).eq(Emp::getId, 1).one()));
         e.update(Emp.class).set(Emp::getAge, 20).set(Emp::getCity, "Beijing").eq(Emp::getId, 1).update();
         ck("lam-im delete复合", 2, e.delete(Emp.class).eq(Emp::getCity, "Beijing").remove());
     }
@@ -348,6 +348,10 @@ public class MemoryFullCoverageExample {
 
     private static String name(Object obj) {
         return obj == null ? null : ((Emp) obj).getName();
+    }
+
+    private static String city(Object obj) {
+        return obj == null ? null : ((Emp) obj).getCity();
     }
 
     private static Object col(List<java.util.Map<String, Object>> rows, String field) {
