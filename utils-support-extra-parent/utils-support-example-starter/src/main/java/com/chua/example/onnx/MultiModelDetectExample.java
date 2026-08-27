@@ -85,6 +85,8 @@ public final class MultiModelDetectExample {
                 "D:/images/1people.png"});
         MODEL_IMAGES.put("grounding-dino", new String[]{
                 "D:/images/1people.png"});
+        MODEL_IMAGES.put("duguang-det-large", new String[]{
+                "D:/images/ticket_new.png", "D:/images/freetxt.png"});
     }
 
     public static void main(String[] args) throws Exception {

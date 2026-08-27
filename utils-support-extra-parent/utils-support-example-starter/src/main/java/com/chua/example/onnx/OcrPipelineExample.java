@@ -31,16 +31,23 @@ public final class OcrPipelineExample extends BaseExample {
 
     /** Main */
     public static void main(String[] args) throws Exception {
-        String imagePath = args.length > 0 ? args[0] : "G:\\images\\车票.png";
+        String imagePath = "G:\\images\\车票.png";
+        String detector = "paddleocrv6-medium-det";
+        String recognizer = "paddleocrv6-medium-rec";
+        String direction = "doc-orientation";
+        for (int i = 0; i < args.length; i++) {
+            if (args[i].startsWith("--image=")) imagePath = args[i].substring("--image=".length());
+            else if (args[i].startsWith("--detector=")) detector = args[i].substring("--detector=".length());
+            else if (args[i].startsWith("--recognizer=")) recognizer = args[i].substring("--recognizer=".length());
+            else if (args[i].startsWith("--direction=")) direction = args[i].substring("--direction=".length());
+            else if (!args[i].startsWith("--")) imagePath = args[i];
+        }
         byte[] img = Files.readAllBytes(Path.of(imagePath));
 
-        // 完整链路：检测 + 方向矫正 + 识别（medium 精度更高）。
-        // 注：文字修复（restorerModel="text-bsr"）为可选环节，对裁剪文本块执行 4x 超分，
-        // CPU 逐块推理较慢（21 块约 4 分钟），适合模糊/低清文字场景，实时识别建议不启用。
         OcrPipeline ocr = OcrPipeline.builder()
-                .detector("paddleocrv6-medium-det")
-                .recognizer("paddleocrv6-medium-rec")
-                .direction("doc-orientation")
+                .detector(detector)
+                .recognizer(recognizer)
+                .direction(direction)
                 .build();
 
         long t0 = System.currentTimeMillis();
