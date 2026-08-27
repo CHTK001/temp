@@ -160,7 +160,8 @@ public class MemoryLambdaExample {
     }
 
     /**
-     * FileEngine Lambda 场景：JSON 格式（CSV 因 CsvFileSystem.parseLine 预存 Bug 暂跳）。
+     * FileEngine Lambda 场景：CSV + JSON 双格式。
+     * <p>Excel/DBF 需要各自 starter 模块在 classpath 上，此处仅验证 CSV 和 JSON。</p>
      */
     private static void runFileLambdaScenarios() {
         Path dir;
@@ -171,6 +172,39 @@ public class MemoryLambdaExample {
             failed++;
             log.info("[FAIL] 创建临时目录失败: {}", e.getMessage());
             return;
+        }
+
+        /* --- CSV 格式 --- */
+        try {
+            Path csv = dir.resolve("emp.csv");
+            Files.writeString(csv, "id,name,age,city\n1,Alice,20,Beijing\n2,Bob,30,Shanghai\n"
+                    + "3,Cathy,25,Beijing\n4,Dave,35,Guangzhou");
+            var csvEngine = new com.chua.datasource.support.engine.FileEngine();
+            csvEngine.load("emp", csv.toString());
+
+            check("csv eq", "Alice",
+                    nameOf(csvEngine.query(Emp.class).eq(Emp::getId, 1).one()));
+            check("csv gt", 2, csvEngine.query(Emp.class).gt(Emp::getAge, 25).list().size());
+            check("csv lt", 1, csvEngine.query(Emp.class).lt(Emp::getAge, 25).list().size());
+            check("csv in", 2, csvEngine.query(Emp.class).in(Emp::getId, List.of(1, 3)).list().size());
+            check("csv between", 3, csvEngine.query(Emp.class)
+                    .between(Emp::getAge, 20, 30).list().size());
+            check("csv like", 1, csvEngine.query(Emp.class).like(Emp::getName, "li").list().size());
+            check("csv orderByDesc", "Dave",
+                    nameOf(csvEngine.query(Emp.class).orderByDesc(Emp::getAge).one()));
+            check("csv orderByAsc", "Alice",
+                    nameOf(csvEngine.query(Emp.class).orderByAsc(Emp::getAge).one()));
+            check("csv page", 2, csvEngine.query(Emp.class).orderByAsc(Emp::getId).page(1, 2)
+                    .getRecords().size());
+
+            int csvUpd = csvEngine.update(Emp.class).set(Emp::getAge, 88)
+                    .eq(Emp::getId, 2).update();
+            check("csv update", 1, csvUpd);
+            int csvDel = csvEngine.delete(Emp.class).eq(Emp::getId, 4).remove();
+            check("csv delete", 1, csvDel);
+        } catch (IOException e) {
+            failed++;
+            log.info("[FAIL] csv 场景: {}", e.getMessage());
         }
 
         /* --- JSON 格式 --- */
