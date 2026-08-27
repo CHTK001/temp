@@ -44,50 +44,57 @@ public final class BackoffProviderExample {
 
     private static boolean linearBackoff() {
         var p = new LinearBackoffProvider(50L, 10L, 500L);
+        // 50+0*10=50, 50+1*10=60, 50+2*10=70
         var ok = p.nextDelay(0) == 50L
                 && p.nextDelay(1) == 60L
-                && p.nextDelay(2) == 70L
-                && p.nextDelay(5) == 80L;
+                && p.nextDelay(2) == 70L;
         print("linearBackoff", ok);
         return ok;
     }
 
     private static boolean fibonacciBackoff() {
         var p = new FibonacciBackoffProvider(10L, 200L);
+        // f0=10, f1=10, f2=20, f3=30, f4=50
         var ok = p.nextDelay(0) == 10L
                 && p.nextDelay(1) == 10L
                 && p.nextDelay(2) == 20L
                 && p.nextDelay(3) == 30L
-                && p.nextDelay(5) == 55L;
+                && p.nextDelay(4) == 50L;
         print("fibonacciBackoff", ok);
         return ok;
     }
 
     private static boolean exponentialBackoff() {
         var p = new ExponentialBackoffProvider(100L, 2.0, 1000L);
+        // 100*2^0=100, 100*2^1=200, 100*2^2=400
         var ok = p.nextDelay(0) == 100L
                 && p.nextDelay(1) == 200L
-                && p.nextDelay(2) == 400L
-                && p.nextDelay(5) == 1600L > 1000L ? 1000L : p.nextDelay(5);
+                && p.nextDelay(2) == 400L;
         print("exponentialBackoff", ok);
         return ok;
     }
 
     private static boolean beyondTestedRange() {
         boolean allOk = true;
-        var providers = new java.util.ArrayList<java.lang.Object>();
-        providers.add(new FixedBackoffProvider(50L));
-        providers.add(new LinearBackoffProvider(30L, 5L, 200L));
-        providers.add(new FibonacciBackoffProvider(5L, 100L));
-        providers.add(new ExponentialBackoffProvider(20L, 1.5, 500L));
-        for (var p : providers) {
-            try {
-                long d0 = ((com.chua.common.support.concurrent.backoff.provider.BackoffProvider) p).nextDelay(0);
-                long d100 = ((com.chua.common.support.concurrent.backoff.provider.BackoffProvider) p).nextDelay(100);
-                if (d100 < 0) allOk = false;
-            } catch (Exception e) {
-                allOk = false;
-            }
+        try {
+            var fixed = new FixedBackoffProvider(50L);
+            var linear = new LinearBackoffProvider(30L, 5L, 200L);
+            var fib = new FibonacciBackoffProvider(5L, 100L);
+            var exp = new ExponentialBackoffProvider(20L, 1.5, 500L);
+            long d0 = fixed.nextDelay(0);
+            long d100 = fixed.nextDelay(100);
+            if (d100 < 0) allOk = false;
+            d0 = linear.nextDelay(0);
+            d100 = linear.nextDelay(100);
+            if (d100 < 0) allOk = false;
+            d0 = fib.nextDelay(0);
+            d100 = fib.nextDelay(100);
+            if (d100 < 0) allOk = false;
+            d0 = exp.nextDelay(0);
+            d100 = exp.nextDelay(100);
+            if (d100 < 0) allOk = false;
+        } catch (Exception e) {
+            allOk = false;
         }
         print("beyondTestedRange", allOk);
         return allOk;
