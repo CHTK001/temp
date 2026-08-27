@@ -3,43 +3,49 @@ package com.chua.example.image;
 import com.chua.deeplearning.support.image.ImageSearcher;
 
 /**
- * 图片检索完整能力配置示例 — Builder 组件必填/选填标注。
+ * 图片检索 — 完整处理流程图 + Builder 配置标注。
  *
- * <p>运行方式：{@code java com.chua.example.image.ImageRecognitionDocExample}
- *
- * <h3>组件清单</h3>
+ * <h2>处理流程</h2>
  * <pre>
- *   ★ 必填   featureExtractor   特征提取器      （build 必需，模型自动加载）
- *   ★ 必填   vectorStorage      向量库          （build 必需，默认 FileVectorStorage）
+ *   图片 byte[]
+ *     │
+ *     ▼ ① 特征提取（featureExtractor，必填）
+ *     │   └─ FeatureExtractor.extract(image)
+ *     │       ├─ 输入：原始图片 byte[]
+ *     │       └─ 输出：固定维度向量（512/1024维）
+ *     │
+ *     ▼ ② 图像分割（segmentation，可选预处理）
+ *     │   └─ ImageSegmenter.segment(image)
+ *     │       ├─ 前景/背景分离
+ *     │       └─ 分割后区域分别提取特征，提升检索精度
+ *     │
+ *     ▼ ③ 入库 / 检索
+ *     │   ├─ enroll: Vector(id, feature, metadata) → VectorStorage.add()
+ *     │   └─ search: query → cosine SIMD 排序 → TopK 结果
  * </pre>
  *
- * <p><b>与人脸/声纹对比</b>：</p>
+ * <h2>Builder 组件</h2>
  * <pre>
- *   FacePipeline:        19 字段 / 29 方法 / 59 API / 完整流水线
- *   VoiceprintPipeline:   5 字段 /  6 方法 / 11 API / 最小可用
- *   ImageSearcher:        2 字段 /  3 方法 /  3 API / 最小可用（仅检索）
+ *   ★ 必填   featureExtractor  特征提取器（图片 → 向量，模型自动加载）
+ *   ★ 必填   vectorStorage     向量库（默认 FileVectorStorage）
  * </pre>
  *
- * @since 4.0.0.42
+ * <h2>⚠ 缺失能力</h2>
+ * <pre>
+ *   图像分割    分离前景/背景以提升检索（ImageSegmenter 未接入）
+ *   目标检测    定位图中物体（检测器未接入）
+ *   图像增强    超分辨率/去噪等预处理（未接入）
+ * </pre>
  */
 public class ImageRecognitionDocExample {
     private ImageRecognitionDocExample() { }
 
     public static void main(String[] args) throws Exception {
-        System.out.println("===== 图片检索 — Builder 完整配置 =====");
+        System.out.println("===== 图片检索 — Builder 配置 =====");
         ImageSearcher searcher = ImageSearcher.builder()
-                // ★ 必填 — 特征提取器（模型自动加载）
-                .featureExtractor("image-feature-resnet")
-                // ★ 必填 — 向量库（默认文件落盘）
-                // .vectorStorage(...)   // 不设则自动创建
-                .build();
+                .featureExtractor("image-feature-resnet")   // ★ 特征提取：图片→向量
+                .build();                                     // ★ 向量库自动创建
 
         System.out.println("  pipeline ready");
-
-        // 1:N 搜索示例
-        // List<ImageSearchHit> hits = searcher.search(imageData, 10);
-
-        // 入库示例
-        // searcher.enroll("product_001", imageData, "iPhone 15 Pro");
     }
 }

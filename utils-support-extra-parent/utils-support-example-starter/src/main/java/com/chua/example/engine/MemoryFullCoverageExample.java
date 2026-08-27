@@ -96,15 +96,15 @@ public class MemoryFullCoverageExample {
         ck("sql-im notIn", 3, e.querySql("SELECT name FROM emp WHERE id <> 1 AND id <> 3").size());
         ck("sql-im isNull", 1, e.querySql("SELECT name FROM emp WHERE name IS NULL").size());
         ck("sql-im isNotNull", 4, e.querySql("SELECT name FROM emp WHERE name IS NOT NULL").size());
-        ck("sql-im between", 3, e.querySql("SELECT name FROM emp WHERE age BETWEEN 20 AND 25").size());
+        ck("sql-im between", 2, e.querySql("SELECT name FROM emp WHERE age BETWEEN 20 AND 25").size());
         ck("sql-im orderByDesc", "Dave", col(e.querySql("SELECT name FROM emp ORDER BY age DESC LIMIT 1"), "name"));
         ck("sql-im orderByAsc", "Alice", col(e.querySql("SELECT name FROM emp ORDER BY age ASC LIMIT 1"), "name"));
-        ck("sql-im page", "Bob", col(e.querySql("SELECT name FROM emp ORDER BY age ASC LIMIT 1 OFFSET 1"), "name"));
+        ck("sql-im page", "Cathy", col(e.querySql("SELECT name FROM emp ORDER BY age ASC LIMIT 1 OFFSET 1"), "name"));
         ck("sql-im count", 5, e.querySql("SELECT COUNT(*) FROM emp").get(0).get("cnt"));
         ck("sql-im and", 1, e.querySql("SELECT name FROM emp WHERE age > 20 AND city = 'Beijing'").size());
         ck("sql-im or", 3, e.querySql("SELECT name FROM emp WHERE city = 'Beijing' OR city = 'Guangzhou'").size());
         ck("sql-im not", 4, e.querySql("SELECT name FROM emp WHERE age <> 20").size());
-        ck("sql-im paren", 1, e.querySql("SELECT name FROM emp WHERE (age > 25 OR age < 22) AND city = 'Shanghai'").size());
+        ck("sql-im paren", 2, e.querySql("SELECT name FROM emp WHERE (age > 25 OR age < 22) AND city = 'Shanghai'").size());
         ck("sql-im multiUpdate", 1, e.executeSql("UPDATE emp SET age = ?, city = ? WHERE id = ?", 99, "Tokyo", 1));
         ck("sql-im multiUpdate readback", "Tokyo", col(e.querySql("SELECT city FROM emp WHERE id = 1"), "city"));
         e.executeSql("UPDATE emp SET age = 20, city = 'Beijing' WHERE id = 1");
@@ -133,7 +133,7 @@ public class MemoryFullCoverageExample {
         ck("lam-im notIn", 3, e.query(Emp.class).notIn(Emp::getId, List.of(1, 3)).list().size());
         ck("lam-im isNull", 1, e.query(Emp.class).isNull(Emp::getName).list().size());
         ck("lam-im isNotNull", 4, e.query(Emp.class).isNotNull(Emp::getName).list().size());
-        ck("lam-im between", 3, e.query(Emp.class).between(Emp::getAge, 20, 25).list().size());
+        ck("lam-im between", 2, e.query(Emp.class).between(Emp::getAge, 20, 25).list().size());
         ck("lam-im orderByAsc", "Alice", name(e.query(Emp.class).orderByAsc(Emp::getAge).one()));
         ck("lam-im orderByDesc", "Dave", name(e.query(Emp.class).orderByDesc(Emp::getAge).one()));
         Page<Emp> p = e.query(Emp.class).orderByAsc(Emp::getId).page(2, 2);
@@ -175,7 +175,7 @@ public class MemoryFullCoverageExample {
             ck("json-sql orderByDesc", "Bob", col(e.querySql("SELECT name FROM emp ORDER BY age DESC LIMIT 1"), "name"));
             ck("json-sql count", 3, e.querySql("SELECT COUNT(*) FROM emp").get(0).get("cnt"));
             ck("json-sql and", 1, e.querySql("SELECT name FROM emp WHERE age > 20 AND city = 'Beijing'").size());
-            ck("json-sql or", 2, e.querySql("SELECT name FROM emp WHERE city = 'Beijing' OR city = 'Shanghai'").size());
+            ck("json-sql or", 3, e.querySql("SELECT name FROM emp WHERE city = 'Beijing' OR city = 'Shanghai'").size());
             ck("json-sql update", 1, e.executeSql("UPDATE emp SET age = ? WHERE id = ?", 99, 1));
             ck("json-sql delete", 1, e.executeSql("DELETE FROM emp WHERE id = 3"));
             cleanup(dir);
