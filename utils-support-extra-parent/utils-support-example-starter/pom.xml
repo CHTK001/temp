@@ -224,7 +224,7 @@
         </dependency>
         <dependency>
             <groupId>com.chua</groupId>
-            <artifactId>utils-support-deeplearning-llama-starter</artifactId>
+            <artifactId>utils-support-deeplearning-gpu-llama3-starter</artifactId>
             <version>${project.version}</version>
                     <optional>true</optional>
         </dependency>
@@ -699,7 +699,6 @@
                     </annotationProcessorPaths>
                     <!-- 排除引用了已失效 API 的历史遗留示例，修复后应逐个移出本清单 -->
                     <excludes>
-                        <exclude>**/llama/*.java</exclude>
                         <exclude>**/flow/FlowTraceExample.java</exclude>
                         <exclude>**/network/HttpClientExample.java</exclude>
                         <exclude>**/network/sip/SipClientExample.java</exclude>
