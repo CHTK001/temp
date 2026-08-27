@@ -44,6 +44,7 @@ public class FeatureDimensionInferenceExample {
         log.info("===== 嵌入式图片特征 维度实测 =====");
         testImageFeature("dino-v2-small-embedding", 384, image);
         testImageFeature("mobileclip-s0-vision", 512, image);
+        testImageFeature("cn-clip-rn50-image", 1024, image);
 
         log.info("\n===== 嵌入式文本嵌入 维度实测 =====");
         testTextEmbedding("minilm-embedding", 384, "你好世界");

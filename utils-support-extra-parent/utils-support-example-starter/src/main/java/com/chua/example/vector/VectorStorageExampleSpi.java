@@ -37,6 +37,11 @@ import java.util.Random;
  *   java ExampleRunner --example=vector-storage --type=milvus \
  *       --host=in03-xxx.serverless.gcp-us-west1.cloud.zilliz.com \
  *       --port=443 --collection=vector_store_v4 --token=xxx
+ *   # vector（cuVS GPU / jvector CPU 自动切换）
+ *   java ExampleRunner --example=vector-storage --type=vector
+ *
+ *   # vector 强制 CPU
+ *   java ExampleRunner --example=vector-storage --type=vector --force-cpu=true
  * </pre>
  *
  * @author CH
@@ -98,8 +103,9 @@ public class VectorStorageExampleSpi implements Example {
             case "memory" -> testMemoryCapabilities();
             case "jvector" -> testJVectorCapabilities(mode);
             case "milvus" -> testMilvusCapabilities(host, port, collection, token);
+            case "vector" -> testVectorCapabilities(args);
             default -> {
-                log.info("不支持的 SPI 类型: {}，可选: memory / jvector / milvus", type);
+                log.info("不支持的 SPI 类型: {}，可选: memory / jvector / milvus / vector", type);
                 yield false;
             }
         };
@@ -468,6 +474,80 @@ public class VectorStorageExampleSpi implements Example {
             return false;
         } finally {
             closeQuietly(s);
+        }
+    }
+
+    // ==================== vector (cuVS + jvector) 能力集 ====================
+
+    /** TestVectorCapabilities */
+    @SuppressWarnings("unchecked")
+    private boolean testVectorCapabilities(Map<String, String> args) {
+        log.info("\n[vector] 环境检测与能力矩阵");
+        boolean passed = true;
+        passed &= testVectorAutoDetect();
+        passed &= testVectorForceCpu();
+        passed &= testVectorRuntimeDetector();
+        return passed;
+    }
+
+    /** TestVector自动检测 */
+    private boolean testVectorAutoDetect() {
+        log.info("  [TC-V01] vector AUTO 自动检测后端");
+        try {
+            com.chua.vector.support.configuration.VectorStorageProperties props =
+                    new com.chua.vector.support.configuration.VectorStorageProperties();
+            VectorStorage s = VectorStorageProvider.of("vector").dimension(DIM)
+                    .algorithm(VectorCompareAlgorithm.cosine())
+                    .properties(props).build();
+            assertEquals("auto-detect", DIM, s.dimension());
+            seedJVector(s, "vec-auto");
+            s.close();
+            pass();
+            return true;
+        } catch (Exception e) {
+            fail("vector AUTO 检测异常: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /** TestVector强制CPU */
+    private boolean testVectorForceCpu() {
+        log.info("  [TC-V02] vector forceCpu=true 强制 CPU");
+        try {
+            com.chua.vector.support.configuration.VectorStorageProperties props =
+                    new com.chua.vector.support.configuration.VectorStorageProperties().forceCpu(true);
+            VectorStorage s = VectorStorageProvider.of("vector").dimension(DIM)
+                    .algorithm(VectorCompareAlgorithm.cosine())
+                    .properties(props).build();
+            assertEquals("force-cpu", DIM, s.dimension());
+            seedJVector(s, "vec-cpu");
+            s.close();
+            pass();
+            return true;
+        } catch (Exception e) {
+            fail("vector forceCpu 异常: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /** TestVectorRuntimeDetector */
+    private boolean testVectorRuntimeDetector() {
+        log.info("  [TC-V03] RuntimeDetector SPI 收集与排序");
+        try {
+            List<com.chua.common.support.vector.RuntimeDetector> detectors =
+                    com.chua.common.support.spi.ServiceProvider
+                            .of(com.chua.common.support.vector.RuntimeDetector.class).collect();
+            log.info("    检测到 {} 个 RuntimeDetector:", detectors.size());
+            detectors.sort((a, b) -> Integer.compare(b.priority(), a.priority()));
+            for (com.chua.common.support.vector.RuntimeDetector d : detectors) {
+                boolean available = d.isAvailable();
+                log.info("    - {} (priority={}, available={})", d.name(), d.priority(), available);
+            }
+            pass();
+            return true;
+        } catch (Exception e) {
+            fail("RuntimeDetector SPI 异常: " + e.getMessage());
+            return false;
         }
     }
 

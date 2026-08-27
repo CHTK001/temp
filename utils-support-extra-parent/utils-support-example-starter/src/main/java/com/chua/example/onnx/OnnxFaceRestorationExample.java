@@ -1,6 +1,5 @@
 package com.chua.example.onnx;
 
-import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.face.FaceDetector;
 import com.chua.deeplearning.support.image.ImageEnhancer;
 import com.chua.deeplearning.support.model.PredictRectangle;
@@ -16,10 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * ONNX 人脸链路验证：onnx-retinaface 检测(5点) → 子图外扩 → 5点对齐 →
- * onnx-gfpgan 修复 → onnx-parsenet 分割 → 逆仿射贴回原图。
- *
- * <p>全链路 ONNX 引擎（gfpgan 为重写 forward 结构版，规避 double 计算域，无偏色）。</p>
+ * 混合引擎人脸修复（对照 pt FaceRestorationExample）：
+ * 检测=pytorch-retinaface，修复=onnx-gfpgan，分割=pytorch-parsenet。
+ * 与 pt 版唯一区别是修复模型换成 ONNX 的 onnx-gfpgan，其余完全一致。
  *
  * <pre>{@code
  *   OnnxFaceRestorationExample G:\images\三个人.jpg
@@ -28,13 +26,17 @@ import java.util.List;
  *
  * @since 4.0.0.42
  */
-@Slf4j
 public final class OnnxFaceRestorationExample {
+
+    /**
+     * 日志。
+     */
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(OnnxFaceRestorationExample.class);
 
     /**
      * 输出目录。
      */
-    private static final String OUT_DIR = "G:\\images\\output";
+    private static final String OUT_DIR = "D:\\images\\output";
 
     /** 创建 OnnxFaceRestorationExample 实例 */
     private OnnxFaceRestorationExample() {
@@ -42,13 +44,21 @@ public final class OnnxFaceRestorationExample {
 
     /** Main */
     public static void main(String[] args) throws Exception {
-        String imagePath = args.length > 0 ? args[0] : "G:\\images\\三个人.jpg";
+        String imagePath = args.length > 0 ? args[0] : "D:\\images\\3peoplebeauty.jpg";
+        String detectorId = args.length > 1 ? args[1] : "pytorch-retinaface";
+        String gfpganId = args.length > 2 ? args[2] : "onnx-gfpgan";
+        String parsenetId = args.length > 3 ? args[3] : "pytorch-parsenet";
         byte[] img = Files.readAllBytes(Path.of(imagePath));
 
-        FaceDetector detector = FaceDetector.create("onnx-retinaface");
+        // 独立运行（非 Spring 容器）时 SPI 可能未触发注册器，显式加载 onnx + pytorch 注册器
+        Class.forName("com.chua.deeplearning.support.onnx.OnnxModelRegistrar");
+        Class.forName("com.chua.deeplearning.support.pytorch.PytorchModelRegistrar");
+
+        // 检测引擎
+        FaceDetector detector = FaceDetector.create(detectorId);
         long t0 = System.currentTimeMillis();
         List<PredictRectangle> boxes = detector.detect(img);
-        log.info("[detect] 模型=onnx-retinaface 人脸数=" + boxes.size()
+        log.info("[detect] 模型=" + detectorId + " 人脸数=" + boxes.size()
                 + " 耗时=" + (System.currentTimeMillis() - t0) + "ms");
         if (boxes.isEmpty()) {
             log.info("[detect] 未检测到人脸");
@@ -74,10 +84,12 @@ public final class OnnxFaceRestorationExample {
         for (PredictRectangle box : boxes) {
             org.opencv.core.Rect r = new org.opencv.core.Rect(
                     (int) box.x(), (int) box.y(), (int) box.width(), (int) box.height());
-            org.opencv.imgproc.Imgproc.rectangle(draw, r, new Scalar(0, 200, 0), 2);
+            org.opencv.imgproc.Imgproc.rectangle(draw, r,
+                    new Scalar(0, 200, 0), 2);
             if (box.keypoints() != null) {
                 for (float[] kp : box.keypoints()) {
-                    org.opencv.imgproc.Imgproc.circle(draw, new Point(kp[0], kp[1]), 2, new Scalar(0, 0, 255), -1);
+                    org.opencv.imgproc.Imgproc.circle(draw,
+                            new Point(kp[0], kp[1]), 2, new Scalar(0, 0, 255), -1);
                 }
             }
         }
@@ -86,11 +98,13 @@ public final class OnnxFaceRestorationExample {
         log.info("[detect] 已输出: " + detectOut);
         draw.release();
 
-        ImageEnhancer gfpgan = ImageEnhancer.create("onnx-gfpgan");
-        ImageEnhancer parsenet = ImageEnhancer.create("onnx-parsenet");
+        // 修复/分割引擎（混合引擎：检测 pytorch-retinaface + 修复 onnx-gfpgan + 分割 pytorch-parsenet）
+        ImageEnhancer gfpgan = ImageEnhancer.create(gfpganId);
+        ImageEnhancer parsenet = ImageEnhancer.create(parsenetId);
 
         for (int i = 0; i < boxes.size(); i++) {
             PredictRectangle box = boxes.get(i);
+            // 子图外扩 100%（AIAS 同款）
             int x1 = (int) box.x(), y1 = (int) box.y();
             int x2 = x1 + (int) box.width(), y2 = y1 + (int) box.height();
             int newX1 = Math.max((int) (x1 + x1 * 0.5f - x2 * 0.5f), 0);
@@ -103,6 +117,7 @@ public final class OnnxFaceRestorationExample {
                 continue;
             }
             Mat sub = new Mat(src, new Rect(newX1, newY1, cw, ch));
+
             List<float[]> kps = new ArrayList<>();
             if (box.keypoints() != null) {
                 for (float[] p : box.keypoints()) {
@@ -114,6 +129,8 @@ public final class OnnxFaceRestorationExample {
                 sub.release();
                 continue;
             }
+
+            // 5 点 SVD 仿射对齐（保留矩阵供贴回）
             Mat affine = ImageUtils.estimateFaceAffine512(kps);
             Mat aligned = new Mat();
             org.opencv.imgproc.Imgproc.warpAffine(sub, aligned, affine,
@@ -123,17 +140,16 @@ public final class OnnxFaceRestorationExample {
             Files.write(alignOut, ImageUtils.encode(aligned));
             log.info("[align] #" + i + " 已输出: " + alignOut);
 
-            // onnx-gfpgan 修复（重写结构版，无偏色）
+            // 修复
             byte[] face = ImageUtils.encode(aligned);
             long t1 = System.currentTimeMillis();
             byte[] restored = gfpgan.enhance(face);
             Path restoreOut = Path.of(OUT_DIR, "onnx_face" + i + "_restore.png");
             Files.write(restoreOut, restored);
-            log.info("[gfpgan] #" + i + " 模型=onnx-gfpgan 耗时="
+            log.info("[gfpgan] #" + i + " 模型=" + gfpganId + " 耗时="
                     + (System.currentTimeMillis() - t1) + "ms 已输出: " + restoreOut);
-            Mat restoredMat = ImageUtils.decode(restored);
 
-            // onnx parsenet 分割
+            // 分割软 mask
             long t2 = System.currentTimeMillis();
             byte[] maskBytes = parsenet.enhance(restored);
             Mat softMask = ImageUtils.decode(maskBytes);
@@ -145,23 +161,24 @@ public final class OnnxFaceRestorationExample {
             }
             Path maskOut = Path.of(OUT_DIR, "onnx_face" + i + "_mask.png");
             Files.write(maskOut, ImageUtils.encode(softMask));
-            log.info("[parsenet] #" + i + " 模型=onnx-parsenet 耗时="
+            log.info("[parsenet] #" + i + " 模型=" + parsenetId + " 耗时="
                     + (System.currentTimeMillis() - t2) + "ms 已输出: " + maskOut);
 
-            // 贴回（修复后人脸 + mask 逆仿射融合）
+            // 逆仿射贴回原图 + mask 融合
+            Mat restoredMat = ImageUtils.decode(restored);
             Mat pasted = ImageUtils.pasteFace(src, restoredMat, softMask, affine);
             Path pasteOut = Path.of(OUT_DIR, "onnx_face" + i + "_pasted.png");
             Files.write(pasteOut, ImageUtils.encode(pasted));
             log.info("[paste] #" + i + " 已输出: " + pasteOut);
 
-            restoredMat.release();
             pasted.release();
+            restoredMat.release();
             softMask.release();
             aligned.release();
             sub.release();
             affine.release();
         }
         src.release();
-        log.info("[done] ONNX 链路完成，共 " + boxes.size() + " 张人脸");
+        log.info("[done] ONNX 混合链路完成，共 " + boxes.size() + " 张人脸");
     }
 }

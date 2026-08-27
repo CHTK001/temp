@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * 3peoplebeauty.jpg 全流程：检测→裁剪→输出到各模型子目录。
  */
-public class FaceFullPipe3Beauty {
+public class FaceFullPipe3BeautyExample {
     public static void main(String[] args) throws Exception {
         String imgPath = "D:\\images\\3peoplebeauty.jpg";
         String outBase = "D:\\images\\output";

@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter;
  * @since 4.0.0.42
  */
 @ShellMethod("/demo")
-public class DeployShellCommands {
+public class DeployShellCommandsExample {
 
     /**
      * 问候命令。

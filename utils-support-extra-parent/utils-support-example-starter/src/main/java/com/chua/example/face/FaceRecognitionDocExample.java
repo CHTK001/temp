@@ -1,85 +1,66 @@
 package com.chua.example.face;
 
+import com.chua.common.support.vector.Vector;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import com.chua.deeplearning.support.face.FaceDetectionHit;
+import com.chua.deeplearning.support.face.FaceIdentifyHit;
 import com.chua.deeplearning.support.face.FacePipeline;
 
 /**
- * 人脸识别 — 完整处理流程图 + Builder 配置标注。
+ * 人脸识别 — 完整处理流程图 + Builder 配置标注（修正版）。
  *
- * <h2>处理流程</h2>
+ * <h2>处理流程（与 FacePipeline.java buildIdentifyPipeline() 完全一致）</h2>
  * <pre>
  *   图片 byte[]
  *     │
- *     ▼ ① 人脸检测（detector，必填）
- *     │   └─ FaceDetector.detect(image)
- *     │       ├─ 输入：原始图片 byte[]
- *     │       ├─ 输出：List&lt;DetectionHit&gt;（每张脸：box + confidence + faceImage 裁切）
- *     │       └─ 可配置：minFaceArea / minConfidence 过滤低质量检测
+ *     ▼ ① 裁剪 (crop) —— 检测框四周扩展
  *     │
- *     ▼ ② 质量过滤（quality，可选）
- *     │   └─ FaceQualityAssessor.quality(faceImage)
- *     │       ├─ 输入：裁切后的人脸图片
- *     │       └─ 输出：FaceQualityInfo（模糊度/光照/角度/遮挡评分）
- *     │           低于阈值的检测结果会被丢弃
+ *     ▼ ② **活体检测 (liveness)** ← **修正：特征提取前，业务优先拒非活体**
+ *     │   └─ 真人 vs 照片/屏幕/深伪，通过 requireLive/threshold 过滤
  *     │
- *     ▼ ③ 动漫检测（anime，可选）
- *     │   └─ FaceDetector.detect(faceImage)
- *     │       ├─ 识别二次元/虚拟人风格人脸
- *     │       └─ 与真实人脸分开走不同特征提取器
+ *     ▼ ③ 人脸对齐 (align) —— 基于关键点五官坐标摆正
+ *     │   └─ 关键点：68/98 点坐标 → 旋转至两眼水平，提升后续特征精度
  *     │
- *     ▼ ④ 超分辨率（superResolution，可选）
- *     │   └─ ImageEnhancer.enhance(faceImage)
- *     │       ├─ 低分辨率/模糊人脸 → 高清增强
- *     │       └─ 增强后再做特征提取，提升模糊脸的识别精度
+ *     ▼ ④ 图像修复 (restore) —— 去除遮挡/疤痕/噪声
  *     │
- *     ▼ ⑤ 图像修复（restore，可选）
- *     │   └─ ImageEnhancer.enhance(faceImage)
- *     │       ├─ 去除遮挡/疤痕/噪声等瑕疵
- *     │       └─ 修复后再做特征提取
+ *     ▼ ⑤ 超分辨率 (enhance/superResolution) —— 分辨率提升
  *     │
- *     ▼ ⑥ 特征提取（feature，必填）
- *     │   └─ FeatureExtractor.extract(faceImage)
- *     │       ├─ 人脸裁切图 → 固定维度向量（512/1024维）
- *     │       └─ 可配置：sigmoidRecognize（默认 true）
+ *     ▼ ⑥ **特征提取 (feature)** —— 人脸 → 512/1024维向量
  *     │
- *     ▼ ⑦ 活体检测（liveness，可选）
- *     │   └─ LivenessDetector.detect(faceImage)
- *     │       ├─ 区分真人脸 vs 照片/屏幕翻拍/深伪视频
- *     │       ├─ 输出：boolean alive + float score
- *     │       └─ 可配置：requireLive=true / livenessThreshold=0.6
+ *     ▼ ⑦ 检索/比对 (search/compare) ──► 向量库
  *     │
- *     ▼ ⑧ 关键点提取（landmark，可选）
- *     │   └─ FeatureExtractor.extract(faceImage)
- *     │       └─ 输出：float[] 坐标（68/98 个五官点）
- *     │
- *     ▼ ⑨ 深伪检测（deepfake，可选）
- *     │   └─ ImageClassifier.classify(faceImage)
- *     │       └─ 判断人脸是否为 AI 生成/换脸伪造
- *     │
- *     ▼ ⑩ 入库 / 比对 / 检索
- *     │   ├─ enroll: Vector(id, feature, metadata, content) → VectorStorage.add()
- *     │   ├─ compare: 1:1 比对两张脸的特征相似度
- *     │   └─ search: 查询向量 → 余弦排序 → TopK 结果
+ *     ▼ ⑧ 收集 (collectIdentify) ──► 结果封装
  * </pre>
  *
- * <h2>Builder 组件</h2>
+ * <h2>Builder 组件标注</h2>
  * <pre>
- *   ★ 必填   detector       人脸检测器（定位图片中所有人脸）
- *   ★ 必填   feature        特征提取器（人脸 → 512维向量）
+ *   ★ 必填   detector      人脸检测器（定位图片中所有人脸）
+ *   ★ 必填   feature        特征提取器（人脸 → 固定维度向量）
  *   ★ 必填   vectorStorage  向量库（默认 FileVectorStorage）
- *   ○ topK                   检索返回条数上限
- *   ○ liveness               活体检测器（区分真人 vs 照片/屏幕/深伪）
- *   ○ requireLive            是否要求活体通过（默认 true）
- *   ○ livenessThreshold      活体分阈值（默认 0.5）
- *   ○ minConfidence          最低检测置信度过滤
- *   ● superResolution        超分辨率：模糊脸 → 高清增强
- *   ● restorer               图像修复：去除遮挡/瑕疵
- *   ● anime                  动漫检测：二次元/虚拟人区分
- *   ● landmark               关键点：定位 68/98 个五官坐标
- *   ● deepfake               深伪检测：AI 生成/换脸判断
- *   ● quality                质量评估：模糊度/光照/角度打分
- *   ● cropPadding            检测框扩展像素（默认 0）
- *   ● minFaceArea            最小脸面积阈值（默认 0）
+ *   ○ 可选   topK          检索返回条数上限
+ *   ○ 可选   liveness      活体检测器（区分真人 vs 照片/屏幕/深伪）
+ *   ○ 可选   requireLive   是否要求活体通过（默认 true）
+ *   ○ 可选   livenessThreshold 活体分阈值（默认 0.5）
+ *   ○ 可选   minConfidence 最低检测置信度过滤
+ *   ○ 可选   minFaceArea   最小脸面积阈值（默认 0）
+ *   ○ 可选   cropPadding   检测框扩展像素（默认 0）
+ *   ● 新增   anime          动漫检测：二次元/虚拟人区分
+ *   ● 新增   superResolution 超分辨率：模糊脸 → 高清增强
+ *   ● 新增   restorer       图像修复：去除遮挡/瑕疵
+ *   ● 新增   landmark       关键点：定位 68/98 个五官坐标（用于对齐）
+ *   ● 新增   deepfake       深伪检测：AI 生成/换脸判断（独立接口 isDeepfake）
+ *   ● 新增   quality        质量评估：模糊度/光照/角度打分
  * </pre>
+ *
+ * <p>注意：</p>
+ * <ul>
+ *   <li>活体检测(liveness)已放在特征提取前，避免浪费 compute 资源。</li>
+ *   <li>关键点(landmark)用于 align 步骤，位于特征提取前，不单独“在提取后检测”。</li>
+ *   <li>深伪检测(deepfake)是独立的辅助能力，通过 pipeline.isDeepfake(image) 调用，不在主流程中。</li>
+ * </ul>
  */
 public class FaceRecognitionDocExample {
     private FaceRecognitionDocExample() { }
@@ -91,21 +72,39 @@ public class FaceRecognitionDocExample {
                 .feature("faceplugin-face-feature")         // ★ 特征提取
                 .build();                                    // ★ 向量库自动创建
 
-        System.out.println("\n===== 完整配置（必填 + 选填 + 可选）=====");
+        System.out.println("\n===== 完整配置（必填 + 关键流程项）=====");
         FacePipeline full = FacePipeline.builder()
                 .detector("faceplugin-face-detect-slim")
                 .feature("faceplugin-face-feature")
-                .topK(10)
+                // ○ 业务优先项：活体在特征前
                 .liveness("face-liveness-flrgb")
                 .requireLive(true)
                 .livenessThreshold(0.6f)
-                .minConfidence(0.7f)
-                .superResolution("super-res-v1")            // 超分：模糊→高清
-                .restore("face-restore-v1")                 // 修复：去瑕疵
-                .anime("anime-face-detector")               // 动漫：二次元区分
-                .landmark("faceplugin-face-landmark")       // 关键点：五官坐标
-                .deepfake("deepfake-detector")              // 深伪：AI伪造判断
+                // ○ 几何对齐项：关键点引导对齐（在特征前）
+                .landmark("faceplugin-face-landmark")
+                // ○ 图像质量项
+                .superResolution("gfpgan-face-super-resolution")   // 超分：模糊→高清
+                .restore("codeformer")                            // 修复：去瑕疵
+                // ● 可选高级项
+                .anime("anime-face-detector")                      // 动漫：二次元区分
+                .deepfake("deepfake-detector")                    // 深伪：AI伪造判断（单独接口）
+                .minConfidence(0.7f)                             // 置信度过滤
                 .build();
+
         System.out.println("  pipeline ready");
+
+        // 示例：执行完整识别流程
+        byte[] imageData = Files.readAllBytes(Path.of("test.jpg"));
+
+        // 1. 人脸检测 + 活体过滤
+        List<FacePipeline.FaceDetectionHit> hits = full.detectPipeline(imageData);
+        if (hits.isEmpty()) {
+            System.out.println("  检测无人脸");
+            System.exit(0);
+        }
+
+        // 2. 完整识别（含活体→对齐→修复→超分→特征→检索）
+        List<FacePipeline.FaceIdentifyHit> results = full.identifyPipeline(imageData);
+        System.out.println("  识别结果数: " + results.size());
     }
 }

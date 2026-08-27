@@ -1,13 +1,13 @@
 package com.chua.example.engine;
 
 import com.chua.common.support.lang.datasource.page.Page;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 全覆盖测试：所有操作符 × 所有引擎（InMemory / File-JSON / File-CSV）× SQL+Lambda 双路径。
@@ -25,8 +25,7 @@ import java.util.List;
  * @author CH
  * @since 4.0.0.42
  */
-@Slf4j
-public class MemoryFullCoverageExample {
+public class MemoryFullCoverageExample extends AbstractEngineExample {
 
     /** 测试员工实体 */
     public static class Emp {
@@ -49,25 +48,54 @@ public class MemoryFullCoverageExample {
         public void setCity(String city) { this.city = city; }
     }
 
-    /** 失败计数 */
-    private static int failed;
-
     /**
-     * 入口。
+     * 入口：通过 {@code --mode} 指定运行分组，默认全量。
      *
-     * @param args 未使用
+     * <p>可选值：sql / lambda / reactor / exception / all（默认）。</p>
+     *
+     * @param args 启动参数，支持 {@code --mode=value} 或 {@code --mode value}
      */
     public static void main(String[] args) {
-        runInMemorySql();
-        runInMemoryLambda();
-        runFileJsonSql();
-        runFileJsonLambda();
-        runFileCsvLambda();
-        runReactorLambda();
-        runExceptionPaths();
+        String mode = "all";
+        for (int i = 0; i < args.length; i++) {
+            String a = args[i];
+            if (a.startsWith("--mode")) {
+                if (a.contains("=")) {
+                    mode = a.substring(a.indexOf('=') + 1);
+                } else if (i + 1 < args.length) {
+                    mode = args[++i];
+                }
+            }
+        }
+        switch (mode) {
+            case "sql":
+                runInMemorySql();
+                runFileJsonSql();
+                break;
+            case "lambda":
+                runInMemoryLambda();
+                runFileJsonLambda();
+                runFileCsvLambda();
+                break;
+            case "reactor":
+                runReactorLambda();
+                break;
+            case "exception":
+                runExceptionPaths();
+                break;
+            case "all":
+            default:
+                runInMemorySql();
+                runInMemoryLambda();
+                runFileJsonSql();
+                runFileJsonLambda();
+                runFileCsvLambda();
+                runReactorLambda();
+                runExceptionPaths();
+        }
 
-        if (failed > 0) {
-            log.error("[FAIL] 全覆盖失败数: {}", failed);
+        if (FAILED.get() > 0) {
+            log.error("[FAIL] 全覆盖失败数: {}", FAILED.get());
             System.exit(1);
         }
         System.out.println("[PASS] full-coverage all scenarios passed");
@@ -180,7 +208,7 @@ public class MemoryFullCoverageExample {
             ck("json-sql delete", 1, e.executeSql("DELETE FROM emp WHERE id = 3"));
             cleanup(dir);
         } catch (IOException ex) {
-            failed++;
+            FAILED.incrementAndGet();
             log.info("[FAIL] json-sql: {}", ex.getMessage());
         }
     }
@@ -221,7 +249,7 @@ public class MemoryFullCoverageExample {
             ck("json-lam delete复合", 1, e.delete(Emp.class).eq(Emp::getCity, "Guangzhou").remove());
             cleanup(dir);
         } catch (IOException ex) {
-            failed++;
+            FAILED.incrementAndGet();
             log.info("[FAIL] json-lam: {}", ex.getMessage());
         }
     }
@@ -258,7 +286,7 @@ public class MemoryFullCoverageExample {
             ck("csv-lam delete复合", 1, e.delete(Emp.class).eq(Emp::getCity, "Guangzhou").remove());
             cleanup(dir);
         } catch (IOException ex) {
-            failed++;
+            FAILED.incrementAndGet();
             log.info("[FAIL] csv-lam: {}", ex.getMessage());
         }
     }
@@ -301,7 +329,7 @@ public class MemoryFullCoverageExample {
                     fe.delete(Emp.class).eq(Emp::getId, 2).remove().block());
             cleanup(dir);
         } catch (IOException ex) {
-            failed++;
+            FAILED.incrementAndGet();
             log.info("[FAIL] rx-fj: {}", ex.getMessage());
         }
     }
@@ -320,7 +348,7 @@ public class MemoryFullCoverageExample {
         /* 无效 SQL */
         try {
             im.querySql("SELEC * FROM emp");
-            failed++;
+            FAILED.incrementAndGet();
             log.info("[FAIL] 无效SQL应抛异常");
         } catch (Exception expected) {
             /* 预期异常 */
@@ -337,14 +365,7 @@ public class MemoryFullCoverageExample {
         ck("lambda null eq", 1, im.query(Emp.class).eq(Emp::getId, 1).list().size());
     }
 
-    /* ==================== 辅助 ==================== */
-
-    private static void ck(String scene, Object expected, Object actual) {
-        var pass = expected == null ? actual == null : expected.equals(actual);
-        log.info("{} {} => {}", pass ? "[PASS]" : "[FAIL]", scene,
-                pass ? actual : "expected=" + expected + " actual=" + actual);
-        if (!pass) failed++;
-    }
+    /* ==================== 辅助（实体相关 fixture） ==================== */
 
     private static String name(Object obj) {
         return obj == null ? null : ((Emp) obj).getName();
@@ -354,35 +375,16 @@ public class MemoryFullCoverageExample {
         return obj == null ? null : ((Emp) obj).getCity();
     }
 
-    private static Object col(List<java.util.Map<String, Object>> rows, String field) {
+    private static Object col(List<Map<String, Object>> rows, String field) {
         return rows.isEmpty() ? null : rows.get(0).get(field);
     }
 
     private static Emp emp(int id, String name, int age, String city) {
-        var e = new Emp();
+        Emp e = new Emp();
         e.setId(id);
         e.setName(name);
         e.setAge(age);
         e.setCity(city);
         return e;
-    }
-
-    private static Path tempDir(String name) {
-        try {
-            Path dir = Paths.get(System.getProperty("java.io.tmpdir"), "test-output", name);
-            Files.createDirectories(dir);
-            return dir;
-        } catch (IOException e) {
-            failed++;
-            log.info("[FAIL] 创建临时目录 {}: {}", name, e.getMessage());
-            return null;
-        }
-    }
-
-    private static void cleanup(Path dir) {
-        try (var paths = Files.walk(dir)) {
-            paths.sorted(java.util.Comparator.reverseOrder())
-                    .forEach(p -> { try { Files.deleteIfExists(p); } catch (Exception ignored) {} });
-        } catch (IOException ignored) {}
     }
 }

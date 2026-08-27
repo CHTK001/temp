@@ -1,5 +1,7 @@
 package com.chua.example.tree;
 
+import static java.util.Objects.requireNonNull;
+
 import com.chua.common.support.tree.BinaryTreeConverter;
 import com.chua.common.support.tree.TreeEngine;
 import com.chua.common.support.tree.TreeNode;
@@ -7,6 +9,7 @@ import com.chua.common.support.tree.TreeNode;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BooleanSupplier;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -32,6 +35,8 @@ public final class BTreeExample {
         passed &= timed("bplusRangeQuery", BTreeExample::bplusRangeQuery);
         passed &= timed("bplusDelete", BTreeExample::bplusDelete);
         passed &= timed("bplusLargeScale", BTreeExample::bplusLargeScale);
+        passed &= timed("bplusPerf", BTreeExample::bplusPerf);
+        passed &= timed("btreePerf", BTreeExample::btreePerf);
         passed &= timed("bplusToBinaryAndBack", BTreeExample::bplusToBinaryAndBack);
         passed &= timed("btreePutAndGet", BTreeExample::btreePutAndGet);
         passed &= timed("btreeRangeQuery", BTreeExample::btreeRangeQuery);
@@ -45,7 +50,14 @@ public final class BTreeExample {
         System.exit(EXIT_CODE_SUCCESS);
     }
 
-    private static boolean timed(String name, java.util.function.BooleanSupplier scenario) {
+    /**
+     * 计时执行测试场景并记录耗时。
+     *
+     * @param name     场景名称，用于日志与输出标记
+     * @param scenario 测试场景，返回 true 表示通过
+     * @return 场景是否通过
+     */
+    private static boolean timed(String name, BooleanSupplier scenario) {
         long start = System.currentTimeMillis();
         boolean ok = scenario.getAsBoolean();
         log.info("[TIME] " + name + " " + (System.currentTimeMillis() - start) + "ms");
@@ -133,6 +145,74 @@ public final class BTreeExample {
             return ok;
         } catch (Exception e) {
             return fail("bplusLargeScale", e);
+        }
+    }
+
+    private static boolean bplusPerf() {
+        try {
+            int total = 1_000_000;
+            TreeEngine<Integer, String> tree = TreeEngine.ofBPlusTree(200);
+            long start = System.nanoTime();
+            for (int i = 0; i < total; i++) {
+                tree.put(i, "v" + i);
+            }
+            long putNs = System.nanoTime() - start;
+            log.info("[PERF] B+ put {} ops in {}ms", total, putNs / 1_000_000);
+
+            start = System.nanoTime();
+            for (int i = 0; i < total; i++) {
+                tree.get(i);
+            }
+            long getNs = System.nanoTime() - start;
+            log.info("[PERF] B+ get {} ops in {}ms", total, getNs / 1_000_000);
+
+            start = System.nanoTime();
+            List<Map.Entry<Integer, String>> all = tree.range(0, total);
+            long rangeNs = System.nanoTime() - start;
+            log.info("[PERF] B+ range[0,1M) {} entries in {}ms", all.size(), rangeNs / 1_000_000);
+
+            start = System.nanoTime();
+            List<Map.Entry<Integer, String>> k10k = tree.range(490_000, 500_000);
+            long range10kNs = System.nanoTime() - start;
+            log.info("[PERF] B+ range[490k,500k) {} entries in {}ms", k10k.size(), range10kNs / 1_000_000);
+
+            return all.size() == total && k10k.size() == 10_000;
+        } catch (Exception e) {
+            return fail("bplusPerf", e);
+        }
+    }
+
+    private static boolean btreePerf() {
+        try {
+            int total = 1_000_000;
+            TreeEngine<Integer, String> tree = TreeEngine.ofBTree(200);
+            long start = System.nanoTime();
+            for (int i = 0; i < total; i++) {
+                tree.put(i, "v" + i);
+            }
+            long putNs = System.nanoTime() - start;
+            log.info("[PERF] B  put {} ops in {}ms", total, putNs / 1_000_000);
+
+            start = System.nanoTime();
+            for (int i = 0; i < total; i++) {
+                tree.get(i);
+            }
+            long getNs = System.nanoTime() - start;
+            log.info("[PERF] B  get {} ops in {}ms", total, getNs / 1_000_000);
+
+            start = System.nanoTime();
+            List<Map.Entry<Integer, String>> all = tree.range(0, total);
+            long rangeNs = System.nanoTime() - start;
+            log.info("[PERF] B  range[0,1M) {} entries in {}ms", all.size(), rangeNs / 1_000_000);
+
+            start = System.nanoTime();
+            List<Map.Entry<Integer, String>> k10k = tree.range(490_000, 500_000);
+            long range10kNs = System.nanoTime() - start;
+            log.info("[PERF] B  range[490k,500k) {} entries in {}ms", k10k.size(), range10kNs / 1_000_000);
+
+            return all.size() == total && k10k.size() == 10_000;
+        } catch (Exception e) {
+            return fail("btreePerf", e);
         }
     }
 
@@ -239,7 +319,7 @@ public final class BTreeExample {
     // ==================== 辅助 ====================
 
     private static void print(String name, boolean ok) {
-        log.info((ok ? "[PASS] " : "[FAIL] ") + name);
+        log.info("[{}] {}", ok ? "PASS" : "FAIL", name);
     }
 
     private static boolean fail(String name, Exception e) {
