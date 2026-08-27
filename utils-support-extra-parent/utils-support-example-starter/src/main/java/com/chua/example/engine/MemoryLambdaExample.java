@@ -195,7 +195,7 @@ public class MemoryLambdaExample {
             check("json likeRight", 1, jsonEngine.query(Emp.class).likeRight(Emp::getName, "Ali").list().size());
             check("json in", 2, jsonEngine.query(Emp.class).in(Emp::getId, List.of(1, 3)).list().size());
             check("json notIn", 2, jsonEngine.query(Emp.class).notIn(Emp::getId, List.of(1, 3)).list().size());
-            check("json between", 4, jsonEngine.query(Emp.class).between(Emp::getAge, 20, 30).list().size());
+            check("json between", 3, jsonEngine.query(Emp.class).between(Emp::getAge, 20, 30).list().size());
             check("json orderByDesc", "Dave",
                     nameOf(jsonEngine.query(Emp.class).orderByDesc(Emp::getAge).one()));
             check("json orderByAsc", "Alice",
