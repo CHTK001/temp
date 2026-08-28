@@ -57,7 +57,6 @@ public class SipServerExample {
                 .port(Integer.parseInt(kv.getOrDefault("port", String.valueOf(SipConfig.DEFAULT_PORT))))
                 .token(kv.getOrDefault("token", SipConfig.defaults().getToken()))
                 .encrypt(Boolean.parseBoolean(kv.getOrDefault("encrypt", "false")))
-                .dataPlaneMode(kv.getOrDefault("data-plane", SipConfig.MODE_RELAY))
                 .build();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
