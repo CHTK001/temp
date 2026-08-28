@@ -3,6 +3,7 @@ package com.chua.example.face;
 import com.chua.deeplearning.support.draw.DrawerPipeline;
 import com.chua.deeplearning.support.face.FaceDetectionHit;
 import com.chua.deeplearning.support.face.FacePipeline;
+import com.chua.deeplearning.support.face.FacePipelineDiskCallback;
 import com.chua.deeplearning.support.model.DetectionInfo;
 import com.chua.deeplearning.support.model.PredictRectangle;
 import lombok.extern.slf4j.Slf4j;
@@ -67,6 +68,7 @@ public class FaceDetectMultiExample {
             FacePipeline face = FacePipeline.builder()
                     .detector(model)
                     .build();
+            face.setCallback(new FacePipelineDiskCallback(Path.of(outputDir)));
 
             try (Stream<Path> files = Files.list(Path.of("D:\\images"))) {
                 files.filter(f -> f.toString().matches(".*\\.(jpg|png|jpeg|webp)$"))

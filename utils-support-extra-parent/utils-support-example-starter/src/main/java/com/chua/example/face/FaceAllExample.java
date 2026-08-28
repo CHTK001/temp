@@ -1,6 +1,7 @@
 package com.chua.example.face;
 
 import com.chua.deeplearning.support.face.FacePipeline;
+import com.chua.deeplearning.support.face.FacePipelineDiskCallback;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Files;
@@ -45,6 +46,7 @@ public class FaceAllExample {
                 .attribute("age-race-gender")
                 .emotion("emotion-ferplus")
                 .build();
+        face.setCallback(new FacePipelineDiskCallback(Path.of("D:\\images\\output\\face_all")));
 
         log.info("===== 人脸全能力测试 =====");
         List<String> images = List.of(

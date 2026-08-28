@@ -2,6 +2,7 @@ package com.chua.example.onnx;
 
 import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.face.FacePipeline;
+import com.chua.deeplearning.support.face.FacePipelineDiskCallback;
 import com.chua.deeplearning.support.model.PredictRectangle;
 
 import java.nio.file.Files;
@@ -35,6 +36,7 @@ public final class LivenessPipelineExample extends BaseExample {
                 .liveness("face-liveness-flrgb")
                 .requireLive(true)
                 .build();
+        pipeline.setCallback(new FacePipelineDiskCallback(Path.of("G:\\images\\output\\liveness")));
 
         long t0 = System.currentTimeMillis();
         var boxes = pipeline.detectBoxes(img);

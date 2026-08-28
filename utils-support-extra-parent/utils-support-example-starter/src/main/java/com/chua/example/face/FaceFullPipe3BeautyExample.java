@@ -1,5 +1,6 @@
 import com.chua.deeplearning.support.face.FaceDetectionHit;
 import com.chua.deeplearning.support.face.FacePipeline;
+import com.chua.deeplearning.support.face.FacePipelineDiskCallback;
 import com.chua.common.support.vector.MemoryVectorStorage;
 import com.chua.common.support.vector.VectorCompareAlgorithm;
 import java.nio.file.*;
@@ -22,6 +23,7 @@ public class FaceFullPipe3BeautyExample {
                 .vectorStorage(new MemoryVectorStorage(512, VectorCompareAlgorithm.cosine()))
                 .minConfidence(0.45f)
                 .build();
+        face.setCallback(new FacePipelineDiskCallback(Path.of(outBase, "yolo-face-detector")));
 
         List<FaceDetectionHit> hits = face.detect(img);
         System.out.println("detected: " + hits.size() + " faces");

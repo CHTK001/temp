@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.draw.DrawerPipeline;
 import com.chua.deeplearning.support.face.FaceDetectionHit;
 import com.chua.deeplearning.support.face.FacePipeline;
+import com.chua.deeplearning.support.face.FacePipelineDiskCallback;
 import com.chua.deeplearning.support.feature.FeatureExtractor;
 import com.chua.deeplearning.support.model.DetectionInfo;
 import com.chua.deeplearning.support.model.PredictRectangle;
@@ -43,6 +44,7 @@ public class InsightFaceExample {
         FacePipeline face = FacePipeline.builder()
                 .detector("insightface-scrfd")
                 .build();
+        face.setCallback(new FacePipelineDiskCallback(Path.of(outputDir)));
 
         for (String file : files) {
             Path f = Path.of("D:\\images", file);

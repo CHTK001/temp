@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import com.chua.deeplearning.support.face.FaceDetectionHit;
 import com.chua.deeplearning.support.face.FaceIdentifyHit;
 import com.chua.deeplearning.support.face.FacePipeline;
+import com.chua.deeplearning.support.face.FacePipelineDiskCallback;
 
 /**
  * 人脸识别 — 完整处理流程图 + Builder 配置标注（修正版）。
@@ -71,6 +72,7 @@ public class FaceRecognitionDocExample {
                 .detector("faceplugin-face-detect-slim")   // ★ 人脸检测
                 .feature("faceplugin-face-feature")         // ★ 特征提取
                 .build();                                    // ★ 向量库自动创建
+        minimal.setCallback(new FacePipelineDiskCallback(Path.of("D:\\images\\output\\minimal")));
 
         System.out.println("\n===== 完整配置（必填 + 关键流程项）=====");
         FacePipeline full = FacePipeline.builder()
@@ -90,6 +92,7 @@ public class FaceRecognitionDocExample {
                 .deepfake("deepfake-detector")                    // 深伪：AI伪造判断（单独接口）
                 .minConfidence(0.7f)                             // 置信度过滤
                 .build();
+        full.setCallback(new FacePipelineDiskCallback(Path.of("D:\\images\\output\\full")));
 
         System.out.println("  pipeline ready");
 
