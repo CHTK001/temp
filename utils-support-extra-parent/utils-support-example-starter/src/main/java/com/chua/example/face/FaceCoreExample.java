@@ -2,6 +2,7 @@ package com.chua.example.face;
 
 import com.chua.deeplearning.support.face.FaceDetectionHit;
 import com.chua.deeplearning.support.face.FacePipeline;
+import com.chua.deeplearning.support.face.FacePipelineDiskCallback;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Files;
@@ -36,6 +37,7 @@ public class FaceCoreExample {
                 .detector("faceplugin-face-detect-slim")
                 .feature("arc-face")
                 .build();
+        face.setCallback(new FacePipelineDiskCallback(Path.of("D:\\images\\output\\face_core")));
 
         try (Stream<Path> files = Files.list(Path.of("D:\\images"))) {
             files.filter(f -> f.toString().matches(".*\\.(jpg|png|jpeg|webp)$"))

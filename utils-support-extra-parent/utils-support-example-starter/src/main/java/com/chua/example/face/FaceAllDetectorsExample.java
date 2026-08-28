@@ -2,6 +2,7 @@ package com.chua.example.face;
 
 import com.chua.deeplearning.support.face.FaceDetectionHit;
 import com.chua.deeplearning.support.face.FacePipeline;
+import com.chua.deeplearning.support.face.FacePipelineDiskCallback;
 import java.nio.file.*;
 import java.util.List;
 
@@ -52,6 +53,7 @@ public class FaceAllDetectorsExample {
                         .detector(modelId)
                         .minConfidence(0.3f)
                         .build();
+                pipeline.setCallback(new FacePipelineDiskCallback(Path.of("D:\\images\\output\\all_detectors")));
                 for (int i = 0; i < IMAGES.length; i++) {
                     byte[] img = Files.readAllBytes(Path.of(IMAGES[i]));
                     try {

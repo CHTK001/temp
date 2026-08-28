@@ -1,11 +1,10 @@
-package com.chua.example.face;
-
 import com.chua.common.support.vector.MemoryVectorStorage;
 import com.chua.common.support.vector.VectorCompareAlgorithm;
 import com.chua.deeplearning.support.draw.DrawerPipeline;
 import com.chua.deeplearning.support.face.FaceDetectionHit;
 import com.chua.deeplearning.support.face.FaceIdentifyHit;
 import com.chua.deeplearning.support.face.FacePipeline;
+import com.chua.deeplearning.support.face.FacePipelineDiskCallback;
 import com.chua.deeplearning.support.model.DetectionInfo;
 import lombok.extern.slf4j.Slf4j;
 
@@ -66,6 +65,7 @@ public class FaceEnrollSearchBranchExample {
                 .feature("arc-face")
                 .vectorStorage(new MemoryVectorStorage(512, VectorCompareAlgorithm.cosine()))
                 .build();
+        face.setCallback(new FacePipelineDiskCallback(Path.of(OUTPUT_DIR)));
 
         byte[] manBytes = Files.readAllBytes(Path.of("D:\\images\\1peopleman.png"));
         byte[] animeFace1 = Files.readAllBytes(Path.of("D:\\images\\anime_face1.png"));

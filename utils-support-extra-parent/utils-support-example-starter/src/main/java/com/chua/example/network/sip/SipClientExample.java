@@ -11,30 +11,61 @@ import java.util.concurrent.CountDownLatch;
 /**
  * SIP 隧道客户端常驻入口（内网穿透节点）。
  *
- * <p>两种角色：</p>
+ * <p>三种角色 + 三种访问方式，完整覆盖所有使用场景：</p>
+ *
+ * <h2>角色说明</h2>
  * <ul>
- *   <li>{@code --mode=provider}：服务提供方，把本地/可达的 TCP 服务暴露为隧道服务，
- *       如暴露内网 Windows 的远程桌面：{@code --service=mstsc --host=192.168.200.120 --port=3389}</li>
- *   <li>{@code --mode=visitor}：访问方，监听本地端口映射到远端隧道服务，
- *       之后 {@code mstsc /v:127.0.0.1:13389} 即可访问对端远程桌面</li>
+ *   <li>{@code --mode=provider} — 服务提供方，暴露本地服务给远程</li>
+ *   <li>{@code --mode=visitor} — 访问方，通过隧道访问远程服务</li>
+ * </ul>
+ *
+ * <h2>Provider 暴露方式</h2>
+ * <ul>
+ *   <li>固定服务：{@code --service=web --host=127.0.0.1 --port=8080}</li>
+ *   <li>通配模式（暴露整机）：{@code --service=*}，visitor 可指定任意目标</li>
+ *   <li>通配 + 白名单：{@code --service=* --allow=192.168.,10.}</li>
+ * </ul>
+ *
+ * <h2>Visitor 访问方式</h2>
+ * <ul>
+ *   <li>端口映射：{@code --mode=visitor --service=web --port=18080}</li>
+ *   <li>通配目标：{@code --mode=visitor --service=192.168.1.100:3389 --port=13389}</li>
+ *   <li>SOCKS5 代理：{@code --mode=visitor --socks5=1080}，三方软件配 SOCKS5 代理</li>
  * </ul>
  *
  * <h2>用法</h2>
- * <pre>{@code
- * java ... SipClientExample --mode=provider --server=tcp://124.221.230.112:19460 \
- *         --token=chua-sip-default-token --service=mstsc --host=192.168.200.120 --port=3389
+ * <pre>
+ * # 1. 启动服务器
+ * java ... SipServerExample --host=0.0.0.0 --port=19460 --token=my-secret
  *
- * java ... SipClientExample --mode=visitor --server=tcp://124.221.230.112:19460 \
- *         --token=chua-sip-default-token --service=mstsc --host=0.0.0.0 --port=13389
- * }</pre>
+ * # 2. Provider：暴露固定服务
+ * java ... SipClientExample --mode=provider --server=tcp://server:19460 \
+ *         --token=my-secret --service=web --host=127.0.0.1 --port=8080
+ *
+ * # 3. Provider：通配模式暴露整机
+ * java ... SipClientExample --mode=provider --server=tcp://server:19460 \
+ *         --token=my-secret --service=* --allow=192.168.,10.
+ *
+ * # 4. Visitor：端口映射
+ * java ... SipClientExample --mode=visitor --server=tcp://server:19460 \
+ *         --token=my-secret --service=web --port=18080
+ *
+ * # 5. Visitor：SOCKS5 代理（推荐）
+ * java ... SipClientExample --mode=visitor --server=tcp://server:19460 \
+ *         --token=my-secret --socks5=1080
+ *
+ * # 6. Visitor：通配目标（远程桌面）
+ * java ... SipClientExample --mode=visitor --server=tcp://server:19460 \
+ *         --token=my-secret --service=192.168.1.100:3389 --port=13389
+ * </pre>
  *
  * @author CH
  * @since 4.0.0.42
  */
 @Slf4j
 public class SipClientExample {
-    private SipClientExample() { }
 
+    private SipClientExample() { }
 
     /**
      * 常驻锁存器，阻止主线程退出
@@ -49,7 +80,7 @@ public class SipClientExample {
     /**
      * 常驻入口。
      *
-     * @param args 命令行参数（--mode / --server / --token / --service / --host / --port）
+     * @param args 命令行参数
      */
     public static void main(String[] args) {
         Map<String, String> kv = parseArgs(args);
@@ -59,14 +90,22 @@ public class SipClientExample {
         String service = kv.getOrDefault("service", "mstsc");
         String host = kv.getOrDefault("host", "127.0.0.1");
         int port = Integer.parseInt(kv.getOrDefault("port", "3389"));
+        int socks5Port = Integer.parseInt(kv.getOrDefault("socks5", "0"));
         boolean encrypt = Boolean.parseBoolean(kv.getOrDefault("encrypt", "false"));
         boolean mux = Boolean.parseBoolean(kv.getOrDefault("mux", "false"));
         String tokenFile = kv.get("token-file");
-        if (tokenFile != null && !tokenFile.isEmpty()) { System.setProperty("sip.token.file", tokenFile); }
+        if (tokenFile != null && !tokenFile.isEmpty()) {
+            System.setProperty("sip.token.file", tokenFile);
+        }
         String maxFrameMs = kv.get("max-frame-ms");
-        if (maxFrameMs != null) { System.setProperty("sip.minFrameIntervalNs", String.valueOf((long)(Double.parseDouble(maxFrameMs) * 1_000_000))); }
+        if (maxFrameMs != null) {
+            System.setProperty("sip.minFrameIntervalNs",
+                    String.valueOf((long) (Double.parseDouble(maxFrameMs) * 1_000_000)));
+        }
         String maxAuth = kv.get("max-auth-per-min");
-        if (maxAuth != null) { System.setProperty("sip.maxAuthPerIpPerMin", maxAuth); }
+        if (maxAuth != null) {
+            System.setProperty("sip.maxAuthPerIpPerMin", maxAuth);
+        }
         String allowStr = kv.get("allow");
         java.util.List<String> allow = allowStr == null || allowStr.isEmpty()
                 ? null : java.util.Arrays.asList(allowStr.split(","));
@@ -75,17 +114,28 @@ public class SipClientExample {
 
         SipClient client = SipClient.tcp(server).token(token).encrypt(encrypt).mux(mux);
         client.onReconnect(() -> log.info("SIP 重连成功，资源已重新绑定"));
+
         if ("provider".equalsIgnoreCase(mode)) {
+            // ===== Provider 模式 =====
+            boolean isWildcard = "*".equals(service);
             new SipTunnelService(client, service, host, port, allow).start();
-            log.info("SIP 服务提供方已启动: 服务[{}] -> {}:{} 加密={} 复用={}", service, host, port, encrypt, mux);
-        } else if ("visitor".equalsIgnoreCase(mode)) {
+            if (isWildcard) {
+                log.info("SIP 服务提供方已启动: 通配模式 白名单={} 加密={} 复用={}",
+                        allow == null ? "不限制" : allow, encrypt, mux);
+            } else {
+                log.info("SIP 服务提供方已启动: 服务[{}] -> {}:{} 加密={} 复用={}",
+                        service, host, port, encrypt, mux);
+            }
+        } else if (socks5Port > 0) {
+            // ===== Visitor SOCKS5 模式 =====
+            client.socks5(socks5Port);
+            log.info("SIP SOCKS5 代理已启动: 127.0.0.1:{} -> 所有隧道服务 (加密={})", socks5Port, encrypt);
+        } else {
+            // ===== Visitor 端口映射模式 =====
             client.tunnel(service).listen(host, port);
             log.info("SIP 访问方已启动: {}:{} -> 服务[{}] 加密={}", host, port, service, encrypt);
-        } else {
-            log.error("未知模式: {}（仅支持 provider / visitor）", mode);
-            System.exit(1);
-            return;
         }
+
         log.info("SIP 客户端运行中: clientId={}, server={}, 按 Ctrl+C 退出", client.getClientId(), server);
         try {
             STOP_LATCH.await();
@@ -99,7 +149,7 @@ public class SipClientExample {
     /**
      * 解析 --key=value 形式的命令行参数。
      *
-     * @param args 命令行参数
+     * @param args 命令行参数数组
      * @return 键值映射
      */
     private static Map<String, String> parseArgs(String[] args) {
