@@ -759,6 +759,9 @@
                         <exclude>**/taskretry/RetryExample.java</exclude>
                         <exclude>**/taskloader/LoaderExample.java</exclude>
                         <exclude>**/ai/rag/HttpClientExample.java</exclude>
+                        <exclude>**/ocr/OcrPipelineExample.java</exclude>
+                        <exclude>**/onnx/FaceDetectDrawExample.java</exclude>
+                        <exclude>**/vector/VectorStorageExampleSpi.java</exclude>
 </excludes>
                     
                 </configuration>
