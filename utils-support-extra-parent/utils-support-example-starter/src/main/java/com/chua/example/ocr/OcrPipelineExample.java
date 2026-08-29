@@ -2,6 +2,7 @@ package com.chua.example.ocr;
 
 import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.ocr.OcrPipeline;
+import com.chua.deeplearning.support.ocr.OcrPipelineDiskCallback;
 import com.chua.deeplearning.support.ocr.DrawerPipeline;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -51,6 +52,7 @@ public class OcrPipelineExample {
                 .cropPadding(8)
                 .minConfidence(0.6f)
                 .build();
+        ocr.setCallback(new OcrPipelineDiskCallback(Path.of(OUTPUT_DIR)));
 
         try (Stream<Path> files = Files.list(Path.of("D:\\images"))) {
             files.filter(f -> f.toString().matches(".*\\.(jpg|png)$"))
@@ -64,17 +66,6 @@ public class OcrPipelineExample {
 
                          // 一键出图：toDrawer 自动完成检测+识别+匹配+标注
                          byte[] drawn = ocr.toDrawer(Files.readAllBytes(f));
-
-                         // 或自定义 DrawerPipeline 带进度回调：
-                         // byte[] corrected = ocr.correct(imageData);
-                         // var boxes = ocr.detector().detect(corrected);
-                         // var results = ocr.recognizeDetail(imageData);
-                         // byte[] drawn = ocr.withInitDrawer()
-                         //        .target(corrected)
-                         //        .boxes(boxes, results)
-                         //        .onProcess((box, text, conf, idx, total) ->
-                         //            log.info("  " + idx + "/" + total + ": " + text))
-                         //        .done();
 
                          Files.write(Path.of(OUTPUT_DIR + name), drawn);
                          log.info((System.currentTimeMillis() - t0) + "ms");

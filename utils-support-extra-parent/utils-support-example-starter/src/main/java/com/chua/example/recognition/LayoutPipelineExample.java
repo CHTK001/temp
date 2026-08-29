@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.image.ImagePipeline;
 import com.chua.deeplearning.support.engine.ModelRegistry;
 import com.chua.deeplearning.support.recognition.LayoutPipeline;
+import com.chua.deeplearning.support.recognition.LayoutPipelineDiskCallback;
 import com.chua.deeplearning.support.model.PredictRectangle;
 import com.chua.deeplearning.support.utils.ImageUtils;
 
@@ -32,6 +33,7 @@ public final class LayoutPipelineExample {
         LayoutPipeline pipeline = LayoutPipeline.builder()
                 .model("doc-layout-yolo")
                 .build();
+        pipeline.setCallback(new LayoutPipelineDiskCallback(Path.of("D:\\images\\output\\layout")));
 
         long t0 = System.currentTimeMillis();
         Object result = pipeline.recognizeSingle(imageBytes);

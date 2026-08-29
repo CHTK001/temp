@@ -3,6 +3,7 @@ package com.chua.example.onnx;
 import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.audio.AudioFingerprinter;
 import com.chua.deeplearning.support.audio.AudioRecognitionPipeline;
+import com.chua.deeplearning.support.audio.AudioRecognitionPipelineDiskCallback;
 import com.chua.deeplearning.support.audio.SpeakerDiarizer;
 import com.chua.deeplearning.support.audio.SpeakerSegment;
 
@@ -102,6 +103,7 @@ public final class SpeakerDiarizationExample extends BaseExample {
                     .speakerEmbeddingModel(speakerModel)
                     .maxSpeakers(maxSpeakers)
                     .build();
+            pipeline.setCallback(new AudioRecognitionPipelineDiskCallback());
             List<SpeakerSegment> segments = pipeline.recognize(path);
             long elapsed = System.currentTimeMillis() - t0;
             log.info("[diarization] mode=diarize");
@@ -123,6 +125,7 @@ public final class SpeakerDiarizationExample extends BaseExample {
                     .asrModel(asrModel)
                     .maxSpeakers(maxSpeakers)
                     .build();
+            pipeline.setCallback(new AudioRecognitionPipelineDiskCallback());
             List<SpeakerSegment> segments = pipeline.recognize(path);
             long elapsed = System.currentTimeMillis() - t0;
             log.info("[diarization] mode=full (VAD+嵌入+ASR)");
