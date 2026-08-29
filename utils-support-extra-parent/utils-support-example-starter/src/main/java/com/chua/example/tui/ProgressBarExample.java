@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import com.chua.example.spi.Example;
 
 import java.io.ByteArrayOutputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 /**
@@ -28,7 +27,7 @@ import java.util.Map;
  * <tr><td>SshProgress 生命周期</td><td>{@link #testSshProgressLifecycle()}</td><td>验证 close / done 完成操作</td></tr>
  * <tr><td>SshMultiProgress 多任务</td><td>{@link #testSshMultiProgress()}</td><td>验证 add / stepBy 多任务并行进度</td></tr>
  * <tr><td>SshMultiProgress 名称步进</td><td>{@link #testSshMultiProgressByName()}</td><td>验证 stepTo 按名称跳转进度</td></tr>
- * <tr><td>SshMultiProgress 生命周期</td><td>{@link #testSshMultiProgressLifecycle()}</td><>验证 close 完成操作</td></tr>
+ * <tr><td>SshMultiProgress 生命周期</td><td>{@link #testSshMultiProgressLifecycle()}</td><td>验证 close 完成操作</td></tr>
  * </table>
  *
  * <h2>用法</h2>
@@ -63,7 +62,9 @@ import java.util.Map;
 public class ProgressBarExample implements Example {
 
     private static final int EXIT_CODE_SUCCESS = 0;
+
     private static final int EXIT_CODE_FAILURE = 1;
+
     private static final String DEFAULT_TYPE = "all";
 
     // ==================== SPI 调度入口 ====================
@@ -186,7 +187,7 @@ public class ProgressBarExample implements Example {
 
     /**
      * MordantHelper 颜色分级测试：验证使用率颜色分级逻辑。
-     * <p>green(<50%), yellow(50-79%), red(>=80%)</p>
+     * <p>green(&lt;50%), yellow(50-79%), red(&gt;=80%)</p>
      *
      * @return true 表示颜色分级正确
      */
@@ -292,9 +293,8 @@ public class ProgressBarExample implements Example {
             bar.stepTo(50);
             bar.stepBy(10);
             bar.stepTo(100);
-            boolean ok = true;
-            log.info(" [ssh-progress] step/stepBy/stepTo passed={}", ok);
-            return ok;
+            log.info(" [ssh-progress] step/stepBy/stepTo passed=true");
+            return true;
         } catch (Exception e) {
             log.error("[ProgressBarExample] ssh-progress failed: {}", e.getMessage());
             return false;
@@ -318,9 +318,8 @@ public class ProgressBarExample implements Example {
             bar.extraMessage("处理中...");
             bar.stepTo(50);
             bar.extraMessage("即将完成");
-            boolean ok = true;
-            log.info(" [ssh-progress-msg] extraMessage passed={}", ok);
-            return ok;
+            log.info(" [ssh-progress-msg] extraMessage passed=true");
+            return true;
         } catch (Exception e) {
             log.error("[ProgressBarExample] ssh-progress-msg failed: {}", e.getMessage());
             return false;
@@ -482,26 +481,6 @@ public class ProgressBarExample implements Example {
      * @return 模拟的 SshCommandResponse
      */
     private static com.chua.ssh.support.server.SshCommandResponse createMockResponse(ByteArrayOutputStream baos) {
-        return new com.chua.ssh.support.server.SshCommandResponse() {
-            @Override
-            public void writeRaw(byte[] data) {
-                baos.write(data, 0, data.length);
-            }
-
-            @Override
-            public void write(String text) {
-                baos.write(text.getBytes(StandardCharsets.UTF_8), 0, text.length());
-            }
-
-            @Override
-            public void writeln(String text) {
-                write(text + "\n");
-            }
-
-            @Override
-            public String readLine() {
-                return "";
-            }
-        };
+        return new com.chua.ssh.support.server.SshCommandResponse(baos);
     }
 }
