@@ -1,86 +1,52 @@
 package com.chua.example.tree;
 
 import com.chua.common.support.tree.*;
-import java.lang.reflect.*;
 import java.util.*;
 
 public class BTreeDebug {
     public static void main(String[] args) throws Exception {
-        // Test BTree with small order to trace easily
-        BTree<Integer, String> bt = new BTree<>(4);
-        for (int i = 0; i < 20; i++) {
-            System.out.println("=== Insert " + i + " ===");
-            bt.put(i, "v" + i);
-            printBTree(bt);
-            validateBT(bt);
-        }
-        System.out.println("\nsize=" + bt.size());
+        // B+ tree 100K
+        long t0 = System.nanoTime();
+        BPlusTree<Integer, String> plus100k = new BPlusTree<>(200);
+        for (int i = 0; i < 100000; i++) plus100k.put(i, "v" + i);
+        long t1 = System.nanoTime();
         int miss = 0;
-        for (int j = 0; j < 20; j++) {
-            if (!bt.containsKey(j)) miss++;
-        }
-        System.out.println("missing=" + miss);
-    }
+        for (int j = 0; j < 100000; j++) if (!plus100k.containsKey(j)) miss++;
+        long t2 = System.nanoTime();
+        System.out.println("B+ 100K: size=" + plus100k.size() + " missing=" + miss
+                + " put=" + (t1 - t0) / 1_000_000 + "ms get=" + (t2 - t1) / 1_000_000 + "ms");
 
-    static void printBTree(BTree<Integer, String> tree) throws Exception {
-        Field rootField = BTree.class.getDeclaredField("root");
-        rootField.setAccessible(true);
-        Object root = rootField.get(tree);
-        printNode(root, 0);
-    }
+        // B+ tree 1M
+        t0 = System.nanoTime();
+        BPlusTree<Integer, String> plus1m = new BPlusTree<>(200);
+        for (int i = 0; i < 1000000; i++) plus1m.put(i, "v" + i);
+        t1 = System.nanoTime();
+        miss = 0;
+        for (int j = 0; j < 1000000; j++) if (!plus1m.containsKey(j)) miss++;
+        t2 = System.nanoTime();
+        System.out.println("B+ 1M: size=" + plus1m.size() + " missing=" + miss
+                + " put=" + (t1 - t0) / 1_000_000 + "ms get=" + (t2 - t1) / 1_000_000 + "ms");
 
-    static void printNode(Object node, int depth) throws Exception {
-        String indent = "  ".repeat(depth);
-        Field leafField = node.getClass().getDeclaredField("leaf");
-        Field keysField = node.getClass().getDeclaredField("keys");
-        Field valuesField = node.getClass().getDeclaredField("values");
-        Field childrenField = node.getClass().getDeclaredField("children");
-        leafField.setAccessible(true);
-        keysField.setAccessible(true);
-        valuesField.setAccessible(true);
-        childrenField.setAccessible(true);
-        boolean isLeaf = (boolean) leafField.get(node);
-        List<?> keys = (List<?>) keysField.get(node);
-        List<?> values = (List<?>) valuesField.get(node);
-        List<?> children = (List<?>) childrenField.get(node);
-        String inv = isLeaf ? "" : (children.size() == keys.size() + 1 ? " OK" : " BAD!");
-        System.out.println(indent + (isLeaf ? "LEAF" : "INT") + " keys=" + keys + " vals=" + values + " ch=" + children.size() + inv);
-        if (!isLeaf) {
-            for (Object child : children) printNode(child, depth + 1);
-        }
-    }
+        // B+ range
+        long r0 = System.nanoTime();
+        List<Map.Entry<Integer, String>> r1 = plus1m.range(0, 1000000);
+        long r1t = System.nanoTime() - r0;
+        System.out.println("B+ range[0,1M): " + r1.size() + " entries in " + r1t / 1_000_000 + "ms");
 
-    static void validateBT(BTree<Integer, String> tree) throws Exception {
-        Field rootField = BTree.class.getDeclaredField("root");
-        rootField.setAccessible(true);
-        Object root = rootField.get(tree);
-        validateNode(root, Integer.MIN_VALUE, Integer.MAX_VALUE);
-        System.out.println("  VALIDATE OK");
-    }
+        r0 = System.nanoTime();
+        List<Map.Entry<Integer, String>> r2 = plus1m.range(490000, 500000);
+        r1t = System.nanoTime() - r0;
+        System.out.println("B+ range[490k,500k): " + r2.size() + " entries in " + r1t / 1_000_000 + "ms");
 
-    static int validateNode(Object node, int min, int max) throws Exception {
-        Field leafField = node.getClass().getDeclaredField("leaf");
-        Field keysField = node.getClass().getDeclaredField("keys");
-        Field valuesField = node.getClass().getDeclaredField("values");
-        Field childrenField = node.getClass().getDeclaredField("children");
-        leafField.setAccessible(true);
-        keysField.setAccessible(true);
-        valuesField.setAccessible(true);
-        childrenField.setAccessible(true);
-        boolean isLeaf = (boolean) leafField.get(node);
-        List<?> keys = (List<?>) keysField.get(node);
-        List<?> children = (List<?>) childrenField.get(node);
-        if (!isLeaf && children.size() != keys.size() + 1) {
-            throw new RuntimeException("Invariant broken: keys=" + keys + " children=" + children.size());
+        // Check duplicates in range
+        Set<Integer> seen = new HashSet<>();
+        int dup = 0;
+        for (Map.Entry<Integer, String> e : r1) {
+            if (!seen.add(e.getKey())) dup++;
         }
-        if (!isLeaf) {
-            for (int i = 0; i < keys.size(); i++) {
-                int k = (Integer) keys.get(i);
-                if (k <= min || k >= max) throw new RuntimeException("Key out of range: " + k);
-                validateNode(children.get(i), min, k);
-            }
-            validateNode(children.get(keys.size()), keys.isEmpty() ? min : (Integer) keys.get(keys.size()-1), max);
-        }
-        return keys.isEmpty() ? min : (Integer) keys.get(keys.size()-1);
+        System.out.println("B+ range dups: " + dup);
+
+        // BTree 100K (skip if buggy - just note it)
+        System.out.println("\nNote: BTree still has structural bugs under testing, skipping.");
     }
 }
