@@ -150,6 +150,12 @@
             <artifactId>utils-support-network-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- FTP 客户端，供 FtpServerTest 使用 -->
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-ftp-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-kcp-starter</artifactId>
@@ -579,6 +585,12 @@
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-jvector-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- 向量存储 SPI 示例：配置类 VectorStorageProperties -->
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-vector-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

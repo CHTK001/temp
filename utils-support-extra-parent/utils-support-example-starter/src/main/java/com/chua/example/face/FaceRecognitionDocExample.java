@@ -10,6 +10,8 @@ import com.chua.deeplearning.support.face.FaceIdentifyHit;
 import com.chua.deeplearning.support.face.FacePipeline;
 import com.chua.deeplearning.support.face.FacePipelineDiskCallback;
 
+import java.util.List;
+
 /**
  * 人脸识别 — 完整处理流程图 + Builder 配置标注（修正版）。
  *
@@ -100,14 +102,14 @@ public class FaceRecognitionDocExample {
         byte[] imageData = Files.readAllBytes(Path.of("test.jpg"));
 
         // 1. 人脸检测 + 活体过滤
-        List<FacePipeline.FaceDetectionHit> hits = full.detectPipeline(imageData);
+        List<FaceDetectionHit> hits = full.detectPipeline(imageData);
         if (hits.isEmpty()) {
             System.out.println("  检测无人脸");
             System.exit(0);
         }
 
         // 2. 完整识别（含活体→对齐→修复→超分→特征→检索）
-        List<FacePipeline.FaceIdentifyHit> results = full.identifyPipeline(imageData);
+        List<FaceIdentifyHit> results = full.identifyPipeline(imageData);
         System.out.println("  识别结果数: " + results.size());
     }
 }

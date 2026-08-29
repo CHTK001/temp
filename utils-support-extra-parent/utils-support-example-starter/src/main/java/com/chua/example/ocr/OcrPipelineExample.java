@@ -52,7 +52,6 @@ public class OcrPipelineExample {
                 .cropPadding(8)
                 .minConfidence(0.6f)
                 .build();
-        ocr.setCallback(new OcrPipelineDiskCallback(Path.of(OUTPUT_DIR)));
 
         try (Stream<Path> files = Files.list(Path.of("D:\\images"))) {
             files.filter(f -> f.toString().matches(".*\\.(jpg|png)$"))

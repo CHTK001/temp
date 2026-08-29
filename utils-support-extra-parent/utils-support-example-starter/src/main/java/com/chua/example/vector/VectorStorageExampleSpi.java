@@ -501,7 +501,7 @@ public class VectorStorageExampleSpi implements Example {
             VectorStorage s = VectorStorageProvider.of("vector").dimension(DIM)
                     .algorithm(VectorCompareAlgorithm.cosine())
                     .properties(props).build();
-            assertEquals("auto-detect", DIM, s.dimension());
+            assertEquals(DIM, s.dimension(), "auto-detect");
             seedJVector(s, "vec-auto");
             s.close();
             pass();
@@ -521,7 +521,7 @@ public class VectorStorageExampleSpi implements Example {
             VectorStorage s = VectorStorageProvider.of("vector").dimension(DIM)
                     .algorithm(VectorCompareAlgorithm.cosine())
                     .properties(props).build();
-            assertEquals("force-cpu", DIM, s.dimension());
+            assertEquals(DIM, s.dimension(), "force-cpu");
             seedJVector(s, "vec-cpu");
             s.close();
             pass();
@@ -563,7 +563,7 @@ public class VectorStorageExampleSpi implements Example {
             VectorStorage s = VectorStorageProvider.of("vector").dimension(DIM)
                     .algorithm(VectorCompareAlgorithm.cosine())
                     .properties(props).build();
-            assertEquals("explicit-jvector", DIM, s.dimension());
+            assertEquals(DIM, s.dimension(), "explicit-jvector");
             seedJVector(s, "vec-explicit");
             s.close();
             pass();

@@ -40,7 +40,7 @@ public final class LangSerializationExample {
         try {
             String json = "{\"name\":\"test\",\"age\":18}";
             JsonObject parsed = Json.getJsonObject(json);
-            boolean ok = "test".equals(parsed.get("name")) && parsed.get("age") == 18;
+            boolean ok = "test".equals(parsed.get("name")) && Integer.valueOf(parsed.get("age").toString()) == 18;
             passed &= ok;
             System.out.println((ok ? "[PASS]" : "[FAIL]") + " Json反序列化基本功能");
         } catch (Exception e) {

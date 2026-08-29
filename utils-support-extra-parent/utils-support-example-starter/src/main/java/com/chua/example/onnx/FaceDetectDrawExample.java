@@ -96,7 +96,8 @@ public final class FaceDetectDrawExample extends BaseExample {
 
             // 完整修复管线（对齐 → 修复 → 贴回），回调自动落盘中间图片
             long t1 = System.currentTimeMillis();
-            byte[] result = pipeline.restoreWithAlign(img);
+            List<FaceRestoreResult> results = pipeline.restoreWithAlign(img);
+            byte[] result = results.get(0).restoredFace();
             long tTotal = System.currentTimeMillis() - t1;
             Path resultOut = Path.of(OUTPUT_DIR, base + "_result.png");
             Files.write(resultOut, result);
