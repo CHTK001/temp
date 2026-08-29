@@ -184,6 +184,37 @@
             <artifactId>utils-support-models-onnx-gemma-3-270m</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- Chinese-CLIP 中文图文特征模型（RN50/ViT-B/16/ViT-L/14，img+txt 独立模块，示例使用） -->
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-models-onnx-cn-clip-rn50-image</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-models-onnx-cn-clip-rn50-text</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-models-onnx-cn-clip-vit-b-16-image</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-models-onnx-cn-clip-vit-b-16-text</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-models-onnx-cn-clip-vit-l-14-image</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-models-onnx-cn-clip-vit-l-14-text</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <!-- 宓屽叆寮忚€佺収鐗囦笂鑹叉ā鍨嬶紙DeOldify ONNX ~830MB锛夛紝渚?ImageColorizeExample 浣跨敤 -->
         <dependency>
             <groupId>com.chua</groupId>
