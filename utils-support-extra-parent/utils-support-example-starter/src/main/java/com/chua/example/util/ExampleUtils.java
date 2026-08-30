@@ -109,4 +109,28 @@ public final class ExampleUtils {
     public static void fail(String msg) {
         log.info("  \u2717 失败: {}", msg);
     }
+
+    /**
+     * 场景失败日志输出（带场景名 + 异常），便于 lambda 收口。
+     *
+     * @param name 场景名称
+     * @param e    异常
+     * @return {@code false}（便于链式 {@code return ExampleUtils.fail(name, e);}）
+     */
+    public static boolean fail(String name, Exception e) {
+        log.warn("[FAIL] {}: {}", name, e.getMessage());
+        return false;
+    }
+
+    /**
+     * 场景失败日志输出（带场景名 + 自定义消息），便于 lambda 收口。
+     *
+     * @param name 场景名称
+     * @param msg  失败消息
+     * @return {@code false}
+     */
+    public static boolean fail(String name, String msg) {
+        log.warn("[FAIL] {}: {}", name, msg);
+        return false;
+    }
 }
