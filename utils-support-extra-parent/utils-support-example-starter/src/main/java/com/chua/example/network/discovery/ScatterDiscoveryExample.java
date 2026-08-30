@@ -323,17 +323,6 @@ public final class ScatterDiscoveryExample {
     }
 
     /**
-     * 失败收口：打印错误日志并返回 false。
-     *
-     * @param msg 失败描述
-     * @return 恒为 false
-     */
-    private static boolean fail(String msg) {
-        LOG.error("    ✗ 失败: {}", msg);
-        return false;
-    }
-
-    /**
      * 静默关闭可关闭资源。
      *
      * @param c 可关闭资源，可为 null
