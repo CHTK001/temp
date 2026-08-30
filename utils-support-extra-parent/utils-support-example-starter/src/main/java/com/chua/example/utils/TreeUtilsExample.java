@@ -406,28 +406,4 @@ public final class TreeUtilsExample {
         return TreeUtils.build(sampleFlat(), idOf(), pidOf(),
                 (n, kids) -> n.children = kids);
     }
-
-    /**
-     * 输出异常失败信息。
-     *
-     * @param name 场景名
-     * @param e    异常
-     * @return 恒为 false
-     */
-    private static boolean fail(String name, Exception e) {
-        log.info("[FAIL] " + name + " 异常: " + e);
-        return false;
-    }
-
-    /**
-     * 输出失败信息。
-     *
-     * @param name 场景名
-     * @param msg  失败原因
-     * @return 恒为 false
-     */
-    private static boolean fail(String name, String msg) {
-        log.info("[FAIL] " + name + ": " + msg);
-        return false;
-    }
 }
