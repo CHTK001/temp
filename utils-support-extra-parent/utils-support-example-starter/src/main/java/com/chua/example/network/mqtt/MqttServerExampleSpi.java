@@ -1,4 +1,4 @@
-﻿package com.chua.example.network.mqtt;
+package com.chua.example.network.mqtt;
 
 import com.chua.common.support.network.server.ServerSetting;
 import com.chua.mqtt.support.client.MqttClientWrapper;
