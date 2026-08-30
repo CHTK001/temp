@@ -19,7 +19,8 @@ import com.chua.image.support.filter.lama.LaMaImageUtils;
  * </p>
  *
  * @author CH
- * @since 2024/7/29
+ * @since 4.0.0
+ *
  */
 @Slf4j
 public class LaMaFilterExample {
@@ -264,3 +265,4 @@ public class LaMaFilterExample {
         log.info("✅ 边界条件测试完成");
     }
 }
+

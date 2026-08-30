@@ -38,6 +38,8 @@ import com.chua.common.support.image.ImagePipeline;
  * </pre>
  *
  * @author CH
+ *
+ * @since 4.0.0
  */
 public class ImageRecognitionDocExample {
     private ImageRecognitionDocExample() { }

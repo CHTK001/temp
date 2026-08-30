@@ -40,8 +40,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public final class PocketTtsEdgeCaseExample {
 
-    private static final List<String> FAILURES = new ArrayList<>();
-    private static final List<String> SKIPPED = new ArrayList<>();
     private static int passed = 0;
     private static String onlyFilter = "";
 
@@ -61,47 +59,50 @@ public final class PocketTtsEdgeCaseExample {
             }
         }
 
-        run("flattenJson.simple", PocketTtsEdgeCaseExample::t01);
-        run("flattenJson.nested", PocketTtsEdgeCaseExample::t02);
-        run("flattenJson.deepNested", PocketTtsEdgeCaseExample::t03);
-        run("flattenJson.commaString", PocketTtsEdgeCaseExample::t04);
-        run("flattenJson.quotedValues", PocketTtsEdgeCaseExample::t05);
-        run("flattenJson.realTemplate", PocketTtsEdgeCaseExample::t06);
-        run("tensorName.configPriority", PocketTtsEdgeCaseExample::t07);
-        run("tensorName.defaultFallback", PocketTtsEdgeCaseExample::t08);
-        run("configStr.defaultValue", PocketTtsEdgeCaseExample::t09);
-        run("configStr.configuredValue", PocketTtsEdgeCaseExample::t10);
-        run("configInt.parseSuccess", PocketTtsEdgeCaseExample::t11);
-        run("configInt.parseFallback", PocketTtsEdgeCaseExample::t12);
-        run("configDouble.parseSuccess", PocketTtsEdgeCaseExample::t13);
-        run("decodeWav.emptyInput", PocketTtsEdgeCaseExample::t14);
-        run("decodeWav.invalidFile", PocketTtsEdgeCaseExample::t15);
-        run("toWav.validHeader", PocketTtsEdgeCaseExample::t16);
-        run("loadConfig.allFields", PocketTtsEdgeCaseExample::t17);
-        run("loadConfig.refLatentsLayout", PocketTtsEdgeCaseExample::t18);
-        run("loadConfig.missingUsesDefault", PocketTtsEdgeCaseExample::t19);
-        run("unquote.formats", PocketTtsEdgeCaseExample::t20);
-        run("findValueEnd.string", PocketTtsEdgeCaseExample::t21);
-        run("findValueEnd.object", PocketTtsEdgeCaseExample::t22);
-        run("close.idempotent", PocketTtsEdgeCaseExample::t23);
-        gated("synthesize.endToEnd", PocketTtsEdgeCaseExample::t24);
-        gated("synthesize.emptyTextThrows", PocketTtsEdgeCaseExample::t25);
-        gated("synthesize.withRefAudio", PocketTtsEdgeCaseExample::t26);
+        var failures = new ArrayList<String>();
+        var skipped = new ArrayList<String>();
 
-        log.info("===== 汇总 通过=" + passed + " 跳过=" + SKIPPED.size()
-                + " 失败=" + FAILURES.size() + " =====");
-        for (String s : SKIPPED) {
+        run("flattenJson.simple", PocketTtsEdgeCaseExample::t01, failures);
+        run("flattenJson.nested", PocketTtsEdgeCaseExample::t02, failures);
+        run("flattenJson.deepNested", PocketTtsEdgeCaseExample::t03, failures);
+        run("flattenJson.commaString", PocketTtsEdgeCaseExample::t04, failures);
+        run("flattenJson.quotedValues", PocketTtsEdgeCaseExample::t05, failures);
+        run("flattenJson.realTemplate", PocketTtsEdgeCaseExample::t06, failures);
+        run("tensorName.configPriority", PocketTtsEdgeCaseExample::t07, failures);
+        run("tensorName.defaultFallback", PocketTtsEdgeCaseExample::t08, failures);
+        run("configStr.defaultValue", PocketTtsEdgeCaseExample::t09, failures);
+        run("configStr.configuredValue", PocketTtsEdgeCaseExample::t10, failures);
+        run("configInt.parseSuccess", PocketTtsEdgeCaseExample::t11, failures);
+        run("configInt.parseFallback", PocketTtsEdgeCaseExample::t12, failures);
+        run("configDouble.parseSuccess", PocketTtsEdgeCaseExample::t13, failures);
+        run("decodeWav.emptyInput", PocketTtsEdgeCaseExample::t14, failures);
+        run("decodeWav.invalidFile", PocketTtsEdgeCaseExample::t15, failures);
+        run("toWav.validHeader", PocketTtsEdgeCaseExample::t16, failures);
+        run("loadConfig.allFields", PocketTtsEdgeCaseExample::t17, failures);
+        run("loadConfig.refLatentsLayout", PocketTtsEdgeCaseExample::t18, failures);
+        run("loadConfig.missingUsesDefault", PocketTtsEdgeCaseExample::t19, failures);
+        run("unquote.formats", PocketTtsEdgeCaseExample::t20, failures);
+        run("findValueEnd.string", PocketTtsEdgeCaseExample::t21, failures);
+        run("findValueEnd.object", PocketTtsEdgeCaseExample::t22, failures);
+        run("close.idempotent", PocketTtsEdgeCaseExample::t23, failures);
+        gated("synthesize.endToEnd", PocketTtsEdgeCaseExample::t24, failures, skipped);
+        gated("synthesize.emptyTextThrows", PocketTtsEdgeCaseExample::t25, failures, skipped);
+        gated("synthesize.withRefAudio", PocketTtsEdgeCaseExample::t26, failures, skipped);
+
+        log.info("===== 汇总 通过=" + passed + " 跳过=" + skipped.size()
+                + " 失败=" + failures.size() + " =====");
+        for (String s : skipped) {
             log.info("  [SKIP] " + s);
         }
-        for (String f : FAILURES) {
+        for (String f : failures) {
             log.info("  [FAIL] " + f);
         }
-        System.exit(FAILURES.isEmpty() ? 0 : 1);
+        System.exit(failures.isEmpty() ? 0 : 1);
     }
 
     // ==================== 运行器 ====================
 
-    private static void run(String name, ThrowingCheck check) {
+    private static void run(String name, ThrowingCheck check, List<String> failures) {
         if (!name.contains(onlyFilter)) {
             return;
         }
@@ -110,17 +111,17 @@ public final class PocketTtsEdgeCaseExample {
             passed++;
             log.info("[PASS] " + name);
         } catch (Throwable t) {
-            FAILURES.add(name + " -> " + t);
+            failures.add(name + " -> " + t);
             log.info("[FAIL] " + name + " -> " + t);
         }
     }
 
-    private static void gated(String name, ThrowingCheck check) {
+    private static void gated(String name, ThrowingCheck check, List<String> failures, List<String> skipped) {
         if (System.getProperty("pocket-tts.model.dir") == null) {
-            SKIPPED.add(name + " (需 -Dpocket-tts.model.dir)");
+            skipped.add(name + " (需 -Dpocket-tts.model.dir)");
             return;
         }
-        run(name, check);
+        gated(name, check, failures, skipped);
     }
 
     private interface ThrowingCheck {

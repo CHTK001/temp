@@ -367,7 +367,7 @@ public class DatalakeIntegratedExample {
         @Override
         /** 获取Agents */
         public java.util.List<com.chua.datasync.agent.support.DataSyncAgent> getAgents() {
-            return Collections.emptyList();
+            return java.util.Collections.emptyList();
         }
 
         @Override

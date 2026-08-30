@@ -60,12 +60,12 @@ public class RpcServerExample {
             registry.setProtocol("direct");
             registry.setAddress("127.0.0.1:" + port);
             server = RpcServer.createService("native", List.of(registry),
-                    RpcExample.protocol("native", port), "rpc-example-server");
+                    RpcProtocolConfig.auto("native", port), "rpc-example-server");
         } else {
             RpcRegistryConfig registry = new RpcRegistryConfig();
             registry.setAddress("http://127.0.0.1:" + port);
             server = RpcServer.createService("json", List.of(registry),
-                    RpcExample.protocol("json", port), "rpc-example-server");
+                    RpcProtocolConfig.auto("json", port), "rpc-example-server");
         }
         server.afterPropertiesSet();
         server.register(RpcEchoServiceExample.class.getName(), new RpcEchoServiceImplExample());

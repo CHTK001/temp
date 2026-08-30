@@ -35,61 +35,67 @@ public final class MultiModelDetectExample {
     /**
      * 模型 → 测试图（按模型适配的场景选择）。
      */
-    private static final Map<String, String[]> MODEL_IMAGES = new LinkedHashMap<>();
+    private final Map<String, String[]> modelImages = new LinkedHashMap<>();
 
     /**
      * 标注图默认输出根目录。
      */
     private static final String DEFAULT_OUTPUT_DIR = "D:/images/output";
 
-    static {
-        MODEL_IMAGES.put("insightface-scrfd", new String[]{
+    {
+        modelImages.put("insightface-scrfd", new String[]{
                 "D:/images/1people.png", "D:/images/3peoplebeauty.jpg", "D:/images/largest_selfie.jpg"});
-        MODEL_IMAGES.put("anime-face-detector", new String[]{
+        modelImages.put("anime-face-detector", new String[]{
                 "D:/images/anime.webp", "D:/images/anime_face1.png", "D:/images/anime_face2.png"});
-        MODEL_IMAGES.put("doc-layout-yolo", new String[]{
+        modelImages.put("doc-layout-yolo", new String[]{
                 "D:/images/paper-real-full.png", "D:/images/document.webp", "D:/images/table.png"});
-        MODEL_IMAGES.put("paddleocrv6-det", new String[]{
+        modelImages.put("paddleocrv6-det", new String[]{
                 "D:/images/ticket_new.png", "D:/images/freetxt.png"});
-        MODEL_IMAGES.put("duguang-det-small", new String[]{
+        modelImages.put("duguang-det-small", new String[]{
                 "D:/images/ticket_new.png", "D:/images/chTable.png"});
-        MODEL_IMAGES.put("yolov8s", new String[]{
+        modelImages.put("yolov8s", new String[]{
                 "D:/images/1people.png", "D:/images/more car plate.webp"});
-        MODEL_IMAGES.put("yolov10n", new String[]{
+        modelImages.put("yolov10n", new String[]{
                 "D:/images/3peoplebeauty.jpg"});
-        MODEL_IMAGES.put("yolov8s-world", new String[]{
+        modelImages.put("yolov8s-world", new String[]{
                 "D:/images/1people.png", "D:/images/more car plate.webp", "D:/images/fire.webp"});
-        MODEL_IMAGES.put("face-mask-detector", new String[]{
+        modelImages.put("face-mask-detector", new String[]{
                 "D:/images/1people.png", "D:/images/3peoplebeauty.jpg"});
-        MODEL_IMAGES.put("safety-helmet", new String[]{
+        modelImages.put("safety-helmet", new String[]{
                 "D:/images/1people.png", "D:/images/more car plate.webp"});
-        MODEL_IMAGES.put("rtdetr-layout", new String[]{
+        modelImages.put("rtdetr-layout", new String[]{
                 "D:/images/paper-real-full.png", "D:/images/document.webp"});
-        MODEL_IMAGES.put("dfine-l-obj2coco", new String[]{
+        modelImages.put("dfine-l-obj2coco", new String[]{
                 "D:/images/1people.png", "D:/images/more car plate.webp"});
-        MODEL_IMAGES.put("yolo-face-detector", new String[]{
+        modelImages.put("yolo-face-detector", new String[]{
                 "D:/images/1people.png", "D:/images/3peoplebeauty.jpg", "D:/images/largest_selfie.jpg"});
-        MODEL_IMAGES.put("yolo11-odd", new String[]{
+        modelImages.put("yolo11-odd", new String[]{
                 "D:/images/more car plate.webp"});
-        MODEL_IMAGES.put("yolo26n", new String[]{
+        modelImages.put("yolo26n", new String[]{
                 "D:/images/1people.png", "D:/images/more car plate.webp"});
-        MODEL_IMAGES.put("yolo26-obb", new String[]{
+        modelImages.put("yolo26-obb", new String[]{
                 "D:/images/more car plate.webp"});
-        MODEL_IMAGES.put("yolov10m", new String[]{
+        modelImages.put("yolov10m", new String[]{
                 "D:/images/1people.png", "D:/images/more car plate.webp"});
-        MODEL_IMAGES.put("yolov2-coco", new String[]{
+        modelImages.put("yolov2-coco", new String[]{
                 "D:/images/1people.png", "D:/images/more car plate.webp"});
-        MODEL_IMAGES.put("yolov8m-world", new String[]{
+        modelImages.put("yolov8m-world", new String[]{
                 "D:/images/1people.png"});
-        MODEL_IMAGES.put("yolov8l-world", new String[]{
+        modelImages.put("yolov8l-world", new String[]{
                 "D:/images/1people.png"});
-        MODEL_IMAGES.put("grounding-dino", new String[]{
+        modelImages.put("grounding-dino", new String[]{
                 "D:/images/1people.png"});
-        MODEL_IMAGES.put("duguang-det-large", new String[]{
+        modelImages.put("duguang-det-large", new String[]{
                 "D:/images/ticket_new.png", "D:/images/freetxt.png"});
     }
 
+    private MultiModelDetectExample() {}
+
     public static void main(String[] args) throws Exception {
+        new MultiModelDetectExample().run(args);
+    }
+
+    void run(String[] args) throws Exception {
         String onlyModel = null;
         String outDirBase = DEFAULT_OUTPUT_DIR;
         Float threshold = null;
@@ -114,7 +120,7 @@ public final class MultiModelDetectExample {
         ImageUtils.load();
 
         int totalDetected = 0;
-        for (Map.Entry<String, String[]> entry : MODEL_IMAGES.entrySet()) {
+        for (Map.Entry<String, String[]> entry : modelImages.entrySet()) {
             String modelId = entry.getKey();
             if (onlyModel != null && !onlyModel.equals(modelId)) {
                 continue;

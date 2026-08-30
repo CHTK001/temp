@@ -44,6 +44,8 @@ import java.nio.file.Path;
  * </pre>
  *
  * @author CH
+ *
+ * @since 4.0.0
  */
 public class OcrRecognitionDocExample {
     private OcrRecognitionDocExample() { }

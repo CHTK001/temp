@@ -9,6 +9,7 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * SshClient 高级功能测试：PTY 终端与隧道（正向/反向/SOCKS5 动态）。
@@ -18,6 +19,7 @@ import java.nio.charset.StandardCharsets;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public class SshAdvancedExample {
 
     public static void main(String[] args) {
@@ -65,7 +67,7 @@ public class SshAdvancedExample {
 
             term.close();
         } catch (Exception e) {
-            System.out.println("FAIL: " + e); e.printStackTrace(System.out);
+            log.error("FAIL: {}", e.getMessage(), e);
         }
     }
 
@@ -98,7 +100,7 @@ public class SshAdvancedExample {
             tunnel.close();
             System.out.println("PASS: 隧道关闭");
         } catch (Exception e) {
-            System.out.println("FAIL: " + e); e.printStackTrace(System.out);
+            log.error("FAIL: {}", e.getMessage(), e);
         }
     }
 
@@ -132,7 +134,7 @@ public class SshAdvancedExample {
             tunnel.close();
             System.out.println("PASS: SOCKS5 关闭");
         } catch (Exception e) {
-            System.out.println("FAIL: " + e); e.printStackTrace(System.out);
+            log.error("FAIL: {}", e.getMessage(), e);
         }
     }
 
@@ -182,7 +184,7 @@ public class SshAdvancedExample {
             echo.join(2000);
             System.out.println("PASS: 反向隧道关闭");
         } catch (Exception e) {
-            System.out.println("FAIL: " + e); e.printStackTrace(System.out);
+            log.error("FAIL: {}", e.getMessage(), e);
         }
     }
 

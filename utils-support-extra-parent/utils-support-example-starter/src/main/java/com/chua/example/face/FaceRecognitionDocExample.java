@@ -66,6 +66,8 @@ import java.util.List;
  * </ul>
  *
  * @author CH
+ *
+ * @since 4.0.0
  */
 public class FaceRecognitionDocExample {
     private FaceRecognitionDocExample() { }

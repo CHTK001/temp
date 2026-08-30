@@ -5,6 +5,9 @@ import java.util.Map;
 
 /**
  * Gemma3 ONNX 示例（存根：deeplearning-onnx-starter 未构建）。
+ *
+ * @author CH
+ * @since 4.0.0
  */
 public class Gemma3Example implements Example {
     @Override
