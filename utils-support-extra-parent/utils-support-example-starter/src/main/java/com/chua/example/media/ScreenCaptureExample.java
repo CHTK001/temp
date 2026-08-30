@@ -45,6 +45,9 @@ import java.nio.ByteBuffer;
 public class ScreenCaptureExample {
     private ScreenCaptureExample() { }
 
+    /** runDemo 参数 */
+    private static record DemoArgs(String captureType, int width, int height, int fps, int frameCount, File outputDir) {}
+
 
     /**
      * 默认采集器类型
@@ -191,7 +194,13 @@ public class ScreenCaptureExample {
      * @param frameCount  采集帧数
      * @param outputDir   输出目录（null 表示不保存）
      */
-    private static void runDemo(String captureType, int width, int height, int fps, int frameCount, File outputDir) {
+    private static void runDemo(DemoArgs a) {
+        String captureType = a.captureType();
+        int width = a.width();
+        int height = a.height();
+        int fps = a.fps();
+        int frameCount = a.frameCount();
+        File outputDir = a.outputDir();
         ScreenCature capture = createScreenCapture(captureType);
         if (capture == null) {
             log.error("[ERROR] 无法创建采集器，请检查依赖是否完整");
@@ -267,6 +276,6 @@ public class ScreenCaptureExample {
             return;
         }
 
-        runDemo(captureType, width, height, fps, frameCount, outputDir);
+        runDemo(new DemoArgs(captureType, width, height, fps, frameCount, outputDir));
     }
 }

@@ -191,19 +191,9 @@ public class TimeWheelExample {
             log.info("[rate] tick#{} fired", n);
         }, 50, 50, TimeUnit.MILLISECONDS);
 
-        try {
-            ThreadUtils.sleep(400L);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
 
         boolean cancelled = wheel.cancel(task);
         int observed = counter.get();
-        try {
-            ThreadUtils.sleep(150L);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
         int afterCancel = counter.get();
 
         wheel.shutdown();
@@ -237,11 +227,6 @@ public class TimeWheelExample {
         assert task != null : "schedule 应返回非空任务";
         boolean cancelled = wheel.cancel(task);
 
-        try {
-            ThreadUtils.sleep(800L);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
 
         wheel.shutdown();
 

@@ -204,10 +204,6 @@ public class LazyExpiringListExample implements Example {
             printResult("过期后重新加载，loadCount=2", p3);
 
             return p1 && p2 && p3;
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            log.error("测试被中断", e);
-            return false;
         }
     }
 
@@ -335,11 +331,7 @@ public class LazyExpiringListExample implements Example {
         try (LazyExpiringList<String> list = LazyExpiringList.<String>builder()
                 .loader(() -> {
                     loadCount.incrementAndGet();
-                    try {
-                        ThreadUtils.sleep(50);
-                    } catch (InterruptedException ignored) {
-                        Thread.currentThread().interrupt();
-                    }
+                    ThreadUtils.sleep(50);
                     return Arrays.asList("concurrent");
                 })
                 .build()) {
@@ -873,10 +865,6 @@ public class LazyExpiringListExample implements Example {
             if (!p5 || !p6 || !p7) {
                 return false;
             }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            log.error("测试被中断", e);
-            return false;
         }
 
         // 4. OffHeapDataStore 独立 clear/close 内存释放

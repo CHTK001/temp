@@ -34,6 +34,9 @@ public final class ImageProcessorEdgeCaseExample {
     private ImageProcessorEdgeCaseExample() {
     }
 
+    /** 矩形填充参数 */
+    private static record RectArgs(BufferedImage img, int rx, int ry, int rw, int rh) {}
+
     /**
      * 入口：生成测试图并遍历全部实现的 edge 方向组合。
      *
@@ -223,7 +226,7 @@ public final class ImageProcessorEdgeCaseExample {
                 img.setRGB(x, y, (level << 16) | (level << 8) | level);
             }
         }
-        fillRect(img, 24, 16, 48, 32);
+        fillRect(new RectArgs(img, 24, 16, 48, 32));
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ImageIO.write(img, "png", out);
         return out.toByteArray();
@@ -238,7 +241,12 @@ public final class ImageProcessorEdgeCaseExample {
      * @param rw  矩形宽度
      * @param rh  矩形高度
      */
-    private static void fillRect(BufferedImage img, int rx, int ry, int rw, int rh) {
+    private static void fillRect(RectArgs a) {
+        BufferedImage img = a.img();
+        int rx = a.rx();
+        int ry = a.ry();
+        int rw = a.rw();
+        int rh = a.rh();
         for (int y = ry; y < ry + rh; y++) {
             for (int x = rx; x < rx + rw; x++) {
                 img.setRGB(x, y, 0xFFFFFF);

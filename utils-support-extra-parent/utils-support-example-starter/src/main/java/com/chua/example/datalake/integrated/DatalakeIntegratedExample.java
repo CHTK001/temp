@@ -165,11 +165,7 @@ public class DatalakeIntegratedExample {
         dataSyncServer.start();
 
         // 7. 等待一段时间看 sink 输出
-        try {
-            ThreadUtils.sleep(durationSeconds * 1000L);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+        ThreadUtils.sleep(durationSeconds * 1000L);
 
         // 8. 验证 sink 接收至少一条
         boolean ok = true;
