@@ -692,30 +692,6 @@ public final class TaskRunnerExample {
     // ==================== 辅助方法 ====================
 
     /**
-     * 输出异常失败信息。
-     *
-     * @param name 场景名
-     * @param e    异常
-     * @return 恒为 false
-     */
-    private static boolean fail(String name, Exception e) {
-        log.info("[FAIL] " + name + " 异常: " + e);
-        return false;
-    }
-
-    /**
-     * 输出失败信息。
-     *
-     * @param name 场景名
-     * @param msg  失败原因
-     * @return 恒为 false
-     */
-    private static boolean fail(String name, String msg) {
-        log.info("[FAIL] " + name + ": " + msg);
-        return false;
-    }
-
-    /**
      * 忽略中断的闩锁等待。
      *
      * @param latch 目标闩锁
