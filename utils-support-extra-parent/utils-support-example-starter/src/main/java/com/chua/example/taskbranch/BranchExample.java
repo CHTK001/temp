@@ -460,18 +460,6 @@ public final class BranchExample {
     }
 
     /**
-     * 输出单场景异常失败结果。
-     *
-     * @param name 场景名
-     * @param e    异常
-     * @return 恒为 false
-     */
-    private static boolean fail(String name, Exception e) {
-        log.info("[FAIL] " + name + ": " + e.getMessage());
-        return false;
-    }
-
-    /**
      * 断言可执行体抛出指定类型异常，否则记录 AssertionError。
      *
      * @param name         场景名
