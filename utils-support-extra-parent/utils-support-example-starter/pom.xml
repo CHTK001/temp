@@ -805,16 +805,6 @@
                         <exclude>**/vector/VectorStorageExampleSpi.java</exclude>
                         <exclude>**/arcsoft/ClassLoaderExample.java</exclude>
                         <exclude>**/lang/NodeFactorySpiExample.java</exclude>
-                        <exclude>**/taskrunner/TaskRunnerExample.java</exclude>
-                        <exclude>**/taskbackup/BackupRoundTripExample.java</exclude>
-                        <exclude>**/taskdistribution/ReactiveTaskManagerExample.java</exclude>
-                        <exclude>**/pipeline/PipelineCallbackExample.java</exclude>
-                        <exclude>**/timer/TimeWheelExample.java</exclude>
-                        <exclude>**/network/http/HttpServerBenchmarkExample.java</exclude>
-                        <exclude>**/network/perf/PerfReportExample.java</exclude>
-                        <exclude>**/collection/LazyExpiringListExample.java</exclude>
-                        <exclude>**/onnx/PocketTtsEdgeCaseExample.java</exclude>
-                        <exclude>**/network/rpc/RpcServerExample.java</exclude>
                         </excludes>
 
                 </configuration>
