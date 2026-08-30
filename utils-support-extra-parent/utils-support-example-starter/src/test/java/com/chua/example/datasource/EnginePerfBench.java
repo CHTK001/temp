@@ -4,6 +4,7 @@ import com.chua.datasource.support.engine.JdbcReactorEngine;
 import com.chua.h2.support.engine.H2Engine;
 import com.chua.mysql.support.engine.MysqlEngine;
 import com.chua.sqlite.support.engine.SqliteEngine;
+import com.chua.sqlserver.support.engine.dServerLegacyEngine;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

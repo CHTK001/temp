@@ -2,15 +2,15 @@ package com.chua.example.concurrent.bulkhead;
 
 import com.chua.common.support.concurrent.bulkhead.BulkheadFlow;
 import com.chua.common.support.utils.ThreadUtils;
+import com.chua.example.util.ExampleUtils;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * 限流器 {@link BulkheadFlow} 全场景自检示例。
- *
- * <p>覆盖：正常通行、超限拒绝走 fallback、并发计数验证。</p>
+ * 闂勬劖绁﹂崳?{@link BulkheadFlow} 閸忋劌婧€閺咁垵鍤滃Λ鈧粈杞扮伐閵? *
+ * <p>鐟曞棛娲婇敍姘劀鐢悂鈧俺顢戦妴浣界Т闂勬劖瀚嗙紒婵婅泲 fallback閵嗕礁鑻熼崣鎴ｎ吀閺佷即鐛欑拠浣碘偓?/p>
  *
  * @author CH
  * @since 4.0.0.42
@@ -53,13 +53,13 @@ public final class BulkheadExample {
 
     public static void main(String[] args) {
         boolean passed = true;
-        passed &= ExampleUtils.timed"normalExecute", BulkheadExample::normalExecute);
-        passed &= ExampleUtils.timed"fallbackOnOverload", BulkheadExample::fallbackOnOverload);
+        passed &= ExampleUtils.timed("normalExecute", BulkheadExample::normalExecute);
+        passed &= ExampleUtils.timed("fallbackOnOverload", BulkheadExample::fallbackOnOverload);
         if (!passed) {
-            System.out.ExampleUtils.println("[FAIL] Bulkhead 存在失败场景");
-            System.exit(EXIT_CODE_FAILURE);
+            System.out.println("[FAIL] Bulkhead 瀛樺湪澶辫触鍦烘櫙");
+            System.exit(ExampleUtils.FAILURE);
         }
-        System.out.ExampleUtils.println("[PASS] Bulkhead 全部场景通过");
-        System.exit(EXIT_CODE_SUCCESS);
+        System.out.println("[PASS] Bulkhead 鍏ㄩ儴鍦烘櫙閫氳繃");
+        System.exit(ExampleUtils.SUCCESS);
     }
 }

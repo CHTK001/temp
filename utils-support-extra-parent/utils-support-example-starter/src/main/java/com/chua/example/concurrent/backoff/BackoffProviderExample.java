@@ -4,7 +4,6 @@ import com.chua.common.support.concurrent.backoff.provider.ExponentialBackoffPro
 import com.chua.common.support.concurrent.backoff.provider.FixedBackoffProvider;
 import com.chua.common.support.concurrent.backoff.provider.FibonacciBackoffProvider;
 import com.chua.common.support.concurrent.backoff.provider.LinearBackoffProvider;
-
 import com.chua.example.util.ExampleUtils;
 
 /**
@@ -104,17 +103,17 @@ public final class BackoffProviderExample {
 
     public static void main(String[] args) {
         boolean passed = true;
-        passed &= ExampleUtils.timed"fixedBackoff", BackoffProviderExample::fixedBackoff);
-        passed &= ExampleUtils.timed"linearBackoff", BackoffProviderExample::linearBackoff);
-        passed &= ExampleUtils.timed"fibonacciBackoff", BackoffProviderExample::fibonacciBackoff);
-        passed &= ExampleUtils.timed"exponentialBackoff", BackoffProviderExample::exponentialBackoff);
-        passed &= ExampleUtils.timed"beyondTestedRange", BackoffProviderExample::beyondTestedRange);
-        passed &= ExampleUtils.timed"allProvidersNoCrash", BackoffProviderExample::allProvidersNoCrash);
+        passed &= ExampleUtils.timed("fixedBackoff", BackoffProviderExample::fixedBackoff);
+        passed &= ExampleUtils.timed("linearBackoff", BackoffProviderExample::linearBackoff);
+        passed &= ExampleUtils.timed("fibonacciBackoff", BackoffProviderExample::fibonacciBackoff);
+        passed &= ExampleUtils.timed("exponentialBackoff", BackoffProviderExample::exponentialBackoff);
+        passed &= ExampleUtils.timed("beyondTestedRange", BackoffProviderExample::beyondTestedRange);
+        passed &= ExampleUtils.timed("allProvidersNoCrash", BackoffProviderExample::allProvidersNoCrash);
         if (!passed) {
-            System.out.ExampleUtils.println("[FAIL] BackoffProvider 存在失败场景");
-            System.exit(EXIT_CODE_FAILURE);
+            System.out.println("[FAIL] BackoffProvider 存在失败场景");
+            System.exit(ExampleUtils.FAILURE);
         }
-        System.out.ExampleUtils.println("[PASS] BackoffProvider 全部场景通过");
-        System.exit(EXIT_CODE_SUCCESS);
+        System.out.println("[PASS] BackoffProvider 全部场景通过");
+        System.exit(ExampleUtils.SUCCESS);
     }
 }

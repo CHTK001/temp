@@ -2,6 +2,7 @@ package com.chua.example.concurrent.bulkhead;
 
 import com.chua.common.support.concurrent.bulkhead.BulkheadFlow;
 import com.chua.common.support.utils.ThreadUtils;
+import com.chua.example.util.ExampleUtils;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.CountDownLatch;
@@ -18,21 +19,7 @@ import java.util.concurrent.TimeUnit;
  */
 public final class BulkheadPressureExample {
 
-    private static final int EXIT_CODE_SUCCESS = 0;
-    private static final int EXIT_CODE_FAILURE = 1;
-
     private BulkheadPressureExample() {
-    }
-
-    private static boolean timed(String name, Runnable scenario) {
-        long start = System.currentTimeMillis();
-        scenario.run();
-        System.out.println("[TIME] " + name + " " + (System.currentTimeMillis() - start) + "ms");
-        return true;
-    }
-
-    private static void print(String name, boolean ok) {
-        System.out.println((ok ? "[PASS] " : "[FAIL] ") + name);
     }
 
     /** 1. 100线程竞争2个槽位 - 全部应被降级 */
@@ -70,7 +57,7 @@ public final class BulkheadPressureExample {
 
         /** 验证：失败计数 >= 90 且 成功计数 <= 10 */
         boolean ok = failed.get() >= 90 && succeeded.get() <= 10;
-        print("extremeContention (fail=" + failed.get() + ", success=" + succeeded.get() + ")", ok);
+        ExampleUtils.print("extremeContention (fail=" + failed.get() + ", success=" + succeeded.get() + ")", ok);
         return ok;
     }
 
@@ -104,7 +91,7 @@ public final class BulkheadPressureExample {
 
         /** 验证总计执行次数 = 9次 */
         boolean ok = counter.get() == 9;
-        print("alternatingPasses (count=" + counter.get() + ")", ok);
+        ExampleUtils.print("alternatingPasses (count=" + counter.get() + ")", ok);
         return ok;
     }
 
@@ -133,7 +120,7 @@ public final class BulkheadPressureExample {
             Thread.currentThread().interrupt();
         }
             boolean ok = innerCounter.get() <= 1;
-            print("extremeReentry (innerCounter=" + innerCounter.get() + ")", ok);
+            ExampleUtils.print("extremeReentry (innerCounter=" + innerCounter.get() + ")", ok);
         });
 
         try {
@@ -143,20 +130,20 @@ public final class BulkheadPressureExample {
         }
 
         boolean ok = !Thread.currentThread().isInterrupted();
-        print("extremeReentry (noException)", ok);
+        ExampleUtils.print("extremeReentry (noException)", ok);
         return ok;
     }
 
     public static void main(String[] args) {
         boolean passed = true;
-        passed &= timed("extremeContention", BulkheadPressureExample::extremeContention);
-        passed &= timed("alternatingPasses", BulkheadPressureExample::alternatingPasses);
-        passed &= timed("extremeReentry", BulkheadPressureExample::extremeReentry);
+        passed &= ExampleUtils.timed("extremeContention", BulkheadPressureExample::extremeContention);
+        passed &= ExampleUtils.timed("alternatingPasses", BulkheadPressureExample::alternatingPasses);
+        passed &= ExampleUtils.timed("extremeReentry", BulkheadPressureExample::extremeReentry);
         if (!passed) {
             System.out.println("[FAIL] Bulkhead压力测试存在失败场景");
-            System.exit(EXIT_CODE_FAILURE);
+            System.exit(ExampleUtils.FAILURE);
         }
         System.out.println("[PASS] Bulkhead压力测试全部通过");
-        System.exit(EXIT_CODE_SUCCESS);
+        System.exit(ExampleUtils.SUCCESS);
     }
 }

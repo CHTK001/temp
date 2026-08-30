@@ -1,4 +1,4 @@
-﻿package com.chua.example.vector;
+package com.chua.example.vector;
 
 import com.chua.common.support.vector.Vector;
 import com.chua.common.support.vector.VectorCompareAlgorithm;

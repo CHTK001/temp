@@ -13,8 +13,6 @@ import com.chua.common.support.vector.VectorStorage;
 import com.chua.common.support.vector.VectorStorageBuilder;
 import com.chua.example.util.ExampleUtils;
 
-import com.chua.example.util.ExampleUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

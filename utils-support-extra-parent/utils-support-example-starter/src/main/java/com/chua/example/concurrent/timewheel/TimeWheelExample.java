@@ -61,12 +61,6 @@ public class TimeWheelExample {
     private TimeWheelExample() { }
 
 
-    /** 退出码：成功 */
-    private static final int EXIT_CODE_SUCCESS = 0;
-
-    /** 退出码：失败 */
-    private static final int EXIT_CODE_FAILURE = 1;
-
     /** 默认场景 */
     private static final String DEFAULT_TYPE = "all";
 
@@ -125,10 +119,10 @@ public class TimeWheelExample {
 
         if (ok) {
             log.info("[TimeWheelExample] ALL PASS");
-            System.exit(EXIT_CODE_SUCCESS);
+            System.exit(ExampleUtils.SUCCESS);
         } else {
             log.error("[TimeWheelExample] FAILED");
-            System.exit(EXIT_CODE_FAILURE);
+            System.exit(ExampleUtils.FAILURE);
         }
     }
 

@@ -428,13 +428,4 @@ public class JsonProviderExampleSpi implements Example {
         }
     }
 
-    /** Pass */
-    private static void pass() {
-        log.info("  ✓ 通过");
-    }
-
-    /** Fail */
-    private static void fail(String msg) {
-        log.info("  ✗ 失败: {}", msg);
-    }
 }
