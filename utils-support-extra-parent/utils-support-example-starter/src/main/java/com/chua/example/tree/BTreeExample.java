@@ -65,7 +65,7 @@ public final class BTreeExample {
             ExampleUtils.print("bplusPutAndGet", true);
             return true;
         } catch (Exception e) {
-            return fail("bplusPutAndGet", e);
+            return ExampleUtils.fail("bplusPutAndGet", e);
         }
     }
 
@@ -81,7 +81,7 @@ public final class BTreeExample {
             ExampleUtils.print("bplusRangeQuery", ok);
             return ok;
         } catch (Exception e) {
-            return fail("bplusRangeQuery", e);
+            return ExampleUtils.fail("bplusRangeQuery", e);
         }
     }
 
@@ -102,7 +102,7 @@ public final class BTreeExample {
             ExampleUtils.print("bplusDelete", true);
             return true;
         } catch (Exception e) {
-            return fail("bplusDelete", e);
+            return ExampleUtils.fail("bplusDelete", e);
         }
     }
 
@@ -128,7 +128,7 @@ public final class BTreeExample {
             ExampleUtils.print("bplusLargeScale", ok);
             return ok;
         } catch (Exception e) {
-            return fail("bplusLargeScale", e);
+            return ExampleUtils.fail("bplusLargeScale", e);
         }
     }
 
@@ -162,7 +162,7 @@ public final class BTreeExample {
 
             return all.size() == total && k10k.size() == 10_000;
         } catch (Exception e) {
-            return fail("bplusPerf", e);
+            return ExampleUtils.fail("bplusPerf", e);
         }
     }
 
@@ -196,7 +196,7 @@ public final class BTreeExample {
 
             return all.size() == total && k10k.size() == 10_000;
         } catch (Exception e) {
-            return fail("btreePerf", e);
+            return ExampleUtils.fail("btreePerf", e);
         }
     }
 
@@ -219,7 +219,7 @@ public final class BTreeExample {
             ExampleUtils.print("bplusToBinaryAndBack", true);
             return true;
         } catch (Exception e) {
-            return fail("bplusToBinaryAndBack", e);
+            return ExampleUtils.fail("bplusToBinaryAndBack", e);
         }
     }
 
@@ -237,7 +237,7 @@ public final class BTreeExample {
             ExampleUtils.print("btreePutAndGet", true);
             return true;
         } catch (Exception e) {
-            return fail("btreePutAndGet", e);
+            return ExampleUtils.fail("btreePutAndGet", e);
         }
     }
 
@@ -253,7 +253,7 @@ public final class BTreeExample {
             ExampleUtils.print("btreeRangeQuery", ok);
             return ok;
         } catch (Exception e) {
-            return fail("btreeRangeQuery", e);
+            return ExampleUtils.fail("btreeRangeQuery", e);
         }
     }
 
@@ -271,7 +271,7 @@ public final class BTreeExample {
             ExampleUtils.print("btreeDelete", true);
             return true;
         } catch (Exception e) {
-            return fail("btreeDelete", e);
+            return ExampleUtils.fail("btreeDelete", e);
         }
     }
 
@@ -294,7 +294,7 @@ public final class BTreeExample {
             ExampleUtils.print("btreeToBinaryAndBack", true);
             return true;
         } catch (Exception e) {
-            return fail("btreeToBinaryAndBack", e);
+            return ExampleUtils.fail("btreeToBinaryAndBack", e);
         }
     }
 

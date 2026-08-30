@@ -89,7 +89,7 @@ public final class BranchExample {
             ExampleUtils.print(name, ok);
             return ok;
         } catch (Exception e) {
-            return fail(name, e);
+            return ExampleUtils.fail(name, e);
         }
     }
 
@@ -113,7 +113,7 @@ public final class BranchExample {
             ExampleUtils.print(name, ok);
             return ok;
         } catch (Exception e) {
-            return fail(name, e);
+            return ExampleUtils.fail(name, e);
         }
     }
 
@@ -135,7 +135,7 @@ public final class BranchExample {
             ExampleUtils.print(name, ok);
             return ok;
         } catch (Exception e) {
-            return fail(name, e);
+            return ExampleUtils.fail(name, e);
         }
     }
 
@@ -156,7 +156,7 @@ public final class BranchExample {
             ExampleUtils.print(name, ok);
             return ok;
         } catch (Exception e) {
-            return fail(name, e);
+            return ExampleUtils.fail(name, e);
         }
     }
 
@@ -177,7 +177,7 @@ public final class BranchExample {
             ExampleUtils.print(name, ok);
             return ok;
         } catch (Exception e) {
-            return fail(name, e);
+            return ExampleUtils.fail(name, e);
         }
     }
 
@@ -201,7 +201,7 @@ public final class BranchExample {
             ExampleUtils.print(name, ok);
             return ok;
         } catch (Exception e) {
-            return fail(name, e);
+            return ExampleUtils.fail(name, e);
         }
     }
 
@@ -220,7 +220,7 @@ public final class BranchExample {
             ExampleUtils.print(name, ok);
             return ok;
         } catch (Exception e) {
-            return fail(name, e);
+            return ExampleUtils.fail(name, e);
         }
     }
 
@@ -241,7 +241,7 @@ public final class BranchExample {
             ExampleUtils.print(name, ok);
             return ok;
         } catch (Exception e) {
-            return fail(name, e);
+            return ExampleUtils.fail(name, e);
         }
     }
 
@@ -266,7 +266,7 @@ public final class BranchExample {
             ExampleUtils.print(name, ok);
             return ok;
         } catch (Exception e) {
-            return fail(name, e);
+            return ExampleUtils.fail(name, e);
         }
     }
 
@@ -294,7 +294,7 @@ public final class BranchExample {
             ExampleUtils.print(name, ok);
             return ok;
         } catch (Exception e) {
-            return fail(name, e);
+            return ExampleUtils.fail(name, e);
         }
     }
 
@@ -389,7 +389,7 @@ public final class BranchExample {
             ExampleUtils.print(name, ok);
             return ok;
         } catch (Exception e) {
-            return fail(name, e);
+            return ExampleUtils.fail(name, e);
         }
     }
 
@@ -418,7 +418,7 @@ public final class BranchExample {
             ExampleUtils.print(name, ok);
             return ok;
         } catch (Exception e) {
-            return fail(name, e);
+            return ExampleUtils.fail(name, e);
         }
     }
 
@@ -442,7 +442,7 @@ public final class BranchExample {
             ExampleUtils.print(name, ok);
             return ok;
         } catch (Exception e) {
-            return fail(name, e);
+            return ExampleUtils.fail(name, e);
         }
     }
 
