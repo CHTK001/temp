@@ -76,7 +76,7 @@ public final class AsyncDeduplicateExample {
             ExampleUtils.print("dedupExecutesOnceOnly", ok);
             return ok;
         } catch (Exception e) {
-            return fail("dedupExecutesOnceOnly", e);
+            return ExampleUtils.fail("dedupExecutesOnceOnly", e);
         }
     }
 

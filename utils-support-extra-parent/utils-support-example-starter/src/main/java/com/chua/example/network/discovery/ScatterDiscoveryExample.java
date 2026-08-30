@@ -123,7 +123,7 @@ public final class ScatterDiscoveryExample {
                     portHttpA, portHttpB, portTcp);
             return true;
         } catch (Exception e) {
-            return fail("注册中心路由异常: " + e.getMessage());
+            return ExampleUtils.fail("注册中心路由异常: " + e.getMessage());
         } finally {
             closeQuietly(sd);
         }
@@ -203,7 +203,7 @@ public final class ScatterDiscoveryExample {
             LOG.info("    HTTP 代理 10 次请求全部路由到 order 组（order-A/order-B）✓");
             return true;
         } catch (Exception e) {
-            return fail("HTTP 代理路由异常: " + e.getMessage());
+            return ExampleUtils.fail("HTTP 代理路由异常: " + e.getMessage());
         } finally {
             closeQuietly(proxy);
             closeQuietly(backendA);
@@ -261,7 +261,7 @@ public final class ScatterDiscoveryExample {
             LOG.info("    TCP 代理按 order+tcp 路由到后端 {}，回显一致 ✓", portTcp);
             return true;
         } catch (Exception e) {
-            return fail("TCP 代理路由异常: " + e.getMessage());
+            return ExampleUtils.fail("TCP 代理路由异常: " + e.getMessage());
         } finally {
             closeQuietly(proxy);
             closeQuietly(backend);

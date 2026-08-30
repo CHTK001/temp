@@ -66,7 +66,7 @@ public final class SchedulerExample {
             ExampleUtils.print("cronParseAndFireTimes", ok);
             return ok;
         } catch (Exception e) {
-            return fail("cronParseAndFireTimes", e);
+            return ExampleUtils.fail("cronParseAndFireTimes", e);
         }
     }
 
@@ -104,7 +104,7 @@ public final class SchedulerExample {
             ExampleUtils.print("fixedIntervalTriggers", ok);
             return ok;
         } catch (Exception e) {
-            return fail("fixedIntervalTriggers", e);
+            return ExampleUtils.fail("fixedIntervalTriggers", e);
         }
     }
 
@@ -132,7 +132,7 @@ public final class SchedulerExample {
             return ok;
         } catch (Exception e) {
             counter.incrementAndGet();
-            return fail("providerLifecycle", e);
+            return ExampleUtils.fail("providerLifecycle", e);
         }
     }
 

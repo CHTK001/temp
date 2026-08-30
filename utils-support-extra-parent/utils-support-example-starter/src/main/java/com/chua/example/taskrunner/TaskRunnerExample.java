@@ -144,7 +144,7 @@ public final class TaskRunnerExample {
             ExampleUtils.print("serialChainAndDataDependency", ok);
             return ok;
         } catch (Exception e) {
-            return fail("serialChainAndDataDependency", e);
+            return ExampleUtils.fail("serialChainAndDataDependency", e);
         }
     }
 
@@ -159,7 +159,7 @@ public final class TaskRunnerExample {
                     .policy(CompletionPolicy.allSuccess())
                     .task("x", ctx -> "v")
                     .task("x", ctx -> "v2");
-            return fail("duplicateIdRejected", "未拒绝重复 ID");
+            return ExampleUtils.fail("duplicateIdRejected", "未拒绝重复 ID");
         } catch (IllegalStateException expected) {
             var ok = expected.getMessage().contains("已注册");
             ExampleUtils.print("duplicateIdRejected", ok);
@@ -180,7 +180,7 @@ public final class TaskRunnerExample {
                     .task("q", ctx -> 2).afterNode("p")
                     .task("r", ctx -> 3).afterNode("q")
                     .executeSync(null);
-            return fail("cycleDetectionRejected", "未拒绝循环依赖");
+            return ExampleUtils.fail("cycleDetectionRejected", "未拒绝循环依赖");
         } catch (IllegalStateException expected) {
             var ok = expected.getMessage().contains("循环依赖");
             ExampleUtils.print("cycleDetectionRejected", ok);
@@ -224,7 +224,7 @@ public final class TaskRunnerExample {
         } catch (Exception e) {
             releaseA.countDown();
             releaseB.countDown();
-            return fail("parallelTopLevelOverlap", e);
+            return ExampleUtils.fail("parallelTopLevelOverlap", e);
         }
     }
 
@@ -249,7 +249,7 @@ public final class TaskRunnerExample {
             ExampleUtils.print("allSuccessFailFastSkipsDownstream", ok);
             return ok;
         } catch (Exception e) {
-            return fail("allSuccessFailFastSkipsDownstream", e);
+            return ExampleUtils.fail("allSuccessFailFastSkipsDownstream", e);
         }
     }
 
@@ -303,7 +303,7 @@ public final class TaskRunnerExample {
             ExampleUtils.print("dataflowReadyScheduling (c-start=" + offset + "ms)", ok);
             return ok;
         } catch (Exception e) {
-            return fail("dataflowReadyScheduling", e);
+            return ExampleUtils.fail("dataflowReadyScheduling", e);
         }
     }
 
@@ -337,7 +337,7 @@ public final class TaskRunnerExample {
             return ok;
         } catch (Exception e) {
             release.countDown();
-            return fail("anySuccessEarlyExitCancelsRest", e);
+            return ExampleUtils.fail("anySuccessEarlyExitCancelsRest", e);
         }
     }
 
@@ -354,7 +354,7 @@ public final class TaskRunnerExample {
             ExampleUtils.print("successRateThresholds", ok);
             return ok;
         } catch (Exception e) {
-            return fail("successRateThresholds", e);
+            return ExampleUtils.fail("successRateThresholds", e);
         }
     }
 
@@ -411,7 +411,7 @@ public final class TaskRunnerExample {
             ExampleUtils.print("thresholdPolicies", ok);
             return ok;
         } catch (Exception e) {
-            return fail("thresholdPolicies", e);
+            return ExampleUtils.fail("thresholdPolicies", e);
         }
     }
 
@@ -440,7 +440,7 @@ public final class TaskRunnerExample {
             ExampleUtils.print("perTaskTimeoutIsolated (slow=" + slowStatus + ")", ok);
             return ok;
         } catch (Exception e) {
-            return fail("perTaskTimeoutIsolated", e);
+            return ExampleUtils.fail("perTaskTimeoutIsolated", e);
         }
     }
 
@@ -467,7 +467,7 @@ public final class TaskRunnerExample {
             ExampleUtils.print("globalRetryRecoversFlakyTask", ok);
             return ok;
         } catch (Exception e) {
-            return fail("globalRetryRecoversFlakyTask", e);
+            return ExampleUtils.fail("globalRetryRecoversFlakyTask", e);
         }
     }
 
@@ -497,7 +497,7 @@ public final class TaskRunnerExample {
             ExampleUtils.print("circuitBreakerFallbackDegradation", firstOk && secondOk);
             return firstOk && secondOk;
         } catch (Exception e) {
-            return fail("circuitBreakerFallbackDegradation", e);
+            return ExampleUtils.fail("circuitBreakerFallbackDegradation", e);
         }
     }
 
@@ -520,7 +520,7 @@ public final class TaskRunnerExample {
             ExampleUtils.print("asyncExecutionCompletes", ok);
             return ok;
         } catch (Exception e) {
-            return fail("asyncExecutionCompletes", e);
+            return ExampleUtils.fail("asyncExecutionCompletes", e);
         }
     }
 
@@ -541,7 +541,7 @@ public final class TaskRunnerExample {
             ExampleUtils.print("reactiveExecutionEmitsResult", ok);
             return ok;
         } catch (Exception e) {
-            return fail("reactiveExecutionEmitsResult", e);
+            return ExampleUtils.fail("reactiveExecutionEmitsResult", e);
         }
     }
 
@@ -571,7 +571,7 @@ public final class TaskRunnerExample {
             CompletableFuture<RunResult> future = runner.execute(null);
             // 等任务真正进入阻塞后再取消，确保中断送达执行体
             if (!started.await(5, TimeUnit.SECONDS)) {
-                return fail("asyncCancelPropagatesInterruption", "任务未按时启动");
+                return ExampleUtils.fail("asyncCancelPropagatesInterruption", "任务未按时启动");
             }
             future.cancel(true);
             // 给中断传播留出时间窗
@@ -582,7 +582,7 @@ public final class TaskRunnerExample {
             ExampleUtils.print("asyncCancelPropagatesInterruption", ok);
             return ok;
         } catch (Exception e) {
-            return fail("asyncCancelPropagatesInterruption", e);
+            return ExampleUtils.fail("asyncCancelPropagatesInterruption", e);
         }
     }
 
@@ -609,7 +609,7 @@ public final class TaskRunnerExample {
             ExampleUtils.print("watchStreamCarriesLifecycleEvents", ok);
             return ok;
         } catch (Exception e) {
-            return fail("watchStreamCarriesLifecycleEvents", e);
+            return ExampleUtils.fail("watchStreamCarriesLifecycleEvents", e);
         }
     }
 
@@ -631,7 +631,7 @@ public final class TaskRunnerExample {
             ExampleUtils.print("preconditionsEnforced", ok);
             return ok;
         } catch (Exception e) {
-            return fail("preconditionsEnforced", e);
+            return ExampleUtils.fail("preconditionsEnforced", e);
         }
     }
 
@@ -655,7 +655,7 @@ public final class TaskRunnerExample {
             ExampleUtils.print("parameterValidation", ok);
             return ok;
         } catch (Exception e) {
-            return fail("parameterValidation", e);
+            return ExampleUtils.fail("parameterValidation", e);
         }
     }
 

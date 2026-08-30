@@ -66,7 +66,7 @@ public final class RetryExample {
             ExampleUtils.print("recoverAfterTransientFailures", ok);
             return ok;
         } catch (Exception e) {
-            return fail("recoverAfterTransientFailures", e);
+            return ExampleUtils.fail("recoverAfterTransientFailures", e);
         }
     }
 
@@ -88,7 +88,7 @@ public final class RetryExample {
             ExampleUtils.print("exhaustedFallsBack", ok);
             return ok;
         } catch (Exception e) {
-            return fail("exhaustedFallsBack", e);
+            return ExampleUtils.fail("exhaustedFallsBack", e);
         }
     }
 
@@ -108,13 +108,13 @@ public final class RetryExample {
                         attempts.incrementAndGet();
                         throw new NumberFormatException("not retryable");
                     });
-            return fail("nonMatchingExceptionSkipsRetry", "不应到达此处");
+            return ExampleUtils.fail("nonMatchingExceptionSkipsRetry", "不应到达此处");
         } catch (NumberFormatException expected) {
             boolean ok = attempts.get() == 1;
             ExampleUtils.print("nonMatchingExceptionSkipsRetry", ok);
             return ok;
         } catch (Exception e) {
-            return fail("nonMatchingExceptionSkipsRetry", e);
+            return ExampleUtils.fail("nonMatchingExceptionSkipsRetry", e);
         }
     }
 
@@ -137,7 +137,7 @@ public final class RetryExample {
             ExampleUtils.print("immediateSuccessNoRetry", ok);
             return ok;
         } catch (Exception e) {
-            return fail("immediateSuccessNoRetry", e);
+            return ExampleUtils.fail("immediateSuccessNoRetry", e);
         }
     }
 

@@ -154,7 +154,7 @@ public final class TreeUtilsExample {
             ExampleUtils.print("buildNormalTree", ok);
             return ok;
         } catch (Exception e) {
-            return fail("buildNormalTree", e);
+            return ExampleUtils.fail("buildNormalTree", e);
         }
     }
 
@@ -174,7 +174,7 @@ public final class TreeUtilsExample {
             ExampleUtils.print("buildOrphanBecomesRoot", ok);
             return ok;
         } catch (Exception e) {
-            return fail("buildOrphanBecomesRoot", e);
+            return ExampleUtils.fail("buildOrphanBecomesRoot", e);
         }
     }
 
@@ -189,13 +189,13 @@ public final class TreeUtilsExample {
             flat.add(new Node("dup", null));
             flat.add(new Node("dup", null));
             TreeUtils.build(flat, idOf(), pidOf(), (n, kids) -> n.children = kids);
-            return fail("buildRejectsDuplicateId", "未拒绝重复 ID");
+            return ExampleUtils.fail("buildRejectsDuplicateId", "未拒绝重复 ID");
         } catch (IllegalArgumentException expected) {
             boolean ok = expected.getMessage().contains("重复");
             ExampleUtils.print("buildRejectsDuplicateId", ok);
             return ok;
         } catch (Exception e) {
-            return fail("buildRejectsDuplicateId", e);
+            return ExampleUtils.fail("buildRejectsDuplicateId", e);
         }
     }
 
@@ -211,13 +211,13 @@ public final class TreeUtilsExample {
             flat.add(new Node("b", "c"));
             flat.add(new Node("c", "b"));
             TreeUtils.build(flat, idOf(), pidOf(), (n, kids) -> n.children = kids);
-            return fail("buildDetectsCycle", "未检测到循环引用");
+            return ExampleUtils.fail("buildDetectsCycle", "未检测到循环引用");
         } catch (IllegalStateException expected) {
             boolean ok = expected.getMessage().contains("循环引用");
             ExampleUtils.print("buildDetectsCycle", ok);
             return ok;
         } catch (Exception e) {
-            return fail("buildDetectsCycle", e);
+            return ExampleUtils.fail("buildDetectsCycle", e);
         }
     }
 
@@ -239,7 +239,7 @@ public final class TreeUtilsExample {
             ExampleUtils.print("findByIdAndFindNode", ok);
             return ok;
         } catch (Exception e) {
-            return fail("findByIdAndFindNode", e);
+            return ExampleUtils.fail("findByIdAndFindNode", e);
         }
     }
 
@@ -262,7 +262,7 @@ public final class TreeUtilsExample {
             ExampleUtils.print("directAndAllChildren", ok);
             return ok;
         } catch (Exception e) {
-            return fail("directAndAllChildren", e);
+            return ExampleUtils.fail("directAndAllChildren", e);
         }
     }
 
@@ -285,7 +285,7 @@ public final class TreeUtilsExample {
             ExampleUtils.print("parentChainAndParents", ok);
             return ok;
         } catch (Exception e) {
-            return fail("parentChainAndParents", e);
+            return ExampleUtils.fail("parentChainAndParents", e);
         }
     }
 
@@ -304,7 +304,7 @@ public final class TreeUtilsExample {
             ExampleUtils.print("siblingsExcludeSelf", ok);
             return ok;
         } catch (Exception e) {
-            return fail("siblingsExcludeSelf", e);
+            return ExampleUtils.fail("siblingsExcludeSelf", e);
         }
     }
 
@@ -326,7 +326,7 @@ public final class TreeUtilsExample {
             ExampleUtils.print("rootSiblingsAreOtherRoots", ok);
             return ok;
         } catch (Exception e) {
-            return fail("rootSiblingsAreOtherRoots", e);
+            return ExampleUtils.fail("rootSiblingsAreOtherRoots", e);
         }
     }
 
@@ -351,7 +351,7 @@ public final class TreeUtilsExample {
             ExampleUtils.print("sortTreeRecursive", ok);
             return ok;
         } catch (Exception e) {
-            return fail("sortTreeRecursive", e);
+            return ExampleUtils.fail("sortTreeRecursive", e);
         }
     }
 
@@ -369,7 +369,7 @@ public final class TreeUtilsExample {
             ExampleUtils.print("flattenPreOrder (" + ids + ")", ok);
             return ok;
         } catch (Exception e) {
-            return fail("flattenPreOrder", e);
+            return ExampleUtils.fail("flattenPreOrder", e);
         }
     }
 
@@ -391,7 +391,7 @@ public final class TreeUtilsExample {
             ExampleUtils.print("depthCalculation", ok);
             return ok;
         } catch (Exception e) {
-            return fail("depthCalculation", e);
+            return ExampleUtils.fail("depthCalculation", e);
         }
     }
 

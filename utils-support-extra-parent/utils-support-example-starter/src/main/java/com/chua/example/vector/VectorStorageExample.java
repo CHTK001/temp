@@ -85,7 +85,7 @@ public final class VectorStorageExample {
             ExampleUtils.print("add/search Top-K 最相似排首", ok);
             return ok;
         } catch (Exception e) {
-            return fail("add/search Top-K 最相似排首", e);
+            return ExampleUtils.fail("add/search Top-K 最相似排首", e);
         }
     }
 
@@ -111,7 +111,7 @@ public final class VectorStorageExample {
             ExampleUtils.print("removeByIdPrefix 批量删除", ok);
             return ok;
         } catch (Exception e) {
-            return fail("removeByIdPrefix 批量删除", e);
+            return ExampleUtils.fail("removeByIdPrefix 批量删除", e);
         }
     }
 
@@ -130,7 +130,7 @@ public final class VectorStorageExample {
             ExampleUtils.print("removeByIdPrefix 无命中返回 0", ok);
             return ok;
         } catch (Exception e) {
-            return fail("removeByIdPrefix 无命中返回 0", e);
+            return ExampleUtils.fail("removeByIdPrefix 无命中返回 0", e);
         }
     }
 
@@ -150,7 +150,7 @@ public final class VectorStorageExample {
             ExampleUtils.print("remove 单条幂等语义", ok);
             return ok;
         } catch (Exception e) {
-            return fail("remove 单条幂等语义", e);
+            return ExampleUtils.fail("remove 单条幂等语义", e);
         }
     }
 
@@ -170,7 +170,7 @@ public final class VectorStorageExample {
             ExampleUtils.print("clear 清空存储", ok);
             return ok;
         } catch (Exception e) {
-            return fail("clear 清空存储", e);
+            return ExampleUtils.fail("clear 清空存储", e);
         }
     }
 
