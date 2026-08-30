@@ -40,7 +40,7 @@ public final class MessageHookExample {
             ExampleUtils.print("spiResolvesWebhookImplementation", ok);
             return ok;
         } catch (Exception e) {
-            return fail("spiResolvesWebhookImplementation", e);
+            return ExampleUtils.fail("spiResolvesWebhookImplementation", e);
         }
     }
 
@@ -58,7 +58,7 @@ public final class MessageHookExample {
             ExampleUtils.print("missingUrlFails (" + resp.getErrorMessage() + ")", ok);
             return ok;
         } catch (Exception e) {
-            return fail("missingUrlFails", e);
+            return ExampleUtils.fail("missingUrlFails", e);
         }
     }
 
@@ -79,7 +79,7 @@ public final class MessageHookExample {
             ExampleUtils.print("unreachableFailsGracefully", ok);
             return ok;
         } catch (Exception e) {
-            return fail("unreachableFailsGracefully", e);
+            return ExampleUtils.fail("unreachableFailsGracefully", e);
         }
     }
 
