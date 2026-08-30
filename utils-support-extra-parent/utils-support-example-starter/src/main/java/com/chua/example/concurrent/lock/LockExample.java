@@ -1,6 +1,7 @@
 package com.chua.example.concurrent.lock;
 
 import com.chua.common.support.concurrent.lock.LockFlow;
+import com.chua.common.support.utils.ThreadUtils;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -34,7 +35,8 @@ public final class LockExample {
     }
 
     private static void sleepMillis(long ms) {
-        try { Thread.sleep(ms); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+        // 安静模式 sleep：捕获 InterruptedException 并忽略（与原 try-catch 行为一致）
+        ThreadUtils.sleepMillisecondsQuietly(ms);
     }
 
     private static boolean tryLockReturnsTrue() {
@@ -85,7 +87,11 @@ public final class LockExample {
                 latch.countDown();
             });
         }
-        try { latch.await(5, java.util.concurrent.TimeUnit.SECONDS); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+        try {
+            latch.await(5, java.util.concurrent.TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
         var ok = successes.get() == 1;
         print("concurrentTryLockContention", ok);
         return ok;

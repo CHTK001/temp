@@ -42,7 +42,6 @@ public final class TextBsrExample {
         // 穿透 LazyDjlTranslator / ITranslatorDelegate 包装，找到原生 TextBsrTranslator 设置 scale
         try {
             Object target = unwrap(t);
-            java.lang.reflect.Method setScale = ReflectUtils.getMethod(target.getClass(), "setScale", int.class);
             ReflectUtils.invoke(target, "setScale", void.class, int.class, scale);
             log.info("[text-bsr] scale=" + scale + "x");
         } catch (Exception e) {

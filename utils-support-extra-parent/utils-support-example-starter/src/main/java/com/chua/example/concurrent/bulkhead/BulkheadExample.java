@@ -58,18 +58,29 @@ public final class BulkheadExample {
     }
 
     private static void await(CountDownLatch l) {
-        try { l.await(5, TimeUnit.SECONDS); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+        try {
+            l.await(5, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     private static void sleepMillis(long ms) {
-        try { Thread.sleep(ms); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     public static void main(String[] args) {
         boolean passed = true;
         passed &= timed("normalExecute", BulkheadExample::normalExecute);
         passed &= timed("fallbackOnOverload", BulkheadExample::fallbackOnOverload);
-        if (!passed) { System.out.println("[FAIL] Bulkhead 存在失败场景"); System.exit(EXIT_CODE_FAILURE); }
+        if (!passed) {
+            System.out.println("[FAIL] Bulkhead 存在失败场景");
+            System.exit(EXIT_CODE_FAILURE);
+        }
         System.out.println("[PASS] Bulkhead 全部场景通过");
         System.exit(EXIT_CODE_SUCCESS);
     }

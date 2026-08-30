@@ -1,6 +1,7 @@
 package com.chua.example.network.scatter;
 
 import com.chua.common.support.network.discovery.Discovery;
+import com.chua.common.support.reflection.ReflectUtils;
 import com.chua.common.support.scatter.Scatter;
 import com.chua.common.support.scatter.ScatterSyncHelper;
 import com.chua.common.support.scatter.TcpScatterBuilder;
@@ -213,12 +214,20 @@ public class ScatterTcpClusterExample {
      * @param serverId 待强制标记失败的服务标识
      * @throws Exception 反射访问 AbstractScatterDiscovery 失败时抛出
      */
-    private static void forceHeartbeatFail(Scatter observer, String serverId) throws Exception {
-        Field failField = AbstractScatterDiscovery.class.getDeclaredField("heartbeatFailCounts");
-        failField.setAccessible(true);
+    private static void forceHeartbeatFail(Scatter observer, String serverId) {
+        @SuppressWarnings("unchecked")
         ConcurrentHashMap<String, Integer> failCounts =
-                (ConcurrentHashMap<String, Integer>) failField.get(observer.discovery());
-        failCounts.put(serverId, 99);
+                (ConcurrentHashMap<String, Integer>) ReflectUtils.getField(
+                        AbstractScatterDiscovery.class, "heartbeatFailCounts");
+        @SuppressWarnings("unchecked")
+        ConcurrentHashMap<String, Integer> map =
+                (ConcurrentHashMap<String, Integer>) ReflectUtils.getField(observer.discovery(), "heartbeatFailCounts");
+        if (map != null) {
+            map.put(serverId, 99);
+        }
+        if (failCounts != null) {
+            failCounts.put(serverId, 99);
+        }
     }
 
     /**

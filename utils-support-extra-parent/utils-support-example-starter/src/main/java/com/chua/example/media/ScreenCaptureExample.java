@@ -195,13 +195,13 @@ public class ScreenCaptureExample {
         ScreenCature capture = createScreenCapture(captureType);
         if (capture == null) {
             log.error("[ERROR] 无法创建采集器，请检查依赖是否完整");
-            System.exit(1);
+            throw new IllegalStateException("无法创建采集器: " + captureType);
         }
 
         if (!capture.init(width, height, fps)) {
             log.error("[ERROR] 采集器初始化失败");
             capture.close();
-            System.exit(1);
+            throw new IllegalStateException("采集器初始化失败: " + captureType);
         }
 
         log.info("采集器已就绪: {} {}x{}@{}fps", capture.getClass().getSimpleName(),

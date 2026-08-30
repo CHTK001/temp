@@ -18,7 +18,7 @@ import java.util.List;
  * @since 4.0.0.42
  */
 @Slf4j
-public final class PlatePipelineVerifyExample {
+public final class PlatePipelineTestExample {
     public static void main(String[] args) throws Exception {
         ModelRegistry.discoverAll();
         ImageUtils.load();

@@ -26,7 +26,11 @@ public class SshServerExample {
      */
     public static void main(String[] args) throws Exception {
         int port = 17322;
-        String password = "deploy123";
+        String password = System.getenv("SSH_PASSWORD");
+        if (password == null || password.isEmpty()) {
+            password = "change-me-in-production";
+            System.err.println("[WARN] SSH_PASSWORD env not set, using placeholder password");
+        }
 
         for (int i = 0; i < args.length; i++) {
             if ("--port".equals(args[i]) && i + 1 < args.length) {

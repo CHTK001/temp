@@ -1,5 +1,6 @@
 package com.chua.example.face;
 
+import com.chua.common.support.reflection.ReflectUtils;
 import com.chua.common.support.vector.VectorStorage;
 import com.chua.common.support.vector.VectorStorageBuilder;
 import com.chua.deeplearning.support.face.FaceIdentifyHit;
@@ -26,24 +27,24 @@ import java.util.Map;
  * 再用同一批图分别识别，验证向量库检索返回的 bestId 与登记的 ID 一致。</p>
  *
  * <pre>{@code
- *   FaceIdentifyFullTest            // 全部流程
+ *   FaceIdentifyFullExample            // 全部流程
  * }</pre>
  *
  * @author CH
  * @since 4.0.0.42
  */
 @Slf4j
-public final class FaceIdentifyFullTest {
+public final class FaceIdentifyFullExample {
 
     private static final String IMG_DIR = "D:\\images";
     private static final String OUT_ROOT = "D:\\images\\output\\face_identify_full";
 
-    private FaceIdentifyFullTest() {
+    private FaceIdentifyFullExample() {
     }
 
     public static void main(String[] args) throws Exception {
         // 独立运行时显式加载注册器（SPI 在容器外可能未触发）
-        Class.forName("com.chua.deeplearning.support.onnx.OnnxModelRegistrar");
+        ReflectUtils.forName("com.chua.deeplearning.support.onnx.OnnxModelRegistrar");
 
         int passed = 0;
         int failed = 0;

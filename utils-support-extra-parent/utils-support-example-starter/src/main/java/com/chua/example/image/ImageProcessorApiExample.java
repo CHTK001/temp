@@ -5,12 +5,12 @@ import com.chua.common.support.image.ImageProcessors;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * ImageProcessor API 示例：默认处理器获取与 FluentProcessor 链式 API 存在性自检。
+ * ImageProcessor API 示例：默认处理器获取与 FluentProcessor 链式 API 自检。
  *
  * <p>改写自 common-starter 测试代码 ImageProcessorApiTest，覆盖场景：
  * SPI 代理可发现默认 ImageProcessor、{@link ImageProcessors#from(byte[])} 可创建
  * FluentProcessor、resize / grayscale / rotate / blur / brightness / crop / flip
- * 七个链式方法签名均存在（仅反射校验签名，不实际处理图像）。</p>
+ * 七个链式方法可正常调用并产出结果。</p>
  *
  * @author CH
  * @since 4.0.0.42
@@ -43,7 +43,7 @@ public final class ImageProcessorApiExample {
         }
         log.info("[PASS] fluent-create");
 
-        if (!hasFluentMethods(fluent)) {
+        if (!verifyFluentChain(fluent)) {
             log.info("[FAIL] fluent-chain-methods");
             System.exit(1);
         }
@@ -51,24 +51,26 @@ public final class ImageProcessorApiExample {
     }
 
     /**
-     * 反射校验 FluentProcessor 的七个链式方法签名是否齐全。
+     * 实际调用 FluentProcessor 的七个链式方法，验证链式 API 可正常使用。
+     *
+     * <p>方法签名由 {@link ImageProcessors.FluentProcessor} 编译期固定，
+     * 无需反射检查存在性，直接链式调用即可验证。</p>
      *
      * @param fluent FluentProcessor 实例
-     * @return 全部方法存在返回 true
+     * @return 链式调用不抛异常返回 true
      */
-    private static boolean hasFluentMethods(ImageProcessors.FluentProcessor fluent) {
-        Class<?> type = fluent.getClass();
+    private static boolean verifyFluentChain(ImageProcessors.FluentProcessor fluent) {
         try {
-            type.getMethod( "resize", int.class, int.class);
-            type.getMethod( "grayscale");
-            type.getMethod( "rotate", int.class);
-            type.getMethod( "blur", int.class);
-            type.getMethod( "brightness", int.class);
-            type.getMethod( "crop", int.class, int.class, int.class, int.class);
-            type.getMethod( "flip", String.class);
+            fluent.resize(64, 64)
+                    .grayscale()
+                    .rotate(90)
+                    .blur(2)
+                    .brightness(10)
+                    .crop(0, 0, 64, 64)
+                    .flip("horizontal");
             return true;
-        } catch (ReflectiveOperationException e) {
-            log.info("  missing method: " + e.getMessage());
+        } catch (RuntimeException e) {
+            log.info("  fluent-chain 调用异常: " + e.getMessage());
             return false;
         }
     }

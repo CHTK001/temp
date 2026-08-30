@@ -1,5 +1,6 @@
 package com.chua.example.ssh;
 
+import com.chua.common.support.utils.FileUtils;
 import com.chua.ssh.support.client.SftpClient;
 import com.chua.ssh.support.client.SshClient;
 
@@ -172,8 +173,9 @@ public class SshSftpClientExample {
         } catch (Exception e) {
             System.out.println("FAIL: " + e.getMessage());
         } finally {
-            try { if (localFile != null) { Files.deleteIfExists(localFile); } } catch (Exception ignored) {}
-            try { if (localDownload != null) { Files.deleteIfExists(localDownload); } } catch (Exception ignored) {}
+            // 静默删除临时文件，异常已通过 FileUtils.deleteQuietly 内部吞掉
+            FileUtils.deleteQuietly(localFile);
+            FileUtils.deleteQuietly(localDownload);
         }
     }
 

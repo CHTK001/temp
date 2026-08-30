@@ -61,7 +61,11 @@ public final class BulkheadPressureExample {
             });
         }
 
-        try { latch.await(30, TimeUnit.SECONDS); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+        try {
+            latch.await(30, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
 
         /** 验证：失败计数 >= 90 且 成功计数 <= 10 */
         boolean ok = failed.get() >= 90 && succeeded.get() <= 10;
@@ -91,7 +95,11 @@ public final class BulkheadPressureExample {
             }
         }
 
-        try { latch.await(30, TimeUnit.SECONDS); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+        try {
+            latch.await(30, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
 
         /** 验证总计执行次数 = 9次 */
         boolean ok = counter.get() == 9;
@@ -111,19 +119,31 @@ public final class BulkheadPressureExample {
             });
         });
 
-        try { Thread.sleep(200); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
 
         Thread t2 = Thread.ofVirtual().start(() -> {
             Object result = flow.execute(() -> {
                 innerCounter.incrementAndGet();
                 return "second";
             });
-            try { t1.join(500); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+            try {
+            t1.join(500);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
             boolean ok = innerCounter.get() <= 1;
             print("extremeReentry (innerCounter=" + innerCounter.get() + ")", ok);
         });
 
-        try { t2.join(3000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+        try {
+            t2.join(3000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
 
         boolean ok = !Thread.currentThread().isInterrupted();
         print("extremeReentry (noException)", ok);
@@ -135,7 +155,10 @@ public final class BulkheadPressureExample {
         passed &= timed("extremeContention", BulkheadPressureExample::extremeContention);
         passed &= timed("alternatingPasses", BulkheadPressureExample::alternatingPasses);
         passed &= timed("extremeReentry", BulkheadPressureExample::extremeReentry);
-        if (!passed) { System.out.println("[FAIL] Bulkhead压力测试存在失败场景"); System.exit(EXIT_CODE_FAILURE); }
+        if (!passed) {
+            System.out.println("[FAIL] Bulkhead压力测试存在失败场景");
+            System.exit(EXIT_CODE_FAILURE);
+        }
         System.out.println("[PASS] Bulkhead压力测试全部通过");
         System.exit(EXIT_CODE_SUCCESS);
     }

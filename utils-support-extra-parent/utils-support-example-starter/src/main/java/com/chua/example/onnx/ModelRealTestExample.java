@@ -15,7 +15,7 @@ import java.nio.file.Path;
  * @since 4.0.0.42
  */
 @Slf4j
-public final class ModelRealVerifyExample {
+public final class ModelRealTestExample {
     public static void main(String[] args) throws Exception {
         ModelRegistry.discoverAll();
         ImageUtils.load();

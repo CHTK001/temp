@@ -83,9 +83,11 @@ public class LockFreeQueueExample {
         }
 
         if (parsed.type() == null) {
-            runAllTests(parsed.capacity());
+            boolean ok = runAllTests(parsed.capacity());
+            System.exit(ok ? 0 : 1);
         } else {
-            runSingleTest(parsed.type(), parsed.capacity());
+            boolean ok = runSingleTest(parsed.type(), parsed.capacity());
+            System.exit(ok ? 0 : 1);
         }
     }
 
@@ -94,7 +96,13 @@ public class LockFreeQueueExample {
      *
      * @param capacity 有界队列容量
      */
-    private static void runAllTests(int capacity) {
+    /**
+     * 自检全部队列实现。
+     *
+     * @param capacity 有界队列容量
+     * @return 全部通过返回 true
+     */
+    private static boolean runAllTests(int capacity) {
         log.info("===== 无锁队列自检（全部实现，capacity={}）=====", capacity);
         boolean allPassed = true;
         allPassed &= testSingle(QueueType.SPSC, capacity);
@@ -106,8 +114,8 @@ public class LockFreeQueueExample {
             log.info("[PASS] 全部实现自检通过");
         } else {
             log.info("[FAIL] 存在失败的测试项");
-            System.exit(1);
         }
+        return allPassed;
     }
 
     /**
@@ -115,17 +123,19 @@ public class LockFreeQueueExample {
      *
      * @param type     队列类型标识
      * @param capacity 有界队列容量
+     * @return 全部通过返回 true
      */
-    private static void runSingleTest(String type, int capacity) {
+    private static boolean runSingleTest(String type, int capacity) {
         QueueType queueType = parseQueueType(type);
         if (queueType == null) {
             System.err.println("[ERROR] 未知队列类型: " + type);
-            System.exit(1);
+            return false;
         }
         boolean passed = testSingle(queueType, capacity);
         if (!passed) {
-            System.exit(1);
+            return false;
         }
+        return true;
     }
 
     /**

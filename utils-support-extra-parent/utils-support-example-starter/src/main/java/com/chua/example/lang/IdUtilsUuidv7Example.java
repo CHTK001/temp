@@ -60,14 +60,16 @@ public final class IdUtilsUuidv7Example {
                 exampleDecode();
                 break;
             case "verify":
-                runVerifications();
+                boolean ok = runVerifications();
+                System.exit(ok ? 0 : 1);
                 break;
             default:
                 exampleSingle();
                 exampleBatch(20);
                 exampleDecode();
                 exampleMonotonic();
-                runVerifications();
+                boolean allOk = runVerifications();
+                System.exit(allOk ? 0 : 1);
                 break;
         }
     }
@@ -146,36 +148,40 @@ public final class IdUtilsUuidv7Example {
     }
 
     /** 依次运行全部正确性校验场景（对齐 common-starter IdUtilsUuidv7Test 五个用例） */
-    private static void runVerifications() throws InterruptedException {
-        verifyNotNull();
-        verifyFormat();
-        verifyTimestampMonotonic();
-        verifyCreateUuidv7Format();
-        verifyUniqueness();
+    private static boolean runVerifications() throws InterruptedException {
+        boolean ok = true;
+        ok &= verifyNotNull();
+        ok &= verifyFormat();
+        ok &= verifyTimestampMonotonic();
+        ok &= verifyCreateUuidv7Format();
+        ok &= verifyUniqueness();
+        return ok;
     }
 
     /** 校验 uuidv7() 返回非空（对应 testUuidv7ReturnsNotNull） */
-    private static void verifyNotNull() {
+    private static boolean verifyNotNull() {
         String id = IdUtils.uuidv7();
         if (id == null || id.isEmpty()) {
             log.info("[FAIL] uuidv7 返回空值");
-            System.exit(1);
+            return false;
         }
         log.info("[PASS] uuidv7 非空校验通过");
+        return true;
     }
 
     /** 校验 uuidv7() 符合 RFC 9562 格式（对应 testUuidv7Format） */
-    private static void verifyFormat() {
+    private static boolean verifyFormat() {
         String id = IdUtils.uuidv7();
         if (!id.matches(UUIDV7_REGEX)) {
             log.info("[FAIL] UUIDv7 格式不符合 RFC 9562: " + id);
-            System.exit(1);
+            return false;
         }
         log.info("[PASS] UUIDv7 格式符合 RFC 9562");
+        return true;
     }
 
     /** 校验跨毫秒时间戳非递减（对应 testUuidv7IsMonotonic，200 次、间隔 1ms） */
-    private static void verifyTimestampMonotonic() throws InterruptedException {
+    private static boolean verifyTimestampMonotonic() throws InterruptedException {
         List<Long> timestamps = new ArrayList<>();
         for (int i = 0; i < 200; i++) {
             timestamps.add(extractTimestamp(IdUtils.uuidv7()));
@@ -188,33 +194,36 @@ public final class IdUtilsUuidv7Example {
             long current = timestamps.get(i);
             if (current < previous) {
                 log.info("[FAIL] UUIDv7 时间戳应非递减: " + previous + " > " + current);
-                System.exit(1);
+                return false;
             }
         }
         log.info("[PASS] 200 个跨毫秒时间戳全部非递减");
+        return true;
     }
 
     /** 校验 createUuidv7() 同样产出合法 UUIDv7（对应 testCreateUuidv7SameAsUuidv7） */
-    private static void verifyCreateUuidv7Format() {
+    private static boolean verifyCreateUuidv7Format() {
         String id = IdUtils.createUuidv7();
         if (!id.matches(UUIDV7_REGEX)) {
             log.info("[FAIL] createUuidv7 格式不符合 RFC 9562: " + id);
-            System.exit(1);
+            return false;
         }
         log.info("[PASS] createUuidv7 与 uuidv7 格式一致");
+        return true;
     }
 
     /** 校验批量生成唯一率（对应 testUuidv7Uniqueness，1000 次去重数 >= 950，容忍同毫秒极小碰撞） */
-    private static void verifyUniqueness() {
+    private static boolean verifyUniqueness() {
         Set<String> unique = new HashSet<>();
         for (int i = 0; i < 1000; i++) {
             unique.add(IdUtils.uuidv7());
         }
         if (unique.size() < 950) {
             log.info("[FAIL] UUIDv7 唯一性不足，去重数: " + unique.size());
-            System.exit(1);
+            return false;
         }
         log.info("[PASS] 1000 次生成去重数 " + unique.size() + " >= 950");
+        return true;
     }
 
     /** 提取 UUIDv7 的 Unix 毫秒时间戳（去连字符后前 12 位 hex） */

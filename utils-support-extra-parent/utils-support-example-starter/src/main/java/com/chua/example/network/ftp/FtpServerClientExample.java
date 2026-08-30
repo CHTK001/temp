@@ -26,13 +26,13 @@ import java.util.List;
  *
  * <h2>用法</h2>
  * <pre>
- *   java FtpServerTest
+ *   java FtpServerClientExample
  * </pre>
  *
  * @author CH
  * @since 4.0.0.43
  */
-public class FtpServerTest {
+public class FtpServerClientExample {
 
     /**
      * 测试用 FTP 端口

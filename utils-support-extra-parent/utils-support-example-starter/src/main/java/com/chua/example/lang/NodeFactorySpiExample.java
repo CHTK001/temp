@@ -170,7 +170,7 @@ public final class NodeFactorySpiExample {
          *
          * @param m 源 Map
          */
-        public StubJsonObject(Map m) {
+        public StubJsonObject(Map<String, Object> m) {
             super(m);
         }
     }
@@ -179,16 +179,12 @@ public final class NodeFactorySpiExample {
      * 测试用节点子类（数组）。
      */
     static class StubJsonArray extends JsonArray {
-        /** 创建 StubJsonArray 实例 */
-        public StubJsonArray() {
-        }
-
         /**
          * 创建 StubJsonArray 实例
          *
          * @param collection 源集合
          */
-        public StubJsonArray(Collection collection) {
+        public StubJsonArray(Collection<?> collection) {
             super(collection);
         }
     }
@@ -217,9 +213,9 @@ public final class NodeFactorySpiExample {
             return new StubJsonObject();
         }
 
-        @Override
         /** 创建JsonObject */
-        public JsonObject createJsonObject(Map map) {
+        @Override
+        public JsonObject createJsonObject(Map<String, Object> map) {
             return new StubJsonObject(map);
         }
 
@@ -229,14 +225,14 @@ public final class NodeFactorySpiExample {
             return new StubJsonArray();
         }
 
-        @Override
         /** 创建JsonArray */
-        public JsonArray createJsonArray(Collection collection) {
+        @Override
+        public JsonArray createJsonArray(Collection<?> collection) {
             return new StubJsonArray(collection);
         }
 
-        @Override
         /** 创建JsonNode */
+        @Override
         public JsonNode createJsonNode(Object value) {
             return new StubJsonNode(value);
         }

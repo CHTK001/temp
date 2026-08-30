@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import com.chua.common.support.reflection.ReflectUtils;
 import com.chua.deeplearning.support.face.FaceDetector;
 import com.chua.deeplearning.support.image.ImageEnhancer;
 import com.chua.deeplearning.support.model.PredictRectangle;
@@ -16,22 +17,35 @@ import java.util.List;
 /**
  * A/B 对比：检测/裁剪/对齐/分割模型固定（pytorch-retinaface + pytorch-parsenet），
  * 仅"修复"在 pytorch-gfpgan 与 onnx-gfpgan 间切换，输出两组可直比对修复图。
+ *
+ * @author CH
+ * @since 4.0.0.42
  */
-public class FaceRestoreCompareTest {
+public class FaceRestoreCompareExample {
 
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(FaceRestoreCompareTest.class);
+    /** 日志 */
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(FaceRestoreCompareExample.class);
+    /** 输出目录 */
     private static final String OUT_DIR = "D:\\images\\output";
+    /** 对齐输出边长 */
+    private static final int ALIGN_SIZE = 512;
+    /** 检测框扩展比例 */
+    private static final float EXPAND_RATIO = 0.5f;
+    /** 检测模型 */
+    private static final String DETECTOR_MODEL = "pytorch-retinaface";
+    /** 分割模型 */
+    private static final String PARSENET_MODEL = "pytorch-parsenet";
 
     public static void main(String[] args) {
         try {
         String imagePath = args.length > 0 ? args[0] : "D:\\images\\3peoplebeauty.jpg";
         byte[] img = Files.readAllBytes(Path.of(imagePath));
 
-        Class.forName("com.chua.deeplearning.support.onnx.OnnxModelRegistrar");
-        Class.forName("com.chua.deeplearning.support.pytorch.PytorchModelRegistrar");
+        ReflectUtils.forName("com.chua.deeplearning.support.onnx.OnnxModelRegistrar");
+        ReflectUtils.forName("com.chua.deeplearning.support.pytorch.PytorchModelRegistrar");
 
         // 固定检测模型
-        FaceDetector detector = FaceDetector.create("pytorch-retinaface");
+        FaceDetector detector = FaceDetector.create(DETECTOR_MODEL);
         log.info("检测模型=pytorch-retinaface 开始 detect...");
         List<PredictRectangle> boxes = detector.detect(img);
         log.info("检测模型=pytorch-retinaface 人脸数=" + boxes.size());
@@ -44,7 +58,7 @@ public class FaceRestoreCompareTest {
         int iw = src.cols(), ih = src.rows();
 
         // 固定分割模型
-        ImageEnhancer parsenet = ImageEnhancer.create("pytorch-parsenet");
+        ImageEnhancer parsenet = ImageEnhancer.create(PARSENET_MODEL);
 
         String[] restoreIds = {"pytorch-gfpgan", "onnx-gfpgan"};
         for (String rid : restoreIds) {
@@ -53,10 +67,10 @@ public class FaceRestoreCompareTest {
                 PredictRectangle box = boxes.get(i);
                 int x1 = (int) box.x(), y1 = (int) box.y();
                 int x2 = x1 + (int) box.width(), y2 = y1 + (int) box.height();
-                int newX1 = Math.max((int) (x1 + x1 * 0.5f - x2 * 0.5f), 0);
-                int newX2 = Math.min((int) (x2 + x2 * 0.5f - x1 * 0.5f), iw - 1);
-                int newY1 = Math.max((int) (y1 + y1 * 0.5f - y2 * 0.5f), 0);
-                int newY2 = Math.min((int) (y2 + y2 * 0.5f - y1 * 0.5f), ih - 1);
+                int newX1 = Math.max((int) (x1 + x1 * EXPAND_RATIO - x2 * EXPAND_RATIO), 0);
+                int newX2 = Math.min((int) (x2 + x2 * EXPAND_RATIO - x1 * EXPAND_RATIO), iw - 1);
+                int newY1 = Math.max((int) (y1 + y1 * EXPAND_RATIO - y2 * EXPAND_RATIO), 0);
+                int newY2 = Math.min((int) (y2 + y2 * EXPAND_RATIO - y1 * EXPAND_RATIO), ih - 1);
                 int cw = newX2 - newX1, ch = newY2 - newY1;
                 if (cw <= 0 || ch <= 0) continue;
                 Mat sub = new Mat(src, new Rect(newX1, newY1, cw, ch));
@@ -69,7 +83,7 @@ public class FaceRestoreCompareTest {
                 Mat affine = ImageUtils.estimateFaceAffine512(kps);
                 Mat aligned = new Mat();
                 org.opencv.imgproc.Imgproc.warpAffine(sub, aligned, affine,
-                        new org.opencv.core.Size(512, 512),
+                        new org.opencv.core.Size(ALIGN_SIZE, ALIGN_SIZE),
                         org.opencv.imgproc.Imgproc.INTER_CUBIC, 0, new Scalar(135, 133, 132));
                 byte[] face = ImageUtils.encode(aligned);
 

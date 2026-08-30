@@ -21,8 +21,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 4.0.0.42
  */
 @Slf4j
-public class AllPipelinesDrawerVerifyExample {
-    private AllPipelinesDrawerVerifyExample() { }
+public class AllPipelinesDrawerTestExample {
+    private AllPipelinesDrawerTestExample() { }
 
 
     /** 参与自检的 Pipeline 全限定类名列表 */

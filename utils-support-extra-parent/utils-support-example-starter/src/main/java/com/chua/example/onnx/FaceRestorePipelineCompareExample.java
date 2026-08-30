@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import com.chua.common.support.reflection.ReflectUtils;
 import com.chua.deeplearning.support.face.FacePipeline;
 import com.chua.deeplearning.support.face.FacePipelineCallback;
 import com.chua.deeplearning.support.face.FacePipelineDiskCallback;
@@ -27,9 +28,9 @@ import java.util.List;
  * @author CH
  * @since 4.0.0.42
  */
-public final class FaceRestorePipelineCompareTest {
+public final class FaceRestorePipelineCompareExample {
 
-    private static final Logger log = LoggerFactory.getLogger(FaceRestorePipelineCompareTest.class);
+    private static final Logger log = LoggerFactory.getLogger(FaceRestorePipelineCompareExample.class);
 
     /** 输出根目录 */
     private static final String OUT_ROOT = "D:\\images\\output\\face_restore_compare";
@@ -51,7 +52,7 @@ public final class FaceRestorePipelineCompareTest {
             "D:\\images\\largest_selfie.jpg"
     };
 
-    private FaceRestorePipelineCompareTest() {
+    private FaceRestorePipelineCompareExample() {
     }
 
     /**
@@ -62,8 +63,8 @@ public final class FaceRestorePipelineCompareTest {
      */
     public static void main(String[] args) throws Exception {
         // 独立运行（非 Spring 容器）时 SPI 可能未触发注册器，显式加载
-        Class.forName("com.chua.deeplearning.support.onnx.OnnxModelRegistrar");
-        Class.forName("com.chua.deeplearning.support.pytorch.PytorchModelRegistrar");
+        ReflectUtils.forName("com.chua.deeplearning.support.onnx.OnnxModelRegistrar");
+        ReflectUtils.forName("com.chua.deeplearning.support.pytorch.PytorchModelRegistrar");
 
         Path root = Path.of(OUT_ROOT);
         Files.createDirectories(root);

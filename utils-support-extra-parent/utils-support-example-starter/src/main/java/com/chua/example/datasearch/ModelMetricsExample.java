@@ -3,8 +3,8 @@ package com.chua.example.datasearch;
 import com.chua.common.support.ai.chat.ModelDefinition;
 import com.chua.common.support.datasearch.pricing.spi.AbstractModelMetricsProvider;
 import com.chua.common.support.datasearch.pricing.spi.ModelMetricsProvider;
+import com.chua.common.support.reflection.ReflectUtils;
 
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.ServiceLoader;
 import lombok.extern.slf4j.Slf4j;
@@ -115,10 +115,9 @@ public final class ModelMetricsExample {
      */
     private static int bundledCount(AbstractModelMetricsProvider provider) {
         try {
-            Method method = AbstractModelMetricsProvider.class.getDeclaredMethod("readClasspathPricing");
-            method.setAccessible(true);
             @SuppressWarnings("unchecked")
-            List<ModelDefinition> bundled = (List<ModelDefinition>) method.invoke(provider);
+            List<ModelDefinition> bundled = (List<ModelDefinition>) ReflectUtils.invoke(
+                    provider, "readClasspathPricing", List.class);
             return bundled == null ? -1 : bundled.size();
         } catch (Throwable t) {
             return -1;

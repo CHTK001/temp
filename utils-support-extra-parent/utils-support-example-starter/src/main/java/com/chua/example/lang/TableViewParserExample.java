@@ -40,31 +40,36 @@ public class TableViewParserExample {
                 Map.of("Name", "alice", "Age", 30),
                 Map.of("Name", "bob", "Age", 25));
 
+        boolean allPassed = true;
+
         // 场景 1：默认框线模式回归——必须保留全部框线字符
         String bordered = new TableViewParser().render(keyValue);
-        verify("框线模式含竖线分隔符", bordered.contains("│"));
-        verify("框线模式含顶线与底线", bordered.contains("┌") && bordered.contains("└"));
+        allPassed &= verify("框线模式含竖线分隔符", bordered.contains("│"));
+        allPassed &= verify("框线模式含顶线与底线", bordered.contains("┌") && bordered.contains("└"));
 
         // 场景 2：Map 无边框——仅空格对齐，无任何框线字符
         String plain = new TableViewParser().setBorderless(true).render(keyValue);
-        verify("无边框模式不含任何框线字符", !containsBorderChar(plain));
-        verify("无边框表头对齐为 Key  Value", plain.lines().findFirst().orElse("").equals("Key  Value"));
-        verify("无边框数据行对齐为 foo  123", plain.contains("\nfoo  123"));
+        allPassed &= verify("无边框模式不含任何框线字符", !containsBorderChar(plain));
+        allPassed &= verify("无边框表头对齐为 Key  Value", plain.lines().findFirst().orElse("").equals("Key  Value"));
+        allPassed &= verify("无边框数据行对齐为 foo  123", plain.contains("\nfoo  123"));
 
         // 场景 3：List<Map> 动态列无边框——多行行尾均无多余空白
         String table = new TableViewParser().setBorderless(true).render(rows);
         boolean noTrailingSpace = table.lines().allMatch(line -> line.equals(line.stripTrailing()));
-        verify("List<Map> 无边框渲染所有行尾无空白", noTrailingSpace && !containsBorderChar(table));
+        allPassed &= verify("List<Map> 无边框渲染所有行尾无空白", noTrailingSpace && !containsBorderChar(table));
 
         // 场景 4：简单类型单列无边框
         String simple = new TableViewParser().setBorderless(true).render(List.of("a", "b"));
-        verify("简单类型单列无边框逐行输出", simple.equals("#\na\nb"));
+        allPassed &= verify("简单类型单列无边框逐行输出", simple.equals("#\na\nb"));
 
         // 场景 5：空数据占位不受模式影响
         String empty = new TableViewParser().setBorderless(true).render(List.of());
-        verify("空数据返回占位文本", "(empty)".equals(empty));
+        allPassed &= verify("空数据返回占位文本", "(empty)".equals(empty));
 
-        log.info("[PASS] TableViewParser 全部场景通过");
+        if (allPassed) {
+            log.info("[PASS] TableViewParser 全部场景通过");
+        }
+        System.exit(allPassed ? 0 : 1);
     }
 
     /**
@@ -78,16 +83,18 @@ public class TableViewParserExample {
     }
 
     /**
-     * 执行单条校验，失败打印 [FAIL] 并终止进程。
+     * 执行单条校验。
      *
      * @param name      校验项名称
      * @param condition 断言条件
+     * @return 校验通过返回 true
      */
-    private static void verify(String name, boolean condition) {
+    private static boolean verify(String name, boolean condition) {
         if (!condition) {
             log.info("[FAIL] " + name);
-            System.exit(1);
+            return false;
         }
         log.info("[PASS] " + name);
+        return true;
     }
 }

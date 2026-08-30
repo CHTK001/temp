@@ -14,8 +14,8 @@ import com.chua.deeplearning.support.image.ImageSegmenter;
  * @author CH
  * @since 4.0.0.42
  */
-public class ZeroShotDebugExample {
-    private ZeroShotDebugExample() { }
+public class ZeroShotDebugDemoExample {
+    private ZeroShotDebugDemoExample() { }
 
     public static void main(String[] args) throws Exception {
         log.info("=== Debug: Loading OnnxModelRegistrar ===");

@@ -1,5 +1,6 @@
 package com.chua.example.onnx;
 
+import com.chua.common.support.reflection.ReflectUtils;
 import com.chua.deeplearning.support.face.FaceDetector;
 import com.chua.deeplearning.support.image.ImageEnhancer;
 import com.chua.deeplearning.support.model.PredictRectangle;
@@ -51,8 +52,8 @@ public final class OnnxFaceRestorationExample {
         byte[] img = Files.readAllBytes(Path.of(imagePath));
 
         // 独立运行（非 Spring 容器）时 SPI 可能未触发注册器，显式加载 onnx + pytorch 注册器
-        Class.forName("com.chua.deeplearning.support.onnx.OnnxModelRegistrar");
-        Class.forName("com.chua.deeplearning.support.pytorch.PytorchModelRegistrar");
+        ReflectUtils.forName("com.chua.deeplearning.support.onnx.OnnxModelRegistrar");
+        ReflectUtils.forName("com.chua.deeplearning.support.pytorch.PytorchModelRegistrar");
 
         // 检测引擎
         FaceDetector detector = FaceDetector.create(detectorId);

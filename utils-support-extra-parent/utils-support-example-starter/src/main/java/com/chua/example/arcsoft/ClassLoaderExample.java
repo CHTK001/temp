@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
  * @since 4.0.0
  */
 @Slf4j
-public final class TestClassLoaderExample {
+public final class ClassLoaderExample {
 
     /**
      * 默认探测的 native 资源目录。
@@ -30,7 +30,7 @@ public final class TestClassLoaderExample {
      */
     private static final String DEFAULT_NATIVE_DLL = "native/windows-x86_64/libarcsoft_face.dll";
 
-    private TestClassLoaderExample() {
+    private ClassLoaderExample() {
     }
 
     public static void main(String[] args) {

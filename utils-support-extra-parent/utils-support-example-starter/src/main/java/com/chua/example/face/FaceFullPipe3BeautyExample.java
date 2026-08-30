@@ -1,6 +1,7 @@
 import com.chua.deeplearning.support.face.FaceDetectionHit;
 import com.chua.deeplearning.support.face.FacePipeline;
 import com.chua.deeplearning.support.face.FacePipelineDiskCallback;
+import com.chua.common.support.reflection.ReflectUtils;
 import com.chua.common.support.vector.MemoryVectorStorage;
 import com.chua.common.support.vector.VectorCompareAlgorithm;
 import java.nio.file.*;
@@ -33,24 +34,23 @@ public class FaceFullPipe3BeautyExample {
         Files.createDirectories(detDir);
 
         // 标注图
-        var gfp = Class.forName("com.chua.deeplearning.support.draw.DrawerPipeline");
-        var dp = gfp.getConstructor(float.class).newInstance(0.5f);
-        var targetM = gfp.getMethod("target", byte[].class);
-        var boxesM = gfp.getMethod("boxes", java.util.List.class, java.util.List.class);
-        var doneM = gfp.getMethod("done");
-
-        java.util.List<com.chua.deeplearning.support.model.DetectionInfo> dinfos = new java.util.ArrayList<>();
-        java.util.List<String> labels = new java.util.ArrayList<>();
+        Class<?> gfp = ReflectUtils.forName("com.chua.deeplearning.support.draw.DrawerPipeline");
+        Object dp = ReflectUtils.instantiate(gfp, 0.5f);
+        Object dinfos = new java.util.ArrayList<>();
+        Object labels = new java.util.ArrayList<>();
         for (int i = 0; i < hits.size(); i++) {
             var b = hits.get(i).box();
-            dinfos.add(new com.chua.deeplearning.support.model.DetectionInfo(
+            ReflectUtils.invoke(dinfos, "add", void.class,
+                new com.chua.deeplearning.support.model.DetectionInfo(
                     "face", b.confidence(), b.x(), b.y(), b.width(), b.height()));
-            labels.add(String.format("face_%d %.2f", i + 1, b.confidence()));
+            ReflectUtils.invoke(labels, "add", void.class,
+                String.format("face_%d %.2f", i + 1, b.confidence()));
         }
-        targetM.invoke(dp, img);
-        boxesM.invoke(dp, dinfos, labels);
+        ReflectUtils.invoke(dp, "target", void.class, byte[].class, img);
+        ReflectUtils.invoke(dp, "boxes", void.class,
+            java.util.List.class, java.util.List.class, dinfos, labels);
         @SuppressWarnings("unchecked")
-        byte[] drawn = (byte[]) doneM.invoke(dp);
+        byte[] drawn = (byte[]) ReflectUtils.invoke(dp, "done", byte[].class);
         Files.write(Path.of(detDir.toString(), "3peoplebeauty_annotated.png"), drawn);
         System.out.println("annotated -> yolo-face-detector/3peoplebeauty_annotated.png");
 

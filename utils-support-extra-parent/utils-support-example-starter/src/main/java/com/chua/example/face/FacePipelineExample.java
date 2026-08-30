@@ -1,5 +1,9 @@
-package com.chua.deeplearning.support.face;
+package com.chua.example.face;
 
+import com.chua.common.support.reflection.ReflectUtils;
+import com.chua.deeplearning.support.face.FacePipeline;
+import com.chua.deeplearning.support.face.FacePipelineDiskCallback;
+import com.chua.deeplearning.support.face.FaceRestoreResult;
 import com.chua.deeplearning.support.model.PredictRectangle;
 
 import java.nio.file.Files;
@@ -11,20 +15,27 @@ import java.util.List;
  * 人脸修复管线端到端测试：检测→5点对齐→修复，回调落盘中间图片。
  *
  * <p>修复模型分别使用 ONNX(GFPGANv1.3) 和 PT 各跑一次，对比效果。</p>
+ *
+ * @author CH
+ * @since 4.0.0.42
  */
-public final class FacePipelineSmokeTest {
+public final class FacePipelineExample {
 
-    private static final String TEST_IMAGE = "G:\\images\\三个人.jpg";
+    /** 测试图片路径，可通过 args[0] 覆盖 */
+    private static final String TEST_IMAGE = "D:\\images\\3peoplebeauty.jpg";
+    /** 输出目录 */
     private static final String OUT_DIR = "D:\\images\\output\\face_pipeline_test";
+    /** 人脸检测模型 */
     private static final String DETECTOR = "scrfd-face-detector";
 
-    private FacePipelineSmokeTest() {
+    private FacePipelineExample() {
     }
 
     public static void main(String[] args) throws Exception {
-        Class.forName("com.chua.deeplearning.support.onnx.OnnxModelRegistrar");
+        String testImage = args.length > 0 ? args[0] : TEST_IMAGE;
+        ReflectUtils.forName("com.chua.deeplearning.support.onnx.OnnxModelRegistrar");
 
-        byte[] img = Files.readAllBytes(Paths.get(TEST_IMAGE));
+        byte[] img = Files.readAllBytes(Paths.get(testImage));
         Files.createDirectories(Path.of(OUT_DIR));
 
         // ── 1. ONNX GFPGAN ──

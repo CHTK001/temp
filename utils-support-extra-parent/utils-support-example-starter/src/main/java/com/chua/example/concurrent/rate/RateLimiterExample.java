@@ -61,7 +61,10 @@ public final class RateLimiterExample {
         boolean passed = true;
         passed &= timed("firstAcquireAllowed", RateLimiterExample::firstAcquireAllowed);
         passed &= timed("exhaustedRejectsThenRecovers", RateLimiterExample::exhaustedRejectsThenRecovers);
-        if (!passed) { System.out.println("[FAIL] RateLimiter 存在失败场景"); System.exit(EXIT_CODE_FAILURE); }
+        if (!passed) {
+            System.out.println("[FAIL] RateLimiter 存在失败场景");
+            System.exit(EXIT_CODE_FAILURE);
+        }
         System.out.println("[PASS] RateLimiter 全部场景通过");
         System.exit(EXIT_CODE_SUCCESS);
     }
