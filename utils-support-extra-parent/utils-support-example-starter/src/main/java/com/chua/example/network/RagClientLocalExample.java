@@ -367,18 +367,6 @@ public final class RagClientLocalExample {
     // ==================== 通用辅助 ====================
 
     /**
-     * 输出单场景异常失败结果。
-     *
-     * @param name 场景名
-     * @param e    异常
-     * @return 恒为 false
-     */
-    private static boolean fail(String name, Exception e) {
-        log.info("[FAIL] " + name + ": " + e.getMessage());
-        return false;
-    }
-
-    /**
      * 在 java.io.tmpdir/test-output/common-misc 下创建唯一临时目录。
      *
      * @param prefix 目录名前缀

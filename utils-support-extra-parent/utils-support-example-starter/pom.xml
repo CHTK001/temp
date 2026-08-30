@@ -804,8 +804,9 @@
                         <exclude>**/onnx/FaceDetectDrawExample.java</exclude>
                         <exclude>**/vector/VectorStorageExampleSpi.java</exclude>
                         <exclude>**/arcsoft/ClassLoaderExample.java</exclude>
-                        <exclude>**/lang/NodeFactorySpiExample.java</exclude>
-                        </excludes>
+                         <exclude>**/lang/NodeFactorySpiExample.java</exclude>
+                         <exclude>**/datasource/EnginePerfBench.java</exclude>
+                         </excludes>
 
                 </configuration>
             </plugin>
