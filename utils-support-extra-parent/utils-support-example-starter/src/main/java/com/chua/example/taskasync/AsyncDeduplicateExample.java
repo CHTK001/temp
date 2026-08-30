@@ -8,6 +8,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BooleanSupplier;
+import com.chua.common.support.utils.ThreadUtils;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -120,7 +121,7 @@ public final class AsyncDeduplicateExample {
         try (MemoryDeduplicator dedup = new MemoryDeduplicator(100)) {
             dedup.markProcessed("k");
             boolean markedBefore = dedup.isDuplicate("k");
-            Thread.sleep(180);
+            ThreadUtils.sleep(180);
             boolean expiredAfter = !dedup.isDuplicate("k");
             dedup.markProcessed("k2");
             dedup.clear();

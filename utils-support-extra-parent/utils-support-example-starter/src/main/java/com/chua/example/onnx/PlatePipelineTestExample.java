@@ -48,6 +48,8 @@ public final class PlatePipelineTestExample {
             }
         }
         log.info(allOk ? "[PlatePipelineVerify] ALL PASS" : "[PlatePipelineVerify] 部分未识别");
-        if (!allOk) { System.exit(1); }
+        if (!allOk) {
+            System.exit(1);
+        }
     }
 }

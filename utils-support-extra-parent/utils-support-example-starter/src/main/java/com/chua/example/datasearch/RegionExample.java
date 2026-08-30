@@ -4,6 +4,7 @@ import com.chua.common.support.datasearch.region.model.RegionInfo;
 import com.chua.common.support.datasearch.region.spi.RegionProvider;
 import com.chua.common.support.spi.ServiceProvider;
 import com.chua.common.support.utils.CollectionUtils;
+import com.chua.example.util.ExampleUtils;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -46,7 +47,7 @@ public final class RegionExample {
     }
 
     public static void main(String[] args) {
-        Map<String, String> params = parseArgs(args);
+        Map<String, String> params = ExampleUtils.parseArgs(args);
         String spiName = params.getOrDefault("spi", SPI_ALL);
         int treeLevel = Integer.parseInt(params.getOrDefault("level", String.valueOf(DEFAULT_TREE_LEVEL)));
         Map<String, RegionProvider> providers = resolveProviders(spiName);
@@ -66,23 +67,6 @@ public final class RegionExample {
         }
         log.info("[PASS] 全部通过, 共 " + providers.size() + " 个实现");
         System.exit(0);
-    }
-
-    private static Map<String, String> parseArgs(String[] args) {
-        Map<String, String> params = new LinkedHashMap<>();
-        for (int i = 0; i < args.length; i++) {
-            String arg = args[i];
-            if (!arg.startsWith(PARAM_PREFIX)) {
-                continue;
-            }
-            int idx = arg.indexOf('=');
-            if (idx > PARAM_PREFIX.length()) {
-                params.put(arg.substring(PARAM_PREFIX.length(), idx), arg.substring(idx + 1));
-            } else if (i + 1 < args.length && !args[i + 1].startsWith(PARAM_PREFIX)) {
-                params.put(arg.substring(PARAM_PREFIX.length()), args[++i]);
-            }
-        }
-        return params;
     }
 
     private static Map<String, RegionProvider> resolveProviders(String spiName) {

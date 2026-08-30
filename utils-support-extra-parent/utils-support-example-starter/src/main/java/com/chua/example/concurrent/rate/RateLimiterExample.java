@@ -3,7 +3,7 @@ package com.chua.example.concurrent.rate;
 import com.chua.common.support.concurrent.rate.RateLimiterFlow;
 
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.BooleanSupplier;
+import com.chua.example.util.ExampleUtils;
 
 /**
  * 速率限制器 {@link RateLimiterFlow} 全场景自检示例。
@@ -15,26 +15,12 @@ import java.util.function.BooleanSupplier;
  */
 public final class RateLimiterExample {
 
-    private static final int EXIT_CODE_SUCCESS = 0;
-    private static final int EXIT_CODE_FAILURE = 1;
-
     private RateLimiterExample() {
-    }
-
-    private static boolean timed(String name, BooleanSupplier scenario) {
-        long start = System.currentTimeMillis();
-        boolean ok = scenario.getAsBoolean();
-        System.out.println("[TIME] " + name + " " + (System.currentTimeMillis() - start) + "ms");
-        return ok;
-    }
-
-    private static void print(String name, boolean ok) {
-        System.out.println((ok ? "[PASS] " : "[FAIL] ") + name);
     }
 
     private static boolean firstAcquireAllowed() {
         var ok = RateLimiterFlow.of("rate-first-test", 10.0).tryAcquire();
-        print("firstAcquireAllowed", ok);
+        ExampleUtils.print("firstAcquireAllowed", ok);
         return ok;
     }
 
@@ -49,23 +35,23 @@ public final class RateLimiterExample {
             rate.execute(counter::incrementAndGet);
             var recovered = counter.get() == 1;
             var ok = rejected && recovered;
-            print("exhaustedRejectsThenRecovers", ok);
+            ExampleUtils.print("exhaustedRejectsThenRecovers", ok);
             return ok;
         } catch (Exception e) {
-            System.out.println("[FAIL] exhaustedRejectsThenRecovers 异常: " + e);
+            System.out.ExampleUtils.println("[FAIL] exhaustedRejectsThenRecovers 异常: " + e);
             return false;
         }
     }
 
     public static void main(String[] args) {
         boolean passed = true;
-        passed &= timed("firstAcquireAllowed", RateLimiterExample::firstAcquireAllowed);
-        passed &= timed("exhaustedRejectsThenRecovers", RateLimiterExample::exhaustedRejectsThenRecovers);
+        passed &= ExampleUtils.timed"firstAcquireAllowed", RateLimiterExample::firstAcquireAllowed);
+        passed &= ExampleUtils.timed"exhaustedRejectsThenRecovers", RateLimiterExample::exhaustedRejectsThenRecovers);
         if (!passed) {
-            System.out.println("[FAIL] RateLimiter 存在失败场景");
+            System.out.ExampleUtils.println("[FAIL] RateLimiter 存在失败场景");
             System.exit(EXIT_CODE_FAILURE);
         }
-        System.out.println("[PASS] RateLimiter 全部场景通过");
+        System.out.ExampleUtils.println("[PASS] RateLimiter 全部场景通过");
         System.exit(EXIT_CODE_SUCCESS);
     }
 }

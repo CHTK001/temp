@@ -6,7 +6,6 @@ import com.chua.common.support.utils.ThreadUtils;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.BooleanSupplier;
 
 /**
  * 限流器 {@link BulkheadFlow} 全场景自检示例。
@@ -18,21 +17,7 @@ import java.util.function.BooleanSupplier;
  */
 public final class BulkheadExample {
 
-    private static final int EXIT_CODE_SUCCESS = 0;
-    private static final int EXIT_CODE_FAILURE = 1;
-
     private BulkheadExample() {
-    }
-
-    private static boolean timed(String name, BooleanSupplier scenario) {
-        long start = System.currentTimeMillis();
-        boolean ok = scenario.getAsBoolean();
-        System.out.println("[TIME] " + name + " " + (System.currentTimeMillis() - start) + "ms");
-        return ok;
-    }
-
-    private static void print(String name, boolean ok) {
-        System.out.println((ok ? "[PASS] " : "[FAIL] ") + name);
     }
 
     private static boolean normalExecute() {
@@ -40,7 +25,7 @@ public final class BulkheadExample {
         Integer r = BulkheadFlow.of("normal-test").maxConcurrent(2)
                 .execute(counter::incrementAndGet);
         var ok = r != null && r == 1;
-        print("normalExecute", ok);
+        ExampleUtils.print("normalExecute", ok);
         return ok;
     }
 
@@ -54,7 +39,7 @@ public final class BulkheadExample {
         block.countDown();
         ThreadUtils.sleepMillisecondsQuietly(100);
         var ok = "overloaded".equals(result);
-        print("fallbackOnOverload", ok);
+        ExampleUtils.print("fallbackOnOverload", ok);
         return ok;
     }
 
@@ -68,13 +53,13 @@ public final class BulkheadExample {
 
     public static void main(String[] args) {
         boolean passed = true;
-        passed &= timed("normalExecute", BulkheadExample::normalExecute);
-        passed &= timed("fallbackOnOverload", BulkheadExample::fallbackOnOverload);
+        passed &= ExampleUtils.timed"normalExecute", BulkheadExample::normalExecute);
+        passed &= ExampleUtils.timed"fallbackOnOverload", BulkheadExample::fallbackOnOverload);
         if (!passed) {
-            System.out.println("[FAIL] Bulkhead 存在失败场景");
+            System.out.ExampleUtils.println("[FAIL] Bulkhead 存在失败场景");
             System.exit(EXIT_CODE_FAILURE);
         }
-        System.out.println("[PASS] Bulkhead 全部场景通过");
+        System.out.ExampleUtils.println("[PASS] Bulkhead 全部场景通过");
         System.exit(EXIT_CODE_SUCCESS);
     }
 }

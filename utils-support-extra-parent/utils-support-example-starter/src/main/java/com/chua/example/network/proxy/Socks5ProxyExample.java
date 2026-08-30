@@ -13,7 +13,7 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
+import com.chua.example.util.ExampleUtils;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 
@@ -51,7 +51,7 @@ public final class Socks5ProxyExample {
      * @throws Exception 后端启动失败等异常
      */
     public static void main(String[] args) throws Exception {
-        Map<String, String> arg = parseArgs(args);
+        Map<String, String> arg = ExampleUtils.parseArgs(args);
         EchoServer backend = EchoServer.start(intVal(arg.get("backend-port"), DEFAULT_BACKEND_PORT));
         LOG.info("===== socks5-proxy 主示例 [echo-backend=127.0.0.1:{}] =====", backend.getPort());
         boolean passed;
@@ -365,29 +365,6 @@ public final class Socks5ProxyExample {
         } catch (NumberFormatException e) {
             return defVal;
         }
-    }
-
-    /**
-     * 解析命令行参数：支持 {@code --key=value} 与 {@code --key value}。
-     *
-     * @param args 原始参数
-     * @return 键值对
-     */
-    private static Map<String, String> parseArgs(String[] args) {
-        Map<String, String> result = new HashMap<>();
-        for (int i = 0; i < args.length; i++) {
-            String arg = args[i];
-            if (!arg.startsWith("--")) {
-                continue;
-            }
-            int eq = arg.indexOf('=');
-            if (eq > 0) {
-                result.put(arg.substring(2, eq), arg.substring(eq + 1));
-            } else if (i + 1 < args.length && !args[i + 1].startsWith("--")) {
-                result.put(arg.substring(2), args[++i]);
-            }
-        }
-        return result;
     }
 
     /**

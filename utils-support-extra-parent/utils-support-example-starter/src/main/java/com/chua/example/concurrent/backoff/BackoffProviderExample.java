@@ -5,7 +5,7 @@ import com.chua.common.support.concurrent.backoff.provider.FixedBackoffProvider;
 import com.chua.common.support.concurrent.backoff.provider.FibonacciBackoffProvider;
 import com.chua.common.support.concurrent.backoff.provider.LinearBackoffProvider;
 
-import java.util.function.BooleanSupplier;
+import com.chua.example.util.ExampleUtils;
 
 /**
  * 退避策略 {@link com.chua.common.support.concurrent.backoff.BackoffProvider} 全场景自检示例。
@@ -18,27 +18,13 @@ import java.util.function.BooleanSupplier;
  */
 public final class BackoffProviderExample {
 
-    private static final int EXIT_CODE_SUCCESS = 0;
-    private static final int EXIT_CODE_FAILURE = 1;
-
     private BackoffProviderExample() {
-    }
-
-    private static boolean timed(String name, BooleanSupplier scenario) {
-        long start = System.currentTimeMillis();
-        boolean ok = scenario.getAsBoolean();
-        System.out.println("[TIME] " + name + " " + (System.currentTimeMillis() - start) + "ms");
-        return ok;
-    }
-
-    private static void print(String name, boolean ok) {
-        System.out.println((ok ? "[PASS] " : "[FAIL] ") + name);
     }
 
     private static boolean fixedBackoff() {
         var p = new FixedBackoffProvider(100L);
         var ok = p.nextDelay(0) == 100L && p.nextDelay(5) == 100L && p.nextDelay(99) == 100L;
-        print("fixedBackoff", ok);
+        ExampleUtils.print("fixedBackoff", ok);
         return ok;
     }
 
@@ -48,7 +34,7 @@ public final class BackoffProviderExample {
         var ok = p.nextDelay(0) == 50L
                 && p.nextDelay(1) == 60L
                 && p.nextDelay(2) == 70L;
-        print("linearBackoff", ok);
+        ExampleUtils.print("linearBackoff", ok);
         return ok;
     }
 
@@ -60,7 +46,7 @@ public final class BackoffProviderExample {
                 && p.nextDelay(2) == 20L
                 && p.nextDelay(3) == 30L
                 && p.nextDelay(4) == 50L;
-        print("fibonacciBackoff", ok);
+        ExampleUtils.print("fibonacciBackoff", ok);
         return ok;
     }
 
@@ -70,7 +56,7 @@ public final class BackoffProviderExample {
         var ok = p.nextDelay(0) == 100L
                 && p.nextDelay(1) == 200L
                 && p.nextDelay(2) == 400L;
-        print("exponentialBackoff", ok);
+        ExampleUtils.print("exponentialBackoff", ok);
         return ok;
     }
 
@@ -96,7 +82,7 @@ public final class BackoffProviderExample {
         } catch (Exception e) {
             allOk = false;
         }
-        print("beyondTestedRange", allOk);
+        ExampleUtils.print("beyondTestedRange", allOk);
         return allOk;
     }
 
@@ -112,23 +98,23 @@ public final class BackoffProviderExample {
         } catch (Exception e) {
             ok = false;
         }
-        print("allProvidersNoCrash", ok);
+        ExampleUtils.print("allProvidersNoCrash", ok);
         return ok;
     }
 
     public static void main(String[] args) {
         boolean passed = true;
-        passed &= timed("fixedBackoff", BackoffProviderExample::fixedBackoff);
-        passed &= timed("linearBackoff", BackoffProviderExample::linearBackoff);
-        passed &= timed("fibonacciBackoff", BackoffProviderExample::fibonacciBackoff);
-        passed &= timed("exponentialBackoff", BackoffProviderExample::exponentialBackoff);
-        passed &= timed("beyondTestedRange", BackoffProviderExample::beyondTestedRange);
-        passed &= timed("allProvidersNoCrash", BackoffProviderExample::allProvidersNoCrash);
+        passed &= ExampleUtils.timed"fixedBackoff", BackoffProviderExample::fixedBackoff);
+        passed &= ExampleUtils.timed"linearBackoff", BackoffProviderExample::linearBackoff);
+        passed &= ExampleUtils.timed"fibonacciBackoff", BackoffProviderExample::fibonacciBackoff);
+        passed &= ExampleUtils.timed"exponentialBackoff", BackoffProviderExample::exponentialBackoff);
+        passed &= ExampleUtils.timed"beyondTestedRange", BackoffProviderExample::beyondTestedRange);
+        passed &= ExampleUtils.timed"allProvidersNoCrash", BackoffProviderExample::allProvidersNoCrash);
         if (!passed) {
-            System.out.println("[FAIL] BackoffProvider 存在失败场景");
+            System.out.ExampleUtils.println("[FAIL] BackoffProvider 存在失败场景");
             System.exit(EXIT_CODE_FAILURE);
         }
-        System.out.println("[PASS] BackoffProvider 全部场景通过");
+        System.out.ExampleUtils.println("[PASS] BackoffProvider 全部场景通过");
         System.exit(EXIT_CODE_SUCCESS);
     }
 }

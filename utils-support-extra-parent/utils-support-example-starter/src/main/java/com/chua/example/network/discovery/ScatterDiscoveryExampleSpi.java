@@ -10,8 +10,10 @@ import com.chua.common.support.network.server.filter.discovery.ServiceDiscoveryS
 import com.chua.common.support.network.server.filter.proxy.ReverseProxyServer;
 import com.chua.common.support.network.server.proxy.DiscoveryProxyTargetResolver;
 import com.chua.common.support.network.server.proxy.TcpProxyServer;
+import com.chua.common.support.utils.ThreadUtils;
 import com.chua.example.spi.Example;
 import lombok.extern.slf4j.Slf4j;
+import com.chua.example.util.ExampleUtils;
 
 import java.net.InetSocketAddress;
 import java.net.URI;
@@ -98,7 +100,7 @@ public class ScatterDiscoveryExampleSpi implements Example {
                 .serverId("order-3").scatterId("order").protocol("tcp")
                 .host("127.0.0.1").port(19091).weight(1).build());
         // 等待注册生效
-        Thread.sleep(100);
+        ThreadUtils.sleep(100);
         return sd;
     }
 
@@ -181,7 +183,7 @@ public class ScatterDiscoveryExampleSpi implements Example {
                     .host("127.0.0.1").port(backendB.getPort()).weight(1).build());
             sd.registerService("/api", Discovery.builder().serverId("user-1").scatterId("user").protocol("http")
                     .host("127.0.0.1").port(18083).weight(1).build());
-            Thread.sleep(100);
+            ThreadUtils.sleep(100);
 
             // 代理:只路由 order 组(ServerBuilder 链式,内部维护 ServerSetting)
             proxy = new ReverseProxyServer(0)
@@ -237,7 +239,7 @@ public class ScatterDiscoveryExampleSpi implements Example {
             sd.start();
             sd.registerService("/api", Discovery.builder().serverId("order-3").scatterId("order").protocol("tcp")
                     .host("127.0.0.1").port(backend.getPort()).weight(1).build());
-            Thread.sleep(100);
+            ThreadUtils.sleep(100);
 
             // TCP 代理:按 order + tcp 解析目标
             ServerSetting setting = ServerSetting.defaults();

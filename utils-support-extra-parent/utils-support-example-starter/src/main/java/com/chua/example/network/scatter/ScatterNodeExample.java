@@ -5,6 +5,7 @@ import com.chua.common.support.scatter.DefaultScatter;
 import com.chua.common.support.scatter.Scatter;
 import com.chua.common.support.scatter.TcpScatterBuilder;
 
+import com.chua.common.support.utils.ThreadUtils;
 import java.util.Arrays;
 import java.util.List;
 
@@ -68,7 +69,7 @@ public class ScatterNodeExample {
         Thread reporter = new Thread(() -> {
             while (!Thread.currentThread().isInterrupted()) {
                 try {
-                    Thread.sleep(3000);
+                    ThreadUtils.sleep(3000);
                     var services = scatter.discovery().getServiceAll("/scatter");
                     log.info("[ScatterNodeMain][" + nodeId + "] 当前发现 " + services.size()
                             + " 个服务: " + services.stream()

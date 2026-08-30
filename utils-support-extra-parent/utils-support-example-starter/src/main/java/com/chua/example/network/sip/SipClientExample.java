@@ -2,9 +2,9 @@ package com.chua.example.network.sip;
 
 import com.chua.common.support.network.sip.SipClient;
 import com.chua.common.support.network.sip.SipTunnelService;
+import com.chua.example.util.ExampleUtils;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
@@ -83,7 +83,7 @@ public class SipClientExample {
      * @param args 命令行参数
      */
     public static void main(String[] args) {
-        Map<String, String> kv = parseArgs(args);
+        Map<String, String> kv = ExampleUtils.parseArgs(args);
         String mode = kv.getOrDefault("mode", "provider");
         String server = kv.getOrDefault("server", "tcp://127.0.0.1:19460");
         String token = kv.getOrDefault("token", DEFAULT_TOKEN);
@@ -146,22 +146,4 @@ public class SipClientExample {
         }
     }
 
-    /**
-     * 解析 --key=value 形式的命令行参数。
-     *
-     * @param args 命令行参数数组
-     * @return 键值映射
-     */
-    private static Map<String, String> parseArgs(String[] args) {
-        Map<String, String> kv = new HashMap<>();
-        for (String arg : args) {
-            if (!arg.startsWith("--")) {
-                continue;
-            }
-            String body = arg.substring(2);
-            int eq = body.indexOf('=');
-            kv.put(eq > 0 ? body.substring(0, eq) : body, eq > 0 ? body.substring(eq + 1) : "true");
-        }
-        return kv;
-    }
 }

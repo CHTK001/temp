@@ -28,11 +28,15 @@ public final class DepthAnythingExample {
 
         var entry = ModelRegistry.get("depth-anything");
         log.info("[depth-anything] 注册: " + (entry != null ? "OK" : "FAIL"));
-        if (entry == null) { System.exit(1); }
+        if (entry == null) {
+            System.exit(1);
+        }
 
         var path = ModelRegistry.resolveModelPath("depth-anything");
         log.info("[depth-anything] 路径: " + path);
-        if (path == null || !path.toFile().exists()) { System.exit(1); }
+        if (path == null || !path.toFile().exists()) {
+            System.exit(1);
+        }
 
         Object translator = ModelRegistry.createTranslator("depth-anything", null);
         long t0 = System.currentTimeMillis();
@@ -41,6 +45,8 @@ public final class DepthAnythingExample {
         boolean ok = out != null;
         log.info("[depth-anything] 耗时=" + cost + "ms 输出类型=" + out.getClass().getName());
         log.info(ok ? "[DepthAnythingVerify] ALL PASS" : "[DepthAnythingVerify] FAIL");
-        if (!ok) { System.exit(1); }
+        if (!ok) {
+            System.exit(1);
+        }
     }
 }

@@ -7,6 +7,7 @@ import com.chua.example.spi.Example;
 import com.chua.protobuf.support.serialize.ProtobufSerialization;
 import com.chua.protobuf.support.serialize.ProtobufSerializer;
 import lombok.extern.slf4j.Slf4j;
+import com.chua.example.util.ExampleUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;

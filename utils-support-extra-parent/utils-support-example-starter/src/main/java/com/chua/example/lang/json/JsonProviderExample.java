@@ -2,6 +2,7 @@ package com.chua.example.lang.json;
 
 import com.chua.common.support.spi.ServiceProvider;
 import com.chua.example.spi.Example;
+import com.chua.example.util.ExampleUtils;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -40,7 +41,7 @@ public final class JsonProviderExample {
      * @param args 支持 --type=gson|fory|fastjson|all（默认 all）
      */
     public static void main(String[] args) {
-        Map<String, String> params = parseArgs(args);
+        Map<String, String> params = ExampleUtils.parseArgs(args);
         Example example = discover("json-provider");
         if (example == null || !"json".equals(example.module())) {
             log.info("[FAIL] spi-discovery: getExtension(json-provider) 应命中且 module=json");
@@ -79,29 +80,4 @@ public final class JsonProviderExample {
         return null;
     }
 
-    /**
-     * 将命令行参数解析为有序映射，支持 --key=value 与 --key value 两种形式。
-     *
-     * @param args 原始命令行参数
-     * @return 有序参数映射
-     */
-    private static Map<String, String> parseArgs(String[] args) {
-        Map<String, String> params = new LinkedHashMap<>();
-        for (int i = 0; i < args.length; i++) {
-            String arg = args[i];
-            if (!arg.startsWith("--")) {
-                continue;
-            }
-            String key = arg.substring(2);
-            int eq = key.indexOf('=');
-            if (eq >= 0) {
-                params.put(key.substring(0, eq), key.substring(eq + 1));
-            } else if (i + 1 < args.length && !args[i + 1].startsWith("--")) {
-                params.put(key, args[++i]);
-            } else {
-                params.put(key, "");
-            }
-        }
-        return params;
-    }
 }

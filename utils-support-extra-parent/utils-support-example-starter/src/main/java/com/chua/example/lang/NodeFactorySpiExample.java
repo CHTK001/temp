@@ -179,6 +179,9 @@ public final class NodeFactorySpiExample {
      * 测试用节点子类（数组）。
      */
     static class StubJsonArray extends JsonArray {
+        public StubJsonArray() {
+        }
+
         /**
          * 创建 StubJsonArray 实例
          *
@@ -215,7 +218,7 @@ public final class NodeFactorySpiExample {
 
         /** 创建JsonObject */
         @Override
-        public JsonObject createJsonObject(Map<String, Object> map) {
+        public JsonObject createJsonObject(Map map) {
             return new StubJsonObject(map);
         }
 
@@ -227,7 +230,7 @@ public final class NodeFactorySpiExample {
 
         /** 创建JsonArray */
         @Override
-        public JsonArray createJsonArray(Collection<?> collection) {
+        public JsonArray createJsonArray(Collection collection) {
             return new StubJsonArray(collection);
         }
 

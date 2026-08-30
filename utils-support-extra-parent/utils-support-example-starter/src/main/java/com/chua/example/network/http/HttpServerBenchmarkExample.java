@@ -142,7 +142,7 @@ public final class HttpServerBenchmarkExample {
             ((ConfigServer) server).registerMapping("/echo", (req, resp) -> {
                 if (delayMs > 0) {
                     try {
-                        Thread.sleep(delayMs);
+                        ThreadUtils.sleep(delayMs);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                     }
@@ -162,7 +162,7 @@ public final class HttpServerBenchmarkExample {
                     long used = usedMemMb();
                     peakUsedMb.accumulateAndGet(used, Math::max);
                     try {
-                        Thread.sleep(100L);
+                        ThreadUtils.sleep(100L);
                     } catch (InterruptedException e) {
                         break;
                     }
@@ -184,7 +184,7 @@ public final class HttpServerBenchmarkExample {
             for (int i = 0; i < concurrency; i++) {
                 pool.submit(() -> {
                     try {
-                        Thread.sleep(10);
+                        ThreadUtils.sleep(10);
                         ready.countDown();
                         start.await();
                         long[] mine = new long[requestsPerVu];
@@ -231,7 +231,7 @@ public final class HttpServerBenchmarkExample {
                 log.warn("[bench] {} delay={}ms 并发={} 就绪超时", serverType, delayMs, concurrency);
                 start.countDown();
             }
-            Thread.sleep(50);
+            ThreadUtils.sleep(50);
             long wallStart = System.nanoTime();
             start.countDown();
             if (!done.await(60, TimeUnit.SECONDS)) {
@@ -271,7 +271,7 @@ public final class HttpServerBenchmarkExample {
             // (曾出现 nio 单跑正常 RPS=1056,但 jdk 之后连跑异常 RPS=38/p50=8s 的现象)
             System.gc();
             try {
-                Thread.sleep(500L);
+                ThreadUtils.sleep(500L);
             } catch (InterruptedException ignored) {
                 Thread.currentThread().interrupt();
             }

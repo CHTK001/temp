@@ -5,6 +5,7 @@ import com.chua.example.spi.Example;
 import com.chua.fory.support.serialize.ForySerialization;
 import com.chua.fory.support.serialize.ForySerializer;
 import lombok.extern.slf4j.Slf4j;
+import com.chua.example.util.ExampleUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;

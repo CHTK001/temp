@@ -44,9 +44,11 @@ public final class OnnxQwenExample {
             }
         } finally {
             if (translator instanceof AutoCloseable ac) {
-                try { ac.close(); } catch (Exception ignore) {
-            log.warn("Caught: {}", ignore.getMessage());
-        }
+                try {
+                    ac.close();
+                } catch (Exception ignore) {
+                    log.warn("Caught: {}", ignore.getMessage());
+                }
             }
         }
     }

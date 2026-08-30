@@ -5,7 +5,6 @@ import com.chua.common.support.network.client.yunxiao.YunxiaoClientSetting;
 import com.chua.common.support.network.client.yunxiao.constant.RepoType;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -48,7 +47,7 @@ public class YunxiaoClientExample {
      * @param args 命令行参数，支持 {@code --key=value} 与 {@code --key value}
      */
     public static void main(String[] args) {
-        Map<String, String> parsed = parseArgs(args);
+        Map<String, String> parsed = ExampleUtils.parseArgs(args);
         String remoteFlag = parsed.get(PARAM_REMOTE);
         boolean passed;
         String scene;
@@ -140,33 +139,4 @@ public class YunxiaoClientExample {
         return value == null || value.isEmpty();
     }
 
-    /**
-     * 解析 {@code --key=value} 与 {@code --key value} 两种形式；无值开关记为空串。
-     *
-     * @param args 原生命令行参数
-     * @return 键值参数表
-     */
-    private static Map<String, String> parseArgs(String[] args) {
-        Map<String, String> map = new HashMap<>();
-        for (int i = 0; i < args.length; i++) {
-            String arg = args[i];
-            if (!arg.startsWith("--")) {
-                continue;
-            }
-            String kv = arg.substring(2);
-            int eq = kv.indexOf('=');
-            if (eq > 0) {
-                map.put(kv.substring(0, eq), kv.substring(eq + 1));
-                continue;
-            }
-            String next = i + 1 < args.length ? args[i + 1] : null;
-            if (next != null && !next.startsWith("--")) {
-                map.put(kv, next);
-                i++;
-                continue;
-            }
-            map.put(kv, "");
-        }
-        return map;
-    }
 }

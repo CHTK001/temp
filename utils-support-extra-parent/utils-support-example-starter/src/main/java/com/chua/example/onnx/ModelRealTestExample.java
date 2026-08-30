@@ -57,9 +57,13 @@ public final class ModelRealTestExample {
                 } else {
                     log.info("  ⚠️ 结果为空");
                 }
-                if (t instanceof AutoCloseable ac) { try { ac.close(); } catch (Exception e) {
-            log.warn("Caught: {}", e.getMessage());
-        } }
+                if (t instanceof AutoCloseable ac) {
+                    try {
+                        ac.close();
+                    } catch (Exception e) {
+                        log.warn("Caught: {}", e.getMessage());
+                    }
+                }
             } catch (Exception e) {
                 log.info("  ❌ FAIL: " + e.getMessage());
             }

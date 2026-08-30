@@ -12,6 +12,7 @@ import com.chua.common.support.spi.ServiceProvider;
 import com.chua.example.network.perf.PerfReportExample;
 import com.chua.example.spi.Example;
 import lombok.extern.slf4j.Slf4j;
+import com.chua.example.util.ExampleUtils;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -900,7 +901,7 @@ public class HttpServerExampleSpi implements Example {
             server = s;
             ((ConfigServer) server).registerMapping("/slow", (req, resp) -> {
                 try {
-                    Thread.sleep(500);
+                    ThreadUtils.sleep(500);
                 } catch (InterruptedException ignored) {}
                 resp.setResult("done");
             });
@@ -1205,7 +1206,7 @@ public class HttpServerExampleSpi implements Example {
             for (int i = 0; i < connections; i++) {
                 pool.submit(() -> {
                     try {
-                        Thread.sleep(10);
+                        ThreadUtils.sleep(10);
                         ready.countDown();
                         start.await();
                         long[] mine = new long[requestsPerConn];
@@ -1233,7 +1234,7 @@ public class HttpServerExampleSpi implements Example {
                 log.warn("  │ 并发={} 就绪超时", concurrency);
                 return null;
             }
-            Thread.sleep(50);
+            ThreadUtils.sleep(50);
             long startWall = System.nanoTime();
             start.countDown();
             if (!done.await(120, TimeUnit.SECONDS)) {

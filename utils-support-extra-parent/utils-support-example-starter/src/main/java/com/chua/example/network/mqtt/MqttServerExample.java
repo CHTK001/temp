@@ -1,8 +1,8 @@
 package com.chua.example.network.mqtt;
 
+import com.chua.example.util.ExampleUtils;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -30,7 +30,7 @@ public class MqttServerExample {
      * @param args 命令行参数，支持 {@code --key=value} 与 {@code --key value}
      */
     public static void main(String[] args) {
-        Map<String, String> parsed = parseArgs(args);
+        Map<String, String> parsed = ExampleUtils.parseArgs(args);
         log.info("[MQTT-SERVER] 启动参数 {}", parsed);
         boolean passed = new MqttServerExampleSpi().run(parsed);
         if (!passed) {
@@ -40,33 +40,4 @@ public class MqttServerExample {
         log.info("[PASS] mqtt-server 演示全部通过");
     }
 
-    /**
-     * 解析 {@code --key=value} 与 {@code --key value} 两种形式；无值键以空串传入。
-     *
-     * @param args 原始命令行参数
-     * @return 键值对参数
-     */
-    private static Map<String, String> parseArgs(String[] args) {
-        Map<String, String> map = new HashMap<>();
-        for (int i = 0; i < args.length; i++) {
-            String arg = args[i];
-            if (!arg.startsWith("--")) {
-                continue;
-            }
-            String kv = arg.substring(2);
-            int eq = kv.indexOf('=');
-            if (eq > 0) {
-                map.put(kv.substring(0, eq), kv.substring(eq + 1));
-                continue;
-            }
-            String next = i + 1 < args.length ? args[i + 1] : null;
-            if (next != null && !next.startsWith("--")) {
-                map.put(kv, next);
-                i++;
-                continue;
-            }
-            map.put(kv, "");
-        }
-        return map;
-    }
 }

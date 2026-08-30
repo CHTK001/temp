@@ -1,5 +1,6 @@
 package com.chua.example.network.perf;
 
+import com.chua.common.support.utils.ThreadUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.management.ManagementFactory;
@@ -180,7 +181,7 @@ public final class PerfReportExample {
                 try {
                     sampleCpu();
                     sampleMemory();
-                    Thread.sleep(200L);
+                    ThreadUtils.sleep(200L);
                 } catch (InterruptedException e) {
                     break;
                 }

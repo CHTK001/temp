@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.scatter.Scatter;
 import com.chua.common.support.scatter.TcpScatterBuilder;
 
+import com.chua.common.support.utils.ThreadUtils;
 import java.util.List;
 
 /**
@@ -47,14 +48,14 @@ public class ScatterFailoverExample {
 
         // ===== 阶段 1：互发现（等 3s） =====
         log.info("\n===== 阶段1: 互发现（等 3s） =====");
-        Thread.sleep(3000);
+        ThreadUtils.sleep(3000);
         printServices("node-b 发现", nodeB);
 
         // ===== 阶段 2：node-c 掉线 =====
         log.info("\n===== 阶段2: node-c 掉线（心跳 1s×失败2次≈2-3s 剔除） =====");
         nodeC.stop();
         log.info("[TEST] node-c 已停止");
-        Thread.sleep(6000);
+        ThreadUtils.sleep(6000);
         printServices("node-b 发现(掉线后)", nodeB);
 
         // ===== 阶段 3：node-c 恢复 =====
@@ -67,13 +68,13 @@ public class ScatterFailoverExample {
                 .build();
         nodeC2.start();
         log.info("[TEST] node-c 已重启");
-        Thread.sleep(5000);
+        ThreadUtils.sleep(5000);
         printServices("node-b 发现(恢复后)", nodeB);
 
         // ===== 阶段 4：稳定观察（12s） =====
         log.info("\n===== 阶段4: 稳定观察（12s，验证去重不膨胀） =====");
         for (int i = 0; i < 4; i++) {
-            Thread.sleep(3000);
+            ThreadUtils.sleep(3000);
             int n = nodeB.discovery().getServiceAll("/scatter").size();
             log.info("[TEST] t+" + ((i + 1) * 3) + "s node-b 服务数=" + n);
         }

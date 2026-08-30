@@ -9,6 +9,7 @@ import javax.sound.sampled.AudioSystem;
 import java.io.ByteArrayInputStream;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
+import com.chua.common.support.utils.ThreadUtils;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -191,7 +192,7 @@ public final class TtsBenchmarkExample {
                 + " engine. We will synthesize the same text multiple times to check for memory leaks.";
         synthesizer.synthesize("warmup");
         System.gc();
-        Thread.sleep(100);
+        ThreadUtils.sleep(100);
         long baseline = MEMORY_BEAN.getHeapMemoryUsage().getUsed();
         double prev = baseline;
         System.out.printf("%-10s %-15s %-15s%n", "Iter", "Heap (MB)", "Delta (MB)");
@@ -211,7 +212,7 @@ public final class TtsBenchmarkExample {
             throws Exception {
         synthesizer.synthesize("warmup");
         System.gc();
-        Thread.sleep(100);
+        ThreadUtils.sleep(100);
         long heapBefore = MEMORY_BEAN.getHeapMemoryUsage().getUsed();
         long start = System.nanoTime();
         byte[] wav = synthesizer.synthesize(text);

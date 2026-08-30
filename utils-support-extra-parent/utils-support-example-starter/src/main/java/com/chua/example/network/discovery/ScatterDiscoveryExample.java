@@ -25,6 +25,8 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import com.chua.common.support.utils.ThreadUtils;
+import com.chua.example.util.ExampleUtils;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -67,7 +69,7 @@ public final class ScatterDiscoveryExample {
      * @throws Exception 场景执行异常
      */
     public static void main(String[] args) throws Exception {
-        Map<String, String> arg = parseArgs(args);
+        Map<String, String> arg = ExampleUtils.parseArgs(args);
         int portHttpA = intVal(arg.get("port-http-a"), DEFAULT_PORT_HTTP_A);
         int portHttpB = intVal(arg.get("port-http-b"), DEFAULT_PORT_HTTP_B);
         int portUser = intVal(arg.get("port-user"), DEFAULT_PORT_USER);
@@ -149,7 +151,7 @@ public final class ScatterDiscoveryExample {
                 .protocol("http").host("127.0.0.1").port(portUser).weight(1).build());
         sd.registerService("/api", Discovery.builder().serverId("order-3").scatterId("order")
                 .protocol("tcp").host("127.0.0.1").port(portTcp).weight(1).build());
-        Thread.sleep(100);
+        ThreadUtils.sleep(100);
         return sd;
     }
 
@@ -178,7 +180,7 @@ public final class ScatterDiscoveryExample {
                     .protocol("http").host("127.0.0.1").port(portHttpB).weight(1).build());
             sd.registerService("/api", Discovery.builder().serverId("user-1").scatterId("user")
                     .protocol("http").host("127.0.0.1").port(portUser).weight(1).build());
-            Thread.sleep(100);
+            ThreadUtils.sleep(100);
 
             proxy = new ReverseProxyServer(0)
                     .discovery(sd)
@@ -245,7 +247,7 @@ public final class ScatterDiscoveryExample {
             sd.start();
             sd.registerService("/api", Discovery.builder().serverId("order-3").scatterId("order")
                     .protocol("tcp").host("127.0.0.1").port(backend.getPort()).weight(1).build());
-            Thread.sleep(100);
+            ThreadUtils.sleep(100);
 
             ServerSetting setting = ServerSetting.defaults();
             setting.setHost("127.0.0.1");
@@ -366,25 +368,4 @@ public final class ScatterDiscoveryExample {
     }
 
     /**
-     * 解析命令行参数：支持 {@code --key=value} 与 {@code --key value}。
-     *
-     * @param args 原始参数
-     * @return 键值对
-     */
-    private static Map<String, String> parseArgs(String[] args) {
-        Map<String, String> result = new HashMap<>();
-        for (int i = 0; i < args.length; i++) {
-            String arg = args[i];
-            if (!arg.startsWith("--")) {
-                continue;
-            }
-            int eq = arg.indexOf('=');
-            if (eq > 0) {
-                result.put(arg.substring(2, eq), arg.substring(eq + 1));
-            } else if (i + 1 < args.length && !args[i + 1].startsWith("--")) {
-                result.put(arg.substring(2), args[++i]);
-            }
-        }
-        return result;
-    }
-}
+     * 断言相等（统一装箱比较）。

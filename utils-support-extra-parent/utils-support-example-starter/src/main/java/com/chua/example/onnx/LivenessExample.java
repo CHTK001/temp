@@ -56,9 +56,11 @@ public final class LivenessExample {
             log.info("  耗时: " + cost + "ms");
             log.info("  结果: " + result);
             if (translator instanceof AutoCloseable ac) {
-                try { ac.close(); } catch (Exception ignore) {
-            log.warn("Caught: {}", ignore.getMessage());
-        }
+                try {
+                    ac.close();
+                } catch (Exception ignore) {
+                    log.warn("Caught: {}", ignore.getMessage());
+                }
             }
         }
         log.info("[LivenessVerify] DONE");

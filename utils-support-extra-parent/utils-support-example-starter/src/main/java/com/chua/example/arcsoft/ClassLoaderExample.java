@@ -54,7 +54,7 @@ public final class ClassLoaderExample {
         log.info("Context resource: {}", contextCl.getResource(nativeDir));
         log.info("Context resource (slash): {}", contextCl.getResource("/" + nativeDir));
 
-        ClassLoader myCl = TestClassLoaderExample.class.getClassLoader();
+        ClassLoader myCl = ClassLoaderExample.class.getClassLoader();
         log.info("MyClassLoader: {}", myCl);
         log.info("My resource: {}", myCl.getResource(nativeDir));
         log.info("My resource (slash): {}", myCl.getResource("/" + nativeDir));

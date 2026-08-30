@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.BooleanSupplier;
+import com.chua.common.support.utils.ThreadUtils;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -191,7 +192,7 @@ public final class BackupRoundTripExample {
      */
     private static void sleepMillis(long millis) {
         try {
-            Thread.sleep(millis);
+            ThreadUtils.sleep(millis);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }

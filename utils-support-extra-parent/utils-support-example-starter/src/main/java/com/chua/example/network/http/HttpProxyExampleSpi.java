@@ -14,6 +14,7 @@ import com.chua.example.spi.Example;
 import com.chua.common.support.utils.ThreadUtils;
 import com.sun.net.httpserver.HttpServer;
 import lombok.extern.slf4j.Slf4j;
+import com.chua.example.util.ExampleUtils;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -246,7 +247,7 @@ public class HttpProxyExampleSpi implements Example {
             for (int i = 0; i < connections; i++) {
                 pool.submit(() -> {
                     try {
-                        Thread.sleep(10);
+                        ThreadUtils.sleep(10);
                         ready.countDown();
                         start.await();
                         long[] mine = new long[requestsPerConn];
@@ -277,7 +278,7 @@ public class HttpProxyExampleSpi implements Example {
                 log.warn("  │ 并发={} 就绪超时", concurrency);
                 return null;
             }
-            Thread.sleep(50);
+            ThreadUtils.sleep(50);
             long startWall = System.nanoTime();
             start.countDown();
             if (!done.await(120, TimeUnit.SECONDS)) {
