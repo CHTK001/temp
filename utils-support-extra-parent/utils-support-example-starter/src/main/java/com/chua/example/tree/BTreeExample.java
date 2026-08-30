@@ -299,10 +299,4 @@ public final class BTreeExample {
     }
 
     // ==================== 辅助 ====================
-
-    private static boolean fail(String name, Exception e) {
-        log.info("[FAIL] " + name + " 异常: " + e);
-        e.printStackTrace();
-        return false;
-    }
 }
