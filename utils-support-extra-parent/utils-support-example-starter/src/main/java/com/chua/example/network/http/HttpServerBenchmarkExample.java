@@ -158,7 +158,12 @@ public final class HttpServerBenchmarkExample {
                 while (!Thread.currentThread().isInterrupted()) {
                     long used = usedMemMb();
                     peakUsedMb.accumulateAndGet(used, Math::max);
-                    ThreadUtils.sleepOfUnSafe(100);
+                    try {
+                        ThreadUtils.sleepOfUnSafe(100);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
                 }
             }, "bench-mem-sampler");
             memSampler.setDaemon(true);
@@ -263,7 +268,11 @@ public final class HttpServerBenchmarkExample {
             // 场景间隔离:上一个场景的虚拟线程/连接可能未完全释放,会污染下一个场景
             // (曾出现 nio 单跑正常 RPS=1056,但 jdk 之后连跑异常 RPS=38/p50=8s 的现象)
             System.gc();
-            ThreadUtils.sleepOfUnSafe(500);
+            try {
+                ThreadUtils.sleepOfUnSafe(500);
+            } catch (InterruptedException ignored) {
+                Thread.currentThread().interrupt();
+            }
         }
     }
 

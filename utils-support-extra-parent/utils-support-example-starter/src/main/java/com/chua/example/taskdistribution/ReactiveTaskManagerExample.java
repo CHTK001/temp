@@ -666,7 +666,11 @@ public class ReactiveTaskManagerExample {
                     return;
                 }
             }
-            ThreadUtils.sleepOfUnSafe(20);
+            try {
+                ThreadUtils.sleepOfUnSafe(20);
+            } catch (InterruptedException ignored) {
+                Thread.currentThread().interrupt();
+            }
         }
     }
 }
