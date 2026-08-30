@@ -29,18 +29,6 @@ public final class MessageHookExample {
     }
 
     /**
-     * 输出异常失败信息。
-     *
-     * @param name 场景名
-     * @param e    异常
-     * @return 恒为 false
-     */
-    private static boolean fail(String name, Exception e) {
-        log.info("[FAIL] " + name + " 异常: " + e);
-        return false;
-    }
-
-    /**
      * 场景一：ServiceProvider 解析出 webhook 实现。
      *
      * @return true 表示通过

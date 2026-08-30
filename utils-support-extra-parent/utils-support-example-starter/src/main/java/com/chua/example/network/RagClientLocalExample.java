@@ -122,7 +122,7 @@ public final class RagClientLocalExample {
                 client.close();
             }
         } catch (Exception e) {
-            return fail("uploadDocument 返回 READY 文档", e);
+            return ExampleUtils.fail("uploadDocument 返回 READY 文档", e);
         }
     }
 
@@ -156,7 +156,7 @@ public final class RagClientLocalExample {
                 client.close();
             }
         } catch (Exception e) {
-            return fail("deleteDocument 清理向量与文件", e);
+            return ExampleUtils.fail("deleteDocument 清理向量与文件", e);
         }
     }
 
@@ -184,7 +184,7 @@ public final class RagClientLocalExample {
                 client.close();
             }
         } catch (Exception e) {
-            return fail("updateDocument 原位替换", e);
+            return ExampleUtils.fail("updateDocument 原位替换", e);
         }
     }
 
@@ -215,7 +215,7 @@ public final class RagClientLocalExample {
                 client.close();
             }
         } catch (Exception e) {
-            return fail("listDocuments 分页正确", e);
+            return ExampleUtils.fail("listDocuments 分页正确", e);
         }
     }
 
@@ -240,7 +240,7 @@ public final class RagClientLocalExample {
                 client.close();
             }
         } catch (Exception e) {
-            return fail("readDocumentContent 读回原文", e);
+            return ExampleUtils.fail("readDocumentContent 读回原文", e);
         }
     }
 
@@ -269,7 +269,7 @@ public final class RagClientLocalExample {
                 client.close();
             }
         } catch (Exception e) {
-            return fail("远端问答返回非空回答", e);
+            return ExampleUtils.fail("远端问答返回非空回答", e);
         }
     }
 
