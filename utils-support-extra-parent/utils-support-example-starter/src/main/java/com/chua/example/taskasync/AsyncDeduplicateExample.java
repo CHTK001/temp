@@ -101,7 +101,7 @@ public final class AsyncDeduplicateExample {
         try (MemoryDeduplicator dedup = new MemoryDeduplicator(100)) {
             dedup.markProcessed("k");
             boolean markedBefore = dedup.isDuplicate("k");
-            ThreadUtils.sleep(180);
+            ThreadUtils.sleepOfUnSafe(180);
             boolean expiredAfter = !dedup.isDuplicate("k");
             dedup.markProcessed("k2");
             dedup.clear();

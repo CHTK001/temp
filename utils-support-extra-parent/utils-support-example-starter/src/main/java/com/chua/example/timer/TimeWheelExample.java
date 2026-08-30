@@ -102,11 +102,6 @@ public final class TimeWheelExample {
      * @param millis 毫秒数
      */
     private static void sleepMillis(long millis) {
-        try {
-            ThreadUtils.sleep(millis);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
     }
 
     // ==================== 场景 ====================
@@ -297,12 +292,6 @@ public final class TimeWheelExample {
         try {
             TimerTask task = wheel.schedule(() -> {
                 started.countDown();
-                try {
-                    ThreadUtils.sleep(10_000);
-                } catch (InterruptedException e) {
-                    interruptedFlag.incrementAndGet();
-                    Thread.currentThread().interrupt();
-                }
             }, 30, TimeUnit.MILLISECONDS);
             if (!await(started, 2000)) {
                 ExampleUtils.print("cancelInterruptsRunningTask (未启动)", false);

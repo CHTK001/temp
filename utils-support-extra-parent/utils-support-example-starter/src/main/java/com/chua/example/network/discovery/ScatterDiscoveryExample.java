@@ -151,7 +151,7 @@ public final class ScatterDiscoveryExample {
                 .protocol("http").host("127.0.0.1").port(portUser).weight(1).build());
         sd.registerService("/api", Discovery.builder().serverId("order-3").scatterId("order")
                 .protocol("tcp").host("127.0.0.1").port(portTcp).weight(1).build());
-        ThreadUtils.sleep(100);
+        ThreadUtils.sleepOfUnSafe(100);
         return sd;
     }
 
@@ -180,7 +180,7 @@ public final class ScatterDiscoveryExample {
                     .protocol("http").host("127.0.0.1").port(portHttpB).weight(1).build());
             sd.registerService("/api", Discovery.builder().serverId("user-1").scatterId("user")
                     .protocol("http").host("127.0.0.1").port(portUser).weight(1).build());
-            ThreadUtils.sleep(100);
+            ThreadUtils.sleepOfUnSafe(100);
 
             proxy = new ReverseProxyServer(0)
                     .discovery(sd)
@@ -247,7 +247,7 @@ public final class ScatterDiscoveryExample {
             sd.start();
             sd.registerService("/api", Discovery.builder().serverId("order-3").scatterId("order")
                     .protocol("tcp").host("127.0.0.1").port(backend.getPort()).weight(1).build());
-            ThreadUtils.sleep(100);
+            ThreadUtils.sleepOfUnSafe(100);
 
             ServerSetting setting = ServerSetting.defaults();
             setting.setHost("127.0.0.1");

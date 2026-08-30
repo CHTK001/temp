@@ -213,7 +213,7 @@ public class DataSyncExample implements Example {
             server.addMapping(mapping);
             try {
                 server.start();
-                ThreadUtils.sleep(2000L);
+                ThreadUtils.sleepOfUnSafe(2000);
             } catch (Exception e) {
                 log.error("repeat 第 {} 轮异常", i + 1, e);
                 return false;
@@ -240,7 +240,7 @@ public class DataSyncExample implements Example {
             executor.start();
             executor.subscribe("topic-1", batch -> log.info("subscribe 收到: {}", batch));
             executor.publish("topic-1", List.of(Map.of("k", "v")));
-            ThreadUtils.sleep(500L);
+            ThreadUtils.sleepOfUnSafe(500);
         } catch (Exception e) {
             log.error("direct executor 异常", e);
             return false;

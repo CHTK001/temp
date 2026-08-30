@@ -194,7 +194,7 @@ public class LazyExpiringListExample implements Example {
             printResult("加载后状态 LOADED", p1);
 
             // 等待过期
-            ThreadUtils.sleep(300);
+            ThreadUtils.sleepOfUnSafe(300);
             boolean p2 = list.getState() == ListState.UNLOADED;
             printResult("TTL 过期后状态 UNLOADED", p2);
 
@@ -331,7 +331,7 @@ public class LazyExpiringListExample implements Example {
         try (LazyExpiringList<String> list = LazyExpiringList.<String>builder()
                 .loader(() -> {
                     loadCount.incrementAndGet();
-                    ThreadUtils.sleep(50);
+                    ThreadUtils.sleepOfUnSafe(50);
                     return Arrays.asList("concurrent");
                 })
                 .build()) {
@@ -854,7 +854,7 @@ public class LazyExpiringListExample implements Example {
             printResult("TTL过期前 offHeapBytes=" + bytesBeforeExpiry + " > 0", p5);
 
             // 等待 TTL 过期
-            ThreadUtils.sleep(300);
+            ThreadUtils.sleepOfUnSafe(300);
             boolean p6 = list.getState() == ListState.UNLOADED;
             printResult("TTL过期后状态 UNLOADED", p6);
 

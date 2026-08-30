@@ -132,7 +132,7 @@ public final class IdUtilsUuidv7Example {
         for (int i = 0; i < 10; i++) {
             ids.add(IdUtils.uuidv7());
             if (i < 9) {
-                ThreadUtils.sleep(10);
+                ThreadUtils.sleepOfUnSafe(10);
             }
         }
         boolean monotonic = true;
@@ -187,7 +187,7 @@ public final class IdUtilsUuidv7Example {
         for (int i = 0; i < 200; i++) {
             timestamps.add(extractTimestamp(IdUtils.uuidv7()));
             if (i < 199) {
-                ThreadUtils.sleep(1);
+                ThreadUtils.sleepOfUnSafe(1);
             }
         }
         for (int i = 1; i < timestamps.size(); i++) {

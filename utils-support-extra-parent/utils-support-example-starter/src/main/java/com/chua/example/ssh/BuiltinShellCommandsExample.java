@@ -377,7 +377,7 @@ public class BuiltinShellCommandsExample {
         try (SshProgress bar = new SshProgress(res, "下载", 100)) {
             for (int i = 0; i <= 100; i++) {
                 bar.step();
-                ThreadUtils.sleep(60);
+                ThreadUtils.sleepOfUnSafe(60);
             }
         }
     }
@@ -404,7 +404,7 @@ public class BuiltinShellCommandsExample {
             if (i % 5 == 0) {
                 mp.stepBy(2, 1);
             }
-            ThreadUtils.sleep(50);
+            ThreadUtils.sleepOfUnSafe(50);
         }
         mp.close();
     }

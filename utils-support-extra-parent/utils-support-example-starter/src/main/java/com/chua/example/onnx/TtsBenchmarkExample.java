@@ -192,7 +192,7 @@ public final class TtsBenchmarkExample {
                 + " engine. We will synthesize the same text multiple times to check for memory leaks.";
         synthesizer.synthesize("warmup");
         System.gc();
-        ThreadUtils.sleep(100);
+        ThreadUtils.sleepOfUnSafe(100);
         long baseline = MEMORY_BEAN.getHeapMemoryUsage().getUsed();
         double prev = baseline;
         System.out.printf("%-10s %-15s %-15s%n", "Iter", "Heap (MB)", "Delta (MB)");
@@ -212,7 +212,7 @@ public final class TtsBenchmarkExample {
             throws Exception {
         synthesizer.synthesize("warmup");
         System.gc();
-        ThreadUtils.sleep(100);
+        ThreadUtils.sleepOfUnSafe(100);
         long heapBefore = MEMORY_BEAN.getHeapMemoryUsage().getUsed();
         long start = System.nanoTime();
         byte[] wav = synthesizer.synthesize(text);

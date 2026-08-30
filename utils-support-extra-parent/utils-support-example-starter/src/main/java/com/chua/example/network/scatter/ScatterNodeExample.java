@@ -69,7 +69,7 @@ public class ScatterNodeExample {
         Thread reporter = new Thread(() -> {
             while (!Thread.currentThread().isInterrupted()) {
                 try {
-                    ThreadUtils.sleep(3000);
+                    ThreadUtils.sleepOfUnSafe(3000);
                     var services = scatter.discovery().getServiceAll("/scatter");
                     log.info("[ScatterNodeMain][" + nodeId + "] 当前发现 " + services.size()
                             + " 个服务: " + services.stream()

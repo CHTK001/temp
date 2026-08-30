@@ -240,7 +240,7 @@ public class ThreadFlowExample {
                     .strategy(ThreadStrategy.ALL_SUCCESS)
                     .timeout(100, TimeUnit.MILLISECONDS)
                     .addCallable(() -> {
-                        ThreadUtils.sleep(2000);
+                        ThreadUtils.sleepOfUnSafe(2000);
                         return "too-slow";
                     })
                     .addCallable(() -> "fast")
@@ -356,7 +356,7 @@ public class ThreadFlowExample {
                         throw new IllegalStateException("first-fail");
                     })
                     .addCallable(() -> {
-                        ThreadUtils.sleep(3000);
+                        ThreadUtils.sleepOfUnSafe(3000);
                         return "slow";
                     })
                     .execute();

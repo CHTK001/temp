@@ -206,7 +206,7 @@ public class PipelineParallelExample implements Example {
             }
 
             // 给回调一点时间
-            ThreadUtils.sleep(100);
+            ThreadUtils.sleepOfUnSafe(100);
             boolean ok = "callback-fired:true".equals(callbackResult.get());
             printResult("onComplete callback", ok);
             return ok;
@@ -252,7 +252,7 @@ public class PipelineParallelExample implements Example {
             }
 
             // mergeCurrentData=true 时，currentData 应被更新为并行子流水线的输出
-            ThreadUtils.sleep(100);
+            ThreadUtils.sleepOfUnSafe(100);
             boolean merged = "merged-data".equals(ctx.getCurrentData());
 
             // mergeCurrentData=false
@@ -272,7 +272,7 @@ public class PipelineParallelExample implements Example {
             if (result2 != null) {
                 result2.await();
             }
-            ThreadUtils.sleep(100);
+            ThreadUtils.sleepOfUnSafe(100);
             boolean notMerged = !"merged-data".equals(ctx2.getCurrentData());
 
             // 两种模式至少一种生效即视为通过

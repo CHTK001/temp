@@ -597,12 +597,8 @@ public class ReactiveTaskManagerExample {
      */
     private Thread simulateWorkerAsync(TaskManager manager, String taskId, String data) {
         Thread worker = new Thread(() -> {
-            try {
-                ThreadUtils.sleep(WORKER_DELAY_MS);
-                manager.handleResult(TaskResult.success(taskId, data, "worker-demo"));
-            } catch (InterruptedException ignored) {
-                Thread.currentThread().interrupt();
-            }
+            ThreadUtils.sleep(WORKER_DELAY_MS);
+            manager.handleResult(TaskResult.success(taskId, data, "worker-demo"));
         });
         worker.setDaemon(true);
         return worker;
@@ -618,12 +614,8 @@ public class ReactiveTaskManagerExample {
      */
     private Thread simulateFailureAsync(TaskManager manager, String taskId, String message) {
         Thread worker = new Thread(() -> {
-            try {
-                ThreadUtils.sleep(WORKER_DELAY_MS);
-                manager.handleResult(TaskResult.failure(taskId, message, "worker-demo"));
-            } catch (InterruptedException ignored) {
-                Thread.currentThread().interrupt();
-            }
+            ThreadUtils.sleep(WORKER_DELAY_MS);
+            manager.handleResult(TaskResult.failure(taskId, message, "worker-demo"));
         });
         worker.setDaemon(true);
         return worker;
@@ -667,24 +659,14 @@ public class ReactiveTaskManagerExample {
         while (System.currentTimeMillis() < deadline) {
             for (com.chua.common.support.taskdistribution.task.Task<?> pending : manager.getPendingTasks()) {
                 if (taskType.equals(pending.getTaskType())) {
-                    try {
-                        ThreadUtils.sleep(WORKER_DELAY_MS);
-                    } catch (InterruptedException ignored) {
-                        Thread.currentThread().interrupt();
-                        return;
-                    }
+                    ThreadUtils.sleep(WORKER_DELAY_MS);
                     TaskResult result = TaskResult.success(
                             pending.getTaskId(), "done-by-worker", "worker-demo");
                     manager.handleResult(result);
                     return;
                 }
             }
-            try {
-                ThreadUtils.sleep(20);
-            } catch (InterruptedException ignored) {
-                Thread.currentThread().interrupt();
-                return;
-            }
+            ThreadUtils.sleepOfUnSafe(20);
         }
     }
 }

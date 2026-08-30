@@ -130,7 +130,7 @@ public class MqttServerExampleSpi implements Example {
                     .build();
             client.start();
             client.subscribe().topic("test/topic").qos(1).start();
-            ThreadUtils.sleep(100);
+            ThreadUtils.sleepOfUnSafe(100);
             client.publish().topic("test/topic").payload("mqtt-publish-test").qos(1).send();
 
             assertTrue(received.await(5, TimeUnit.SECONDS), "应在 5s 内收到消息");
@@ -282,7 +282,7 @@ public class MqttServerExampleSpi implements Example {
                 log.warn("  │ 并发={} 客户端就绪超时", concurrency);
                 return null;
             }
-            ThreadUtils.sleep(50);
+            ThreadUtils.sleepOfUnSafe(50);
             long startWall = System.nanoTime();
             start.countDown();
             if (!done.await(300, TimeUnit.SECONDS)) {

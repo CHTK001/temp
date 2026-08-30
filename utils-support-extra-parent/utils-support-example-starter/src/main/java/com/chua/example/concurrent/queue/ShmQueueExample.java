@@ -238,7 +238,7 @@ public class ShmQueueExample {
         consumer.start();
 
         try {
-            ThreadUtils.sleep(100);
+            ThreadUtils.sleepOfUnSafe(100);
             try (ShmQueue q = ShmQueue.create(name, 1024, 512, ShmQueue.Mode.HYBRID)) {
                 for (int i = 0; i < expected; i++) {
                     q.send(i, ("msg-" + i).getBytes());

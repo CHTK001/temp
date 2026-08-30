@@ -181,8 +181,8 @@ public final class PerfReportExample {
                 try {
                     sampleCpu();
                     sampleMemory();
-                    ThreadUtils.sleep(200L);
-                } catch (InterruptedException e) {
+                    ThreadUtils.sleepOfUnSafe(200);
+                } catch (Exception e) {
                     break;
                 }
             }

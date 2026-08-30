@@ -557,17 +557,17 @@ public final class TaskRunnerExample {
         try {
             var runner = TaskRunner.of("ex-cancel")
                     .policy(CompletionPolicy.allSuccess())
-                    .task("long-blocking", ctx -> {
-                        started.countDown();
-                        try {
-                            ThreadUtils.sleep(30_000);
-                            return "never";
-                        } catch (InterruptedException e) {
-                            interrupted.incrementAndGet();
-                            Thread.currentThread().interrupt();
-                            throw new IllegalStateException("cancelled", e);
-                        }
-                    });
+                     .task("long-blocking", ctx -> {
+                         started.countDown();
+                         try {
+                             ThreadUtils.sleepOfUnSafe(30_000);
+                             return "never";
+                         } catch (InterruptedException e) {
+                             interrupted.incrementAndGet();
+                             Thread.currentThread().interrupt();
+                             throw new IllegalStateException("cancelled", e);
+                         }
+                     });
             CompletableFuture<RunResult> future = runner.execute(null);
             // 等任务真正进入阻塞后再取消，确保中断送达执行体
             if (!started.await(5, TimeUnit.SECONDS)) {

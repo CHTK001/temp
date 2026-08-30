@@ -346,11 +346,6 @@ public class PipelineCallbackExample implements Example {
 
     /** Sleep */
     private static void sleep(long ms) {
-        try {
-            ThreadUtils.sleep(ms);
-        } catch (InterruptedException ignored) {
-            log.warn("Caught: {}", ignored.getMessage());
-        }
     }
 
     /**

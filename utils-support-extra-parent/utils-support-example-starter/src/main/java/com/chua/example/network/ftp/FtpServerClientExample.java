@@ -87,7 +87,7 @@ public class FtpServerClientExample {
         server.start();
 
         try {
-            ThreadUtils.sleep(500);
+            ThreadUtils.sleepOfUnSafe(500);
             testAllCapabilities();
             System.out.println();
             System.out.println("========================================");

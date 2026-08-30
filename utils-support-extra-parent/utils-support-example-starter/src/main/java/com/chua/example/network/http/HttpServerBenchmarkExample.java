@@ -142,11 +142,7 @@ public final class HttpServerBenchmarkExample {
             server = ServerBuilder.create().type(serverType).host("127.0.0.1").port(0).build();
             ((ConfigServer) server).registerMapping("/echo", (req, resp) -> {
                 if (delayMs > 0) {
-                    try {
-                        ThreadUtils.sleep(delayMs);
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    }
+                    ThreadUtils.sleep(delayMs);
                 }
                 resp.setResult(body);
             });
@@ -162,11 +158,7 @@ public final class HttpServerBenchmarkExample {
                 while (!Thread.currentThread().isInterrupted()) {
                     long used = usedMemMb();
                     peakUsedMb.accumulateAndGet(used, Math::max);
-                    try {
-                        ThreadUtils.sleep(100L);
-                    } catch (InterruptedException e) {
-                        break;
-                    }
+                    ThreadUtils.sleepOfUnSafe(100);
                 }
             }, "bench-mem-sampler");
             memSampler.setDaemon(true);
@@ -185,7 +177,7 @@ public final class HttpServerBenchmarkExample {
             for (int i = 0; i < concurrency; i++) {
                 pool.submit(() -> {
                     try {
-                        ThreadUtils.sleep(10);
+                        ThreadUtils.sleepOfUnSafe(10);
                         ready.countDown();
                         start.await();
                         long[] mine = new long[requestsPerVu];
@@ -232,7 +224,7 @@ public final class HttpServerBenchmarkExample {
                 log.warn("[bench] {} delay={}ms 并发={} 就绪超时", serverType, delayMs, concurrency);
                 start.countDown();
             }
-            ThreadUtils.sleep(50);
+            ThreadUtils.sleepOfUnSafe(50);
             long wallStart = System.nanoTime();
             start.countDown();
             if (!done.await(60, TimeUnit.SECONDS)) {
@@ -271,11 +263,7 @@ public final class HttpServerBenchmarkExample {
             // 场景间隔离:上一个场景的虚拟线程/连接可能未完全释放,会污染下一个场景
             // (曾出现 nio 单跑正常 RPS=1056,但 jdk 之后连跑异常 RPS=38/p50=8s 的现象)
             System.gc();
-            try {
-                ThreadUtils.sleep(500L);
-            } catch (InterruptedException ignored) {
-                Thread.currentThread().interrupt();
-            }
+            ThreadUtils.sleepOfUnSafe(500);
         }
     }
 

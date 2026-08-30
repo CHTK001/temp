@@ -171,11 +171,6 @@ public final class BackupRoundTripExample {
      * @param millis 毫秒数
      */
     private static void sleepMillis(long millis) {
-        try {
-            ThreadUtils.sleep(millis);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
     }
 
     /**
