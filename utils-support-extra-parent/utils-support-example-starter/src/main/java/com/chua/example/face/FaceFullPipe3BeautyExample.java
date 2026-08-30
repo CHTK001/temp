@@ -9,6 +9,10 @@ import java.util.List;
 
 /**
  * 3peoplebeauty.jpg 全流程：检测→裁剪→输出到各模型子目录。
+ *
+ * @author CH
+ *
+ * @since 4.0.0
  */
 public class FaceFullPipe3BeautyExample {
     public static void main(String[] args) throws Exception {
@@ -77,3 +81,4 @@ public class FaceFullPipe3BeautyExample {
         System.exit(0);
     }
 }
+

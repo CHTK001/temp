@@ -5,6 +5,10 @@ import java.util.Map;
 
 /**
  * Tcp Proxy SPI 示例适配。
+ *
+ * @author CH
+ *
+ * @since 4.0.0
  */
 public class TcpProxyExampleSpi implements Example {
     @Override
@@ -19,3 +23,4 @@ public class TcpProxyExampleSpi implements Example {
         return true;
     }
 }
+

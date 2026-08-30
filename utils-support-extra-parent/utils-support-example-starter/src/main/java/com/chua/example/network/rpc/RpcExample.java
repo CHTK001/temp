@@ -5,6 +5,10 @@ import java.util.Map;
 
 /**
  * RPC 示例。
+ *
+ * @author CH
+ *
+ * @since 4.0.0
  */
 public class RpcExample implements Example {
     @Override
@@ -19,3 +23,4 @@ public class RpcExample implements Example {
         return true;
     }
 }
+

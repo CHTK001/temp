@@ -42,6 +42,8 @@ import java.nio.file.Path;
  *   ○ minConfidence          最低置信度过滤
  *   ○ sortReadingOrder       按阅读顺序重排
  * </pre>
+ *
+ * @author CH
  */
 public class OcrRecognitionDocExample {
     private OcrRecognitionDocExample() { }
@@ -68,3 +70,4 @@ public class OcrRecognitionDocExample {
         Files.write(Path.of("output.png"), drawn);
     }
 }
+

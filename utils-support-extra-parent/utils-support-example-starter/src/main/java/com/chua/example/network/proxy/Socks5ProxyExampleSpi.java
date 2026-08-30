@@ -5,6 +5,10 @@ import java.util.Map;
 
 /**
  * Socks5 Proxy SPI 示例适配。
+ *
+ * @author CH
+ *
+ * @since 4.0.0
  */
 public class Socks5ProxyExampleSpi implements Example {
     @Override
@@ -19,3 +23,4 @@ public class Socks5ProxyExampleSpi implements Example {
         return true;
     }
 }
+

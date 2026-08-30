@@ -5,6 +5,10 @@ import java.util.Map;
 
 /**
  * NIO HTTP Server SPI 示例适配。
+ *
+ * @author CH
+ *
+ * @since 4.0.0
  */
 public class NioHttpServerExampleSpi implements Example {
     @Override
@@ -19,3 +23,4 @@ public class NioHttpServerExampleSpi implements Example {
         return true;
     }
 }
+

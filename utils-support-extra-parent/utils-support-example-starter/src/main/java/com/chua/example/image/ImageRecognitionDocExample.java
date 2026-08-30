@@ -36,6 +36,8 @@ import com.chua.common.support.image.ImagePipeline;
  *   目标检测    定位图中物体（检测器未接入）
  *   图像增强    超分辨率/去噪等预处理（未接入）
  * </pre>
+ *
+ * @author CH
  */
 public class ImageRecognitionDocExample {
     private ImageRecognitionDocExample() { }
@@ -49,3 +51,4 @@ public class ImageRecognitionDocExample {
         System.out.println("  pipeline ready");
     }
 }
+

@@ -64,6 +64,8 @@ import java.util.List;
  *   <li>关键点(landmark)用于 align 步骤，位于特征提取前，不单独“在提取后检测”。</li>
  *   <li>深伪检测(deepfake)是独立的辅助能力，通过 pipeline.isDeepfake(image) 调用，不在主流程中。</li>
  * </ul>
+ *
+ * @author CH
  */
 public class FaceRecognitionDocExample {
     private FaceRecognitionDocExample() { }
