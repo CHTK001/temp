@@ -2,6 +2,7 @@ package com.chua.example.runner;
 
 import com.chua.common.support.spi.ServiceProvider;
 import com.chua.example.spi.Example;
+import com.chua.example.util.ExampleUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
@@ -36,7 +37,7 @@ public final class ExampleRunner {
      * @param args 命令行参数，支持 --example=xxx [附加参数...]
      */
     public static void main(String[] args) {
-        Map<String, String> parsed = parseArgs(args);
+        Map<String, String> parsed = ExampleUtils.parseArgs(args);
         String exampleName = parsed.remove("example");
 
         ServiceProvider<Example> provider = ServiceProvider.of(Example.class);
@@ -87,28 +88,5 @@ public final class ExampleRunner {
                 log.info("  --example=%-18s %-20s %s", e.name(), e.module(), e.description());
             }
             log.info("\n附加参数由具体示例自行解析，例如 --type=nio --mode=perf");
-    }
-
-    /**
-     * 解析命令行参数为 Map。
-     * 支持 --key=value 或 --key value 格式。
-     */
-    private static Map<String, String> parseArgs(String[] args) {
-        Map<String, String> result = new HashMap<>();
-        for (int i = 0; i < args.length; i++) {
-            String arg = args[i];
-            if (arg.startsWith("--")) {
-                String key = arg.substring(2);
-                int eq = key.indexOf('=');
-                if (eq > 0) {
-                    result.put(key.substring(0, eq), key.substring(eq + 1));
-                } else if (i + 1 < args.length && !args[i + 1].startsWith("--")) {
-                    result.put(key, args[++i]);
-                } else {
-                    result.put(key, "true");
-                }
-            }
-        }
-        return result;
     }
 }

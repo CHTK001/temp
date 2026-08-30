@@ -4,6 +4,7 @@ import com.chua.common.support.ai.chat.ModelDefinition;
 import com.chua.common.support.datasearch.pricing.spi.AbstractModelMetricsProvider;
 import com.chua.common.support.datasearch.pricing.spi.ModelMetricsProvider;
 import com.chua.common.support.reflection.ReflectUtils;
+import com.chua.example.util.ExampleUtils;
 
 import java.util.List;
 import java.util.ServiceLoader;
@@ -50,7 +51,7 @@ public final class ModelMetricsExample {
      * @param args 命令行参数
      */
     public static void main(String[] args) {
-        String spiName = parseArgs(args).getOrDefault("spi", SPI_ALL);
+        String spiName = ExampleUtils.parseArgs(args).getOrDefault("spi", SPI_ALL);
         int failures = 0;
         int total = 0;
         System.out.printf("%-18s %7s %8s   %s%n",
@@ -82,29 +83,6 @@ public final class ModelMetricsExample {
             return;
         }
         System.exit(0);
-    }
-
-    /**
-     * 解析命令行参数，支持 {@code --key=value} 与 {@code --key value} 两种形式。
-     *
-     * @param args 命令行参数
-     * @return 参数键值对
-     */
-    private static java.util.Map<String, String> parseArgs(String[] args) {
-        java.util.Map<String, String> params = new java.util.LinkedHashMap<>();
-        for (int i = 0; i < args.length; i++) {
-            String arg = args[i];
-            if (!arg.startsWith(PARAM_PREFIX)) {
-                continue;
-            }
-            int idx = arg.indexOf('=');
-            if (idx > PARAM_PREFIX.length()) {
-                params.put(arg.substring(PARAM_PREFIX.length(), idx), arg.substring(idx + 1));
-            } else if (i + 1 < args.length && !args[i + 1].startsWith(PARAM_PREFIX)) {
-                params.put(arg.substring(PARAM_PREFIX.length()), args[++i]);
-            }
-        }
-        return params;
     }
 
     /**
