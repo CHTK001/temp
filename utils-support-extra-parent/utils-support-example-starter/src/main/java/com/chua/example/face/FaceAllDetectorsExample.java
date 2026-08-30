@@ -70,7 +70,11 @@ public class FaceAllDetectorsExample {
                     }
                 }
                 row.append(String.format(" | %s", anyOk ? "OK" : "NO_DETECT"));
-                if (anyOk) okCount++; else failCount++;
+                if (anyOk) {
+                okCount++;
+            } else {
+                failCount++;
+            }
             } catch (Exception e) {
                 row.append(String.format(" | INIT_FAIL: %.40s", e.getMessage()));
                 failCount++;

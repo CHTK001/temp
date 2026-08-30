@@ -115,19 +115,20 @@ public class InsightFaceExample {
     private static float[] largestFeature(FacePipeline face, FeatureExtractor extractor, String file) {
         Path f = Path.of("D:\\images", file);
         if (!Files.exists(f)) {
-            return null;
+            throw new IllegalArgumentException("图片不存在: " + f);
         }
         try {
             byte[] imageData = Files.readAllBytes(f);
             BufferedImage src = ImageIO.read(new ByteArrayInputStream(imageData));
             FaceDetectionHit largest = face.detectLargest(imageData);
             if (largest == null || largest.box() == null) {
-                return null;
+                throw new IllegalStateException("未检测到人脸");
             }
             byte[] crop = crop(src, largest.box());
-            return crop == null ? null : extractor.extract(crop);
+            if (crop == null) throw new IllegalStateException("人脸裁剪失败");
+            return extractor.extract(crop);
         } catch (Exception e) {
-            return null;
+            throw new RuntimeException("人脸处理失败", e);
         }
     }
 
@@ -147,7 +148,7 @@ public class InsightFaceExample {
             ImageIO.write(faceImg, "png", out);
             return out.toByteArray();
         } catch (Exception e) {
-            return null;
+            throw new RuntimeException("人脸处理失败", e);
         }
     }
 }

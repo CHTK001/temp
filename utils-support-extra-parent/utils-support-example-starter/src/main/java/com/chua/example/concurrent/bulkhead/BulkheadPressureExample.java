@@ -71,8 +71,11 @@ public final class BulkheadPressureExample {
         for (int round = 0; round < 3; round++) {
             for (int i = 0; i < maxConcurrent; i++) {
                 Thread.ofVirtual().start(() -> {
+                        
                     try {
+                        
                         flow.execute(() -> {
+                        
                             counter.incrementAndGet();
                             return "ok";
                         });
@@ -102,7 +105,9 @@ public final class BulkheadPressureExample {
         var innerCounter = new AtomicInteger();
 
         Thread t1 = Thread.ofVirtual().start(() -> {
+                        
             flow.execute(() -> {
+                        
                 return "hold";
             });
         });
@@ -110,7 +115,9 @@ public final class BulkheadPressureExample {
         ThreadUtils.sleepMillisecondsQuietly(200);
 
         Thread t2 = Thread.ofVirtual().start(() -> {
+                        
             Object result = flow.execute(() -> {
+                        
                 innerCounter.incrementAndGet();
                 return "second";
             });
@@ -140,7 +147,9 @@ public final class BulkheadPressureExample {
         passed &= ExampleUtils.timed("alternatingPasses", BulkheadPressureExample::alternatingPasses);
         passed &= ExampleUtils.timed("extremeReentry", BulkheadPressureExample::extremeReentry);
         if (!passed) {
+            
             System.out.println("[FAIL] Bulkhead压力测试存在失败场景");
+            
             System.exit(ExampleUtils.FAILURE);
         }
         System.out.println("[PASS] Bulkhead压力测试全部通过");

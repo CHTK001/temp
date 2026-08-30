@@ -49,8 +49,11 @@ public class SimpleEngineDataSourceExample implements EngineDataSource<Object> {
         this.source = url;
     }
 
+    /**
+     * 获取数据源名称。
+     * @return 数据源名称
+     */
     @Override
-    /** Name */
     public String name() {
         return name;
     }

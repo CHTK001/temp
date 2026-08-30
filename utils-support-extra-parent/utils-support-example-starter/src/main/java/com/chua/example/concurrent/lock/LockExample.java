@@ -85,7 +85,9 @@ public final class LockExample {
         passed &= ExampleUtils.timed("fallbackOnUnresolvable", LockExample::fallbackOnUnresolvable);
         passed &= ExampleUtils.timed("concurrentTryLockContention", LockExample::concurrentTryLockContention);
         if (!passed) {
+            
             System.out.println("[FAIL] Lock 存在失败场景");
+            
             System.exit(ExampleUtils.FAILURE);
         }
         System.out.println("[PASS] Lock 全部场景通过");

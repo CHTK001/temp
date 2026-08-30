@@ -56,7 +56,9 @@ public final class BulkheadExample {
         passed &= ExampleUtils.timed("normalExecute", BulkheadExample::normalExecute);
         passed &= ExampleUtils.timed("fallbackOnOverload", BulkheadExample::fallbackOnOverload);
         if (!passed) {
+            
             System.out.println("[FAIL] Bulkhead 瀛樺湪澶辫触鍦烘櫙");
+            
             System.exit(ExampleUtils.FAILURE);
         }
         System.out.println("[PASS] Bulkhead 鍏ㄩ儴鍦烘櫙閫氳繃");
