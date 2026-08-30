@@ -35,18 +35,6 @@ public final class AsyncDeduplicateExample {
     }
 
     /**
-     * 输出异常失败信息。
-     *
-     * @param name 场景名
-     * @param e    异常
-     * @return 恒为 false
-     */
-    private static boolean fail(String name, Exception e) {
-        log.info("[FAIL] " + name + " 异常: " + e);
-        return false;
-    }
-
-    /**
      * 场景一：supply 异步取值 + run 异步执行 + supplyAll 批量保序聚合。
      *
      * @return true 表示通过
