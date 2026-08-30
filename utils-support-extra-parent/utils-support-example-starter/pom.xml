@@ -812,6 +812,9 @@
                         <exclude>**/timer/TimeWheelExample.java</exclude>
                         <exclude>**/network/http/HttpServerBenchmarkExample.java</exclude>
                         <exclude>**/network/perf/PerfReportExample.java</exclude>
+                        <exclude>**/collection/LazyExpiringListExample.java</exclude>
+                        <exclude>**/onnx/PocketTtsEdgeCaseExample.java</exclude>
+                        <exclude>**/network/rpc/RpcServerExample.java</exclude>
                         </excludes>
 
                 </configuration>
