@@ -5,7 +5,7 @@ import com.chua.common.support.task.message.MessagePush;
 import com.chua.common.support.task.message.MessageRequest;
 import com.chua.common.support.task.message.MessageResponse;
 
-import java.util.function.BooleanSupplier;
+import com.chua.example.util.ExampleUtils;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -25,14 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public final class MessageHookExample {
 
-    private static final int EXIT_CODE_SUCCESS = 0;
-    private static final int EXIT_CODE_FAILURE = 1;
-
     private MessageHookExample() {
-    }
-
-    private static void print(String name, boolean ok) {
-        log.info((ok ? "[PASS] " : "[FAIL] ") + name);
     }
 
     /**
@@ -56,7 +49,7 @@ public final class MessageHookExample {
         try {
             MessagePush push = MessagePush.create("webhook");
             boolean ok = push != null;
-            print("spiResolvesWebhookImplementation", ok);
+            ExampleUtils.print("spiResolvesWebhookImplementation", ok);
             return ok;
         } catch (Exception e) {
             return fail("spiResolvesWebhookImplementation", e);
@@ -74,7 +67,7 @@ public final class MessageHookExample {
             MessageResponse resp = push.send(MessageRequest.builder()
                     .to("ops").content("{}").contentType("application/json").build());
             boolean ok = !resp.isSuccess() && resp.getErrorMessage() != null;
-            print("missingUrlFails (" + resp.getErrorMessage() + ")", ok);
+            ExampleUtils.print("missingUrlFails (" + resp.getErrorMessage() + ")", ok);
             return ok;
         } catch (Exception e) {
             return fail("missingUrlFails", e);
@@ -95,7 +88,7 @@ public final class MessageHookExample {
             MessageResponse resp = push.send(MessageRequest.builder()
                     .to("ops").content("{\"event\":\"test\"}").contentType("application/json").build());
             boolean ok = resp != null && !resp.isSuccess();
-            print("unreachableFailsGracefully", ok);
+            ExampleUtils.print("unreachableFailsGracefully", ok);
             return ok;
         } catch (Exception e) {
             return fail("unreachableFailsGracefully", e);
@@ -109,30 +102,18 @@ public final class MessageHookExample {
      */
     public static void main(String[] args) {
         boolean passed = true;
-        passed &= timed("spiResolvesWebhookImplementation",
+        passed &= ExampleUtils.timed("spiResolvesWebhookImplementation",
                 MessageHookExample::spiResolvesWebhookImplementation);
-        passed &= timed("missingUrlFails", MessageHookExample::missingUrlFails);
-        passed &= timed("unreachableFailsGracefully",
+        passed &= ExampleUtils.timed("missingUrlFails", MessageHookExample::missingUrlFails);
+        passed &= ExampleUtils.timed("unreachableFailsGracefully",
                 MessageHookExample::unreachableFailsGracefully);
         if (!passed) {
             log.info("[FAIL] MessageHook 存在失败场景");
-            System.exit(EXIT_CODE_FAILURE);
+            System.exit(ExampleUtils.FAILURE);
         }
         log.info("[PASS] MessageHook 全部场景通过");
-        System.exit(EXIT_CODE_SUCCESS);
+        System.exit(ExampleUtils.SUCCESS);
     }
 
-    /**
-     * 带耗时的场景执行器。
-     *
-     * @param name     场景名
-     * @param scenario 场景逻辑
-     * @return 场景是否通过
-     */
-    private static boolean timed(String name, BooleanSupplier scenario) {
-        long start = System.currentTimeMillis();
-        boolean ok = scenario.getAsBoolean();
-        log.info("[TIME] " + name + " " + (System.currentTimeMillis() - start) + "ms");
-        return ok;
-    }
+
 }

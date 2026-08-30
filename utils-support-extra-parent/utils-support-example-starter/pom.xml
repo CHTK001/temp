@@ -443,6 +443,16 @@
         </dependency>
         <dependency>
             <groupId>com.chua</groupId>
+            <artifactId>utils-support-postgresql-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-support-sqlserver-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.chua</groupId>
             <artifactId>utils-support-lucene-starter</artifactId>
             <version>${project.version}</version>
         </dependency>

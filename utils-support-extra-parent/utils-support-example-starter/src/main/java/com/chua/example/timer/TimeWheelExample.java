@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.BooleanSupplier;
 import lombok.extern.slf4j.Slf4j;
+import com.chua.example.util.ExampleUtils;
 
 /**
  * 哈希时间轮 {@link Timer} / {@link TimerTask} 全场景自检示例。
@@ -27,16 +27,6 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public final class TimeWheelExample {
-
-    /**
-     * 退出码：成功
-     */
-    private static final int EXIT_CODE_SUCCESS = 0;
-
-    /**
-     * 退出码：失败
-     */
-    private static final int EXIT_CODE_FAILURE = 1;
 
     /**
      * 时间轮槽位数
@@ -63,22 +53,22 @@ public final class TimeWheelExample {
      */
     public static void main(String[] args) {
         var passed = true;
-        passed &= timed("singleShotFiresOnTime", TimeWheelExample::singleShotFiresOnTime);
-        passed &= timed("multipleTasksAllFire", TimeWheelExample::multipleTasksAllFire);
-        passed &= timed("periodicFiresThenCancelStops", TimeWheelExample::periodicFiresThenCancelStops);
-        passed &= timed("cancelPreventsExecution", TimeWheelExample::cancelPreventsExecution);
-        passed &= timed("taskExceptionDoesNotKillWheel", TimeWheelExample::taskExceptionDoesNotKillWheel);
-        passed &= timed("shutdownStopsScheduling", TimeWheelExample::shutdownStopsScheduling);
-        passed &= timed("tickCountProgresses", TimeWheelExample::tickCountProgresses);
-        passed &= timed("slowTaskDoesNotBlockWheel", TimeWheelExample::slowTaskDoesNotBlockWheel);
-        passed &= timed("cancelInterruptsRunningTask", TimeWheelExample::cancelInterruptsRunningTask);
-        passed &= timed("taskCountMatchesScheduled", TimeWheelExample::taskCountMatchesScheduled);
+        passed &= ExampleUtils.timed("singleShotFiresOnTime", TimeWheelExample::singleShotFiresOnTime);
+        passed &= ExampleUtils.timed("multipleTasksAllFire", TimeWheelExample::multipleTasksAllFire);
+        passed &= ExampleUtils.timed("periodicFiresThenCancelStops", TimeWheelExample::periodicFiresThenCancelStops);
+        passed &= ExampleUtils.timed("cancelPreventsExecution", TimeWheelExample::cancelPreventsExecution);
+        passed &= ExampleUtils.timed("taskExceptionDoesNotKillWheel", TimeWheelExample::taskExceptionDoesNotKillWheel);
+        passed &= ExampleUtils.timed("shutdownStopsScheduling", TimeWheelExample::shutdownStopsScheduling);
+        passed &= ExampleUtils.timed("tickCountProgresses", TimeWheelExample::tickCountProgresses);
+        passed &= ExampleUtils.timed("slowTaskDoesNotBlockWheel", TimeWheelExample::slowTaskDoesNotBlockWheel);
+        passed &= ExampleUtils.timed("cancelInterruptsRunningTask", TimeWheelExample::cancelInterruptsRunningTask);
+        passed &= ExampleUtils.timed("taskCountMatchesScheduled", TimeWheelExample::taskCountMatchesScheduled);
         if (!passed) {
             log.info("[FAIL] TimeWheel 存在失败场景");
-            System.exit(EXIT_CODE_FAILURE);
+            System.exit(ExampleUtils.FAILURE);
         }
         log.info("[PASS] TimeWheel 全部场景通过");
-        System.exit(EXIT_CODE_SUCCESS);
+        System.exit(ExampleUtils.SUCCESS);
     }
 
     /**
@@ -132,7 +122,7 @@ public final class TimeWheelExample {
         try {
             wheel.schedule(fired::countDown, 100, TimeUnit.MILLISECONDS);
             var ok = await(fired, 2000);
-            print("singleShotFiresOnTime", ok);
+            ExampleUtils.print("singleShotFiresOnTime", ok);
             return ok;
         } finally {
             wheel.shutdown();
@@ -157,7 +147,7 @@ public final class TimeWheelExample {
                 }, delay, TimeUnit.MILLISECONDS);
             }
             var ok = await(allDone, 2000) && counter.get() == 3;
-            print("multipleTasksAllFire (" + counter.get() + "/3)", ok);
+            ExampleUtils.print("multipleTasksAllFire (" + counter.get() + "/3)", ok);
             return ok;
         } finally {
             wheel.shutdown();
@@ -179,7 +169,7 @@ public final class TimeWheelExample {
             sleepMillis(600);
             int countBeforeCancel = counter.get();
             if (countBeforeCancel < 3) {
-                print("periodicFiresThenCancelStops (触发不足: " + countBeforeCancel + ")", false);
+                ExampleUtils.print("periodicFiresThenCancelStops (触发不足: " + countBeforeCancel + ")", false);
                 return false;
             }
             wheel.cancel(periodic);
@@ -187,7 +177,7 @@ public final class TimeWheelExample {
             sleepMillis(400);
             int countAfterWait = counter.get();
             var ok = countAfterWait == countAtCancel || countAfterWait == countAtCancel + 1;
-            print("periodicFiresThenCancelStops (before=" + countBeforeCancel
+            ExampleUtils.print("periodicFiresThenCancelStops (before=" + countBeforeCancel
                     + " after=" + countAfterWait + ")", ok);
             return ok;
         } finally {
@@ -209,7 +199,7 @@ public final class TimeWheelExample {
             wheel.cancel(doomed);
             sleepMillis(500);
             var ok = counter.get() == 0 && doomed.isCancelled();
-            print("cancelPreventsExecution", ok);
+            ExampleUtils.print("cancelPreventsExecution", ok);
             return ok;
         } finally {
             wheel.shutdown();
@@ -232,7 +222,7 @@ public final class TimeWheelExample {
             sleepMillis(120);
             wheel.schedule(survivor::countDown, 50, TimeUnit.MILLISECONDS);
             var ok = await(survivor, 2000) && wheel.isRunning();
-            print("taskExceptionDoesNotKillWheel", ok);
+            ExampleUtils.print("taskExceptionDoesNotKillWheel", ok);
             return ok;
         } finally {
             wheel.shutdown();
@@ -250,7 +240,7 @@ public final class TimeWheelExample {
         wheel.shutdown();
         TimerTask rejected = wheel.schedule(() -> { }, 10_000, TimeUnit.MILLISECONDS);
         var ok = !wheel.isRunning() && rejected == null;
-        print("shutdownStopsScheduling", ok);
+        ExampleUtils.print("shutdownStopsScheduling", ok);
         return ok;
     }
 
@@ -266,7 +256,7 @@ public final class TimeWheelExample {
             sleepMillis(300);
             long after = wheel.getTickCount();
             var ok = after > before;
-            print("tickCountProgresses (" + before + "->" + after + ")", ok);
+            ExampleUtils.print("tickCountProgresses (" + before + "->" + after + ")", ok);
             return ok;
         } finally {
             wheel.shutdown();
@@ -288,7 +278,7 @@ public final class TimeWheelExample {
             wheel.schedule(shortFired::countDown, 40, TimeUnit.MILLISECONDS);
             // 高负载环境下 tick 可能变慢，窗口给足裕量但仍小于阻塞路径的 450ms 下限
             var ok = await(shortFired, 800);
-            print("slowTaskDoesNotBlockWheel", ok);
+            ExampleUtils.print("slowTaskDoesNotBlockWheel", ok);
             return ok;
         } finally {
             wheel.shutdown();
@@ -315,7 +305,7 @@ public final class TimeWheelExample {
                 }
             }, 30, TimeUnit.MILLISECONDS);
             if (!await(started, 2000)) {
-                print("cancelInterruptsRunningTask (未启动)", false);
+                ExampleUtils.print("cancelInterruptsRunningTask (未启动)", false);
                 return false;
             }
             wheel.cancel(task);
@@ -324,7 +314,7 @@ public final class TimeWheelExample {
                 sleepMillis(100);
             }
             var ok = interruptedFlag.get() > 0 && task.isCancelled();
-            print("cancelInterruptsRunningTask", ok);
+            ExampleUtils.print("cancelInterruptsRunningTask", ok);
             return ok;
         } finally {
             wheel.shutdown();
@@ -346,7 +336,7 @@ public final class TimeWheelExample {
             sleepMillis(900);
             int afterFire = wheel.getTaskCount();
             var ok = pending == 5 && afterFire == 0;
-            print("taskCountMatchesScheduled (pending=" + pending + " after=" + afterFire + ")", ok);
+            ExampleUtils.print("taskCountMatchesScheduled (pending=" + pending + " after=" + afterFire + ")", ok);
             return ok;
         } finally {
             wheel.shutdown();
@@ -355,28 +345,5 @@ public final class TimeWheelExample {
 
     // ==================== 辅助 ====================
 
-    /**
-     * 带耗时的场景执行器：输出 [场景名 (耗时ms)] 前缀。
-     *
-     * @param name     场景名
-     * @param scenario 场景逻辑
-     * @return 场景是否通过
-     */
-    private static boolean timed(String name, BooleanSupplier scenario) {
-        long start = System.currentTimeMillis();
-        boolean ok = scenario.getAsBoolean();
-        log.info((ok ? "[PASS] " : "[FAIL] ") + name
-                + " (" + (System.currentTimeMillis() - start) + "ms)");
-        return ok;
-    }
 
-    /**
-     * 输出单场景结果标记。
-     *
-     * @param name 场景名
-     * @param ok   是否通过
-     */
-    private static void print(String name, boolean ok) {
-        log.info((ok ? "[PASS] " : "[FAIL] ") + name);
-    }
 }

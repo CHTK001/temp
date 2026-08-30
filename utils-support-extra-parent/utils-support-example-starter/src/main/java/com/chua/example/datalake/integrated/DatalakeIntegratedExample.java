@@ -24,6 +24,7 @@ import com.chua.starter.datasync.agent.AgentServerManager;
 import com.chua.starter.datasync.mapping.DataSyncFieldMapping;
 import com.chua.starter.datasync.model.DataSyncMapping;
 import lombok.extern.slf4j.Slf4j;
+import com.chua.example.util.ExampleUtils;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.GlobalMemory;
 import oshi.hardware.HardwareAbstractionLayer;
@@ -73,16 +74,6 @@ import java.util.function.Consumer;
 public class DatalakeIntegratedExample {
 
     /**
-     * 退出码：成功
-     */
-    private static final int EXIT_CODE_SUCCESS = 0;
-
-    /**
-     * 退出码：失败
-     */
-    private static final int EXIT_CODE_FAILURE = 1;
-
-    /**
      * 默认运行时长（秒）
      */
     private static final int DEFAULT_DURATION_SECONDS = 5;
@@ -104,7 +95,7 @@ public class DatalakeIntegratedExample {
         DatalakeIntegratedExample example = new DatalakeIntegratedExample();
         boolean passed = example.runTest(duration);
         log.info("[DatalakeIntegratedExample] self-test duration={}s, passed={}", duration, passed);
-        System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
     }
 
     /**

@@ -9,8 +9,8 @@ import com.chua.common.support.tree.TreeNode;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.BooleanSupplier;
 import lombok.extern.slf4j.Slf4j;
+import com.chua.example.util.ExampleUtils;
 
 /**
  * B+/B 树引擎全场景自检示例。
@@ -23,46 +23,30 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public final class BTreeExample {
 
-    private static final int EXIT_CODE_SUCCESS = 0;
-    private static final int EXIT_CODE_FAILURE = 1;
-
     private BTreeExample() {
     }
 
     public static void main(String[] args) {
         var passed = true;
-        passed &= timed("bplusPutAndGet", BTreeExample::bplusPutAndGet);
-        passed &= timed("bplusRangeQuery", BTreeExample::bplusRangeQuery);
-        passed &= timed("bplusDelete", BTreeExample::bplusDelete);
-        passed &= timed("bplusLargeScale", BTreeExample::bplusLargeScale);
-        passed &= timed("bplusPerf", BTreeExample::bplusPerf);
-        passed &= timed("btreePerf", BTreeExample::btreePerf);
-        passed &= timed("bplusToBinaryAndBack", BTreeExample::bplusToBinaryAndBack);
-        passed &= timed("btreePutAndGet", BTreeExample::btreePutAndGet);
-        passed &= timed("btreeRangeQuery", BTreeExample::btreeRangeQuery);
-        passed &= timed("btreeDelete", BTreeExample::btreeDelete);
-        passed &= timed("btreeToBinaryAndBack", BTreeExample::btreeToBinaryAndBack);
+        passed &= ExampleUtils.timed("bplusPutAndGet", BTreeExample::bplusPutAndGet);
+        passed &= ExampleUtils.timed("bplusRangeQuery", BTreeExample::bplusRangeQuery);
+        passed &= ExampleUtils.timed("bplusDelete", BTreeExample::bplusDelete);
+        passed &= ExampleUtils.timed("bplusLargeScale", BTreeExample::bplusLargeScale);
+        passed &= ExampleUtils.timed("bplusPerf", BTreeExample::bplusPerf);
+        passed &= ExampleUtils.timed("btreePerf", BTreeExample::btreePerf);
+        passed &= ExampleUtils.timed("bplusToBinaryAndBack", BTreeExample::bplusToBinaryAndBack);
+        passed &= ExampleUtils.timed("btreePutAndGet", BTreeExample::btreePutAndGet);
+        passed &= ExampleUtils.timed("btreeRangeQuery", BTreeExample::btreeRangeQuery);
+        passed &= ExampleUtils.timed("btreeDelete", BTreeExample::btreeDelete);
+        passed &= ExampleUtils.timed("btreeToBinaryAndBack", BTreeExample::btreeToBinaryAndBack);
         if (!passed) {
             log.info("[FAIL] BTreeExample 存在失败场景");
-            System.exit(EXIT_CODE_FAILURE);
+            System.exit(ExampleUtils.FAILURE);
         }
         log.info("[PASS] BTreeExample 全部场景通过");
-        System.exit(EXIT_CODE_SUCCESS);
+        System.exit(ExampleUtils.SUCCESS);
     }
 
-    /**
-     * 计时执行测试场景并记录耗时。
-     *
-     * @param name     场景名称，用于日志与输出标记
-     * @param scenario 测试场景，返回 true 表示通过
-     * @return 场景是否通过
-     */
-    private static boolean timed(String name, BooleanSupplier scenario) {
-        long start = System.currentTimeMillis();
-        boolean ok = scenario.getAsBoolean();
-        log.info("[TIME] " + name + " " + (System.currentTimeMillis() - start) + "ms");
-        return ok;
-    }
 
     // ==================== B+ 树测试 ====================
 
@@ -78,7 +62,7 @@ public final class BTreeExample {
             assert tree.get(1).equals(Optional.of("one")) : "bplusPutAndGet get 1";
             assert tree.get(99).equals(Optional.empty()) : "bplusPutAndGet get miss";
             assert tree.size() == 4 : "bplusPutAndGet size";
-            print("bplusPutAndGet", true);
+            ExampleUtils.print("bplusPutAndGet", true);
             return true;
         } catch (Exception e) {
             return fail("bplusPutAndGet", e);
@@ -94,7 +78,7 @@ public final class BTreeExample {
             List<Map.Entry<Integer, String>> range = tree.range(3, 8);
             var ids = range.stream().map(Map.Entry::getKey).toList();
             boolean ok = ids.equals(List.of(3, 4, 5, 6, 7));
-            print("bplusRangeQuery", ok);
+            ExampleUtils.print("bplusRangeQuery", ok);
             return ok;
         } catch (Exception e) {
             return fail("bplusRangeQuery", e);
@@ -115,7 +99,7 @@ public final class BTreeExample {
 
             Optional<String> miss = tree.remove(99);
             assert miss.equals(Optional.empty()) : "bplusDelete remove miss";
-            print("bplusDelete", true);
+            ExampleUtils.print("bplusDelete", true);
             return true;
         } catch (Exception e) {
             return fail("bplusDelete", e);
@@ -141,7 +125,7 @@ public final class BTreeExample {
 
             List<Map.Entry<Integer, String>> range = tree.range(500_000, 500_100);
             boolean ok = range.size() == 100;
-            print("bplusLargeScale", ok);
+            ExampleUtils.print("bplusLargeScale", ok);
             return ok;
         } catch (Exception e) {
             return fail("bplusLargeScale", e);
@@ -232,7 +216,7 @@ public final class BTreeExample {
             assert restored.get(30).equals(Optional.of("thirty")) : "bplusToBinaryAndBack 30";
             assert restored.get(5).equals(Optional.of("five")) : "bplusToBinaryAndBack 5";
             assert restored.size() == 4 : "bplusToBinaryAndBack size";
-            print("bplusToBinaryAndBack", true);
+            ExampleUtils.print("bplusToBinaryAndBack", true);
             return true;
         } catch (Exception e) {
             return fail("bplusToBinaryAndBack", e);
@@ -250,7 +234,7 @@ public final class BTreeExample {
             assert tree.get(1).equals(Optional.of("one")) : "btreePutAndGet get 1";
             assert !tree.containsKey(99) : "btreePutAndGet containsKey miss";
             assert tree.size() == 3 : "btreePutAndGet size";
-            print("btreePutAndGet", true);
+            ExampleUtils.print("btreePutAndGet", true);
             return true;
         } catch (Exception e) {
             return fail("btreePutAndGet", e);
@@ -266,7 +250,7 @@ public final class BTreeExample {
             List<Map.Entry<Integer, String>> range = tree.range(3, 8);
             var ids = range.stream().map(Map.Entry::getKey).toList();
             boolean ok = ids.equals(List.of(3, 4, 5, 6, 7));
-            print("btreeRangeQuery", ok);
+            ExampleUtils.print("btreeRangeQuery", ok);
             return ok;
         } catch (Exception e) {
             return fail("btreeRangeQuery", e);
@@ -284,7 +268,7 @@ public final class BTreeExample {
             assert removed.equals(Optional.of("b")) : "btreeDelete remove 2";
             assert !tree.containsKey(2) : "btreeDelete containsKey 2";
             assert tree.size() == 2 : "btreeDelete size";
-            print("btreeDelete", true);
+            ExampleUtils.print("btreeDelete", true);
             return true;
         } catch (Exception e) {
             return fail("btreeDelete", e);
@@ -307,7 +291,7 @@ public final class BTreeExample {
             assert restored.get(30).equals(Optional.of("thirty")) : "btreeToBinaryAndBack 30";
             assert restored.get(5).equals(Optional.of("five")) : "btreeToBinaryAndBack 5";
             assert restored.size() == 4 : "btreeToBinaryAndBack size";
-            print("btreeToBinaryAndBack", true);
+            ExampleUtils.print("btreeToBinaryAndBack", true);
             return true;
         } catch (Exception e) {
             return fail("btreeToBinaryAndBack", e);
@@ -315,10 +299,6 @@ public final class BTreeExample {
     }
 
     // ==================== 辅助 ====================
-
-    private static void print(String name, boolean ok) {
-        log.info("[{}] {}", ok ? "PASS" : "FAIL", name);
-    }
 
     private static boolean fail(String name, Exception e) {
         log.info("[FAIL] " + name + " 异常: " + e);

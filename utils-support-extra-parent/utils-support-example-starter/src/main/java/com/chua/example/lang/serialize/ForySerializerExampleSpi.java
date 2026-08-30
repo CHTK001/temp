@@ -104,10 +104,10 @@ public class ForySerializerExampleSpi implements Example {
             assertEquals("fory", result.getTags().get(1), "tags 内容");
             // 循环引用保持对象身份（引用一致性检查，避免 Lombok equals 递归）
             assertSame(result, result.getFriend(), "循环引用应保持对象身份");
-            pass();
+            ExampleUtils.pass();
             return true;
         } catch (Exception e) {
-            fail("循环引用往返异常: " + e.getMessage());
+            ExampleUtils.fail("循环引用往返异常: " + e.getMessage());
             return false;
         }
     }
@@ -124,10 +124,10 @@ public class ForySerializerExampleSpi implements Example {
             assertEquals(0, serializer.serialize(null).length, "serialize(null) 应返回空数组");
             assertEquals(null, serializer.deserialize(null), "deserialize(null) 应返回 null");
             assertEquals(null, serializer.deserialize(new byte[0]), "deserialize(空数组) 应返回 null");
-            pass();
+            ExampleUtils.pass();
             return true;
         } catch (Exception e) {
-            fail("null 输入异常: " + e.getMessage());
+            ExampleUtils.fail("null 输入异常: " + e.getMessage());
             return false;
         }
     }
@@ -152,10 +152,10 @@ public class ForySerializerExampleSpi implements Example {
             assertNotNull(result, "接口反序列化结果不应为 null");
             assertEquals("interface", result.getName(), "接口反序列化 name");
             assertEquals(30, result.getAge(), "接口反序列化 age");
-            pass();
+            ExampleUtils.pass();
             return true;
         } catch (Exception e) {
-            fail("Serialization 接口异常: " + e.getMessage());
+            ExampleUtils.fail("Serialization 接口异常: " + e.getMessage());
             return false;
         }
     }
@@ -235,21 +235,5 @@ public class ForySerializerExampleSpi implements Example {
         if (expected == null ? actual != null : !expected.equals(actual)) {
             throw new AssertionError(msg + " — 期望 " + expected + "，实际 " + actual);
         }
-    }
-
-    /**
-     * 记录用例通过日志。
-     */
-    private static void pass() {
-        log.info("  ✓ 通过");
-    }
-
-    /**
-     * 记录用例失败日志。
-     *
-     * @param msg 失败原因
-     */
-    private static void fail(String msg) {
-        log.info("  ✗ 失败: {}", msg);
     }
 }

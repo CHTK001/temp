@@ -11,6 +11,7 @@ import com.chua.common.support.taskdistribution.spi.TaskExecutorRegistry;
 import com.chua.common.support.taskdistribution.strategy.DispatchStrategy;
 import com.chua.common.support.taskdistribution.task.*;
 import lombok.extern.slf4j.Slf4j;
+import com.chua.example.util.ExampleUtils;
 
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -38,21 +39,11 @@ public class TaskDistributionExample {
      */
     private static final int TEST_TIMEOUT_SECONDS = 10;
 
-    /**
-     * 退出码：成功
-     */
-    private static final int EXIT_CODE_SUCCESS = 0;
-
-    /**
-     * 退出码：失败
-     */
-    private static final int EXIT_CODE_FAILURE = 1;
-
     /** Main */
     public static void main(String[] args) {
         TaskDistributionExample example = new TaskDistributionExample();
         boolean passed = example.runTest();
-        System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
     }
 
     /** 运行Test */

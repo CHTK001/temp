@@ -2,6 +2,7 @@ package com.chua.example.lang.document;
 
 import com.chua.common.support.lang.document.*;
 import com.chua.common.support.utils.CommandLine;
+import com.chua.example.util.ExampleUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -29,16 +30,6 @@ import java.util.Map;
  */
 @Slf4j
 public class DocumentExample {
-
-    /**
-     * 程序退出码：成功
-     */
-    private static final int EXIT_CODE_SUCCESS = 0;
-
-    /**
-     * 程序退出码：失败
-     */
-    private static final int EXIT_CODE_FAILURE = 1;
 
     /**
      * 输出目录
@@ -109,7 +100,7 @@ public class DocumentExample {
         DocumentExample example = new DocumentExample();
         boolean passed = example.runTest(host, port, schema, version, user, password, outDir);
         log.info("[DocumentExample] 自检结果: passed={}", passed);
-        System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
     }
 
     /**

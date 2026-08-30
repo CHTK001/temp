@@ -4,6 +4,7 @@ import com.chua.common.support.concurrent.offset.OffsetFlow;
 import com.chua.common.support.concurrent.offset.OffsetStore;
 import com.chua.common.support.spi.ServiceProvider;
 import com.chua.common.support.utils.CommandLine;
+import com.chua.example.util.ExampleUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Path;
@@ -43,16 +44,6 @@ import java.nio.file.Path;
 public class OffsetFlowExample {
 
     /**
-     * 退出码：成功
-     */
-    private static final int EXIT_CODE_SUCCESS = 0;
-
-    /**
-     * 退出码：失败
-     */
-    private static final int EXIT_CODE_FAILURE = 1;
-
-    /**
      * 默认能力点
      */
     private static final String DEFAULT_TYPE = "all";
@@ -84,7 +75,7 @@ public class OffsetFlowExample {
         OffsetFlowExample example = new OffsetFlowExample();
         boolean passed = example.runTest(type);
         log.info("[OffsetFlowExample] self-test type={}, passed={}", type, passed);
-        System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
     }
 
     /**

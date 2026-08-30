@@ -9,6 +9,7 @@ import com.chua.common.support.task.pipeline.core.RouteStrategy;
 import com.chua.common.support.task.retry.RetryConfig;
 import lombok.extern.slf4j.Slf4j;
 import com.chua.example.spi.Example;
+import com.chua.example.util.ExampleUtils;
 
 import java.util.*;
 
@@ -54,10 +55,6 @@ import java.util.*;
 @Slf4j
 public class PipelineFaceOrchestrationExample implements Example {
 
-    /** Exit_code_success */
-    private static final int EXIT_CODE_SUCCESS = 0;
-    /** Exit_code_failure */
-    private static final int EXIT_CODE_FAILURE = 1;
     /** 人脸特征向量维度 */
     private static final int FACE_FEATURE_DIM = 128;
     /** 默认活体检测阈值 */
@@ -403,7 +400,7 @@ public class PipelineFaceOrchestrationExample implements Example {
         String type = parseType(args);
         boolean passed = runTest(type);
         log.info("[PipelineFaceOrchestrationExample] type=" + type + ", passed=" + passed);
-        System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
     }
 
     /**

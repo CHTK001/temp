@@ -4,6 +4,7 @@ import com.chua.deeplearning.support.draw.DrawerPipeline;
 import com.chua.deeplearning.support.model.DetectionInfo;
 import com.chua.deeplearning.support.model.PredictRectangle;
 import com.chua.deeplearning.support.recognition.LayoutPipeline;
+import com.chua.example.util.ExampleUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Files;
@@ -46,20 +47,10 @@ public class LayoutPipelineExample {
      */
     private static final String IMAGE_PATTERN = ".*\\.(jpg|png|jpeg|webp)$";
 
-    /**
-     * 程序退出码：成功
-     */
-    private static final int EXIT_CODE_SUCCESS = 0;
-
-    /**
-     * 程序退出码：失败
-     */
-    private static final int EXIT_CODE_FAILURE = 1;
-
     /** Main */
     public static void main(String[] args) throws Exception {
         boolean passed = runTest();
-        System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
     }
 
     /** 运行Test */

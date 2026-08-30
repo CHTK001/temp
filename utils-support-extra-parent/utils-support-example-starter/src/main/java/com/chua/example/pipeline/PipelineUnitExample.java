@@ -5,6 +5,7 @@ import com.chua.common.support.task.pipeline.core.Pipeline;
 import com.chua.common.support.task.pipeline.core.PipelineContext;
 import lombok.extern.slf4j.Slf4j;
 import com.chua.example.spi.Example;
+import com.chua.example.util.ExampleUtils;
 
 /**
  * Pipeline unit 数据依赖示例 — 声明式数据依赖与自动注入。
@@ -32,17 +33,12 @@ import com.chua.example.spi.Example;
 @Slf4j
 public class PipelineUnitExample implements Example {
 
-    /** Exit_code_success */
-    private static final int EXIT_CODE_SUCCESS = 0;
-    /** Exit_code_failure */
-    private static final int EXIT_CODE_FAILURE = 1;
-
     /** Main */
     public static void main(String[] args) {
         String type = PipelineBasicExample.parseType(args);
         boolean passed = runTest(type);
         log.info("[PipelineUnitExample] type=" + type + ", passed=" + passed);
-        System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
     }
 
     /** 运行Test */

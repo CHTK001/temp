@@ -16,7 +16,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.BooleanSupplier;
+import com.chua.example.util.ExampleUtils;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -41,16 +41,6 @@ import lombok.extern.slf4j.Slf4j;
 public final class TaskRunnerExample {
 
     /**
-     * 退出码：成功
-     */
-    private static final int EXIT_CODE_SUCCESS = 0;
-
-    /**
-     * 退出码：失败
-     */
-    private static final int EXIT_CODE_FAILURE = 1;
-
-    /**
      * 默认场景类型：全部
      */
     private static final String TYPE_ALL = "all";
@@ -73,56 +63,42 @@ public final class TaskRunnerExample {
         var passed = true;
 
         if (TYPE_ALL.equals(type) || "serial".equals(type)) {
-            passed &= timed("serialChainAndDataDependency", TaskRunnerExample::serialChainAndDataDependency);
-            passed &= timed("duplicateIdRejected", TaskRunnerExample::duplicateIdRejected);
-            passed &= timed("cycleDetectionRejected", TaskRunnerExample::cycleDetectionRejected);
+            passed &= ExampleUtils.timed("serialChainAndDataDependency", TaskRunnerExample::serialChainAndDataDependency);
+            passed &= ExampleUtils.timed("duplicateIdRejected", TaskRunnerExample::duplicateIdRejected);
+            passed &= ExampleUtils.timed("cycleDetectionRejected", TaskRunnerExample::cycleDetectionRejected);
         }
         if (TYPE_ALL.equals(type) || "parallel".equals(type)) {
-            passed &= timed("parallelTopLevelOverlap", TaskRunnerExample::parallelTopLevelOverlap);
-            passed &= timed("allSuccessFailFastSkipsDownstream", TaskRunnerExample::allSuccessFailFastSkipsDownstream);
-            passed &= timed("dataflowReadyScheduling", TaskRunnerExample::dataflowReadyScheduling);
+            passed &= ExampleUtils.timed("parallelTopLevelOverlap", TaskRunnerExample::parallelTopLevelOverlap);
+            passed &= ExampleUtils.timed("allSuccessFailFastSkipsDownstream", TaskRunnerExample::allSuccessFailFastSkipsDownstream);
+            passed &= ExampleUtils.timed("dataflowReadyScheduling", TaskRunnerExample::dataflowReadyScheduling);
         }
         if (TYPE_ALL.equals(type) || "policy".equals(type)) {
-            passed &= timed("anySuccessEarlyExitCancelsRest", TaskRunnerExample::anySuccessEarlyExitCancelsRest);
-            passed &= timed("successRateThresholds", TaskRunnerExample::successRateThresholds);
-            passed &= timed("thresholdPolicies", TaskRunnerExample::thresholdPolicies);
+            passed &= ExampleUtils.timed("anySuccessEarlyExitCancelsRest", TaskRunnerExample::anySuccessEarlyExitCancelsRest);
+            passed &= ExampleUtils.timed("successRateThresholds", TaskRunnerExample::successRateThresholds);
+            passed &= ExampleUtils.timed("thresholdPolicies", TaskRunnerExample::thresholdPolicies);
         }
         if (TYPE_ALL.equals(type) || "reliability".equals(type)) {
-            passed &= timed("perTaskTimeoutIsolated", TaskRunnerExample::perTaskTimeoutIsolated);
-            passed &= timed("globalRetryRecoversFlakyTask", TaskRunnerExample::globalRetryRecoversFlakyTask);
-            passed &= timed("circuitBreakerFallbackDegradation", TaskRunnerExample::circuitBreakerFallbackDegradation);
+            passed &= ExampleUtils.timed("perTaskTimeoutIsolated", TaskRunnerExample::perTaskTimeoutIsolated);
+            passed &= ExampleUtils.timed("globalRetryRecoversFlakyTask", TaskRunnerExample::globalRetryRecoversFlakyTask);
+            passed &= ExampleUtils.timed("circuitBreakerFallbackDegradation", TaskRunnerExample::circuitBreakerFallbackDegradation);
         }
         if (TYPE_ALL.equals(type) || "reactive".equals(type)) {
-            passed &= timed("asyncExecutionCompletes", TaskRunnerExample::asyncExecutionCompletes);
-            passed &= timed("asyncCancelPropagatesInterruption", TaskRunnerExample::asyncCancelPropagatesInterruption);
-            passed &= timed("reactiveExecutionEmitsResult", TaskRunnerExample::reactiveExecutionEmitsResult);
-            passed &= timed("watchStreamCarriesLifecycleEvents", TaskRunnerExample::watchStreamCarriesLifecycleEvents);
+            passed &= ExampleUtils.timed("asyncExecutionCompletes", TaskRunnerExample::asyncExecutionCompletes);
+            passed &= ExampleUtils.timed("asyncCancelPropagatesInterruption", TaskRunnerExample::asyncCancelPropagatesInterruption);
+            passed &= ExampleUtils.timed("reactiveExecutionEmitsResult", TaskRunnerExample::reactiveExecutionEmitsResult);
+            passed &= ExampleUtils.timed("watchStreamCarriesLifecycleEvents", TaskRunnerExample::watchStreamCarriesLifecycleEvents);
         }
         if (TYPE_ALL.equals(type)) {
-            passed &= timed("preconditionsEnforced", TaskRunnerExample::preconditionsEnforced);
-            passed &= timed("parameterValidation", TaskRunnerExample::parameterValidation);
+            passed &= ExampleUtils.timed("preconditionsEnforced", TaskRunnerExample::preconditionsEnforced);
+            passed &= ExampleUtils.timed("parameterValidation", TaskRunnerExample::parameterValidation);
         }
 
         if (!passed) {
             log.info("[FAIL] TaskRunner 存在失败场景");
-            System.exit(EXIT_CODE_FAILURE);
+            System.exit(ExampleUtils.FAILURE);
         }
         log.info("[PASS] TaskRunner 全部场景通过");
-        System.exit(EXIT_CODE_SUCCESS);
-    }
-
-    /**
-     * 带耗时的场景执行器：输出 [TIME] 行供测试报告采集真实耗时。
-     *
-     * @param name     场景名
-     * @param scenario 场景逻辑
-     * @return 场景是否通过
-     */
-    private static boolean timed(String name, BooleanSupplier scenario) {
-        var start = System.currentTimeMillis();
-        var ok = scenario.getAsBoolean();
-        log.info("[TIME] " + name + " " + (System.currentTimeMillis() - start) + "ms");
-        return ok;
+        System.exit(ExampleUtils.SUCCESS);
     }
 
     /**
@@ -165,7 +141,7 @@ public final class TaskRunnerExample {
             var result = runner.executeSync(null);
             var ok = result.success()
                     && result.findNode("c").map(r -> Integer.valueOf(111).equals(r.data())).orElse(false);
-            print("serialChainAndDataDependency", ok);
+            ExampleUtils.print("serialChainAndDataDependency", ok);
             return ok;
         } catch (Exception e) {
             return fail("serialChainAndDataDependency", e);
@@ -186,7 +162,7 @@ public final class TaskRunnerExample {
             return fail("duplicateIdRejected", "未拒绝重复 ID");
         } catch (IllegalStateException expected) {
             var ok = expected.getMessage().contains("已注册");
-            print("duplicateIdRejected", ok);
+            ExampleUtils.print("duplicateIdRejected", ok);
             return ok;
         }
     }
@@ -207,7 +183,7 @@ public final class TaskRunnerExample {
             return fail("cycleDetectionRejected", "未拒绝循环依赖");
         } catch (IllegalStateException expected) {
             var ok = expected.getMessage().contains("循环依赖");
-            print("cycleDetectionRejected", ok);
+            ExampleUtils.print("cycleDetectionRejected", ok);
             return ok;
         }
     }
@@ -243,7 +219,7 @@ public final class TaskRunnerExample {
             var result = future.get(5, TimeUnit.SECONDS);
             var ok = overlapped && result.success()
                     && result.countByStatus(TaskResult.Status.SUCCESS) == 2;
-            print("parallelTopLevelOverlap", ok);
+            ExampleUtils.print("parallelTopLevelOverlap", ok);
             return ok;
         } catch (Exception e) {
             releaseA.countDown();
@@ -270,7 +246,7 @@ public final class TaskRunnerExample {
                     && result.findNode("boom").map(r -> r.status() == TaskResult.Status.FAILED).orElse(false)
                     && result.findNode("downstream").map(r -> r.status() == TaskResult.Status.SKIPPED).orElse(false)
                     && result.error() != null;
-            print("allSuccessFailFastSkipsDownstream", ok);
+            ExampleUtils.print("allSuccessFailFastSkipsDownstream", ok);
             return ok;
         } catch (Exception e) {
             return fail("allSuccessFailFastSkipsDownstream", e);
@@ -324,7 +300,7 @@ public final class TaskRunnerExample {
                         log.info("[DEBUG]   node " + r.id() + " -> " + r.status()
                                 + (r.error() != null ? " : " + r.error() : "")));
             }
-            print("dataflowReadyScheduling (c-start=" + offset + "ms)", ok);
+            ExampleUtils.print("dataflowReadyScheduling (c-start=" + offset + "ms)", ok);
             return ok;
         } catch (Exception e) {
             return fail("dataflowReadyScheduling", e);
@@ -357,7 +333,7 @@ public final class TaskRunnerExample {
             var ok = result.success()
                     && result.findNode("quick-ok").map(r -> r.status() == TaskResult.Status.SUCCESS).orElse(false)
                     && elapsed < 5000;
-            print("anySuccessEarlyExitCancelsRest (" + elapsed + "ms)", ok);
+            ExampleUtils.print("anySuccessEarlyExitCancelsRest (" + elapsed + "ms)", ok);
             return ok;
         } catch (Exception e) {
             release.countDown();
@@ -375,7 +351,7 @@ public final class TaskRunnerExample {
             var passedRun = buildRateRunner("ex-rate-pass", 1).executeSync(null);
             var rejectedRun = buildRateRunner("ex-rate-reject", 2).executeSync(null);
             var ok = passedRun.success() && !rejectedRun.success();
-            print("successRateThresholds", ok);
+            ExampleUtils.print("successRateThresholds", ok);
             return ok;
         } catch (Exception e) {
             return fail("successRateThresholds", e);
@@ -432,7 +408,7 @@ public final class TaskRunnerExample {
                     .executeSync(null);
 
             var ok = atLeast.success() && !failLimit.success();
-            print("thresholdPolicies", ok);
+            ExampleUtils.print("thresholdPolicies", ok);
             return ok;
         } catch (Exception e) {
             return fail("thresholdPolicies", e);
@@ -461,7 +437,7 @@ public final class TaskRunnerExample {
             var ok = result.success()
                     && slowStatus != TaskResult.Status.SUCCESS
                     && result.findNode("healthy").map(r -> r.status() == TaskResult.Status.SUCCESS).orElse(false);
-            print("perTaskTimeoutIsolated (slow=" + slowStatus + ")", ok);
+            ExampleUtils.print("perTaskTimeoutIsolated (slow=" + slowStatus + ")", ok);
             return ok;
         } catch (Exception e) {
             return fail("perTaskTimeoutIsolated", e);
@@ -488,7 +464,7 @@ public final class TaskRunnerExample {
             var result = runner.executeSync(null);
             var ok = result.success() && attempts.get() == 3
                     && "recovered".equals(result.findNode("flaky").map(TaskResult::data).orElse(null));
-            print("globalRetryRecoversFlakyTask", ok);
+            ExampleUtils.print("globalRetryRecoversFlakyTask", ok);
             return ok;
         } catch (Exception e) {
             return fail("globalRetryRecoversFlakyTask", e);
@@ -518,7 +494,7 @@ public final class TaskRunnerExample {
                     && "cached-value".equals(first.findNode("unstable-cb-demo").map(TaskResult::data).orElse(null));
             var secondOk = second.success()
                     && "cached-value".equals(second.findNode("unstable-cb-demo").map(TaskResult::data).orElse(null));
-            print("circuitBreakerFallbackDegradation", firstOk && secondOk);
+            ExampleUtils.print("circuitBreakerFallbackDegradation", firstOk && secondOk);
             return firstOk && secondOk;
         } catch (Exception e) {
             return fail("circuitBreakerFallbackDegradation", e);
@@ -541,7 +517,7 @@ public final class TaskRunnerExample {
             var result = future.get(5, TimeUnit.SECONDS);
             var ok = result.success()
                     && "payload-done".equals(result.findNode("work").map(TaskResult::data).orElse(null));
-            print("asyncExecutionCompletes", ok);
+            ExampleUtils.print("asyncExecutionCompletes", ok);
             return ok;
         } catch (Exception e) {
             return fail("asyncExecutionCompletes", e);
@@ -562,7 +538,7 @@ public final class TaskRunnerExample {
             var result = mono.block(Duration.ofSeconds(5));
             var ok = result != null && result.success()
                     && "rx-value".equals(result.findNode("rx-task").map(TaskResult::data).orElse(null));
-            print("reactiveExecutionEmitsResult", ok);
+            ExampleUtils.print("reactiveExecutionEmitsResult", ok);
             return ok;
         } catch (Exception e) {
             return fail("reactiveExecutionEmitsResult", e);
@@ -603,7 +579,7 @@ public final class TaskRunnerExample {
                 sleepMillis(100);
             }
             var ok = interrupted.get() > 0;
-            print("asyncCancelPropagatesInterruption", ok);
+            ExampleUtils.print("asyncCancelPropagatesInterruption", ok);
             return ok;
         } catch (Exception e) {
             return fail("asyncCancelPropagatesInterruption", e);
@@ -630,7 +606,7 @@ public final class TaskRunnerExample {
                     && events.getFirst().type() == RunnerEvent.Type.RUN_STARTED
                     && events.stream().anyMatch(e -> e.type() == RunnerEvent.Type.NODE_COMPLETED)
                     && events.getLast().type() == RunnerEvent.Type.RUN_COMPLETED;
-            print("watchStreamCarriesLifecycleEvents", ok);
+            ExampleUtils.print("watchStreamCarriesLifecycleEvents", ok);
             return ok;
         } catch (Exception e) {
             return fail("watchStreamCarriesLifecycleEvents", e);
@@ -652,7 +628,7 @@ public final class TaskRunnerExample {
                     .policy(CompletionPolicy.allSuccess()).executeSync(null));
             var ok = policyError != null && policyError.contains("policy")
                     && taskError != null && taskError.contains("task");
-            print("preconditionsEnforced", ok);
+            ExampleUtils.print("preconditionsEnforced", ok);
             return ok;
         } catch (Exception e) {
             return fail("preconditionsEnforced", e);
@@ -676,7 +652,7 @@ public final class TaskRunnerExample {
             count += expectIllegalArgument(() -> TaskRunner.of("ex-validation")
                     .task("dep-test", ctx -> 1).afterNode());
             var ok = count == 7;
-            print("parameterValidation", ok);
+            ExampleUtils.print("parameterValidation", ok);
             return ok;
         } catch (Exception e) {
             return fail("parameterValidation", e);
@@ -714,16 +690,6 @@ public final class TaskRunnerExample {
     }
 
     // ==================== 辅助方法 ====================
-
-    /**
-     * 输出单场景结果标记。
-     *
-     * @param name 场景名
-     * @param ok   是否通过
-     */
-    private static void print(String name, boolean ok) {
-        log.info((ok ? "[PASS] " : "[FAIL] ") + name);
-    }
 
     /**
      * 输出异常失败信息。

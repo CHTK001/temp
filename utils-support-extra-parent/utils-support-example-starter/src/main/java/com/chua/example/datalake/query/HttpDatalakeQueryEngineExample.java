@@ -3,6 +3,7 @@ package com.chua.example.datalake.query;
 import com.chua.common.support.utils.CommandLine;
 import com.chua.datalake.support.engine.HttpDatalakeQueryEngine;
 import lombok.extern.slf4j.Slf4j;
+import com.chua.example.util.ExampleUtils;
 
 /**
  * HttpDatalakeQueryEngine 综合示例 — 演示查询 Engine 的实例化与基本调用。
@@ -26,16 +27,6 @@ public class HttpDatalakeQueryEngineExample {
      */
     private static final String DEFAULT_TYPE = "all";
 
-    /**
-     * 退出码：成功
-     */
-    private static final int EXIT_CODE_SUCCESS = 0;
-
-    /**
-     * 退出码：失败
-     */
-    private static final int EXIT_CODE_FAILURE = 1;
-
     /** Main */
     public static void main(String[] args) {
         CommandLine cli = CommandLine.parse(args)
@@ -55,7 +46,7 @@ public class HttpDatalakeQueryEngineExample {
                 yield false;
             }
         };
-        System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
     }
 
     /**

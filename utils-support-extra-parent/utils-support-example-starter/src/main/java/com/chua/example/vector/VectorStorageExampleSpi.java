@@ -1,4 +1,4 @@
-package com.chua.example.vector;
+﻿package com.chua.example.vector;
 
 import com.chua.common.support.vector.Vector;
 import com.chua.common.support.vector.VectorCompareAlgorithm;
@@ -150,7 +150,7 @@ public class VectorStorageExampleSpi implements Example {
                     .algorithm(VectorCompareAlgorithm.cosine()).build();
             seedAndSearch(s, "memory-cosine");
             s.close();
-            ExampleUtils.            ExampleUtils.pass();
+            ExampleUtils.pass();
             return true;
         } catch (Exception e) {
             ExampleUtils.fail("memory 算法构建异常: " + e.getMessage());
@@ -169,7 +169,7 @@ public class VectorStorageExampleSpi implements Example {
             assertEquals(true, s.remove("drop"), "删除存在的 id");
             assertEquals(1, s.size(), "删除后 size");
             assertEquals(false, s.remove("drop"), "删除不存在的 id");
-            ExampleUtils.            pass();
+            ExampleUtils.pass();
             return true;
         } catch (Exception e) {
             ExampleUtils.fail("remove 异常: " + e.getMessage());
@@ -191,7 +191,7 @@ public class VectorStorageExampleSpi implements Example {
             assertEquals(true, s.update("a", new float[]{0f, 0f, 0f, 1f}), "更新存在的 id");
             assertEquals(3, s.size(), "更新不改 size");
             assertEquals(false, s.update("nope", new float[]{1f, 0f, 0f, 0f}), "更新不存在的 id");
-            ExampleUtils.            pass();
+            ExampleUtils.pass();
             return true;
         } catch (Exception e) {
             ExampleUtils.fail("update 异常: " + e.getMessage());
@@ -211,7 +211,7 @@ public class VectorStorageExampleSpi implements Example {
             s.clear();
             assertEquals(0, s.size(), "clear 后 size");
             s.close();
-            ExampleUtils.            ExampleUtils.pass();
+            ExampleUtils.pass();
             return true;
         } catch (Exception e) {
             ExampleUtils.fail("clear 异常: " + e.getMessage());
@@ -230,7 +230,7 @@ public class VectorStorageExampleSpi implements Example {
             }
             assertEquals(5, s.size(), "添加后 size");
             s.close();
-            ExampleUtils.            ExampleUtils.pass();
+            ExampleUtils.pass();
             return true;
         } catch (Exception e) {
             ExampleUtils.fail("size 异常: " + e.getMessage());
@@ -263,7 +263,7 @@ public class VectorStorageExampleSpi implements Example {
             VectorStorage s = createJVectorStorage(mode);
             seedJVector(s, "jv-addsearch");
             s.close();
-            ExampleUtils.            ExampleUtils.pass();
+            ExampleUtils.pass();
             return true;
         } catch (Exception e) {
             ExampleUtils.fail("jvector add/search 异常: " + e.getMessage());
@@ -282,7 +282,7 @@ public class VectorStorageExampleSpi implements Example {
             assertEquals(3, s.size(), "jvector 更新前 size");
             assertEquals(true, s.update("a", new float[]{0f, 0f, 0f, 1f}), "更新存在的 id");
             assertEquals(3, s.size(), "jvector 更新不改 size");
-            ExampleUtils.            pass();
+            ExampleUtils.pass();
             return true;
         } catch (Exception e) {
             ExampleUtils.fail("jvector update 异常: " + e.getMessage());
@@ -302,7 +302,7 @@ public class VectorStorageExampleSpi implements Example {
             assertEquals(2, s.size(), "删除前 size");
             assertEquals(true, s.remove("drop"), "删除存在的 id");
             assertEquals(1, s.size(), "删除后 size");
-            ExampleUtils.            pass();
+            ExampleUtils.pass();
             return true;
         } catch (Exception e) {
             ExampleUtils.fail("jvector remove 异常: " + e.getMessage());
@@ -322,7 +322,7 @@ public class VectorStorageExampleSpi implements Example {
             s.clear();
             assertEquals(0, s.size(), "clear 后 size");
             s.close();
-            ExampleUtils.            pass();
+            ExampleUtils.pass();
             return true;
         } catch (Exception e) {
             ExampleUtils.fail("jvector clear 异常: " + e.getMessage());
@@ -341,7 +341,7 @@ public class VectorStorageExampleSpi implements Example {
             }
             assertEquals(5, s.size(), "添加后 size");
             s.close();
-            ExampleUtils.            pass();
+            ExampleUtils.pass();
             return true;
         } catch (Exception e) {
             ExampleUtils.fail("jvector size 异常: " + e.getMessage());
@@ -401,7 +401,7 @@ public class VectorStorageExampleSpi implements Example {
                     .algorithm(VectorCompareAlgorithm.cosine()).properties(props2).build();
             assertEquals(5, s2.size(), "重启后 size 应为 5");
             s2.close();
-            ExampleUtils.            pass();
+            ExampleUtils.pass();
             return true;
         } catch (Exception e) {
             ExampleUtils.fail("jvector 持久化往返异常: " + e.getMessage());
@@ -430,7 +430,7 @@ public class VectorStorageExampleSpi implements Example {
             ExampleUtils.pass();
             return true;
         } catch (Exception e) {
-            fail("milvus 构建异常: " + e.getMessage());
+            ExampleUtils.fail("milvus 构建异常: " + e.getMessage());
             return false;
         } finally {
             closeQuietly(s);
@@ -447,7 +447,7 @@ public class VectorStorageExampleSpi implements Example {
             ExampleUtils.pass();
             return true;
         } catch (Exception e) {
-            fail("milvus 删除异常: " + e.getMessage());
+            ExampleUtils.fail("milvus 删除异常: " + e.getMessage());
             return false;
         } finally {
             closeQuietly(s);
@@ -464,7 +464,7 @@ public class VectorStorageExampleSpi implements Example {
             ExampleUtils.pass();
             return true;
         } catch (Exception e) {
-            fail("milvus upsert 异常: " + e.getMessage());
+            ExampleUtils.fail("milvus upsert 异常: " + e.getMessage());
             return false;
         } finally {
             closeQuietly(s);
@@ -501,7 +501,7 @@ public class VectorStorageExampleSpi implements Example {
             ExampleUtils.pass();
             return true;
         } catch (Exception e) {
-            fail("vector AUTO 检测异常: " + e.getMessage());
+            ExampleUtils.fail("vector AUTO 检测异常: " + e.getMessage());
             return false;
         }
     }
@@ -521,7 +521,7 @@ public class VectorStorageExampleSpi implements Example {
             ExampleUtils.pass();
             return true;
         } catch (Exception e) {
-            fail("vector forceCpu 异常: " + e.getMessage());
+            ExampleUtils.fail("vector forceCpu 异常: " + e.getMessage());
             return false;
         }
     }
@@ -542,7 +542,7 @@ public class VectorStorageExampleSpi implements Example {
             log.info("  ✓ 正确抛出: {}", msg);
             return true;
         } catch (Exception e) {
-            fail("requireGpu 异常类型不对: " + e.getClass().getSimpleName());
+            ExampleUtils.fail("requireGpu 异常类型不对: " + e.getClass().getSimpleName());
             return false;
         }
     }
@@ -563,7 +563,7 @@ public class VectorStorageExampleSpi implements Example {
             ExampleUtils.pass();
             return true;
         } catch (Exception e) {
-            fail("vector 显式 backend 异常: " + e.getMessage());
+            ExampleUtils.fail("vector 显式 backend 异常: " + e.getMessage());
             return false;
         }
     }
@@ -584,7 +584,7 @@ public class VectorStorageExampleSpi implements Example {
             ExampleUtils.pass();
             return true;
         } catch (Exception e) {
-            fail("RuntimeDetector SPI 异常: " + e.getMessage());
+            ExampleUtils.fail("RuntimeDetector SPI 异常: " + e.getMessage());
             return false;
         }
     }
@@ -665,16 +665,6 @@ public class VectorStorageExampleSpi implements Example {
         if (expected != actual) {
             throw new AssertionError(msg + " — 期望 " + expected + "，实际 " + actual);
         }
-    }
-
-    /** Pass */
-    private static void pass() {
-        log.info("  ✓ 通过");
-    }
-
-    /** Fail */
-    private static void fail(String msg) {
-        log.info("  ✗ 失败: {}", msg);
     }
 
     /** 关闭Quietly */

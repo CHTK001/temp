@@ -4,6 +4,7 @@ import com.chua.common.support.utils.CommandLine;
 import com.chua.datalake.support.server.DatalakeServer;
 import com.chua.datalake.support.server.DatalakeServerBuilder;
 import lombok.extern.slf4j.Slf4j;
+import com.chua.example.util.ExampleUtils;
 
 /**
  * DatalakeServer 综合示例 — 启动 DatalakeServer 并验证生命周期。
@@ -27,16 +28,6 @@ public class DatalakeServerExample {
      */
     private static final String DEFAULT_TYPE = "all";
 
-    /**
-     * 退出码：成功
-     */
-    private static final int EXIT_CODE_SUCCESS = 0;
-
-    /**
-     * 退出码：失败
-     */
-    private static final int EXIT_CODE_FAILURE = 1;
-
     /** Main */
     public static void main(String[] args) {
         CommandLine cli = CommandLine.parse(args)
@@ -56,7 +47,7 @@ public class DatalakeServerExample {
                 yield false;
             }
         };
-        System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
     }
 
     /**

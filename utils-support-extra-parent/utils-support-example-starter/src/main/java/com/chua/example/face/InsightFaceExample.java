@@ -1,6 +1,7 @@
 package com.chua.example.face;
 
 import lombok.extern.slf4j.Slf4j;
+import com.chua.common.support.utils.MathUtils;
 import com.chua.deeplearning.support.draw.DrawerPipeline;
 import com.chua.deeplearning.support.face.FaceDetectionHit;
 import com.chua.deeplearning.support.face.FacePipeline;
@@ -100,11 +101,11 @@ public class InsightFaceExample {
             float[] f3 = largestFeature(face, adaface, "3peoplebeauty.jpg");
             float[] f4 = largestFeature(face, adaface, "anime.jpg");
             System.out.printf("  cos(1people, 1people2)  = %.3f %s%n",
-                    cosine(f1, f2), f1 != null && f2 != null && cosine(f1, f2) > 0.5 ? "(同人?)" : "(异人?)");
+                    MathUtils.cosineSimilarity(f1, f2), f1 != null && f2 != null && MathUtils.cosineSimilarity(f1, f2) > 0.5 ? "(同人?)" : "(异人?)");
             System.out.printf("  cos(1people, 3peoplebeauty) = %.3f %s%n",
-                    cosine(f1, f3), f1 != null && f3 != null && cosine(f1, f3) > 0.5 ? "(同人?)" : "(异人?)");
+                    MathUtils.cosineSimilarity(f1, f3), f1 != null && f3 != null && MathUtils.cosineSimilarity(f1, f3) > 0.5 ? "(同人?)" : "(异人?)");
             System.out.printf("  cos(1people, anime)    = %.3f %s%n",
-                    cosine(f1, f4), f1 != null && f4 != null && cosine(f1, f4) > 0.5 ? "(同人?)" : "(异人?)");
+                    MathUtils.cosineSimilarity(f1, f4), f1 != null && f4 != null && MathUtils.cosineSimilarity(f1, f4) > 0.5 ? "(同人?)" : "(异人?)");
         } catch (Exception e) {
             log.info("  特征比对 FAIL: " + e.getMessage());
         }
@@ -130,19 +131,6 @@ public class InsightFaceExample {
         }
     }
 
-    /** 余弦相似度。 */
-    private static float cosine(float[] a, float[] b) {
-        if (a == null || b == null || a.length != b.length) {
-            return Float.NaN;
-        }
-        double dot = 0, na = 0, nb = 0;
-        for (int i = 0; i < a.length; i++) {
-            dot += a[i] * b[i];
-            na += a[i] * a[i];
-            nb += b[i] * b[i];
-        }
-        return (float) (dot / (Math.sqrt(na) * Math.sqrt(nb) + 1e-9));
-    }
 
     /** 从原图裁剪人脸区域（外扩 20%）。 */
     private static byte[] crop(BufferedImage src, PredictRectangle box) {

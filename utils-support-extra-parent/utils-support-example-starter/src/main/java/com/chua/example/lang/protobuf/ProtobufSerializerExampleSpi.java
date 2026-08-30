@@ -105,10 +105,10 @@ public class ProtobufSerializerExampleSpi implements Example {
             assertEquals(18, result.getAge(), "age 字段");
             assertEquals("chua@example.com", result.getEmail(), "email 字段");
             assertTrue(result.isActive(), "active 字段");
-            pass();
+            ExampleUtils.pass();
             return true;
         } catch (Exception e) {
-            fail("基本类型往返异常: " + e.getMessage());
+            ExampleUtils.fail("基本类型往返异常: " + e.getMessage());
             return false;
         }
     }
@@ -141,10 +141,10 @@ public class ProtobufSerializerExampleSpi implements Example {
             assertNotNull(result.getBuyer(), "buyer 不应为 null");
             assertEquals("buyer", result.getBuyer().getName(), "buyer.name 字段");
             assertEquals(25, result.getBuyer().getAge(), "buyer.age 字段");
-            pass();
+            ExampleUtils.pass();
             return true;
         } catch (Exception e) {
-            fail("嵌套对象往返异常: " + e.getMessage());
+            ExampleUtils.fail("嵌套对象往返异常: " + e.getMessage());
             return false;
         }
     }
@@ -172,10 +172,10 @@ public class ProtobufSerializerExampleSpi implements Example {
             assertEquals(2, result.getTags().size(), "tags 大小");
             assertEquals("java", result.getTags().get(0), "tags[0] 内容");
             assertEquals("protobuf", result.getTags().get(1), "tags[1] 内容");
-            pass();
+            ExampleUtils.pass();
             return true;
         } catch (Exception e) {
-            fail("集合字段往返异常: " + e.getMessage());
+            ExampleUtils.fail("集合字段往返异常: " + e.getMessage());
             return false;
         }
     }
@@ -192,10 +192,10 @@ public class ProtobufSerializerExampleSpi implements Example {
             assertEquals(0, serializer.serialize(null).length, "serialize(null) 应返回空数组");
             assertEquals(null, serializer.deserialize(null), "deserialize(null) 应返回 null");
             assertEquals(null, serializer.deserialize(new byte[0]), "deserialize(空数组) 应返回 null");
-            pass();
+            ExampleUtils.pass();
             return true;
         } catch (Exception e) {
-            fail("null 输入异常: " + e.getMessage());
+            ExampleUtils.fail("null 输入异常: " + e.getMessage());
             return false;
         }
     }
@@ -220,10 +220,10 @@ public class ProtobufSerializerExampleSpi implements Example {
             assertNotNull(result, "接口反序列化结果不应为 null");
             assertEquals("interface", result.getName(), "接口反序列化 name");
             assertEquals(30, result.getAge(), "接口反序列化 age");
-            pass();
+            ExampleUtils.pass();
             return true;
         } catch (Exception e) {
-            fail("Serialization 接口异常: " + e.getMessage());
+            ExampleUtils.fail("Serialization 接口异常: " + e.getMessage());
             return false;
         }
     }
@@ -260,10 +260,10 @@ public class ProtobufSerializerExampleSpi implements Example {
             // Protobuf 通常比 JSON 更紧凑
             assertTrue(protobufBytes.length > 0, "Protobuf 序列化结果不为空");
             assertTrue(jsonBytes.length > 0, "JSON 序列化结果不为空");
-            pass();
+            ExampleUtils.pass();
             return true;
         } catch (Exception e) {
-            fail("压缩比对比异常: " + e.getMessage());
+            ExampleUtils.fail("压缩比对比异常: " + e.getMessage());
             return false;
         }
     }
@@ -368,15 +368,5 @@ public class ProtobufSerializerExampleSpi implements Example {
         if (Math.abs(expected - actual) > delta) {
             throw new AssertionError(msg + " — 期望 " + expected + "，实际 " + actual);
         }
-    }
-
-    /** Pass */
-    private static void pass() {
-        log.info("  ✓ 通过");
-    }
-
-    /** Fail */
-    private static void fail(String msg) {
-        log.info("  ✗ 失败: {}", msg);
     }
 }

@@ -5,6 +5,7 @@ import com.chua.common.support.utils.CommandLine;
 import com.chua.datalake.support.model.DataEnvelope;
 import com.chua.datalake.support.subscriber.RealTimeDatalakeSubscriber;
 import lombok.extern.slf4j.Slf4j;
+import com.chua.example.util.ExampleUtils;
 import reactor.core.publisher.Mono;
 
 import java.nio.file.Path;
@@ -35,16 +36,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SubscriberExample {
     private SubscriberExample() { }
 
-
-    /**
-     * 退出码：成功
-     */
-    private static final int EXIT_CODE_SUCCESS = 0;
-
-    /**
-     * 退出码：失败
-     */
-    private static final int EXIT_CODE_FAILURE = 1;
 
     /**
      * 默认能力点
@@ -78,7 +69,7 @@ public class SubscriberExample {
                 yield false;
             }
         };
-        System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
     }
 
     /**

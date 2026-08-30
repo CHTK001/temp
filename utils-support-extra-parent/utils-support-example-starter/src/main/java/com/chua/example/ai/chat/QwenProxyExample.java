@@ -5,6 +5,7 @@ import com.chua.common.support.ai.chat.ChatClientSetting;
 import com.chua.common.support.ai.generation.ImageGenerationResult;
 import com.chua.common.support.ai.generation.VideoGenerationResult;
 import com.chua.common.support.utils.CommandLine;
+import com.chua.example.util.ExampleUtils;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -26,16 +27,6 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class QwenProxyExample {
-
-    /**
-     * 程序退出码：成功
-     */
-    private static final int EXIT_CODE_SUCCESS = 0;
-
-    /**
-     * 程序退出码：失败
-     */
-    private static final int EXIT_CODE_FAILURE = 1;
 
     /**
      * 默认模型
@@ -83,7 +74,7 @@ public class QwenProxyExample {
         String module = cli.get("module", "all");
 
         boolean passed = new QwenProxyExample().runTest(cookie, module);
-        System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
     }
 
     /**

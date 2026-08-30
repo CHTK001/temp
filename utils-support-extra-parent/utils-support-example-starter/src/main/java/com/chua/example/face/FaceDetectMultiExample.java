@@ -7,6 +7,7 @@ import com.chua.deeplearning.support.face.FacePipelineDiskCallback;
 import com.chua.deeplearning.support.model.DetectionInfo;
 import com.chua.deeplearning.support.model.PredictRectangle;
 import lombok.extern.slf4j.Slf4j;
+import com.chua.example.util.ExampleUtils;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -44,19 +45,9 @@ public class FaceDetectMultiExample {
             "insightface-scrfd"
     };
 
-    /**
-     * 程序退出码：成功
-     */
-    private static final int EXIT_CODE_SUCCESS = 0;
-
-    /**
-     * 程序退出码：失败
-     */
-    private static final int EXIT_CODE_FAILURE = 1;
-
     public static void main(String[] args) throws Exception {
         boolean passed = runTest();
-        System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
     }
 
     public static boolean runTest() throws Exception {

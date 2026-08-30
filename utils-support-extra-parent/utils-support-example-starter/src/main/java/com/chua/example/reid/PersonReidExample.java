@@ -1,6 +1,7 @@
 package com.chua.example.reid;
 
 import lombok.extern.slf4j.Slf4j;
+import com.chua.example.util.ExampleUtils;
 import com.chua.deeplearning.support.feature.FeatureExtractor;
 import com.chua.deeplearning.support.reid.PersonReidPipeline;
 import com.chua.deeplearning.support.reid.PersonReidPipeline.SearchResult;
@@ -26,17 +27,13 @@ public class PersonReidExample {
     private PersonReidExample() { }
 
 
-    /** 成功退出码 */
-    private static final int EXIT_CODE_SUCCESS = 0;
-    /** 失败退出码 */
-    private static final int EXIT_CODE_FAILURE = 1;
-    /** Top-K 数量 */
+    /** Main */
     private static final int TOP_K = 5;
 
     /** Main */
     public static void main(String[] args) throws Exception {
         boolean passed = runTest();
-        System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
     }
 
     /** 运行Test */

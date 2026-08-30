@@ -2,7 +2,9 @@ package com.chua.example.ai.embedding;
 
 import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.ai.embedding.EmbeddingClient;
+import com.chua.common.support.utils.MathUtils;
 import com.chua.common.support.ai.embedding.EmbeddingClientSetting;
+import com.chua.example.util.ExampleUtils;
 
 /**
  * BGE-large-zh 文本嵌入示例 — 本地离线（bge-large-zh）句向量。
@@ -16,15 +18,10 @@ import com.chua.common.support.ai.embedding.EmbeddingClientSetting;
 @Slf4j
 public final class BgeLargeZhEmbeddingExample {
 
-    /** 程序退出码：成功 */
-    private static final int EXIT_CODE_SUCCESS = 0;
-    /** 程序退出码：失败 */
-    private static final int EXIT_CODE_FAILURE = 1;
-
     /** Main */
     public static void main(String[] args) {
         boolean passed = new BgeLargeZhEmbeddingExample().runSelfTest();
-        System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
     }
 
     /** 自检：计算 BGE-large-zh 句向量并校验维度 + 相似度排序合理性。 */
@@ -43,9 +40,9 @@ public final class BgeLargeZhEmbeddingExample {
 
             boolean passed = vectors.length == docs.length && vectors[0].length > 0;
             int dim = vectors[0].length;
-            float cos01 = cosine(vectors[0], vectors[1]);
-            float cos02 = cosine(vectors[0], vectors[2]);
-            float cos03 = cosine(vectors[0], vectors[3]);
+            float cos01 = MathUtils.cosineSimilarity(vectors[0], vectors[1]);
+            float cos02 = MathUtils.cosineSimilarity(vectors[0], vectors[2]);
+            float cos03 = MathUtils.cosineSimilarity(vectors[0], vectors[3]);
 
             log.info(String.format("[%s] BGE-large-zh 自检 → 耗时 %dms, %d 句 × %d 维",
                     passed ? "PASS" : "FAIL", elapsed, docs.length, dim));
@@ -62,14 +59,4 @@ public final class BgeLargeZhEmbeddingExample {
         }
     }
 
-    /** 计算两个向量的余弦相似度。 */
-    private static float cosine(float[] a, float[] b) {
-        double dot = 0, normA = 0, normB = 0;
-        for (int i = 0; i < a.length; i++) {
-            dot += a[i] * b[i];
-            normA += a[i] * a[i];
-            normB += b[i] * b[i];
-        }
-        return (float) (dot / (Math.sqrt(normA) * Math.sqrt(normB) + 1e-9));
-    }
 }

@@ -1,9 +1,11 @@
 package com.chua.example.face;
 
+import com.chua.common.support.utils.MathUtils;
 import com.chua.deeplearning.support.face.FaceDetectionHit;
 import com.chua.deeplearning.support.face.FacePipeline;
 import com.chua.deeplearning.support.face.FacePipelineDiskCallback;
 import lombok.extern.slf4j.Slf4j;
+import com.chua.example.util.ExampleUtils;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,12 +25,9 @@ public class FaceCoreExample {
     private FaceCoreExample() { }
 
 
-    private static final int EXIT_CODE_SUCCESS = 0;
-    private static final int EXIT_CODE_FAILURE = 1;
-
     public static void main(String[] args) throws Exception {
         boolean passed = runTest();
-        System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
     }
 
     public static boolean runTest() throws Exception {
@@ -87,31 +86,9 @@ public class FaceCoreExample {
         // 同一张图重新提取特征
         float[] feat3 = face.extractFeature(img1);
 
-        log.info("  1people vs 1people(重提): " + String.format("%.4f", cosine(feat1, feat3)));
-        log.info("  1people vs 1people2:      " + String.format("%.4f", cosine(feat1, feat2)));
+        log.info("  1people vs 1people(重提): " + String.format("%.4f", MathUtils.cosineSimilarity(feat1, feat3)));
+        log.info("  1people vs 1people2:      " + String.format("%.4f", MathUtils.cosineSimilarity(feat1, feat2)));
         return true;
     }
 
-    /**
-     * 余弦相似度。
-     *
-     * @param a 特征 a
-     * @param b 特征 b
-     * @return 相似度 0~1
-     */
-    private static double cosine(float[] a, float[] b) {
-        if (a == null || b == null || a.length == 0 || b.length == 0 || a.length != b.length) {
-            return -1;
-        }
-        double dot = 0, na = 0, nb = 0;
-        for (int i = 0; i < a.length; i++) {
-            dot += a[i] * b[i];
-            na += a[i] * a[i];
-            nb += b[i] * b[i];
-        }
-        if (na == 0 || nb == 0) {
-            return -1;
-        }
-        return dot / (Math.sqrt(na) * Math.sqrt(nb));
-    }
 }

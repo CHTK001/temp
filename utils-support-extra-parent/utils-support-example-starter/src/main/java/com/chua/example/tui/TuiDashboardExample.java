@@ -15,6 +15,7 @@ import com.chua.tui.support.widgets.HtopWidget;
 import com.chua.tui.support.widgets.MemoryWidget;
 import lombok.extern.slf4j.Slf4j;
 import com.chua.example.spi.Example;
+import com.chua.example.util.ExampleUtils;
 
 import java.util.Map;
 
@@ -68,16 +69,6 @@ import java.util.Map;
  */
 @Slf4j
 public class TuiDashboardExample implements Example {
-
-    /**
-     * 程序退出码：成功
-     */
-    private static final int EXIT_CODE_SUCCESS = 0;
-
-    /**
-     * 程序退出码：失败
-     */
-    private static final int EXIT_CODE_FAILURE = 1;
 
     /**
      * 默认能力点类型
@@ -182,7 +173,7 @@ public class TuiDashboardExample implements Example {
         String type = cli.get("type", DEFAULT_TYPE);
         boolean passed = example.runTest(type);
         log.info("[TuiDashboardExample] self-test type={}, passed={}", type, passed);
-        System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
     }
 
     /**

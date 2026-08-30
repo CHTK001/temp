@@ -9,6 +9,7 @@ import com.chua.common.support.task.flow.FlowNode;
 import com.chua.common.support.task.flow.FlowNodeRegistry;
 import com.chua.common.support.task.flow.FlowProps;
 import com.chua.common.support.task.flow.FlowStatus;
+import com.chua.example.util.ExampleUtils;
 import com.chua.flow.support.FlowEngine;
 import com.chua.flow.support.node.ConditionFlowNode;
 import com.chua.flow.support.node.EndFlowNode;
@@ -50,22 +51,12 @@ import java.util.Map;
 @Slf4j
 public class FlowExample {
 
-    /**
-     * 退出码：成功
-     */
-    private static final int EXIT_CODE_SUCCESS = 0;
-
-    /**
-     * 退出码：失败
-     */
-    private static final int EXIT_CODE_FAILURE = 1;
-
     /** Main */
     public static void main(String[] args) {
         String type = parseType(args);
         boolean passed = new FlowExample().runTest(type);
         log.info("[FlowExample] self-test type=" + type + ", passed=" + passed);
-        System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
     }
 
     /**

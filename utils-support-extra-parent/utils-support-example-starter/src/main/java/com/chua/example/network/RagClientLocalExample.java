@@ -11,6 +11,9 @@ import com.chua.common.support.ai.splitter.TextSplitter;
 import com.chua.common.support.ai.splitter.TextSplitterProvider;
 import com.chua.common.support.vector.VectorStorage;
 import com.chua.common.support.vector.VectorStorageBuilder;
+import com.chua.example.util.ExampleUtils;
+
+import com.chua.example.util.ExampleUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -62,19 +65,6 @@ public final class RagClientLocalExample {
      */
     private static final int TOP_K = 3;
 
-    /**
-     * 退出码：成功
-     */
-    private static final int EXIT_CODE_SUCCESS = 0;
-
-    /**
-     * 退出码：失败
-     */
-    private static final int EXIT_CODE_FAILURE = 1;
-
-    /**
-     * 防止实例化工具类。
-     */
     private RagClientLocalExample() {
     }
 
@@ -102,11 +92,11 @@ public final class RagClientLocalExample {
         }
         if (!passed) {
             log.info("[FAIL] RagClient 本地链路存在失败场景");
-            System.exit(EXIT_CODE_FAILURE);
+            System.exit(ExampleUtils.FAILURE);
         } else {
             log.info("[PASS] RagClient 本地链路全部场景通过");
         }
-        System.exit(EXIT_CODE_SUCCESS);
+        System.exit(ExampleUtils.SUCCESS);
     }
 
     // ==================== 场景 ====================
@@ -128,7 +118,7 @@ public final class RagClientLocalExample {
                 ok &= "test.txt".equals(doc.fileName());
                 ok &= "READY".equals(doc.status());
                 ok &= doc.chunkCount() > 0;
-                print("uploadDocument 返回 READY 文档", ok);
+                ExampleUtils.print("uploadDocument 返回 READY 文档", ok);
                 return ok;
             } finally {
                 client.close();
@@ -162,7 +152,7 @@ public final class RagClientLocalExample {
                     }
                 }
                 boolean ok = removed && gone && fileCleaned;
-                print("deleteDocument 清理向量与文件", ok);
+                ExampleUtils.print("deleteDocument 清理向量与文件", ok);
                 return ok;
             } finally {
                 client.close();
@@ -190,7 +180,7 @@ public final class RagClientLocalExample {
                 boolean ok = newDoc != null;
                 ok &= docId.equals(newDoc.id());
                 ok &= "READY".equals(newDoc.status());
-                print("updateDocument 原位替换", ok);
+                ExampleUtils.print("updateDocument 原位替换", ok);
                 return ok;
             } finally {
                 client.close();
@@ -221,7 +211,7 @@ public final class RagClientLocalExample {
                 ok &= page1.size() == 2;
                 ok &= page2.size() == 1;
                 ok &= page3.isEmpty();
-                print("listDocuments 分页正确", ok);
+                ExampleUtils.print("listDocuments 分页正确", ok);
                 return ok;
             } finally {
                 client.close();
@@ -246,7 +236,7 @@ public final class RagClientLocalExample {
                 String docId = client.uploadDocument("read-test.txt", data).id();
                 String readBack = client.readDocumentContent(docId);
                 boolean ok = readBack != null && readBack.contains("读取测试");
-                print("readDocumentContent 读回原文", ok);
+                ExampleUtils.print("readDocumentContent 读回原文", ok);
                 return ok;
             } finally {
                 client.close();
@@ -275,7 +265,7 @@ public final class RagClientLocalExample {
                         .getBytes(StandardCharsets.UTF_8));
                 var response = client.query("什么是RAG？");
                 boolean ok = response != null && response.answer() != null && !response.answer().isBlank();
-                print("远端问答返回非空回答", ok);
+                ExampleUtils.print("远端问答返回非空回答", ok);
                 return ok;
             } finally {
                 client.close();
@@ -377,16 +367,6 @@ public final class RagClientLocalExample {
     }
 
     // ==================== 通用辅助 ====================
-
-    /**
-     * 输出单场景结果。
-     *
-     * @param name 场景名
-     * @param ok   是否通过
-     */
-    private static void print(String name, boolean ok) {
-        log.info((ok ? "[PASS] " : "[FAIL] ") + name);
-    }
 
     /**
      * 输出单场景异常失败结果。

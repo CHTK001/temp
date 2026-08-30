@@ -3,8 +3,8 @@ package com.chua.example.taskloader;
 import com.chua.common.support.task.loader.SingletonLoader;
 
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.BooleanSupplier;
 import lombok.extern.slf4j.Slf4j;
+import com.chua.example.util.ExampleUtils;
 
 /**
  * 惰性加载器 {@link SingletonLoader} 全场景自检示例。
@@ -18,21 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public final class LoaderExample {
 
-    private static final int EXIT_CODE_SUCCESS = 0;
-    private static final int EXIT_CODE_FAILURE = 1;
-
     private LoaderExample() {
-    }
-
-    private static void print(String name, boolean ok) {
-        log.info((ok ? "[PASS] " : "[FAIL] ") + name);
-    }
-
-    private static boolean timed(String name, BooleanSupplier scenario) {
-        long start = System.currentTimeMillis();
-        boolean ok = scenario.getAsBoolean();
-        log.info("[TIME] " + name + " " + (System.currentTimeMillis() - start) + "ms");
-        return ok;
     }
 
     private static boolean lazyCreateOnce() {
@@ -46,7 +32,7 @@ public final class LoaderExample {
         String second = loader.get();
         boolean ok = !loadedBefore && creations.get() == 1
                 && "instance".equals(first) && first == second && loader.isLoaded();
-        print("lazyCreateOnce", ok);
+        ExampleUtils.print("lazyCreateOnce", ok);
         return ok;
     }
 
@@ -58,7 +44,7 @@ public final class LoaderExample {
         boolean unloaded = !loader.isLoaded();
         String recreated = loader.get();
         boolean ok = unloaded && creations.get() == 2 && "v2".equals(recreated);
-        print("resetTriggersRecreate", ok);
+        ExampleUtils.print("resetTriggersRecreate", ok);
         return ok;
     }
 
@@ -84,17 +70,17 @@ public final class LoaderExample {
         }
         long distinct = java.util.Arrays.stream(results).distinct().count();
         boolean ok = creations.get() == 1 && distinct == 1;
-        print("concurrentGetCreatesOnce", ok);
+        ExampleUtils.print("concurrentGetCreatesOnce", ok);
         return ok;
     }
 
     private static boolean nullSupplierRejected() {
         try {
             SingletonLoader.of(null);
-            print("nullSupplierRejected", false);
+            ExampleUtils.print("nullSupplierRejected", false);
             return false;
         } catch (RuntimeException expected) {
-            print("nullSupplierRejected", true);
+            ExampleUtils.print("nullSupplierRejected", true);
             return true;
         }
     }
@@ -102,19 +88,19 @@ public final class LoaderExample {
     public static void main(String[] args) {
         try {
             boolean passed = true;
-            passed &= timed("lazyCreateOnce", LoaderExample::lazyCreateOnce);
-            passed &= timed("resetTriggersRecreate", LoaderExample::resetTriggersRecreate);
-            passed &= timed("concurrentGetCreatesOnce", LoaderExample::concurrentGetCreatesOnce);
-            passed &= timed("nullSupplierRejected", LoaderExample::nullSupplierRejected);
+            passed &= ExampleUtils.timed("lazyCreateOnce", LoaderExample::lazyCreateOnce);
+            passed &= ExampleUtils.timed("resetTriggersRecreate", LoaderExample::resetTriggersRecreate);
+            passed &= ExampleUtils.timed("concurrentGetCreatesOnce", LoaderExample::concurrentGetCreatesOnce);
+            passed &= ExampleUtils.timed("nullSupplierRejected", LoaderExample::nullSupplierRejected);
             if (!passed) {
                 log.info("[FAIL] Loader 存在失败场景");
-                System.exit(EXIT_CODE_FAILURE);
+System.exit(ExampleUtils.FAILURE);
             }
             log.info("[PASS] Loader 全部场景通过");
-            System.exit(EXIT_CODE_SUCCESS);
+            System.exit(ExampleUtils.SUCCESS);
         } catch (Exception e) {
             log.info("[FAIL] 未预期异常: " + e);
-            System.exit(EXIT_CODE_FAILURE);
+            System.exit(ExampleUtils.FAILURE);
         }
     }
 }

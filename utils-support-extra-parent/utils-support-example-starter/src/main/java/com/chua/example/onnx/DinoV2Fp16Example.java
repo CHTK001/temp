@@ -3,6 +3,7 @@ package com.chua.example.onnx;
 import lombok.extern.slf4j.Slf4j;
 import ai.djl.modality.cv.Image;
 import ai.djl.modality.cv.ImageFactory;
+import com.chua.common.support.utils.MathUtils;
 import com.chua.deeplearning.support.engine.ModelRegistry;
 
 import java.nio.file.Path;
@@ -39,7 +40,7 @@ public final class DinoV2Fp16Example {
 
         boolean ok = fp32 != null && fp32.length == 384
                 && fp16 != null && fp16.length == 384;
-        double cos = cosine(fp32, fp16);
+        double cos = MathUtils.cosineSimilarity(fp32, fp16);
         ok = ok && cos > 0.98;
 
         log.info("[fp32] dim=" + (fp32 == null ? 0 : fp32.length)
@@ -73,21 +74,6 @@ public final class DinoV2Fp16Example {
         }
     }
 
-    private static double cosine(float[] a, float[] b) {
-        double dot = 0;
-        for (int i = 0; i < a.length; i++) {
-            dot += a[i] * b[i];
-        }
-        return dot / (norm(a) * norm(b));
-    }
-
-    private static double norm(float[] v) {
-        double s = 0;
-        for (float f : v) {
-            s += f * f;
-        }
-        return Math.sqrt(s);
-    }
 
     private static String head(float[] v) {
         if (v == null) {

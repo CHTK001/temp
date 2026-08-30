@@ -9,6 +9,7 @@ import com.chua.common.support.taskdistribution.task.TaskStatus;
 import com.chua.common.support.utils.ThreadUtils;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
+import com.chua.example.util.ExampleUtils;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
@@ -44,22 +45,12 @@ public class ReactiveTaskManagerExample {
      */
     private static final int TEST_TIMEOUT_SECONDS = 5;
 
-    /**
-     * 退出码：成功
-     */
-    private static final int EXIT_CODE_SUCCESS = 0;
-
-    /**
-     * 退出码：失败
-     */
-    private static final int EXIT_CODE_FAILURE = 1;
-
     // ==================== main ====================
 
     public static void main(String[] args) {
         ReactiveTaskManagerExample example = new ReactiveTaskManagerExample();
         boolean passed = example.runTest();
-        System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
     }
 
     /**

@@ -2,6 +2,7 @@ package com.chua.example.ai.vision;
 
 import com.chua.deeplearning.support.image.ImageDetector;
 import com.chua.deeplearning.support.model.DetectionInfo;
+import com.chua.example.util.ExampleUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -39,12 +40,6 @@ public class YoloWorldExample {
     /** 默认候选类别（中英文混合） */
     private static final String DEFAULT_CANDIDATES = "人,汽车,自行车,摩托车,狗,猫,卡车,公交车";
 
-    /** 成功退出码 */
-    private static final int EXIT_CODE_SUCCESS = 0;
-
-    /** 失败退出码 */
-    private static final int EXIT_CODE_FAILURE = 1;
-
     /**
      * 入口。
      *
@@ -54,7 +49,7 @@ public class YoloWorldExample {
     public static void main(String[] args) throws IOException {
         String imagePath = args.length > 0 ? args[0] : DEFAULT_PATH;
         boolean passed = runTest(imagePath, DEFAULT_CANDIDATES);
-        System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
     }
 
     /**

@@ -9,6 +9,7 @@ import com.chua.common.support.concurrent.threadflow.ThreadFlowResult;
 import com.chua.common.support.concurrent.threadflow.ThreadStrategy;
 import com.chua.common.support.utils.CommandLine;
 import com.chua.common.support.utils.ThreadUtils;
+import com.chua.example.util.ExampleUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.TimeUnit;
@@ -52,16 +53,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ThreadFlowExample {
 
     /**
-     * 退出码：成功
-     */
-    private static final int EXIT_CODE_SUCCESS = 0;
-
-    /**
-     * 退出码：失败
-     */
-    private static final int EXIT_CODE_FAILURE = 1;
-
-    /**
      * 默认能力点
      */
     private static final String DEFAULT_TYPE = "all";
@@ -83,7 +74,7 @@ public class ThreadFlowExample {
         ThreadFlowExample example = new ThreadFlowExample();
         boolean passed = example.runTest(type);
         log.info("[ThreadFlowExample] self-test type={}, passed={}", type, passed);
-        System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
     }
 
     /**

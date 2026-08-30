@@ -6,6 +6,7 @@ import com.chua.prometheus.support.client.PrometheusClient;
 import com.chua.prometheus.support.engine.PrometheusEngine;
 import com.chua.prometheus.support.model.PrometheusMetric;
 import com.chua.prometheus.support.model.QueryResult;
+import com.chua.example.util.ExampleUtils;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -27,16 +28,6 @@ import lombok.extern.slf4j.Slf4j;
 public class PrometheusExample {
 
     /**
-     * 程序退出码: 成功
-     */
-    private static final int EXIT_CODE_SUCCESS = 0;
-
-    /**
-     * 程序退出码: 失败
-     */
-    private static final int EXIT_CODE_FAILURE = 1;
-
-    /**
      * 默认 Prometheus 地址
      */
     private static final String DEFAULT_URL = "http://localhost:9090";
@@ -52,7 +43,7 @@ public class PrometheusExample {
 
         PrometheusExample example = new PrometheusExample();
         boolean passed = example.runTest(url);
-        System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
     }
 
     /**

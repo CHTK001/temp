@@ -7,6 +7,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import lombok.extern.slf4j.Slf4j;
+import com.chua.example.util.ExampleUtils;
 
 /**
  * {@link Branch} 轻量惰性分支工具示例 — 由单元测试改写。
@@ -25,16 +26,6 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public final class BranchExample {
-
-    /**
-     * 退出码：成功
-     */
-    private static final int EXIT_CODE_SUCCESS = 0;
-
-    /**
-     * 退出码：失败
-     */
-    private static final int EXIT_CODE_FAILURE = 1;
 
     /**
      * 防止实例化工具类。
@@ -68,11 +59,11 @@ public final class BranchExample {
         passed &= sequentialWhensAreIndependentGuards();
         if (!passed) {
             log.info("[FAIL] Branch 存在失败场景");
-            System.exit(EXIT_CODE_FAILURE);
+            System.exit(ExampleUtils.FAILURE);
         } else {
             log.info("[PASS] Branch 全部场景通过");
         }
-        System.exit(EXIT_CODE_SUCCESS);
+        System.exit(ExampleUtils.SUCCESS);
     }
 
     // ==================== 场景 ====================
@@ -95,7 +86,7 @@ public final class BranchExample {
             boolean ok = invoked.get() == 0;
             ok &= "a!".equals(chain.get());
             ok &= invoked.get() == 1;
-            print(name, ok);
+            ExampleUtils.print(name, ok);
             return ok;
         } catch (Exception e) {
             return fail(name, e);
@@ -119,7 +110,7 @@ public final class BranchExample {
                     .otherwise(v -> "small")
                     .get();
             boolean ok = "big".equals(big) && "small".equals(small);
-            print(name, ok);
+            ExampleUtils.print(name, ok);
             return ok;
         } catch (Exception e) {
             return fail(name, e);
@@ -141,7 +132,7 @@ public final class BranchExample {
                     .otherwise(v -> "other")
                     .get();
             boolean ok = ">3".equals(r);
-            print(name, ok);
+            ExampleUtils.print(name, ok);
             return ok;
         } catch (Exception e) {
             return fail(name, e);
@@ -162,7 +153,7 @@ public final class BranchExample {
                     .end()
                     .get();
             boolean ok = r != null && r == 7;
-            print(name, ok);
+            ExampleUtils.print(name, ok);
             return ok;
         } catch (Exception e) {
             return fail(name, e);
@@ -183,7 +174,7 @@ public final class BranchExample {
                     .otherwise(v -> "C")
                     .get();
             boolean ok = "A:5".equals(r);
-            print(name, ok);
+            ExampleUtils.print(name, ok);
             return ok;
         } catch (Exception e) {
             return fail(name, e);
@@ -207,7 +198,7 @@ public final class BranchExample {
                     .end()
                     .get();
             boolean ok = r == null && !predicateCalled.get();
-            print(name, ok);
+            ExampleUtils.print(name, ok);
             return ok;
         } catch (Exception e) {
             return fail(name, e);
@@ -226,7 +217,7 @@ public final class BranchExample {
                     .whenNull(v -> "fallback")
                     .get();
             boolean ok = "fallback".equals(r);
-            print(name, ok);
+            ExampleUtils.print(name, ok);
             return ok;
         } catch (Exception e) {
             return fail(name, e);
@@ -247,7 +238,7 @@ public final class BranchExample {
             ok &= "single".equals(Branch.of(List.of("x")).whenOne(v -> "single").get());
             ok &= "yes".equals(Branch.of(Boolean.TRUE).whenTrue(v -> "yes").get());
             ok &= "raw".equals(Branch.of("raw").whenTrue(v -> "yes").get());
-            print(name, ok);
+            ExampleUtils.print(name, ok);
             return ok;
         } catch (Exception e) {
             return fail(name, e);
@@ -272,7 +263,7 @@ public final class BranchExample {
                     .end()
                     .get();
             boolean ok = "recovered:boom-tail".equals(r);
-            print(name, ok);
+            ExampleUtils.print(name, ok);
             return ok;
         } catch (Exception e) {
             return fail(name, e);
@@ -300,7 +291,7 @@ public final class BranchExample {
                     .end()
                     .get();
             boolean ok = "ok".equals(r);
-            print(name, ok);
+            ExampleUtils.print(name, ok);
             return ok;
         } catch (Exception e) {
             return fail(name, e);
@@ -321,7 +312,7 @@ public final class BranchExample {
                     .end();
             expectThrows(name, IllegalArgumentException.class, bomb::get);
             boolean ok = fine != null && fine == 2;
-            print(name, ok);
+            ExampleUtils.print(name, ok);
             return ok;
         } catch (AssertionError e) {
             log.info("[FAIL] " + name + ": " + e.getMessage());
@@ -359,7 +350,7 @@ public final class BranchExample {
         try {
             Branch<String> noCondition = Branch.of("v").recover(e -> "r");
             expectThrows(name, IllegalStateException.class, noCondition::get);
-            print(name, true);
+            ExampleUtils.print(name, true);
             return true;
         } catch (AssertionError e) {
             log.info("[FAIL] " + name + ": " + e.getMessage());
@@ -395,7 +386,7 @@ public final class BranchExample {
             boolean ok = "fallback-1".equals(first);
             ok &= "fallback-2".equals(second);
             ok &= underlying.get() == 1;
-            print(name, ok);
+            ExampleUtils.print(name, ok);
             return ok;
         } catch (Exception e) {
             return fail(name, e);
@@ -424,7 +415,7 @@ public final class BranchExample {
                     .get();
             boolean ok = List.of("reset").equals(r);
             ok &= seen.get() instanceof IllegalStateException;
-            print(name, ok);
+            ExampleUtils.print(name, ok);
             return ok;
         } catch (Exception e) {
             return fail(name, e);
@@ -448,7 +439,7 @@ public final class BranchExample {
                     .end()
                     .get();
             boolean ok = "data-1-3".equals(r);
-            print(name, ok);
+            ExampleUtils.print(name, ok);
             return ok;
         } catch (Exception e) {
             return fail(name, e);
@@ -466,16 +457,6 @@ public final class BranchExample {
     private static String failWithCount(AtomicInteger counter) {
         counter.incrementAndGet();
         throw new RuntimeException("down");
-    }
-
-    /**
-     * 输出单场景结果。
-     *
-     * @param name 场景名
-     * @param ok   是否通过
-     */
-    private static void print(String name, boolean ok) {
-        log.info((ok ? "[PASS] " : "[FAIL] ") + name);
     }
 
     /**

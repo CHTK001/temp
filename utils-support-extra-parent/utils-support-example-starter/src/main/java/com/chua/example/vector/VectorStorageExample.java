@@ -4,6 +4,7 @@ import com.chua.common.support.vector.Vector;
 import com.chua.common.support.vector.VectorCompareAlgorithm;
 import com.chua.common.support.vector.VectorStorage;
 import com.chua.common.support.vector.VectorStorageBuilder;
+import com.chua.example.util.ExampleUtils;
 
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -30,16 +31,6 @@ public final class VectorStorageExample {
     private static final int DIMENSION = 3;
 
     /**
-     * 退出码：成功
-     */
-    private static final int EXIT_CODE_SUCCESS = 0;
-
-    /**
-     * 退出码：失败
-     */
-    private static final int EXIT_CODE_FAILURE = 1;
-
-    /**
      * 防止实例化工具类。
      */
     private VectorStorageExample() {
@@ -62,16 +53,16 @@ public final class VectorStorageExample {
             passed &= testClear(storage);
         } catch (Exception e) {
             log.info("[FAIL] VectorStorage 示例异常: " + e.getMessage());
-            System.exit(EXIT_CODE_FAILURE);
+            System.exit(ExampleUtils.FAILURE);
             return;
         }
         if (!passed) {
             log.info("[FAIL] VectorStorage 存在失败场景");
-            System.exit(EXIT_CODE_FAILURE);
+            System.exit(ExampleUtils.FAILURE);
         } else {
             log.info("[PASS] VectorStorage 全部场景通过");
         }
-        System.exit(EXIT_CODE_SUCCESS);
+        System.exit(ExampleUtils.SUCCESS);
     }
 
     // ==================== 场景 ====================
@@ -91,7 +82,7 @@ public final class VectorStorageExample {
             List<Vector> results = storage.search(new float[]{1.0f, 0.1f, 0.0f}, 2);
             ok &= results.size() == 2;
             ok &= "v1".equals(results.get(0).id());
-            print("add/search Top-K 最相似排首", ok);
+            ExampleUtils.print("add/search Top-K 最相似排首", ok);
             return ok;
         } catch (Exception e) {
             return fail("add/search Top-K 最相似排首", e);
@@ -117,7 +108,7 @@ public final class VectorStorageExample {
             ok &= storage.size() == 2;
             List<Vector> remaining = storage.search(new float[]{1.0f, 1.0f, 0.0f}, 10);
             ok &= remaining.size() == 2;
-            print("removeByIdPrefix 批量删除", ok);
+            ExampleUtils.print("removeByIdPrefix 批量删除", ok);
             return ok;
         } catch (Exception e) {
             return fail("removeByIdPrefix 批量删除", e);
@@ -136,7 +127,7 @@ public final class VectorStorageExample {
             storage.add(new Vector("doc1_chunk0", new float[]{1.0f, 0.0f, 0.0f}));
             int removed = storage.removeByIdPrefix("nonexistent_");
             boolean ok = removed == 0 && storage.size() == 1;
-            print("removeByIdPrefix 无命中返回 0", ok);
+            ExampleUtils.print("removeByIdPrefix 无命中返回 0", ok);
             return ok;
         } catch (Exception e) {
             return fail("removeByIdPrefix 无命中返回 0", e);
@@ -156,7 +147,7 @@ public final class VectorStorageExample {
             boolean first = storage.remove("only_one");
             boolean second = storage.remove("only_one");
             boolean ok = first && !second && storage.size() == 0;
-            print("remove 单条幂等语义", ok);
+            ExampleUtils.print("remove 单条幂等语义", ok);
             return ok;
         } catch (Exception e) {
             return fail("remove 单条幂等语义", e);
@@ -176,7 +167,7 @@ public final class VectorStorageExample {
             storage.add(new Vector("v2", new float[]{0.0f, 1.0f, 0.0f}));
             storage.clear();
             boolean ok = storage.size() == 0;
-            print("clear 清空存储", ok);
+            ExampleUtils.print("clear 清空存储", ok);
             return ok;
         } catch (Exception e) {
             return fail("clear 清空存储", e);
@@ -195,16 +186,6 @@ public final class VectorStorageExample {
                 .dimension(DIMENSION)
                 .algorithm(VectorCompareAlgorithm.cosine())
                 .build();
-    }
-
-    /**
-     * 输出单场景结果。
-     *
-     * @param name 场景名
-     * @param ok   是否通过
-     */
-    private static void print(String name, boolean ok) {
-        log.info((ok ? "[PASS] " : "[FAIL] ") + name);
     }
 
     /**

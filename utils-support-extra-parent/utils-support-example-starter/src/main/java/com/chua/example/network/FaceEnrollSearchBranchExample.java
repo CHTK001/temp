@@ -6,6 +6,7 @@ import com.chua.deeplearning.support.face.FaceIdentifyHit;
 import com.chua.deeplearning.support.face.FacePipeline;
 import com.chua.deeplearning.support.face.FacePipelineDiskCallback;
 import com.chua.deeplearning.support.model.DetectionInfo;
+import com.chua.example.util.ExampleUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Files;
@@ -42,12 +43,9 @@ public class FaceEnrollSearchBranchExample {
     /** 输出根目录。 */
     private static final String OUTPUT_DIR = "D:\\images\\output\\face-branch\\";
 
-    private static final int EXIT_CODE_SUCCESS = 0;
-    private static final int EXIT_CODE_FAILURE = 1;
-
     public static void main(String[] args) throws Exception {
         boolean passed = runTest();
-        System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
     }
 
     /**

@@ -4,6 +4,7 @@ import com.chua.common.support.ai.audio.AudioClient;
 import com.chua.common.support.ai.audio.AudioClientSetting;
 import com.chua.common.support.ai.audio.AudioResponse;
 import com.chua.common.support.utils.CommandLine;
+import com.chua.example.util.ExampleUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -44,16 +45,6 @@ import java.nio.file.Path;
  */
 @Slf4j
 public class WhisperAudioExample {
-
-    /**
-     * 程序退出码：成功
-     */
-    private static final int EXIT_CODE_SUCCESS = 0;
-
-    /**
-     * 程序退出码：失败
-     */
-    private static final int EXIT_CODE_FAILURE = 1;
 
     /**
      * 默认 provider
@@ -100,7 +91,7 @@ public class WhisperAudioExample {
 
         WhisperAudioExample example = new WhisperAudioExample();
         boolean passed = example.runTest(cli);
-        System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
     }
 
     /**

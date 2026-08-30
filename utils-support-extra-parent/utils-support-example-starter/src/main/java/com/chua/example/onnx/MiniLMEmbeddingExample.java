@@ -2,6 +2,7 @@ package com.chua.example.onnx;
 
 import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.ai.embedding.EmbeddingClient;
+import com.chua.common.support.utils.MathUtils;
 
 /**
  * MiniLM 文本嵌入 int8 / fp32 双版本对比验证。
@@ -46,7 +47,7 @@ public final class MiniLMEmbeddingExample {
             float[] v2 = client.embedding("hello world");
             boolean ok = v1 != null && v1.length == 384
                     && v2 != null && v2.length == 384;
-            double norm = norm(v1);
+            double norm = MathUtils.l2Norm(v1);
             ok = ok && Math.abs(norm - 1.0) < 1e-3;
             System.out.printf("[%s] model=%s dim=%d norm=%.4f equal(重复输入)=%s%n",
                     label, model, v1 == null ? 0 : v1.length, norm, ok && near(v1, v2));
@@ -67,9 +68,9 @@ public final class MiniLMEmbeddingExample {
             float[] b1 = fp32.embedding("how to learn programming");
             float[] b2 = int8.embedding("banana bread recipe");
 
-            double sameInt8 = cosine(a1, a2);
-            double diffInt8 = cosine(a1, b2);
-            double cross = cosine(a1, b1);
+            double sameInt8 = MathUtils.cosineSimilarity(a1, a2);
+            double diffInt8 = MathUtils.cosineSimilarity(a1, b2);
+            double cross = MathUtils.cosineSimilarity(a1, b1);
 
             boolean ok = sameInt8 > 0.55 && diffInt8 < 0.6 && cross > 0.99;
             System.out.printf("[similarity] int8相似=%s int8不相似=%s int8/fp32交叉=%s%n",
@@ -82,21 +83,6 @@ public final class MiniLMEmbeddingExample {
         }
     }
 
-    private static double norm(float[] v) {
-        double s = 0;
-        for (float f : v) {
-            s += f * f;
-        }
-        return Math.sqrt(s);
-    }
-
-    private static double cosine(float[] a, float[] b) {
-        double dot = 0;
-        for (int i = 0; i < a.length; i++) {
-            dot += a[i] * b[i];
-        }
-        return dot / (norm(a) * norm(b));
-    }
 
     private static boolean near(float[] a, float[] b) {
         if (a.length != b.length) {

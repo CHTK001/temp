@@ -4,6 +4,7 @@ import com.chua.deeplearning.support.face.FaceClarityDetector;
 import com.chua.deeplearning.support.image.ImageClarityDetector;
 import com.chua.deeplearning.support.model.FaceQualityInfo;
 import com.chua.deeplearning.support.model.ImageQualityInfo;
+import com.chua.example.util.ExampleUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -27,12 +28,6 @@ public class ImageClarityDetectorExample {
     /** 默认图片目录 */
     private static final String DEFAULT_IMAGE_DIR = "D:\\images";
 
-    /** 成功退出码 */
-    private static final int EXIT_CODE_SUCCESS = 0;
-
-    /** 失败退出码 */
-    private static final int EXIT_CODE_FAILURE = 1;
-
     /**
      * 入口。
      *
@@ -42,7 +37,7 @@ public class ImageClarityDetectorExample {
     public static void main(String[] args) throws IOException {
         String imagePath = args.length > 0 ? args[0] : DEFAULT_IMAGE_DIR;
         boolean passed = runTest(imagePath);
-        System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
     }
 
     /**

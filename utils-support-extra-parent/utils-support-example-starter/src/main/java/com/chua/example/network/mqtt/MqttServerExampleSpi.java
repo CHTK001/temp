@@ -1,4 +1,4 @@
-package com.chua.example.network.mqtt;
+﻿package com.chua.example.network.mqtt;
 
 import com.chua.common.support.network.server.ServerSetting;
 import com.chua.mqtt.support.client.MqttClientWrapper;
@@ -135,10 +135,10 @@ public class MqttServerExampleSpi implements Example {
 
             assertTrue(received.await(5, TimeUnit.SECONDS), "应在 5s 内收到消息");
             assertEquals("mqtt-publish-test", receivedMsg[0], "消息体应一致");
-            pass();
+            ExampleUtils.pass();
             return true;
         } catch (Exception e) {
-            fail("MQTT 自检异常: " + e.getMessage());
+            ExampleUtils.fail("MQTT 自检异常: " + e.getMessage());
             return false;
         } finally {
             closeQuietly(client);
@@ -162,10 +162,10 @@ public class MqttServerExampleSpi implements Example {
             }
             PerfReportExample.printResult("mqtt-server PUBLISH bench/topic 压力", row.concurrency, row.connections, row.requestsPerConn,
                     payloadSize, row.total, row.errors, row.elapsedMs, row.sortedLatencyNs, 0L);
-            pass();
+            ExampleUtils.pass();
             return true;
         } catch (Exception e) {
-            fail("PERF 异常: " + e.getMessage());
+            ExampleUtils.fail("PERF 异常: " + e.getMessage());
             return false;
         } finally {
             closeQuietly(server);
@@ -195,7 +195,7 @@ public class MqttServerExampleSpi implements Example {
             return !rows.isEmpty();
         } catch (Exception e) {
             log.error("SWEEP 异常: {}", e.getMessage(), e);
-            fail("SWEEP 异常: " + e.getMessage());
+            ExampleUtils.fail("SWEEP 异常: " + e.getMessage());
             return false;
         } finally {
             closeQuietly(server);
@@ -328,16 +328,6 @@ public class MqttServerExampleSpi implements Example {
         if (!cond) {
             throw new AssertionError(msg);
         }
-    }
-
-    /** Pass */
-    private static void pass() {
-        log.info("  \u2713 通过");
-    }
-
-    /** Fail */
-    private static void fail(String msg) {
-        log.info("  \u2717 失败: {}", msg);
     }
 
     /** 关闭Quietly */

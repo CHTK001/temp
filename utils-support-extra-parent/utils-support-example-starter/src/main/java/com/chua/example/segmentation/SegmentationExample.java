@@ -5,6 +5,7 @@ import com.chua.deeplearning.support.config.ModelSetting;
 import com.chua.deeplearning.support.engine.AbstractIdentificationEngine;
 import com.chua.common.support.spi.ServiceProvider;
 import lombok.extern.slf4j.Slf4j;
+import com.chua.example.util.ExampleUtils;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,15 +24,10 @@ public class SegmentationExample {
 
     /** 输出根目录 */
     private static final String OUTPUT_ROOT = "D:\\images\\output\\";
-    /** 成功退出码 */
-    private static final int EXIT_CODE_SUCCESS = 0;
-    /** 失败退出码 */
-    private static final int EXIT_CODE_FAILURE = 1;
-
     /** Main */
     public static void main(String[] args) throws Exception {
         boolean passed = runTest();
-        System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
     }
 
     /** 运行Test */

@@ -12,9 +12,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.BooleanSupplier;
 import com.chua.common.support.utils.ThreadUtils;
 import lombok.extern.slf4j.Slf4j;
+import com.chua.example.util.ExampleUtils;
 
 /**
  * 备份/恢复 {@link DefaultDailyBackupStrategy} + {@link DefaultBackupRestore} 往返自检示例。
@@ -34,16 +34,6 @@ import lombok.extern.slf4j.Slf4j;
 public final class BackupRoundTripExample {
 
     /**
-     * 退出码：成功
-     */
-    private static final int EXIT_CODE_SUCCESS = 0;
-
-    /**
-     * 退出码：失败
-     */
-    private static final int EXIT_CODE_FAILURE = 1;
-
-    /**
      * 测试根目录（系统临时目录下的独立子目录）
      */
     private static final Path TEST_ROOT =
@@ -53,16 +43,6 @@ public final class BackupRoundTripExample {
      * 防止实例化工具类。
      */
     private BackupRoundTripExample() {
-    }
-
-    /**
-     * 输出单场景结果标记。
-     *
-     * @param name 场景名
-     * @param ok   是否通过
-     */
-    private static void print(String name, boolean ok) {
-        log.info((ok ? "[PASS] " : "[FAIL] ") + name);
     }
 
     /**
@@ -115,7 +95,7 @@ public final class BackupRoundTripExample {
         if (!ok) {
             log.info("[DBG] result=" + result);
         }
-        print("dailyBackupExecutes", ok);
+        ExampleUtils.print("dailyBackupExecutes", ok);
         return ok;
         } catch (IOException e) {
             return fail("dailyBackupExecutes", e);
@@ -147,7 +127,7 @@ public final class BackupRoundTripExample {
             bOk = Files.exists(rb) && "{\"k\":1}".equals(Files.readString(rb));
         }
         boolean ok = restored.isSuccess() && aOk && bOk;
-        print("restoreLatestMatchesSource", ok);
+        ExampleUtils.print("restoreLatestMatchesSource", ok);
         return ok;
         } catch (IOException e) {
             return fail("restoreLatestMatchesSource", e);
@@ -178,7 +158,7 @@ public final class BackupRoundTripExample {
         boolean oldGone = !Files.exists(archive.resolve(makeDate(-30) + ".zip"));
         boolean newKept = Files.exists(archive.resolve(makeDate(0) + ".zip"));
         boolean ok = backups.size() == 2 && cleaned >= 1 && oldGone && newKept;
-        print("listAndCleanExpired (cleaned=" + cleaned + ")", ok);
+        ExampleUtils.print("listAndCleanExpired (cleaned=" + cleaned + ")", ok);
         return ok;
         } catch (IOException e) {
             return fail("listAndCleanExpired", e);
@@ -217,32 +197,18 @@ public final class BackupRoundTripExample {
     public static void main(String[] args) {
         boolean passed = true;
         try {
-            passed &= timed("dailyBackupExecutes", BackupRoundTripExample::dailyBackupExecutes);
-            passed &= timed("restoreLatestMatchesSource", BackupRoundTripExample::restoreLatestMatchesSource);
-            passed &= timed("listAndCleanExpired", BackupRoundTripExample::listAndCleanExpired);
+            passed &= ExampleUtils.timed("dailyBackupExecutes", BackupRoundTripExample::dailyBackupExecutes);
+            passed &= ExampleUtils.timed("restoreLatestMatchesSource", BackupRoundTripExample::restoreLatestMatchesSource);
+            passed &= ExampleUtils.timed("listAndCleanExpired", BackupRoundTripExample::listAndCleanExpired);
         } finally {
             cleanupTestRoot();
         }
         if (!passed) {
             log.info("[FAIL] Backup 存在失败场景");
-            System.exit(EXIT_CODE_FAILURE);
+            System.exit(ExampleUtils.FAILURE);
         }
         log.info("[PASS] Backup 全部场景通过");
-        System.exit(EXIT_CODE_SUCCESS);
-    }
-
-    /**
-     * 带耗时的场景执行器。
-     *
-     * @param name     场景名
-     * @param scenario 场景逻辑
-     * @return 场景是否通过
-     */
-    private static boolean timed(String name, BooleanSupplier scenario) {
-        long start = System.currentTimeMillis();
-        boolean ok = scenario.getAsBoolean();
-        log.info("[TIME] " + name + " " + (System.currentTimeMillis() - start) + "ms");
-        return ok;
+        System.exit(ExampleUtils.SUCCESS);
     }
 
     /**

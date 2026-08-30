@@ -5,7 +5,7 @@ import com.chua.common.support.concurrent.backoff.provider.FixedBackoffProvider;
 import com.chua.common.support.task.retry.RetryFlow;
 
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.BooleanSupplier;
+import com.chua.example.util.ExampleUtils;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -26,43 +26,9 @@ import lombok.extern.slf4j.Slf4j;
 public final class RetryExample {
 
     /**
-     * 退出码：成功
-     */
-    private static final int EXIT_CODE_SUCCESS = 0;
-
-    /**
-     * 退出码：失败
-     */
-    private static final int EXIT_CODE_FAILURE = 1;
-
-    /**
      * 防止实例化工具类。
      */
     private RetryExample() {
-    }
-
-    /**
-     * 带耗时的场景执行器。
-     *
-     * @param name     场景名
-     * @param scenario 场景逻辑
-     * @return 场景是否通过
-     */
-    private static boolean timed(String name, BooleanSupplier scenario) {
-        long start = System.currentTimeMillis();
-        boolean ok = scenario.getAsBoolean();
-        log.info("[TIME] " + name + " " + (System.currentTimeMillis() - start) + "ms");
-        return ok;
-    }
-
-    /**
-     * 输出单场景结果标记。
-     *
-     * @param name 场景名
-     * @param ok   是否通过
-     */
-    private static void print(String name, boolean ok) {
-        log.info((ok ? "[PASS] " : "[FAIL] ") + name);
     }
 
     /**
@@ -97,7 +63,7 @@ public final class RetryExample {
                         return 42;
                     });
             boolean ok = result == 42 && attempts.get() == 3 && retriesObserved.get() == 2;
-            print("recoverAfterTransientFailures", ok);
+            ExampleUtils.print("recoverAfterTransientFailures", ok);
             return ok;
         } catch (Exception e) {
             return fail("recoverAfterTransientFailures", e);
@@ -119,7 +85,7 @@ public final class RetryExample {
                         throw new IllegalStateException("always");
                     });
             boolean ok = result == -1;
-            print("exhaustedFallsBack", ok);
+            ExampleUtils.print("exhaustedFallsBack", ok);
             return ok;
         } catch (Exception e) {
             return fail("exhaustedFallsBack", e);
@@ -145,7 +111,7 @@ public final class RetryExample {
             return fail("nonMatchingExceptionSkipsRetry", "不应到达此处");
         } catch (NumberFormatException expected) {
             boolean ok = attempts.get() == 1;
-            print("nonMatchingExceptionSkipsRetry", ok);
+            ExampleUtils.print("nonMatchingExceptionSkipsRetry", ok);
             return ok;
         } catch (Exception e) {
             return fail("nonMatchingExceptionSkipsRetry", e);
@@ -168,7 +134,7 @@ public final class RetryExample {
                         return "ok";
                     });
             boolean ok = "ok".equals(result) && attempts.get() == 1;
-            print("immediateSuccessNoRetry", ok);
+            ExampleUtils.print("immediateSuccessNoRetry", ok);
             return ok;
         } catch (Exception e) {
             return fail("immediateSuccessNoRetry", e);
@@ -182,15 +148,15 @@ public final class RetryExample {
      */
     public static void main(String[] args) {
         boolean passed = true;
-        passed &= timed("recoverAfterTransientFailures", RetryExample::recoverAfterTransientFailures);
-        passed &= timed("exhaustedFallsBack", RetryExample::exhaustedFallsBack);
-        passed &= timed("nonMatchingExceptionSkipsRetry", RetryExample::nonMatchingExceptionSkipsRetry);
-        passed &= timed("immediateSuccessNoRetry", RetryExample::immediateSuccessNoRetry);
+        passed &= ExampleUtils.timed("recoverAfterTransientFailures", RetryExample::recoverAfterTransientFailures);
+        passed &= ExampleUtils.timed("exhaustedFallsBack", RetryExample::exhaustedFallsBack);
+        passed &= ExampleUtils.timed("nonMatchingExceptionSkipsRetry", RetryExample::nonMatchingExceptionSkipsRetry);
+        passed &= ExampleUtils.timed("immediateSuccessNoRetry", RetryExample::immediateSuccessNoRetry);
         if (!passed) {
             log.info("[FAIL] Retry 存在失败场景");
-            System.exit(EXIT_CODE_FAILURE);
+            System.exit(ExampleUtils.FAILURE);
         }
         log.info("[PASS] Retry 全部场景通过");
-        System.exit(EXIT_CODE_SUCCESS);
+        System.exit(ExampleUtils.SUCCESS);
     }
 }

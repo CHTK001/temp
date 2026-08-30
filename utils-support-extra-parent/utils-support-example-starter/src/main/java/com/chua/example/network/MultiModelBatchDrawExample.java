@@ -4,6 +4,7 @@ package com.chua.example.ai.vision;
 import com.chua.deeplearning.support.image.ImageDetector;
 import com.chua.deeplearning.support.model.DetectionInfo;
 import com.chua.deeplearning.support.utils.ImageUtils;
+import com.chua.example.util.ExampleUtils;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -37,12 +38,6 @@ public class MultiModelBatchDrawExample {
     /** 默认输出根目录 */
     private static final String DEFAULT_OUTPUT_ROOT = "G:\\images\\output";
 
-    /** 成功退出码 */
-    private static final int EXIT_CODE_SUCCESS = 0;
-
-    /** 失败退出码 */
-    private static final int EXIT_CODE_FAILURE = 1;
-
     /**
      * 需压测的模型 ID 列表（与 OnnxModelRegistrar 注册一致）。
      */
@@ -55,7 +50,7 @@ public class MultiModelBatchDrawExample {
     public static void main(String[] args) throws Exception {
         String input = args.length > 0 ? args[0] : DEFAULT_INPUT;
         boolean passed = runTest(Path.of(input), Path.of(DEFAULT_OUTPUT_ROOT));
-        System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
     }
 
     public static boolean runTest(Path inputDir, Path outputRoot) throws Exception {

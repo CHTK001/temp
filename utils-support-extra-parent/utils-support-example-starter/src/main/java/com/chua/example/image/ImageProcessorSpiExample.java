@@ -4,6 +4,7 @@ import com.chua.common.support.image.ImageProcessor;
 import com.chua.common.support.image.ImageProcessors;
 import com.chua.common.support.spi.ServiceProvider;
 import com.chua.common.support.utils.CommandLine;
+import com.chua.example.util.ExampleUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.imageio.ImageIO;
@@ -49,10 +50,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ImageProcessorSpiExample {
 
-    /** 成功退出码 */
-    private static final int EXIT_CODE_SUCCESS = 0;
-    /** 失败退出码 */
-    private static final int EXIT_CODE_FAILURE = 1;
     /** 默认类型 */
     private static final String DEFAULT_TYPE = "all";
     /** 默认输入路径 */
@@ -83,7 +80,7 @@ public class ImageProcessorSpiExample {
         ImageProcessorSpiExample example = new ImageProcessorSpiExample();
         boolean passed = example.runTest(type, input, output);
         log.info("[ImageProcessorSpiExample] self-test type={}, passed={}", type, passed);
-        System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
     }
 
     /** 运行Test */

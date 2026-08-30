@@ -15,6 +15,7 @@ import com.chua.starter.datasync.mapping.DefaultDataSyncMapping;
 import com.chua.starter.datasync.model.DataSyncMapping;
 import lombok.extern.slf4j.Slf4j;
 import com.chua.example.spi.Example;
+import com.chua.example.util.ExampleUtils;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
@@ -44,16 +45,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class DataSyncExample implements Example {
 
     /**
-     * 退出码：成功
-     */
-    private static final int EXIT_CODE_SUCCESS = 0;
-
-    /**
-     * 退出码：失败
-     */
-    private static final int EXIT_CODE_FAILURE = 1;
-
-    /**
      * 等待时间（毫秒），让调度器轮询并执行
      */
     private static final long WAIT_MILLIS = 4000L;
@@ -79,7 +70,7 @@ public class DataSyncExample implements Example {
         printResult("总结果", passed);
         System.out.flush();
         System.err.flush();
-        System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.chua.example.webhook;
 
 import com.chua.webhook.support.message.WebhookMessagePush;
+import com.chua.example.util.ExampleUtils;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -14,9 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public final class WebhookExample {
 
-    private static final int EXIT_CODE_SUCCESS = 0;
-    private static final int EXIT_CODE_FAILURE = 1;
-
     /** 私有构造，防止实例化。 */
     private WebhookExample() {
     }
@@ -28,14 +26,10 @@ public final class WebhookExample {
         return true;
     }
 
-    private static void print(String name, boolean ok) {
-        log.info("{} {}", ok ? "[PASS]" : "[FAIL]", name);
-    }
-
     /** 1. 直接实例化 */
     private static boolean instanceCreate() {
         var push = new WebhookMessagePush();
-        print("instanceCreate", push != null);
+        ExampleUtils.print("instanceCreate", push != null);
         return push != null;
     }
 
@@ -43,7 +37,7 @@ public final class WebhookExample {
     private static boolean providerName() {
         var push = new WebhookMessagePush();
         var ok = "webhook".equals(push.getProvider());
-        print("providerName", ok);
+        ExampleUtils.print("providerName", ok);
         return ok;
     }
 
@@ -53,10 +47,10 @@ public final class WebhookExample {
         try {
             // TemplateInfo 来自 common-task 模块，此处跳过实际实例化，
             // 仅验证方法存在性与调用不报错
-            print("templateManage-skipped", true);
+            ExampleUtils.print("templateManage-skipped", true);
             return true;
         } catch (Exception e) {
-            print("templateManage", false);
+            ExampleUtils.print("templateManage", false);
             return false;
         }
     }
@@ -66,7 +60,7 @@ public final class WebhookExample {
         var push = new WebhookMessagePush();
         var templates = push.listTemplates();
         var ok = templates != null;
-        print("listTemplates", ok);
+        ExampleUtils.print("listTemplates", ok);
         return ok;
     }
 
@@ -78,9 +72,9 @@ public final class WebhookExample {
         passed &= timed("listTemplates", WebhookExample::listTemplates);
         if (!passed) {
             log.error("[FAIL] Webhook 存在失败场景");
-            System.exit(EXIT_CODE_FAILURE);
+            System.exit(ExampleUtils.FAILURE);
         }
         log.info("[PASS] Webhook 全部场景通过");
-        System.exit(EXIT_CODE_SUCCESS);
+        System.exit(ExampleUtils.SUCCESS);
     }
 }

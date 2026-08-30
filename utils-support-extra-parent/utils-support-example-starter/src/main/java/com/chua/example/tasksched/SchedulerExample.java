@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.BooleanSupplier;
 import lombok.extern.slf4j.Slf4j;
+import com.chua.example.util.ExampleUtils;
 
 /**
  * 调度器全场景自检示例：Cron 表达式解析、三种触发器的触发时间推算、
@@ -31,29 +31,9 @@ import lombok.extern.slf4j.Slf4j;
 public final class SchedulerExample {
 
     /**
-     * 退出码：成功
-     */
-    private static final int EXIT_CODE_SUCCESS = 0;
-
-    /**
-     * 退出码：失败
-     */
-    private static final int EXIT_CODE_FAILURE = 1;
-
-    /**
      * 防止实例化工具类。
      */
     private SchedulerExample() {
-    }
-
-    /**
-     * 输出单场景结果标记。
-     *
-     * @param name 场景名
-     * @param ok   是否通过
-     */
-    private static void print(String name, boolean ok) {
-        log.info((ok ? "[PASS] " : "[FAIL] ") + name);
     }
 
     /**
@@ -83,7 +63,7 @@ public final class SchedulerExample {
                     && times.get(0).isAfter(times.get(1)) == false
                     && times.get(1).isBefore(times.get(2))
                     && times.get(0).getSecond() % 10 == 0;
-            print("cronParseAndFireTimes", ok);
+            ExampleUtils.print("cronParseAndFireTimes", ok);
             return ok;
         } catch (Exception e) {
             return fail("cronParseAndFireTimes", e);
@@ -98,10 +78,10 @@ public final class SchedulerExample {
     private static boolean cronInvalidRejected() {
         try {
             new CronExpression("not-a-cron");
-            print("cronInvalidRejected", false);
+            ExampleUtils.print("cronInvalidRejected", false);
             return false;
         } catch (RuntimeException expected) {
-            print("cronInvalidRejected", true);
+            ExampleUtils.print("cronInvalidRejected", true);
             return true;
         }
     }
@@ -121,7 +101,7 @@ public final class SchedulerExample {
             boolean ok = fixed.get(0).equals(base.plusSeconds(30))
                     && fixed.get(1).equals(base.plusSeconds(60))
                     && simple.get(0).equals(base.plusMinutes(1));
-            print("fixedIntervalTriggers", ok);
+            ExampleUtils.print("fixedIntervalTriggers", ok);
             return ok;
         } catch (Exception e) {
             return fail("fixedIntervalTriggers", e);
@@ -147,7 +127,7 @@ public final class SchedulerExample {
             provider.shutdown();
             boolean stopped = !provider.isRunning();
             boolean ok = executed && registered && cancelled && stopped;
-            print("providerLifecycle (executed=" + executed
+            ExampleUtils.print("providerLifecycle (executed=" + executed
                     + " registered=" + registered + " cancelled=" + cancelled + ")", ok);
             return ok;
         } catch (Exception e) {
@@ -179,29 +159,17 @@ public final class SchedulerExample {
      */
     public static void main(String[] args) {
         boolean passed = true;
-        passed &= timed("cronParseAndFireTimes", SchedulerExample::cronParseAndFireTimes);
-        passed &= timed("cronInvalidRejected", SchedulerExample::cronInvalidRejected);
-        passed &= timed("fixedIntervalTriggers", SchedulerExample::fixedIntervalTriggers);
-        passed &= timed("providerLifecycle", SchedulerExample::providerLifecycle);
+        passed &= ExampleUtils.timed("cronParseAndFireTimes", SchedulerExample::cronParseAndFireTimes);
+        passed &= ExampleUtils.timed("cronInvalidRejected", SchedulerExample::cronInvalidRejected);
+        passed &= ExampleUtils.timed("fixedIntervalTriggers", SchedulerExample::fixedIntervalTriggers);
+        passed &= ExampleUtils.timed("providerLifecycle", SchedulerExample::providerLifecycle);
         if (!passed) {
             log.info("[FAIL] Scheduler 存在失败场景");
-            System.exit(EXIT_CODE_FAILURE);
+            System.exit(ExampleUtils.FAILURE);
         }
         log.info("[PASS] Scheduler 全部场景通过");
-        System.exit(EXIT_CODE_SUCCESS);
+        System.exit(ExampleUtils.SUCCESS);
     }
 
-    /**
-     * 带耗时的场景执行器。
-     *
-     * @param name     场景名
-     * @param scenario 场景逻辑
-     * @return 场景是否通过
-     */
-    private static boolean timed(String name, BooleanSupplier scenario) {
-        long start = System.currentTimeMillis();
-        boolean ok = scenario.getAsBoolean();
-        log.info("[TIME] " + name + " " + (System.currentTimeMillis() - start) + "ms");
-        return ok;
-    }
+
 }

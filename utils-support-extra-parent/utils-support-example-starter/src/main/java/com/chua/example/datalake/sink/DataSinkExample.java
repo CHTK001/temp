@@ -5,6 +5,7 @@ import com.chua.datalake.support.model.DataEnvelope;
 import com.chua.datalake.support.spi.sink.AccessSink;
 import com.chua.datalake.support.spi.sink.DataSink;
 import lombok.extern.slf4j.Slf4j;
+import com.chua.example.util.ExampleUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,16 +37,6 @@ import java.util.Set;
 @Slf4j
 public class DataSinkExample {
 
-    /**
-     * 退出码：成功
-     */
-    private static final int EXIT_CODE_SUCCESS = 0;
-
-    /**
-     * 退出码：失败
-     */
-    private static final int EXIT_CODE_FAILURE = 1;
-
     /** Main */
     public static void main(String[] args) {
         Args parsed = parseArgs(args);
@@ -66,7 +57,7 @@ public class DataSinkExample {
             }
         };
 
-        System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
     }
 
     /**

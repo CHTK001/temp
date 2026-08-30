@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.BooleanSupplier;
 import com.chua.common.support.utils.ThreadUtils;
 import lombok.extern.slf4j.Slf4j;
+import com.chua.example.util.ExampleUtils;
 
 /**
  * 异步流 {@link AsyncFlow} 与幂等去重器 {@link MemoryDeduplicator} 全场景自检示例。
@@ -29,29 +29,9 @@ import lombok.extern.slf4j.Slf4j;
 public final class AsyncDeduplicateExample {
 
     /**
-     * 退出码：成功
-     */
-    private static final int EXIT_CODE_SUCCESS = 0;
-
-    /**
-     * 退出码：失败
-     */
-    private static final int EXIT_CODE_FAILURE = 1;
-
-    /**
      * 防止实例化工具类。
      */
     private AsyncDeduplicateExample() {
-    }
-
-    /**
-     * 输出单场景结果标记。
-     *
-     * @param name 场景名
-     * @param ok   是否通过
-     */
-    private static void print(String name, boolean ok) {
-        log.info((ok ? "[PASS] " : "[FAIL] ") + name);
     }
 
     /**
@@ -81,7 +61,7 @@ public final class AsyncDeduplicateExample {
         boolean ok = "async-value".equals(value)
                 && ran.getCount() == 0
                 && batch.equals(List.of(1, 2, 3));
-        print("asyncSupplyRunAndBatch", ok);
+        ExampleUtils.print("asyncSupplyRunAndBatch", ok);
         return ok;
     }
 
@@ -105,7 +85,7 @@ public final class AsyncDeduplicateExample {
                     && executions.get() == 1
                     && dedup.isDuplicate("order:1001")
                     && dedup.size() == 1;
-            print("dedupExecutesOnceOnly", ok);
+            ExampleUtils.print("dedupExecutesOnceOnly", ok);
             return ok;
         } catch (Exception e) {
             return fail("dedupExecutesOnceOnly", e);
@@ -127,7 +107,7 @@ public final class AsyncDeduplicateExample {
             dedup.clear();
             boolean cleared = dedup.size() == 0;
             boolean ok = markedBefore && expiredAfter && cleared;
-            print("ttlExpiryAllowsReprocess", ok);
+            ExampleUtils.print("ttlExpiryAllowsReprocess", ok);
             return ok;
         }
     }
@@ -139,28 +119,16 @@ public final class AsyncDeduplicateExample {
      */
     public static void main(String[] args) {
         boolean passed = true;
-        passed &= timed("asyncSupplyRunAndBatch", AsyncDeduplicateExample::asyncSupplyRunAndBatch);
-        passed &= timed("dedupExecutesOnceOnly", AsyncDeduplicateExample::dedupExecutesOnceOnly);
-        passed &= timed("ttlExpiryAllowsReprocess", AsyncDeduplicateExample::ttlExpiryAllowsReprocess);
+        passed &= ExampleUtils.timed("asyncSupplyRunAndBatch", AsyncDeduplicateExample::asyncSupplyRunAndBatch);
+        passed &= ExampleUtils.timed("dedupExecutesOnceOnly", AsyncDeduplicateExample::dedupExecutesOnceOnly);
+        passed &= ExampleUtils.timed("ttlExpiryAllowsReprocess", AsyncDeduplicateExample::ttlExpiryAllowsReprocess);
         if (!passed) {
             log.info("[FAIL] Async/Deduplicate 存在失败场景");
-            System.exit(EXIT_CODE_FAILURE);
+            System.exit(ExampleUtils.FAILURE);
         }
         log.info("[PASS] Async/Deduplicate 全部场景通过");
-        System.exit(EXIT_CODE_SUCCESS);
+        System.exit(ExampleUtils.SUCCESS);
     }
 
-    /**
-     * 带耗时的场景执行器。
-     *
-     * @param name     场景名
-     * @param scenario 场景逻辑
-     * @return 场景是否通过
-     */
-    private static boolean timed(String name, BooleanSupplier scenario) {
-        long start = System.currentTimeMillis();
-        boolean ok = scenario.getAsBoolean();
-        log.info("[TIME] " + name + " " + (System.currentTimeMillis() - start) + "ms");
-        return ok;
-    }
+
 }

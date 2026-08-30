@@ -9,6 +9,7 @@ import com.chua.datalake.support.spi.pipeline.PipelineConfig.PipelineStageConfig
 import com.chua.datalake.support.spi.pipeline.PipelineManager;
 import com.chua.datalake.support.spi.sink.DataSink;
 import lombok.extern.slf4j.Slf4j;
+import com.chua.example.util.ExampleUtils;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -43,16 +44,6 @@ public class PipelineEngineExample {
      */
     private static final String DEFAULT_TYPE = "all";
 
-    /**
-     * 退出码：成功
-     */
-    private static final int EXIT_CODE_SUCCESS = 0;
-
-    /**
-     * 退出码：失败
-     */
-    private static final int EXIT_CODE_FAILURE = 1;
-
     /** Main */
     public static void main(String[] args) {
         CommandLine cli = CommandLine.parse(args)
@@ -75,7 +66,7 @@ public class PipelineEngineExample {
                 yield false;
             }
         };
-        System.exit(passed ? EXIT_CODE_SUCCESS : EXIT_CODE_FAILURE);
+        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
     }
 
     /**
