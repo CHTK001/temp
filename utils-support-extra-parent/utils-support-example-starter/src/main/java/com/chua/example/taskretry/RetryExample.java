@@ -32,18 +32,6 @@ public final class RetryExample {
     }
 
     /**
-     * 输出异常失败信息。
-     *
-     * @param name 场景名
-     * @param e    异常
-     * @return 恒为 false
-     */
-    private static boolean fail(String name, Exception e) {
-        log.info("[FAIL] " + name + " 异常: " + e);
-        return false;
-    }
-
-    /**
      * 场景一：瞬时故障在第 3 次尝试恢复，退避与监听计数正确。
      *
      * @return true 表示通过

@@ -187,16 +187,4 @@ public final class VectorStorageExample {
                 .algorithm(VectorCompareAlgorithm.cosine())
                 .build();
     }
-
-    /**
-     * 输出单场景异常失败结果。
-     *
-     * @param name 场景名
-     * @param e    异常
-     * @return 恒为 false
-     */
-    private static boolean fail(String name, Exception e) {
-        log.info("[FAIL] " + name + ": " + e.getMessage());
-        return false;
-    }
 }

@@ -106,8 +106,9 @@ public final class ExampleUtils {
      *
      * @param msg 失败原因
      */
-    public static void fail(String msg) {
-        log.info("  \u2717 失败: {}", msg);
+    public static boolean fail(String msg) {
+        log.warn("[FAIL] {}", msg);
+        return false;
     }
 
     /**

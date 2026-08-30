@@ -37,18 +37,6 @@ public final class SchedulerExample {
     }
 
     /**
-     * 输出异常失败信息。
-     *
-     * @param name 场景名
-     * @param e    异常
-     * @return 恒为 false
-     */
-    private static boolean fail(String name, Exception e) {
-        log.info("[FAIL] " + name + " 异常: " + e);
-        return false;
-    }
-
-    /**
      * 场景一：合法 Cron 解析并推算触发时间（严格递增）。
      *
      * @return true 表示通过
