@@ -46,18 +46,6 @@ public final class BackupRoundTripExample {
     }
 
     /**
-     * 输出异常失败信息。
-     *
-     * @param name 场景名
-     * @param e    异常
-     * @return 恒为 false
-     */
-    private static boolean fail(String name, Exception e) {
-        log.info("[FAIL] " + name + " 异常: " + e);
-        return false;
-    }
-
-    /**
      * 准备源目录：两个业务文件。
      *
      * @return 源目录路径
