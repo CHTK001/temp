@@ -86,7 +86,7 @@ public final class BackupRoundTripExample {
         ExampleUtils.print("dailyBackupExecutes", ok);
         return ok;
         } catch (IOException e) {
-            return fail("dailyBackupExecutes", e);
+            return ExampleUtils.fail("dailyBackupExecutes", e);
         }
     }
 
@@ -118,7 +118,7 @@ public final class BackupRoundTripExample {
         ExampleUtils.print("restoreLatestMatchesSource", ok);
         return ok;
         } catch (IOException e) {
-            return fail("restoreLatestMatchesSource", e);
+            return ExampleUtils.fail("restoreLatestMatchesSource", e);
         }
     }
 
@@ -149,7 +149,7 @@ public final class BackupRoundTripExample {
         ExampleUtils.print("listAndCleanExpired (cleaned=" + cleaned + ")", ok);
         return ok;
         } catch (IOException e) {
-            return fail("listAndCleanExpired", e);
+            return ExampleUtils.fail("listAndCleanExpired", e);
         }
     }
 
