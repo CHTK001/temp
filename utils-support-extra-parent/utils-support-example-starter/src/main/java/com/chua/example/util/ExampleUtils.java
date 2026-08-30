@@ -95,6 +95,17 @@ public final class ExampleUtils {
     }
 
     /**
+     * 打印场景结果及详细信息（PASS/FAIL + 明细），替代各 Example 内重复的私有 printResult。
+     *
+     * @param name   场景名
+     * @param passed 是否通过
+     * @param detail 详细信息
+     */
+    public static void print(String name, boolean passed, String detail) {
+        log.info("{} {} → {}", passed ? "[PASS]" : "[FAIL]", name, detail);
+    }
+
+    /**
      * Spi 自检通过日志输出。
      */
     public static void pass() {
