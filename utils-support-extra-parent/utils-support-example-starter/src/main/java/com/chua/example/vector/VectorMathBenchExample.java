@@ -2,6 +2,7 @@ package com.chua.example.vector;
 
 import com.chua.common.support.vector.VectorCompareAlgorithm;
 import com.chua.common.support.vector.VectorMath;
+import lombok.extern.slf4j.Slf4j;
 
 import static java.lang.Math.random;
 
@@ -19,6 +20,7 @@ import static java.lang.Math.random;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public class VectorMathBenchExample {
 
     /** 基准测试维度集 */
@@ -36,7 +38,7 @@ public class VectorMathBenchExample {
      * @param args 无参数
      */
     public static void main(String[] args) {
-        System.out.println("Vector API: " + VectorMath.isVectorized() + ", lanes=" + VectorMath.lanes());
+        log.info("Vector API: {}, lanes={}", VectorMath.isVectorized(), VectorMath.lanes());
         for (int dim : DIMS) {
             benchmark(dim);
         }
@@ -72,7 +74,7 @@ public class VectorMathBenchExample {
         t1 = System.nanoTime();
         double vecMs = (t1 - t0) / 1e6;
 
-        System.out.printf("dim=%5d algo=%.1fms vectorMath=%.1fms speedup=%.2fx%n",
+        log.info("dim=%5d algo=%.1fms vectorMath=%.1fms speedup=%.2fx",
                 dim, algoMs, vecMs, algoMs / vecMs);
     }
 

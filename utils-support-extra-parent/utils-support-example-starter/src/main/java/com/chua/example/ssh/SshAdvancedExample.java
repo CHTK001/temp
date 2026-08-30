@@ -1,6 +1,7 @@
 package com.chua.example.ssh;
 
 import com.chua.ssh.support.client.SshClient;
+import com.chua.common.support.utils.ThreadUtils;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -57,9 +58,9 @@ public class SshAdvancedExample {
 
             // sendKey 演示: Ctrl+C 中断一个长命令
             term.send("sleep 30");
-            Thread.sleep(500);
+            ThreadUtils.sleep(500);
             term.sendKey("ctrl+c");
-            Thread.sleep(1000);
+            ThreadUtils.sleep(1000);
             System.out.println("PASS: sendKey(ctrl+c) 已发送");
 
             term.close();
@@ -78,7 +79,7 @@ public class SshAdvancedExample {
 
             ssh.connect();
             AutoCloseable tunnel = ssh.forward().local(16379, "172.17.0.9", 6379).start();
-            Thread.sleep(1000);
+            ThreadUtils.sleep(1000);
             System.out.println("PASS: 隧道启动");
 
             try (Socket sock = new Socket()) {
@@ -111,7 +112,7 @@ public class SshAdvancedExample {
 
             ssh.connect();
             AutoCloseable tunnel = ssh.forward().dynamic(11080).start();
-            Thread.sleep(1000);
+            ThreadUtils.sleep(1000);
             System.out.println("PASS: SOCKS5 启动");
 
             // 通过 SOCKS5 代理访问远程 redis 端口验证代理链路
@@ -163,7 +164,7 @@ public class SshAdvancedExample {
             echo.start();
 
             AutoCloseable tunnel = ssh.forward().remote(19990, "127.0.0.1", 19991).bindAddress("0.0.0.0").start();
-            Thread.sleep(1500);
+            ThreadUtils.sleep(1500);
             System.out.println("PASS: 反向隧道注册与远程端口绑定 (netstat 确认 LISTEN)");
 
             // 远程端口位于容器网络内(未映射到宿主机), 从容器内部自连验证完整环回:
@@ -198,7 +199,7 @@ public class SshAdvancedExample {
                     return all.toString();
                 }
             } else {
-                Thread.sleep(200);
+                ThreadUtils.sleep(200);
             }
         }
         return all.toString();

@@ -18,7 +18,8 @@ import java.util.List;
  *   OcrPipelineExample
  *   OcrPipelineExample G:\images\车票.png
  * }</pre>
- *@author CH
+ *
+ * @author CH
  *
  * @since 4.0.0.42
  */
@@ -29,12 +30,24 @@ public final class OcrPipelineExample extends BaseExample {
     private OcrPipelineExample() {
     }
 
-    /** Main */
+    /** 默认图片路径 */
+    private static final String DEFAULT_IMAGE_PATH = "G:\\images\\车票.png";
+    /** 默认检测模型 */
+    private static final String DEFAULT_DET_MODEL = "paddleocrv6-medium-det";
+    /** 默认识别模型 */
+    private static final String DEFAULT_REC_MODEL = "paddleocrv6-medium-rec";
+    /** 默认方向矫正模型 */
+    private static final String DEFAULT_DIRECTION = "doc-orientation";
+
+    /**
+     * 入口方法，解析命令行参数并运行对应示例。
+     * @param args 命令行参数，支持 --key=value 格式
+     */
     public static void main(String[] args) throws Exception {
-        String imagePath = "G:\\images\\车票.png";
-        String detector = "paddleocrv6-medium-det";
-        String recognizer = "paddleocrv6-medium-rec";
-        String direction = "doc-orientation";
+        String imagePath = DEFAULT_IMAGE_PATH;
+        String detector = DEFAULT_DET_MODEL;
+        String recognizer = DEFAULT_REC_MODEL;
+        String direction = DEFAULT_DIRECTION;
         for (int i = 0; i < args.length; i++) {
             if (args[i].startsWith("--image=")) imagePath = args[i].substring("--image=".length());
             else if (args[i].startsWith("--detector=")) detector = args[i].substring("--detector=".length());

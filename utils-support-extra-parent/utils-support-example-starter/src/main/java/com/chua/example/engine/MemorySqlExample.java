@@ -228,7 +228,12 @@ public class MemorySqlExample {
 
             try (var paths = java.nio.file.Files.walk(dir)) {
                 paths.sorted(java.util.Comparator.reverseOrder())
-                        .forEach(pp -> { try { java.nio.file.Files.deleteIfExists(pp); } catch (Exception ignored) { } });
+                        .forEach(pp -> {
+                            try {
+                                java.nio.file.Files.deleteIfExists(pp);
+                            } catch (Exception ignored) {
+                            }
+                        });
             }
         } catch (java.io.IOException e) {
             failed++;

@@ -1,6 +1,7 @@
 package com.chua.example.datasync;
 
 import com.chua.common.support.utils.CommandLine;
+import com.chua.common.support.utils.ThreadUtils;
 import com.chua.datasync.agent.support.DataSyncAgentSink;
 import com.chua.datasync.agent.support.DataSyncAgentSource;
 import com.chua.datasync.agent.support.executor.ReactorDataSyncExecutor;
@@ -168,7 +169,7 @@ public class DataSyncExample implements Example {
         try {
             server.start();
             log.info("Server 已启动，等待 {} ms 让调度器执行...", WAIT_MILLIS);
-            Thread.sleep(WAIT_MILLIS);
+            ThreadUtils.sleep(WAIT_MILLIS);
         } catch (Exception e) {
             log.error("basic 测试异常", e);
             return false;
@@ -221,7 +222,7 @@ public class DataSyncExample implements Example {
             server.addMapping(mapping);
             try {
                 server.start();
-                Thread.sleep(2000L);
+                ThreadUtils.sleep(2000L);
             } catch (Exception e) {
                 log.error("repeat 第 {} 轮异常", i + 1, e);
                 return false;
@@ -248,7 +249,7 @@ public class DataSyncExample implements Example {
             executor.start();
             executor.subscribe("topic-1", batch -> log.info("subscribe 收到: {}", batch));
             executor.publish("topic-1", List.of(Map.of("k", "v")));
-            Thread.sleep(500L);
+            ThreadUtils.sleep(500L);
         } catch (Exception e) {
             log.error("direct executor 异常", e);
             return false;

@@ -4,6 +4,7 @@ import com.chua.common.support.task.timer.HashedWheelTimer;
 import com.chua.common.support.task.timer.Timer;
 import com.chua.common.support.task.timer.TimerTask;
 import com.chua.common.support.utils.CommandLine;
+import com.chua.common.support.utils.ThreadUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.CountDownLatch;
@@ -196,7 +197,7 @@ public class TimeWheelExample {
         }, 50, 50, TimeUnit.MILLISECONDS);
 
         try {
-            Thread.sleep(400L);
+            ThreadUtils.sleep(400L);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
@@ -204,7 +205,7 @@ public class TimeWheelExample {
         boolean cancelled = wheel.cancel(task);
         int observed = counter.get();
         try {
-            Thread.sleep(150L);
+            ThreadUtils.sleep(150L);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
@@ -242,7 +243,7 @@ public class TimeWheelExample {
         boolean cancelled = wheel.cancel(task);
 
         try {
-            Thread.sleep(800L);
+            ThreadUtils.sleep(800L);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }

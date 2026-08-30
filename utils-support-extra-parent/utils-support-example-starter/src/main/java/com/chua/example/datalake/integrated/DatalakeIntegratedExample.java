@@ -5,6 +5,7 @@ import com.chua.common.support.concurrent.dispatcher.DispatcherProvider;
 import com.chua.common.support.concurrent.offset.OffsetFlow;
 import com.chua.common.support.spi.ServiceProvider;
 import com.chua.common.support.utils.CommandLine;
+import com.chua.common.support.utils.ThreadUtils;
 import com.chua.datasync.agent.support.AbstractDataSyncAgent;
 import com.chua.datasync.agent.support.DataSyncAgentSink;
 import com.chua.datasync.agent.support.DataSyncAgentSource;
@@ -174,7 +175,7 @@ public class DatalakeIntegratedExample {
 
         // 7. 等待一段时间看 sink 输出
         try {
-            Thread.sleep(durationSeconds * 1000L);
+            ThreadUtils.sleep(durationSeconds * 1000L);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }

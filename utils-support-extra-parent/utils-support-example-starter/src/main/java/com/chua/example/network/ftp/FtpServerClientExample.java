@@ -3,6 +3,7 @@ package com.chua.example.network.ftp;
 import com.chua.common.support.network.ftp.FtpConfig;
 import com.chua.common.support.network.ftp.FtpServer;
 import com.chua.ftp.support.client.FtpClient;
+import com.chua.common.support.utils.ThreadUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -86,7 +87,7 @@ public class FtpServerClientExample {
         server.start();
 
         try {
-            Thread.sleep(500);
+            ThreadUtils.sleep(500);
             testAllCapabilities();
             System.out.println();
             System.out.println("========================================");

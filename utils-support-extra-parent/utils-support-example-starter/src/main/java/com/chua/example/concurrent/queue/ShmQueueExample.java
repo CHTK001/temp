@@ -2,6 +2,7 @@ package com.chua.example.concurrent.queue;
 
 import com.chua.common.support.shmqueue.ShmQueue;
 import com.chua.common.support.shmqueue.ShmQueueException;
+import com.chua.common.support.utils.ThreadUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.CountDownLatch;
@@ -237,7 +238,7 @@ public class ShmQueueExample {
         consumer.start();
 
         try {
-            Thread.sleep(100);
+            ThreadUtils.sleep(100);
             try (ShmQueue q = ShmQueue.create(name, 1024, 512, ShmQueue.Mode.HYBRID)) {
                 for (int i = 0; i < expected; i++) {
                     q.send(i, ("msg-" + i).getBytes());

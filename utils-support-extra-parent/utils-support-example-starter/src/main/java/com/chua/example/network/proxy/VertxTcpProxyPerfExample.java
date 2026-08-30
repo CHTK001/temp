@@ -1,6 +1,7 @@
 package com.chua.example.network.proxy;
 
 import com.chua.common.support.network.server.ServerSetting;
+import com.chua.common.support.utils.ThreadUtils;
 import com.chua.vertx.support.server.VertxTcpProxyServer;
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,7 +14,6 @@ import java.net.Socket;
 import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.LongAdder;
 
@@ -36,7 +36,7 @@ public class VertxTcpProxyPerfExample {
         /** 服务器Socket */
         private final ServerSocket serverSocket;
         /** 池 */
-        private final ExecutorService pool = Executors.newVirtualThreadPerTaskExecutor();
+        private final ExecutorService pool = ThreadUtils.newVirtualThreadPerTaskExecutor();
         /** running */
         private volatile boolean running = true;
 
@@ -117,7 +117,7 @@ public class VertxTcpProxyPerfExample {
 
             byte[] payload = new byte[payloadSize];
             Arrays.fill(payload, (byte) 'A');
-            ExecutorService pool = Executors.newVirtualThreadPerTaskExecutor();
+            ExecutorService pool = ThreadUtils.newVirtualThreadPerTaskExecutor();
             CountDownLatch ready = new CountDownLatch(connections);
             CountDownLatch start = new CountDownLatch(1);
             CountDownLatch done = new CountDownLatch(connections);

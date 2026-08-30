@@ -1,6 +1,7 @@
 package com.chua.example.webhook;
 
 import com.chua.webhook.support.message.WebhookMessagePush;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Webhook 消息推送全场景自检示例。
@@ -10,23 +11,25 @@ import com.chua.webhook.support.message.WebhookMessagePush;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class WebhookExample {
 
     private static final int EXIT_CODE_SUCCESS = 0;
     private static final int EXIT_CODE_FAILURE = 1;
 
+    /** 私有构造，防止实例化。 */
     private WebhookExample() {
     }
 
     private static boolean timed(String name, Runnable scenario) {
         long start = System.currentTimeMillis();
         scenario.run();
-        System.out.println("[TIME] " + name + " " + (System.currentTimeMillis() - start) + "ms");
+        log.info("[TIME] {} {}ms", name, (System.currentTimeMillis() - start));
         return true;
     }
 
     private static void print(String name, boolean ok) {
-        System.out.println((ok ? "[PASS] " : "[FAIL] ") + name);
+        log.info("{} {}", ok ? "[PASS]" : "[FAIL]", name);
     }
 
     /** 1. 直接实例化 */
@@ -74,10 +77,10 @@ public final class WebhookExample {
         passed &= timed("templateManage", WebhookExample::templateManage);
         passed &= timed("listTemplates", WebhookExample::listTemplates);
         if (!passed) {
-            System.out.println("[FAIL] Webhook 存在失败场景");
+            log.error("[FAIL] Webhook 存在失败场景");
             System.exit(EXIT_CODE_FAILURE);
         }
-        System.out.println("[PASS] Webhook 全部场景通过");
+        log.info("[PASS] Webhook 全部场景通过");
         System.exit(EXIT_CODE_SUCCESS);
     }
 }

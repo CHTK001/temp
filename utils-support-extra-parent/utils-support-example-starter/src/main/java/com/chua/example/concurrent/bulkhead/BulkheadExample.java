@@ -1,6 +1,7 @@
 package com.chua.example.concurrent.bulkhead;
 
 import com.chua.common.support.concurrent.bulkhead.BulkheadFlow;
+import com.chua.common.support.utils.ThreadUtils;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -48,10 +49,10 @@ public final class BulkheadExample {
                 .fallback(() -> "overloaded");
         var block = new CountDownLatch(1);
         Thread t = Thread.ofVirtual().start(() -> flow.execute(() -> { await(block); return "ok"; }));
-        sleepMillis(50);
+        ThreadUtils.sleepMillisecondsQuietly(50);
         var result = flow.execute(() -> "second");
         block.countDown();
-        sleepMillis(100);
+        ThreadUtils.sleepMillisecondsQuietly(100);
         var ok = "overloaded".equals(result);
         print("fallbackOnOverload", ok);
         return ok;
@@ -60,14 +61,6 @@ public final class BulkheadExample {
     private static void await(CountDownLatch l) {
         try {
             l.await(5, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-    }
-
-    private static void sleepMillis(long ms) {
-        try {
-            Thread.sleep(ms);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }

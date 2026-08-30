@@ -5,6 +5,7 @@ import com.chua.common.support.task.pipeline.core.Pipeline;
 import com.chua.common.support.task.pipeline.core.PipelineContext;
 import lombok.extern.slf4j.Slf4j;
 import com.chua.example.spi.Example;
+import java.util.Map;
 
 /**
  * Pipeline 基本能力示例 — 顺序任务、taskStart/onStep/step、exit/start。
@@ -35,7 +36,10 @@ public class PipelineBasicExample implements Example {
      */
     private static final int EXIT_CODE_FAILURE = 1;
 
-    /** Main */
+    /**
+     * 入口方法，解析命令行参数并运行对应示例。
+     * @param args 命令行参数，支持 --key=value 格式
+     */
     public static void main(String[] args) {
         String type = parseType(args);
         boolean passed = runTest(type);
@@ -252,7 +256,7 @@ public class PipelineBasicExample implements Example {
     }
 
     @Override
-    public boolean run(java.util.Map<String, String> args) {
+    public boolean run(Map<String, String> args) {
         main(new String[0]);
         return true;
     }

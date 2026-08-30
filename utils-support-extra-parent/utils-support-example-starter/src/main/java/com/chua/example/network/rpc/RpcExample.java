@@ -6,6 +6,7 @@ import com.chua.common.support.network.rpc.RpcProtocolConfig;
 import com.chua.common.support.network.rpc.RpcRegistryConfig;
 import com.chua.common.support.network.rpc.RpcServer;
 import com.chua.example.spi.Example;
+import com.chua.common.support.utils.ThreadUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -548,7 +549,7 @@ public class RpcExample implements Example {
             } catch (Throwable t) {
                 last = t;
                 log.warn("  {} 第 {} 次调用失败: {}", label, i + 1, t.toString());
-                Thread.sleep(RETRY_DELAY_MS);
+                ThreadUtils.sleep(RETRY_DELAY_MS);
             }
         }
         if (last instanceof Exception e) {

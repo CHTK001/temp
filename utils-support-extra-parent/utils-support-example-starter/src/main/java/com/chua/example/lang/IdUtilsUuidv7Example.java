@@ -1,6 +1,7 @@
 package com.chua.example.lang;
 
 import com.chua.common.support.utils.IdUtils;
+import com.chua.common.support.utils.ThreadUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -131,7 +132,7 @@ public final class IdUtilsUuidv7Example {
         for (int i = 0; i < 10; i++) {
             ids.add(IdUtils.uuidv7());
             if (i < 9) {
-                Thread.sleep(10);
+                ThreadUtils.sleep(10);
             }
         }
         boolean monotonic = true;
@@ -186,7 +187,7 @@ public final class IdUtilsUuidv7Example {
         for (int i = 0; i < 200; i++) {
             timestamps.add(extractTimestamp(IdUtils.uuidv7()));
             if (i < 199) {
-                Thread.sleep(1);
+                ThreadUtils.sleep(1);
             }
         }
         for (int i = 1; i < timestamps.size(); i++) {

@@ -11,6 +11,7 @@ import com.chua.common.support.network.server.request.ServerRequest;
 import com.chua.common.support.network.server.response.ServerResponse;
 import com.chua.example.network.perf.PerfReportExample;
 import com.chua.example.spi.Example;
+import com.chua.common.support.utils.ThreadUtils;
 import com.sun.net.httpserver.HttpServer;
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.LongAdder;
 
@@ -233,10 +233,10 @@ public class HttpProxyExampleSpi implements Example {
         try {
             HttpClient client = HttpClient.newBuilder()
                     .connectTimeout(Duration.ofSeconds(5))
-                    .executor(Executors.newVirtualThreadPerTaskExecutor())
+                    .executor(ThreadUtils.newVirtualThreadPerTaskExecutor())
                     .build();
 
-            pool = Executors.newVirtualThreadPerTaskExecutor();
+            pool = ThreadUtils.newVirtualThreadPerTaskExecutor();
             CountDownLatch ready = new CountDownLatch(connections);
             CountDownLatch start = new CountDownLatch(1);
             CountDownLatch done = new CountDownLatch(connections);
@@ -329,7 +329,7 @@ public class HttpProxyExampleSpi implements Example {
                 }
             });
         }
-        server.setExecutor(Executors.newVirtualThreadPerTaskExecutor());
+        server.setExecutor(ThreadUtils.newVirtualThreadPerTaskExecutor());
         server.start();
         return server;
     }

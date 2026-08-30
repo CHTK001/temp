@@ -3,6 +3,7 @@ package com.chua.example.network.nio;
 import com.chua.common.support.network.server.Server;
 import com.chua.common.support.network.server.ServerBuilder;
 import com.chua.common.support.network.server.http.ConfigServer;
+import com.chua.common.support.utils.ThreadUtils;
 import com.chua.common.support.network.server.request.ServerRequest;
 import com.chua.common.support.network.server.response.ServerResponse;
 import com.chua.example.network.perf.PerfReportExample;
@@ -26,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.LongAdder;
 
@@ -760,10 +760,10 @@ public class NioHttpServerExampleSpi implements Example {
         try {
             HttpClient c = HttpClient.newBuilder()
                     .connectTimeout(Duration.ofSeconds(5))
-                    .executor(Executors.newVirtualThreadPerTaskExecutor())
+                    .executor(ThreadUtils.newVirtualThreadPerTaskExecutor())
                     .build();
 
-            pool = Executors.newVirtualThreadPerTaskExecutor();
+            pool = ThreadUtils.newVirtualThreadPerTaskExecutor();
             CountDownLatch ready = new CountDownLatch(connections);
             CountDownLatch start = new CountDownLatch(1);
             CountDownLatch done = new CountDownLatch(connections);

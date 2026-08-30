@@ -30,8 +30,9 @@ import java.util.List;
  *   Seq2SeqExample t5 translate English to Chinese <text>            # T5 翻译
  *   Seq2SeqExample t5 <文本>                                          # T5 文本生成（无任务前缀）
  *   Seq2SeqExample mt5 summarize 30 <中文多句文本>                    # 中文 多句→一句，最多 30 token
- * }</pre>
- *@author CH
+ * </pre>
+ *
+ * @author CH
  *
  * @since 4.0.0.42
  */

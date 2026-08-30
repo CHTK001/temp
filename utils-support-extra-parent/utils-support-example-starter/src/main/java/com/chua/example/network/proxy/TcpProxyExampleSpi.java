@@ -4,6 +4,7 @@ import com.chua.common.support.network.server.Server;
 import com.chua.common.support.network.server.ServerBuilder;
 import com.chua.common.support.network.server.ServerSetting;
 import com.chua.common.support.network.server.proxy.TcpProxyServer;
+import com.chua.common.support.utils.ThreadUtils;
 import com.chua.example.network.perf.PerfReportExample;
 import com.chua.example.spi.Example;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.LongAdder;
 
@@ -281,7 +281,7 @@ public class TcpProxyExampleSpi implements Example {
             Arrays.fill(payload, (byte) 'A');
 
             // 客户端使用 virtual-thread，避免平台线程调度在小并发时延迟
-            pool = Executors.newVirtualThreadPerTaskExecutor();
+            pool = ThreadUtils.newVirtualThreadPerTaskExecutor();
             CountDownLatch ready = new CountDownLatch(connections);
             CountDownLatch start = new CountDownLatch(1);
             CountDownLatch done = new CountDownLatch(connections);
@@ -467,7 +467,7 @@ public class TcpProxyExampleSpi implements Example {
         private EchoServer(int port) throws IOException {
             this.serverSocket = new ServerSocket(port);
             // virtual-thread 处理高并发 echo
-            this.handlerPool = Executors.newVirtualThreadPerTaskExecutor();
+            this.handlerPool = ThreadUtils.newVirtualThreadPerTaskExecutor();
             this.acceptThread = new Thread(this::acceptLoop, "tcp-proxy-example-echo");
             this.acceptThread.setDaemon(true);
             this.acceptThread.start();

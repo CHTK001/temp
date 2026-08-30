@@ -4,6 +4,7 @@ import com.chua.common.support.task.pipeline.builder.PipelineBuilder;
 import com.chua.common.support.task.pipeline.callback.PipelineListener;
 import com.chua.common.support.task.pipeline.core.Pipeline;
 import com.chua.common.support.task.pipeline.core.PipelineContext;
+import com.chua.common.support.utils.ThreadUtils;
 import lombok.extern.slf4j.Slf4j;
 import com.chua.example.spi.Example;
 
@@ -346,7 +347,7 @@ public class PipelineCallbackExample implements Example {
     /** Sleep */
     private static void sleep(long ms) {
         try {
-            Thread.sleep(ms);
+            ThreadUtils.sleep(ms);
         } catch (InterruptedException ignored) {
             log.warn("Caught: {}", ignored.getMessage());
         }

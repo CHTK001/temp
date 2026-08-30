@@ -8,6 +8,7 @@ import com.chua.common.support.concurrent.threadflow.ThreadFlowListener;
 import com.chua.common.support.concurrent.threadflow.ThreadFlowResult;
 import com.chua.common.support.concurrent.threadflow.ThreadStrategy;
 import com.chua.common.support.utils.CommandLine;
+import com.chua.common.support.utils.ThreadUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.TimeUnit;
@@ -248,7 +249,7 @@ public class ThreadFlowExample {
                     .strategy(ThreadStrategy.ALL_SUCCESS)
                     .timeout(100, TimeUnit.MILLISECONDS)
                     .addCallable(() -> {
-                        Thread.sleep(2000);
+                        ThreadUtils.sleep(2000);
                         return "too-slow";
                     })
                     .addCallable(() -> "fast")
@@ -364,7 +365,7 @@ public class ThreadFlowExample {
                         throw new IllegalStateException("first-fail");
                     })
                     .addCallable(() -> {
-                        Thread.sleep(3000);
+                        ThreadUtils.sleep(3000);
                         return "slow";
                     })
                     .execute();

@@ -2,6 +2,7 @@ package com.chua.example.tui;
 
 import com.chua.common.support.network.ipc.annotations.IpcMethod;
 import com.chua.common.support.utils.CommandLine;
+import com.chua.common.support.utils.ThreadUtils;
 import com.chua.tui.support.MordantHelper;
 import com.chua.tui.support.TuiDashboard;
 import com.chua.tui.support.TuiDashboardBuilder;
@@ -413,7 +414,7 @@ public class TuiDashboardExample implements Example {
                     .build();
 
             dashboard.start();
-            Thread.sleep(DASHBOARD_RUN_MILLIS);
+            ThreadUtils.sleep(DASHBOARD_RUN_MILLIS);
             dashboard.stop();
 
             boolean ok = "handler-test".equals(dashboard.getTitle());
@@ -445,7 +446,7 @@ public class TuiDashboardExample implements Example {
 
             dashboard.start();
             boolean runningBefore = dashboard.isRunning();
-            Thread.sleep(DASHBOARD_RUN_MILLIS);
+            ThreadUtils.sleep(DASHBOARD_RUN_MILLIS);
             dashboard.stop();
             boolean runningAfter = dashboard.isRunning();
 
@@ -482,7 +483,7 @@ public class TuiDashboardExample implements Example {
                     .build();
 
             dashboard.start();
-            Thread.sleep(DASHBOARD_RUN_MILLIS);
+            ThreadUtils.sleep(DASHBOARD_RUN_MILLIS);
             dashboard.stop();
 
             boolean passed = dashboard.getVisibleWidgets().size() == 3;

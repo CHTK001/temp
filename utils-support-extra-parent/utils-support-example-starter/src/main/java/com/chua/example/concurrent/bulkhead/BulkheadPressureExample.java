@@ -1,6 +1,7 @@
 package com.chua.example.concurrent.bulkhead;
 
 import com.chua.common.support.concurrent.bulkhead.BulkheadFlow;
+import com.chua.common.support.utils.ThreadUtils;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.CountDownLatch;
@@ -119,11 +120,7 @@ public final class BulkheadPressureExample {
             });
         });
 
-        try {
-            Thread.sleep(200);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+        ThreadUtils.sleepMillisecondsQuietly(200);
 
         Thread t2 = Thread.ofVirtual().start(() -> {
             Object result = flow.execute(() -> {

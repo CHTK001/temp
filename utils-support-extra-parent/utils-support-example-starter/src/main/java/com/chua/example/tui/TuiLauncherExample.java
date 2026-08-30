@@ -1,6 +1,7 @@
 package com.chua.example.tui;
 
 import lombok.extern.slf4j.Slf4j;
+import com.chua.common.support.utils.ThreadUtils;
 import com.chua.tui.support.TuiDashboard;
 import com.chua.tui.support.TuiDashboardBuilder;
 import com.chua.tui.support.TuiLayout;
@@ -20,13 +21,21 @@ import com.chua.tui.support.widgets.MemoryWidget;
 public class TuiLauncherExample {
     private TuiLauncherExample() { }
 
-    /** Main */
+    /** 刷新间隔（毫秒） */
+    private static final long REFRESH_INTERVAL_MS = 2000L;
+    /** 启动等待时间（毫秒） */
+    private static final long STARTUP_WAIT_MS = 3000L;
+
+    /**
+     * 入口方法，解析命令行参数并运行对应示例。
+     * @param args 命令行参数，支持 --key=value 格式
+     */
     public static void main(String[] args) throws Exception {
         SystemMonitorService monitorService = new SystemMonitorService();
         TuiDashboard dashboard = TuiDashboardBuilder.create()
                 .layout(TuiLayout.GRID_2x2)
                 .title("系统监控仪表盘")
-                .refreshInterval(2000L)
+                .refreshInterval(REFRESH_INTERVAL_MS)
                 .registerHandler(monitorService)
                 .addWidget(new CpuWidget("cpu", "CPU"))
                 .addWidget(new MemoryWidget("memory", "内存"))
@@ -36,7 +45,7 @@ public class TuiLauncherExample {
                 .build();
 
         dashboard.start();
-        Thread.sleep(3000);
+        ThreadUtils.sleep(STARTUP_WAIT_MS);
         dashboard.stop();
         log.info("[TuiLauncher] ok");
     }

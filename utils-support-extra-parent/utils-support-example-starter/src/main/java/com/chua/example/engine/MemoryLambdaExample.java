@@ -152,7 +152,8 @@ public class MemoryLambdaExample {
         check("update", 1, upd);
         check("update readback", 99,
                 engine.query(Emp.class).eq(Emp::getId, 1).one().getAge());
-        engine.update(Emp.class).set(Emp::getAge, 20).eq(Emp::getId, 1).update(); // restore
+        // restore
+        engine.update(Emp.class).set(Emp::getAge, 20).eq(Emp::getId, 1).update();
 
         int del = engine.delete(Emp.class).eq(Emp::getId, 5).remove();
         check("delete", 1, del);
@@ -250,8 +251,14 @@ public class MemoryLambdaExample {
         /* 清理 */
         try (var paths = Files.walk(dir)) {
             paths.sorted(java.util.Comparator.reverseOrder())
-                    .forEach(p -> { try { Files.deleteIfExists(p); } catch (Exception ignored) {} });
-        } catch (IOException ignored) {}
+                    .forEach(p -> {
+                        try {
+                            Files.deleteIfExists(p);
+                        } catch (Exception ignored) {
+                        }
+                    });
+        } catch (IOException ignored) {
+        }
     }
 
     /* ==================== 辅助 ==================== */

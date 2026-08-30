@@ -1,6 +1,7 @@
 package com.chua.example.network.proxy;
 
 import com.chua.common.support.network.server.ServerSetting;
+import com.chua.common.support.utils.ThreadUtils;
 import com.chua.vertx.support.server.VertxHttpProxyServer;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
@@ -15,7 +16,6 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.LongAdder;
 
@@ -59,7 +59,7 @@ public class VertxHttpProxyPerfExample {
             log.info("VertxHttpProxyServer started on {}, backend={}", proxyPort, backendPort);
 
             // 3. 并发 HttpClient 压测
-            ExecutorService pool = Executors.newVirtualThreadPerTaskExecutor();
+            ExecutorService pool = ThreadUtils.newVirtualThreadPerTaskExecutor();
             CountDownLatch ready = new CountDownLatch(concurrency);
             CountDownLatch start = new CountDownLatch(1);
             CountDownLatch done = new CountDownLatch(concurrency);

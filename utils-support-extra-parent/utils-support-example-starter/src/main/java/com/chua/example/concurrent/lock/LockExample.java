@@ -34,11 +34,6 @@ public final class LockExample {
         System.out.println((ok ? "[PASS] " : "[FAIL] ") + name);
     }
 
-    private static void sleepMillis(long ms) {
-        // 安静模式 sleep：捕获 InterruptedException 并忽略（与原 try-catch 行为一致）
-        ThreadUtils.sleepMillisecondsQuietly(ms);
-    }
-
     private static boolean tryLockReturnsTrue() {
         var lock = LockFlow.of("tl-test").lockType("local");
         boolean acquired = lock.tryLock();
@@ -82,7 +77,7 @@ public final class LockExample {
             Thread.ofVirtual().start(() -> {
                 if (lock.tryLock()) {
                     successes.incrementAndGet();
-                    sleepMillis(10);
+                    ThreadUtils.sleepMillisecondsQuietly(10);
                 }
                 latch.countDown();
             });
@@ -103,7 +98,10 @@ public final class LockExample {
         passed &= timed("executeHoldsLock", LockExample::executeHoldsLock);
         passed &= timed("fallbackOnUnresolvable", LockExample::fallbackOnUnresolvable);
         passed &= timed("concurrentTryLockContention", LockExample::concurrentTryLockContention);
-        if (!passed) { System.out.println("[FAIL] Lock 存在失败场景"); System.exit(EXIT_CODE_FAILURE); }
+        if (!passed) {
+            System.out.println("[FAIL] Lock 存在失败场景");
+            System.exit(EXIT_CODE_FAILURE);
+        }
         System.out.println("[PASS] Lock 全部场景通过");
         System.exit(EXIT_CODE_SUCCESS);
     }

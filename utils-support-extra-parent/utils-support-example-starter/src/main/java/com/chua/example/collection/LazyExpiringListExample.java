@@ -7,6 +7,7 @@ import com.chua.common.support.collection.OffHeapDataStore;
 import com.chua.common.support.collection.OnHeapDataStore;
 import com.chua.common.support.serialize.JavaSerializer;
 import com.chua.example.spi.Example;
+import com.chua.common.support.utils.ThreadUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
@@ -193,7 +194,7 @@ public class LazyExpiringListExample implements Example {
             printResult("加载后状态 LOADED", p1);
 
             // 等待过期
-            Thread.sleep(300);
+            ThreadUtils.sleep(300);
             boolean p2 = list.getState() == ListState.UNLOADED;
             printResult("TTL 过期后状态 UNLOADED", p2);
 
@@ -335,7 +336,7 @@ public class LazyExpiringListExample implements Example {
                 .loader(() -> {
                     loadCount.incrementAndGet();
                     try {
-                        Thread.sleep(50);
+                        ThreadUtils.sleep(50);
                     } catch (InterruptedException ignored) {
                         Thread.currentThread().interrupt();
                     }
@@ -861,7 +862,7 @@ public class LazyExpiringListExample implements Example {
             printResult("TTL过期前 offHeapBytes=" + bytesBeforeExpiry + " > 0", p5);
 
             // 等待 TTL 过期
-            Thread.sleep(300);
+            ThreadUtils.sleep(300);
             boolean p6 = list.getState() == ListState.UNLOADED;
             printResult("TTL过期后状态 UNLOADED", p6);
 

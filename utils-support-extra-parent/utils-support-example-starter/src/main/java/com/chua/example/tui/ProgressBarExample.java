@@ -103,6 +103,10 @@ public class ProgressBarExample implements Example {
 
     // ==================== main ====================
 
+    /**
+     * 入口方法，解析命令行参数并运行对应示例。
+     * @param args 命令行参数，支持 --key=value 格式
+     */
     public static void main(String[] args) {
         CommandLine cli = CommandLine.parse(args)
                 .program("ProgressBarExample")

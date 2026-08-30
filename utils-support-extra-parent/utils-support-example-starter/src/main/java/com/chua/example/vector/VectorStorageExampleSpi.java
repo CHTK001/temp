@@ -160,9 +160,8 @@ public class VectorStorageExampleSpi implements Example {
     /** TestMemory移除 */
     private boolean testMemoryRemove() {
         log.info("  [TC-03] memory remove(id)");
-        VectorStorage s = null;
+        VectorStorage s = createMemoryStorage();
         try {
-            s = createMemoryStorage();
             s.add("keep", new float[]{1f, 0f, 0f, 0f});
             s.add("drop", new float[]{0f, 1f, 0f, 0f});
             assertEquals(2, s.size(), "删除前 size");
@@ -182,9 +181,8 @@ public class VectorStorageExampleSpi implements Example {
     /** TestMemory更新 */
     private boolean testMemoryUpdate() {
         log.info("  [TC-04] memory update(id, vector)");
-        VectorStorage s = null;
+        VectorStorage s = createMemoryStorage();
         try {
-            s = createMemoryStorage();
             s.add("a", new float[]{1f, 0f, 0f, 0f});
             s.add("b", new float[]{0f, 1f, 0f, 0f});
             s.add("c", new float[]{0f, 0f, 1f, 0f});
@@ -275,9 +273,8 @@ public class VectorStorageExampleSpi implements Example {
     /** TestJVector更新 */
     private boolean testJVectorUpdate(JVectorStorageProperties.Mode mode) {
         log.info("  [TC-12] jvector {} update", mode);
-        VectorStorage s = null;
+        VectorStorage s = createJVectorStorage(mode);
         try {
-            s = createJVectorStorage(mode);
             s.add("a", new float[]{1f, 0f, 0f, 0f});
             s.add("b", new float[]{0f, 1f, 0f, 0f});
             s.add("c", new float[]{0f, 0f, 1f, 0f});
@@ -297,9 +294,8 @@ public class VectorStorageExampleSpi implements Example {
     /** TestJVector移除 */
     private boolean testJVectorRemove(JVectorStorageProperties.Mode mode) {
         log.info("  [TC-13] jvector {} remove", mode);
-        VectorStorage s = null;
+        VectorStorage s = createJVectorStorage(mode);
         try {
-            s = createJVectorStorage(mode);
             s.add("keep", new float[]{1f, 0f, 0f, 0f});
             s.add("drop", new float[]{0f, 1f, 0f, 0f});
             assertEquals(2, s.size(), "删除前 size");
@@ -427,9 +423,8 @@ public class VectorStorageExampleSpi implements Example {
     /** TestMilvus构建And搜索 */
     private boolean testMilvusBuildAndSearch(String host, int port, String collection, String token) {
         log.info("  [TC-21] milvus 构建 + 搜索");
-        MilvusVectorStorage s = null;
+        MilvusVectorStorage s = new MilvusVectorStorage(DIM, VectorCompareAlgorithm.cosine(), host, port, collection, token);
         try {
-            s = new MilvusVectorStorage(DIM, VectorCompareAlgorithm.cosine(), host, port, collection, token);
             seedAndSearch(s, "milvus");
             pass();
             return true;
@@ -444,9 +439,8 @@ public class VectorStorageExampleSpi implements Example {
     /** TestMilvus删除 */
     private boolean testMilvusDelete(String host, int port, String collection, String token) {
         log.info("  [TC-22] milvus 删除");
-        MilvusVectorStorage s = null;
+        MilvusVectorStorage s = new MilvusVectorStorage(DIM, VectorCompareAlgorithm.cosine(), host, port, collection, token);
         try {
-            s = new MilvusVectorStorage(DIM, VectorCompareAlgorithm.cosine(), host, port, collection, token);
             s.add("del_test", new float[]{1f, 0f, 0f, 0f});
             assertEquals(true, s.remove("del_test"), "milvus 删除存在的 id");
             pass();
@@ -462,9 +456,8 @@ public class VectorStorageExampleSpi implements Example {
     /** TestMilvusUpsert */
     private boolean testMilvusUpsert(String host, int port, String collection, String token) {
         log.info("  [TC-23] milvus upsert");
-        MilvusVectorStorage s = null;
+        MilvusVectorStorage s = new MilvusVectorStorage(DIM, VectorCompareAlgorithm.cosine(), host, port, collection, token);
         try {
-            s = new MilvusVectorStorage(DIM, VectorCompareAlgorithm.cosine(), host, port, collection, token);
             s.add("upsert_key", new float[]{1f, 0f, 0f, 0f});
             assertEquals(true, s.update("upsert_key", new float[]{0f, 1f, 0f, 0f}), "milvus 更新存在的 id");
             pass();

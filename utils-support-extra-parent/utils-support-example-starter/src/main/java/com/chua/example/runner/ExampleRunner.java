@@ -79,14 +79,14 @@ public final class ExampleRunner {
      * 打印帮助信息。
      */
     private static void printHelp(List<Example> examples) {
-        System.out.println("使用方法: java " + ExampleRunner.class.getName() + " --example=<名称> [参数...]\n");
-        System.out.println("可用示例列表：");
-        System.out.printf("  %-28s %-20s %s%n", "命令", "模块", "描述");
-        System.out.println("  " + "-".repeat(90));
-        for (Example e : examples) {
-            System.out.printf("  --example=%-18s %-20s %s%n", e.name(), e.module(), e.description());
-        }
-        System.out.println("\n附加参数由具体示例自行解析，例如 --type=nio --mode=perf");
+            log.info("使用方法: java {} --example=<名称> [参数...]\n", ExampleRunner.class.getName());
+            log.info("可用示例列表：");
+            log.info("  %-28s %-20s %s", "命令", "模块", "描述");
+            log.info("  " + "-".repeat(90));
+            for (Example e : examples) {
+                log.info("  --example=%-18s %-20s %s", e.name(), e.module(), e.description());
+            }
+            log.info("\n附加参数由具体示例自行解析，例如 --type=nio --mode=perf");
     }
 
     /**

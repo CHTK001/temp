@@ -58,6 +58,12 @@ public class PipelineFaceOrchestrationExample implements Example {
     private static final int EXIT_CODE_SUCCESS = 0;
     /** Exit_code_failure */
     private static final int EXIT_CODE_FAILURE = 1;
+    /** 人脸特征向量维度 */
+    private static final int FACE_FEATURE_DIM = 128;
+    /** 默认活体检测阈值 */
+    private static final float DEFAULT_LIVENESS_THRESHOLD = 0.5f;
+    /** 默认质量评估阈值 */
+    private static final float DEFAULT_QUALITY_THRESHOLD = 0.6f;
 
     // ==================== 模拟数据模型 ====================
 
@@ -200,10 +206,8 @@ public class PipelineFaceOrchestrationExample implements Example {
         return (FaceContext) ctx.getAttribute("face");
     }
 
-    /**
-     * 模拟检测模型推理（前 2 次可能失败，第 3 次成功，用于测试 retry）。
-     */
-    private static int detectCallCount = 0;
+    /** 模拟检测调用计数器（演示 retry 逻辑用） */
+    private static final java.util.concurrent.atomic.AtomicInteger DETECT_CALL_COUNT = new java.util.concurrent.atomic.AtomicInteger(0);
 
     /**
      * 模拟人脸检测：前 2 次模拟推理失败，之后检测出 1 张人脸。
@@ -213,12 +217,12 @@ public class PipelineFaceOrchestrationExample implements Example {
      */
     private static String simulateDetect(PipelineContext<?> ctx) {
         FaceContext fc = getFaceCtx(ctx);
-        detectCallCount++;
-        fc.detectRetryCount(detectCallCount);
+        DETECT_CALL_COUNT.incrementAndGet();
+        fc.detectRetryCount(DETECT_CALL_COUNT.get());
 
         // 模拟：前2次失败（测试retry），之后成功
-        if (detectCallCount <= 2) {
-            log.info("  [detect] 模拟推理失败 (第{}次)", detectCallCount);
+        if (DETECT_CALL_COUNT.get() <= 2) {
+            log.info("  [detect] 模拟推理失败 (第{}次)", DETECT_CALL_COUNT.get());
             throw new RuntimeException("模型推理超时 (模拟)");
         }
 
@@ -257,7 +261,7 @@ public class PipelineFaceOrchestrationExample implements Example {
         FaceContext fc = getFaceCtx(ctx);
         float threshold = ctx.getNodeLocalValue("env.livenessThreshold") != null
                 ? ((Number) ctx.getNodeLocalValue("env.livenessThreshold")).floatValue()
-                : 0.5f;
+                : DEFAULT_LIVENESS_THRESHOLD;
         fc.livenessResult(new LivenessResult(true, 0.92f));
         boolean passed = fc.livenessResult().isLive() && fc.livenessResult().score() >= threshold;
         log.info("  [liveness] 活体检测: live={}, score={}, threshold={}, passed={}",
@@ -273,8 +277,8 @@ public class PipelineFaceOrchestrationExample implements Example {
      */
     private static String simulateFeature(PipelineContext<?> ctx) {
         FaceContext fc = getFaceCtx(ctx);
-        // 模拟 128 维特征向量
-        fc.feature(new FaceFeature(new float[128]));
+        // 模拟 FACE_FEATURE_DIM 维特征向量
+        fc.feature(new FaceFeature(new float[FACE_FEATURE_DIM]));
         log.info("  [feature] 提取特征向量 dim={}", fc.feature().vector().length);
         return null;
     }
@@ -335,7 +339,7 @@ public class PipelineFaceOrchestrationExample implements Example {
         FaceContext fc = getFaceCtx(ctx);
         float threshold = ctx.getNodeLocalValue("env.qualityThreshold") != null
                 ? ((Number) ctx.getNodeLocalValue("env.qualityThreshold")).floatValue()
-                : 0.6f;
+                : DEFAULT_QUALITY_THRESHOLD;
         fc.qualityResult(new QualityResult(0.85f, 0.85f >= threshold));
         log.info("  [quality] 质量: score={}, threshold={}, passed={}",
                 fc.qualityResult().score(), threshold, fc.qualityResult().passed());
@@ -391,7 +395,10 @@ public class PipelineFaceOrchestrationExample implements Example {
 
     // ==================== 测试入口 ====================
 
-    /** Main */
+    /**
+     * 入口方法，解析命令行参数并运行对应示例。
+     * @param args 命令行参数，支持 --key=value 格式
+     */
     public static void main(String[] args) {
         String type = parseType(args);
         boolean passed = runTest(type);
@@ -462,7 +469,7 @@ public class PipelineFaceOrchestrationExample implements Example {
         log.info("===== testDetectPipeline =====");
         try {
             // 检测成功路径：跳过失败模拟（前 2 次失败仅用于 retry 测试）
-            detectCallCount = 100;
+            DETECT_CALL_COUNT.set(100);
             Pipeline pipeline = PipelineBuilder.newBuilder("face-detect")
                     .logging()
                     .task("detect", ctx -> simulateDetect(ctx)).taskEnd()
@@ -506,7 +513,7 @@ public class PipelineFaceOrchestrationExample implements Example {
         log.info("===== testIdentifyPipeline =====");
         try {
             // 检测成功路径：跳过失败模拟
-            detectCallCount = 100;
+            DETECT_CALL_COUNT.set(100);
             Pipeline pipeline = PipelineBuilder.newBuilder("face-identify")
                     .logging()
                     .task("detect", ctx -> simulateDetect(ctx)).taskEnd()
@@ -556,7 +563,7 @@ public class PipelineFaceOrchestrationExample implements Example {
         log.info("===== testDecisionBranch =====");
         try {
             // 检测成功路径：跳过失败模拟
-            detectCallCount = 100;
+            DETECT_CALL_COUNT.set(100);
             Pipeline pipeline = PipelineBuilder.newBuilder("face-decision")
                     .task("detect", ctx -> simulateDetect(ctx)).taskEnd()
                     .task("crop", ctx -> simulateCrop(ctx)).taskEnd()
@@ -601,7 +608,7 @@ public class PipelineFaceOrchestrationExample implements Example {
         log.info("===== testForkParallel =====");
         try {
             // 检测成功路径：跳过失败模拟
-            detectCallCount = 100;
+            DETECT_CALL_COUNT.set(100);
 
             // 属性分析分支
             Pipeline attrBranch = PipelineBuilder.newBuilder("attr-branch")
@@ -657,7 +664,7 @@ public class PipelineFaceOrchestrationExample implements Example {
         log.info("===== testRetryStrategy =====");
         try {
             // 重置全局调用计数器，前 2 次会模拟失败
-            detectCallCount = 0;
+            DETECT_CALL_COUNT.set(0);
 
             // FIXED 退避策略
             Pipeline pipeline = PipelineBuilder.newBuilder("face-retry")
@@ -678,7 +685,7 @@ public class PipelineFaceOrchestrationExample implements Example {
             ctx.setAttribute("face", fc);
             pipeline.resume(ctx);
 
-            boolean ok = fc.currentBox() != null && detectCallCount >= 3;
+            boolean ok = fc.currentBox() != null && DETECT_CALL_COUNT.get() >= 3;
             printResult("retry strategy (FIXED, 3 retries)", ok);
             return ok;
         } catch (Exception e) {
@@ -698,7 +705,7 @@ public class PipelineFaceOrchestrationExample implements Example {
         log.info("===== testErrorRecovery =====");
         try {
             // 设置为 100，确保检测任务永远失败（模拟模型加载异常）
-            detectCallCount = 100;
+            DETECT_CALL_COUNT.set(100);
 
             Pipeline pipeline = PipelineBuilder.newBuilder("face-error-recovery")
                     .onError((ctx, e) -> {
@@ -744,7 +751,7 @@ public class PipelineFaceOrchestrationExample implements Example {
         log.info("===== testSubPipeline =====");
         try {
             // 检测成功路径：跳过失败模拟
-            detectCallCount = 100;
+            DETECT_CALL_COUNT.set(100);
 
             // 单张人脸处理子流水线
             Pipeline faceSubPipeline = PipelineBuilder.newBuilder("face-sub")
@@ -786,7 +793,7 @@ public class PipelineFaceOrchestrationExample implements Example {
         log.info("===== testEnvParams =====");
         try {
             // 检测成功路径：跳过失败模拟
-            detectCallCount = 100;
+            DETECT_CALL_COUNT.set(100);
 
             Pipeline pipeline = PipelineBuilder.newBuilder("face-env")
                     .task("detect", ctx -> simulateDetect(ctx))
@@ -837,7 +844,7 @@ public class PipelineFaceOrchestrationExample implements Example {
     public static boolean testFullOrchestration() {
         log.info("===== testFullOrchestration =====");
         try {
-            detectCallCount = 0;
+            DETECT_CALL_COUNT.set(0);
 
             // 属性分析分支
             Pipeline attrBranch = PipelineBuilder.newBuilder("full-attr")
@@ -875,7 +882,7 @@ public class PipelineFaceOrchestrationExample implements Example {
                     .task("crop", ctx -> simulateCrop(ctx)).taskEnd()
                     // 4. 活体
                     .task("liveness", ctx -> simulateLiveness(ctx))
-                        .env("livenessThreshold", 0.5f)
+                        .env("livenessThreshold", DEFAULT_LIVENESS_THRESHOLD)
                         .taskEnd()
                     // 5. 活体通过？
                     .decision("isLive", ctx -> {
@@ -898,7 +905,7 @@ public class PipelineFaceOrchestrationExample implements Example {
                     .taskEnd()
                     // 9. 质量评估
                     .task("quality", ctx -> simulateQuality(ctx))
-                        .env("qualityThreshold", 0.6f)
+                        .env("qualityThreshold", DEFAULT_QUALITY_THRESHOLD)
                         .taskEnd()
                     // 10. 换脸检测
                     .task("deepfake", ctx -> simulateDeepfake(ctx)).taskEnd()

@@ -4,9 +4,11 @@ import com.chua.common.support.task.pipeline.builder.PipelineBuilder;
 import com.chua.common.support.task.pipeline.core.AsyncResult;
 import com.chua.common.support.task.pipeline.core.Pipeline;
 import com.chua.common.support.task.pipeline.core.PipelineContext;
+import com.chua.common.support.utils.ThreadUtils;
 import lombok.extern.slf4j.Slf4j;
 import com.chua.example.spi.Example;
 
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -27,7 +29,10 @@ import java.util.concurrent.atomic.AtomicReference;
 @Slf4j
 public class PipelineParallelExample implements Example {
 
-    /** Main */
+    /**
+     * 入口方法，解析命令行参数并运行对应示例。
+     * @param args 命令行参数，支持 --key=value 格式
+     */
     public static void main(String[] args) {
         String type = PipelineBasicExample.parseType(args);
         boolean passed = runTest(type);
@@ -201,7 +206,7 @@ public class PipelineParallelExample implements Example {
             }
 
             // 给回调一点时间
-            Thread.sleep(100);
+            ThreadUtils.sleep(100);
             boolean ok = "callback-fired:true".equals(callbackResult.get());
             printResult("onComplete callback", ok);
             return ok;
@@ -247,7 +252,7 @@ public class PipelineParallelExample implements Example {
             }
 
             // mergeCurrentData=true 时，currentData 应被更新为并行子流水线的输出
-            Thread.sleep(100);
+            ThreadUtils.sleep(100);
             boolean merged = "merged-data".equals(ctx.getCurrentData());
 
             // mergeCurrentData=false
@@ -267,7 +272,7 @@ public class PipelineParallelExample implements Example {
             if (result2 != null) {
                 result2.await();
             }
-            Thread.sleep(100);
+            ThreadUtils.sleep(100);
             boolean notMerged = !"merged-data".equals(ctx2.getCurrentData());
 
             // 两种模式至少一种生效即视为通过
@@ -291,7 +296,7 @@ public class PipelineParallelExample implements Example {
     }
 
     @Override
-    public boolean run(java.util.Map<String, String> args) {
+    public boolean run(Map<String, String> args) {
         main(new String[0]);
         return true;
     }

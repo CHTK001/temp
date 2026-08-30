@@ -6,6 +6,7 @@ import com.chua.ssh.support.server.SshMultiProgress;
 import com.chua.ssh.support.server.SshProgress;
 
 import javax.annotation.Nonnull;
+import com.chua.common.support.utils.ThreadUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -376,7 +377,7 @@ public class BuiltinShellCommandsExample {
         try (SshProgress bar = new SshProgress(res, "下载", 100)) {
             for (int i = 0; i <= 100; i++) {
                 bar.step();
-                Thread.sleep(60);
+                ThreadUtils.sleep(60);
             }
         }
     }
@@ -403,7 +404,7 @@ public class BuiltinShellCommandsExample {
             if (i % 5 == 0) {
                 mp.stepBy(2, 1);
             }
-            Thread.sleep(50);
+            ThreadUtils.sleep(50);
         }
         mp.close();
     }

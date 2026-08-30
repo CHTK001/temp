@@ -7,6 +7,7 @@ import com.chua.common.support.task.taskrunner.RunnerListener;
 import com.chua.common.support.task.taskrunner.TaskDefinition;
 import com.chua.common.support.task.taskrunner.TaskResult;
 import com.chua.common.support.task.taskrunner.TaskRunner;
+import com.chua.common.support.utils.ThreadUtils;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
@@ -583,7 +584,7 @@ public final class TaskRunnerExample {
                     .task("long-blocking", ctx -> {
                         started.countDown();
                         try {
-                            Thread.sleep(30_000);
+                            ThreadUtils.sleep(30_000);
                             return "never";
                         } catch (InterruptedException e) {
                             interrupted.incrementAndGet();
@@ -768,7 +769,7 @@ public final class TaskRunnerExample {
      */
     private static void sleepMillis(long millis) {
         try {
-            Thread.sleep(millis);
+            ThreadUtils.sleep(millis);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }

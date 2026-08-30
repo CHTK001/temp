@@ -3,6 +3,7 @@ package com.chua.example.network.http;
 import com.chua.common.support.network.server.Server;
 import com.chua.common.support.network.server.ServerBuilder;
 import com.chua.common.support.network.server.http.ConfigServer;
+import com.chua.common.support.utils.ThreadUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
@@ -24,7 +25,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -153,7 +153,7 @@ public final class HttpServerBenchmarkExample {
             int port = server.getPort();
 
             // 并发虚拟用户,每用户 requestsPerVu 次请求
-            pool = Executors.newVirtualThreadPerTaskExecutor();
+            pool = ThreadUtils.newVirtualThreadPerTaskExecutor();
             // 启动时基线内存: 测试占用 = 当前实际内存 - 启动时内存
             long baselineMemMb = usedMemMb();
             AtomicLong peakUsedMb = new AtomicLong(baselineMemMb);

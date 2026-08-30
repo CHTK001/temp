@@ -35,7 +35,10 @@ public class FaceAllDetectorsExample {
 
     public static void main(String[] args) throws Exception {
         // 预加载 OpenCV native（SCRFD 等需要）
-        try { nu.pattern.OpenCV.loadShared(); } catch (Throwable ignored) {}
+        try {
+            nu.pattern.OpenCV.loadShared();
+        } catch (Throwable ignored) {
+        }
 
         System.out.println("=== 人脸检测器全量对比 ===");
         System.out.printf("%-20s", "Detector");

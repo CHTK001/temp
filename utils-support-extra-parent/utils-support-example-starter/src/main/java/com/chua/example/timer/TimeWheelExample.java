@@ -2,6 +2,7 @@ package com.chua.example.timer;
 
 import com.chua.common.support.task.timer.Timer;
 import com.chua.common.support.task.timer.TimerTask;
+import com.chua.common.support.utils.ThreadUtils;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -112,7 +113,7 @@ public final class TimeWheelExample {
      */
     private static void sleepMillis(long millis) {
         try {
-            Thread.sleep(millis);
+            ThreadUtils.sleep(millis);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
@@ -307,7 +308,7 @@ public final class TimeWheelExample {
             TimerTask task = wheel.schedule(() -> {
                 started.countDown();
                 try {
-                    Thread.sleep(10_000);
+                    ThreadUtils.sleep(10_000);
                 } catch (InterruptedException e) {
                     interruptedFlag.incrementAndGet();
                     Thread.currentThread().interrupt();
