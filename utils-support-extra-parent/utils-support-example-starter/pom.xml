@@ -1065,6 +1065,22 @@
                         <exclude>**/onnx/OcrDeskewCompareExample.java</exclude>
                         <exclude>**/onnx/OcrDeskewDirectionExample.java</exclude>
                         <exclude>**/onnx/OcrDetExample.java</exclude>
+                        <exclude>**/onnx/OcrOutputExample.java</exclude>
+                        <exclude>**/onnx/OcrQualityGateExample.java</exclude>
+                        <exclude>**/onnx/OcrRotateCompareExample.java</exclude>
+                        <exclude>**/onnx/OcrSingleExample.java</exclude>
+                        <exclude>**/onnx/OcrTextDumpExample.java</exclude>
+                        <exclude>**/onnx/OnnxQwenExample.java</exclude>
+                        <exclude>**/onnx/PlatePipelineComprehensiveExample.java</exclude>
+                        <exclude>**/onnx/PlatePipelineDemoExample.java</exclude>
+                        <exclude>**/onnx/RTDetrLayoutExample.java</exclude>
+                        <exclude>**/onnx/SealInspectionBlackboxExample.java</exclude>
+                        <exclude>**/onnx/Seq2SeqComprehensiveExample.java</exclude>
+                        <exclude>**/onnx/Seq2SeqTranslationExample.java</exclude>
+                        <exclude>**/onnx/WebpDecodeExample.java</exclude>
+                        <exclude>**/onnx/YoloWorldBatchDrawExample.java</exclude>
+                        <exclude>**/pytorch/FaceRestorationExample.java</exclude>
+                        <exclude>**/reid/PersonReidExample.java</exclude>
                     </excludes>
 
                 </configuration>
