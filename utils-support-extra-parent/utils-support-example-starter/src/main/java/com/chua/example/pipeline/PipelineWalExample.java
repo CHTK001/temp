@@ -307,21 +307,13 @@ public class PipelineWalExample implements Example {
         log.info((ok ? "[PASS] " : "[FAIL] ") + testName);
     }
 
-    /** CleanupDir */
+    /**
+     * 清理指定目录（含子文件/子目录），委托 {@link com.chua.common.support.utils.FileUtils#deleteQuietly(Path)}。
+     *
+     * @param dir 目标目录
+     */
     private static void cleanupDir(Path dir) {
-        try {
-            Files.walk(dir)
-                    .sorted(java.util.Comparator.reverseOrder())
-                    .forEach(p -> {
-                        try {
-                            Files.deleteIfExists(p);
-                        } catch (Exception ignored) {
-            log.warn("Caught: {}", ignored.getMessage());
-        }
-                    });
-        } catch (Exception ignored) {
-            log.warn("Caught: {}", ignored.getMessage());
-        }
+        com.chua.common.support.utils.FileUtils.deleteQuietly(dir);
     }
 
     @Override

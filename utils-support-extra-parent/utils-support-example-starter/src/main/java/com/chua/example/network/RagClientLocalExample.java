@@ -380,19 +380,11 @@ public final class RagClientLocalExample {
     }
 
     /**
-     * 递归删除文件或目录。
+     * 递归删除文件或目录，委托 {@link com.chua.common.support.utils.FileUtils#deleteQuietly(File)}。
      *
      * @param file 目标文件/目录
      */
     private static void deleteRecursively(File file) {
-        if (file.isDirectory()) {
-            File[] children = file.listFiles();
-            if (children != null) {
-                for (File child : children) {
-                    deleteRecursively(child);
-                }
-            }
-        }
-        file.delete();
+        com.chua.common.support.utils.FileUtils.deleteQuietly(file);
     }
 }
