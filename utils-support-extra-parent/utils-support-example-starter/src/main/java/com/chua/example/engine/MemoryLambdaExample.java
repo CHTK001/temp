@@ -90,8 +90,8 @@ public class MemoryLambdaExample {
             runFileLambdaScenarios();
         }
 
-        if (failed > 0) {
-            log.error("[FAIL] lambda 场景失败数: {}", failed);
+        if (failed.get() > 0) {
+            log.error("[FAIL] lambda 场景失败数: {}", failed.get());
             System.exit(1);
         }
         System.out.println("[PASS] memory-lambda all scenarios covered");
@@ -173,7 +173,7 @@ public class MemoryLambdaExample {
             dir = Paths.get(System.getProperty("java.io.tmpdir"), "test-output", "memory-lambda");
             Files.createDirectories(dir);
         } catch (IOException e) {
-            failed++;
+            failed.incrementAndGet();
             log.info("[FAIL] 创建临时目录失败: {}", e.getMessage());
             return;
         }
@@ -207,7 +207,7 @@ public class MemoryLambdaExample {
             int csvDel = csvEngine.delete(Emp.class).eq(Emp::getId, 4).remove();
             check("csv delete", 1, csvDel);
         } catch (IOException e) {
-            failed++;
+            failed.incrementAndGet();
             log.info("[FAIL] csv 场景: {}", e.getMessage());
         }
 
@@ -247,7 +247,7 @@ public class MemoryLambdaExample {
             int jsonDel = jsonEngine.delete(Emp.class).eq(Emp::getId, 4).remove();
             check("json delete", 1, jsonDel);
         } catch (IOException e) {
-            failed++;
+            failed.incrementAndGet();
             log.info("[FAIL] json 场景: {}", e.getMessage());
         }
 
@@ -269,7 +269,7 @@ public class MemoryLambdaExample {
     private static void check(String scene, Object expected, Object actual) {
         var pass = expected == null ? actual == null : expected.equals(actual);
         log.info("{} {} => {}", pass ? "[PASS]" : "[FAIL]", scene, pass ? actual : "expected=" + expected + " actual=" + actual);
-        if (!pass) failed++;
+        if (!pass) failed.incrementAndGet();
     }
 
     private static String nameOf(Object obj) {
