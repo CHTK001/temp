@@ -1034,6 +1034,37 @@
                         <exclude>**/audio/CloneProbeExample.java</exclude>
                         <exclude>**/audio/SpeechLoopExample.java</exclude>
                         <exclude>**/collection/LazyExpiringListExample.java</exclude>
+                        <exclude>**/datalake/subscribe/SubscriberExample.java</exclude>
+                        <exclude>**/lang/document/DocumentExampleSpi.java</exclude>
+                        <exclude>**/layout/LayoutPipelineExample.java</exclude>
+                        <exclude>**/media/VideoProcessorSpiExample.java</exclude>
+                        <exclude>**/network/http/HttpProxyExample.java</exclude>
+                        <exclude>**/network/http/HttpServerExample.java</exclude>
+                        <exclude>**/network/mqtt/MqttServerExample.java</exclude>
+                        <exclude>**/network/mqtt/MqttServerExampleSpi.java</exclude>
+                        <exclude>**/network/MultiModelBatchDrawExample.java</exclude>
+                        <exclude>**/network/nio/NioHttpServerExample.java</exclude>
+                        <exclude>**/network/perf/PerfReportExample.java</exclude>
+                        <exclude>**/network/proxy/AsyncHttpPerfExample.java</exclude>
+                        <exclude>**/network/rpc/RpcEchoServiceImplExample.java</exclude>
+                        <exclude>**/network/rpc/RpcPayloadExample.java</exclude>
+                        <exclude>**/network/rpc/RpcProbeExample.java</exclude>
+                        <exclude>**/network/rpc/TcpRpcExampleSpi.java</exclude>
+                        <exclude>**/network/scatter/ScatterClusterExample.java</exclude>
+                        <exclude>**/network/sync/SyncExample.java</exclude>
+                        <exclude>**/network/sync/SyncExampleSpi.java</exclude>
+                        <exclude>**/onnx/AnimeFaceDetectExample.java</exclude>
+                        <exclude>**/onnx/DeepfakeDetectionExample.java</exclude>
+                        <exclude>**/onnx/DepthAnythingOrtExample.java</exclude>
+                        <exclude>**/onnx/ImageColorizeExample.java</exclude>
+                        <exclude>**/onnx/LamaInpaintingExample.java</exclude>
+                        <exclude>**/onnx/MattingBatchExample.java</exclude>
+                        <exclude>**/onnx/ModelRealDemoExample.java</exclude>
+                        <exclude>**/onnx/MultiModelDetectExample.java</exclude>
+                        <exclude>**/onnx/OcrCropExample.java</exclude>
+                        <exclude>**/onnx/OcrDeskewCompareExample.java</exclude>
+                        <exclude>**/onnx/OcrDeskewDirectionExample.java</exclude>
+                        <exclude>**/onnx/OcrDetExample.java</exclude>
                     </excludes>
 
                 </configuration>
