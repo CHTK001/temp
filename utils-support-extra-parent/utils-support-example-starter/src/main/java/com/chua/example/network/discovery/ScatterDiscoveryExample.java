@@ -49,9 +49,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public final class ScatterDiscoveryExample {
 
-    /** 私有构造，防止实例化 */
-    private ScatterDiscoveryExample() { }
-
     /** 日志 */
     private static final Logger LOG = LoggerFactory.getLogger(ScatterDiscoveryExample.class);
 
@@ -126,7 +123,7 @@ public final class ScatterDiscoveryExample {
                     portHttpA, portHttpB, portTcp);
             return true;
         } catch (Exception e) {
-            return ExampleUtils.fail("注册中心路由异常: " + e.getMessage());
+            return fail("注册中心路由异常: " + e.getMessage());
         } finally {
             closeQuietly(sd);
         }
@@ -206,7 +203,7 @@ public final class ScatterDiscoveryExample {
             LOG.info("    HTTP 代理 10 次请求全部路由到 order 组（order-A/order-B）✓");
             return true;
         } catch (Exception e) {
-            return ExampleUtils.fail("HTTP 代理路由异常: " + e.getMessage());
+            return fail("HTTP 代理路由异常: " + e.getMessage());
         } finally {
             closeQuietly(proxy);
             closeQuietly(backendA);
@@ -264,7 +261,7 @@ public final class ScatterDiscoveryExample {
             LOG.info("    TCP 代理按 order+tcp 路由到后端 {}，回显一致 ✓", portTcp);
             return true;
         } catch (Exception e) {
-            return ExampleUtils.fail("TCP 代理路由异常: " + e.getMessage());
+            return fail("TCP 代理路由异常: " + e.getMessage());
         } finally {
             closeQuietly(proxy);
             closeQuietly(backend);
@@ -323,6 +320,17 @@ public final class ScatterDiscoveryExample {
         if (!cond) {
             throw new AssertionError(msg);
         }
+    }
+
+    /**
+     * 失败收口：打印错误日志并返回 false。
+     *
+     * @param msg 失败描述
+     * @return 恒为 false
+     */
+    private static boolean fail(String msg) {
+        LOG.error("    ✗ 失败: {}", msg);
+        return false;
     }
 
     /**

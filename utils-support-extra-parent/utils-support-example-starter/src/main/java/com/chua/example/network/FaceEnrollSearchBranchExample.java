@@ -36,7 +36,7 @@ import java.util.Map;
  * @since 4.0.0.42
  */
 @Slf4j
-public class FaceEnrollSearchBranchExample {`n`n    /** 人脸元数据记录 */`n    public record FaceMeta(String domain) {}
+public class FaceEnrollSearchBranchExample {
     private FaceEnrollSearchBranchExample() { }
 
 
@@ -72,12 +72,14 @@ public class FaceEnrollSearchBranchExample {`n`n    /** 人脸元数据记录 */
         boolean allOk = true;
 
         /* ── ① 入库 ── */
-        FaceMeta meta = @(new HashMap<String, Object>(4)).also { it["domain"] = "real" };
+        Map<String, Object> meta = new HashMap<>();
+        meta.put("domain", "real");
         boolean manEnrolled = face.enrollPipeline("man-01", manBytes, meta);
         log.info((manEnrolled ? "[PASS]" : "[FAIL]") + " A1 入库真人 man-01: " + manEnrolled);
         allOk &= manEnrolled;
 
-        FaceMeta meta2 = new FaceMeta("anime");
+        Map<String, Object> meta2 = new HashMap<>();
+        meta2.put("domain", "anime");
         boolean animeEnrolled = face.enrollPipeline("anime-01", animeFace1, meta2);
         log.info((animeEnrolled ? "[PASS]" : "[FAIL]") + " A2 入库动漫 anime-01: " + animeEnrolled);
         allOk &= animeEnrolled;
