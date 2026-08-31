@@ -9,6 +9,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,12 +28,9 @@ import java.util.List;
  *
  * @since 4.0.0.42
  */
+@Slf4j
 public final class OnnxFaceRestorationExample {
 
-    /**
-     * 日志。
-     */
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(OnnxFaceRestorationExample.class);
 
     /**
      * 输出目录。

@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * A/B 对比：检测/裁剪/对齐/分割模型固定（pytorch-retinaface + pytorch-parsenet），
@@ -21,13 +22,11 @@ import java.util.List;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public class FaceRestoreCompareExample {
 
     /** 私有构造，防止实例化 */
     private FaceRestoreCompareExample() { }
-
-    /** 日志 */
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(FaceRestoreCompareExample.class);
     /** 输出目录 */
     private static final String OUT_DIR = "D:\\images\\output";
     /** 对齐输出边长 */

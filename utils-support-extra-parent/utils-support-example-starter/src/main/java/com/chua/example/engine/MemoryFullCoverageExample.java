@@ -1,6 +1,7 @@
 package com.chua.example.engine;
 
 import com.chua.common.support.lang.datasource.page.Page;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -25,6 +26,7 @@ import java.util.Map;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public class MemoryFullCoverageExample extends AbstractEngineExample {
 
     /** 私有构造，防止实例化 */

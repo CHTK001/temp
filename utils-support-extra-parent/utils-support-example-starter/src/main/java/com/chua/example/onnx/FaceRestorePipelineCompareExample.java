@@ -6,8 +6,7 @@ import com.chua.deeplearning.support.face.FacePipelineCallback;
 import com.chua.deeplearning.support.face.FacePipelineDiskCallback;
 import com.chua.deeplearning.support.face.FaceRestoreResult;
 import com.chua.deeplearning.support.model.PredictRectangle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,9 +27,9 @@ import java.util.List;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class FaceRestorePipelineCompareExample {
 
-    private static final Logger log = LoggerFactory.getLogger(FaceRestorePipelineCompareExample.class);
 
     /** 输出根目录 */
     private static final String OUT_ROOT = "D:\\images\\output\\face_restore_compare";
