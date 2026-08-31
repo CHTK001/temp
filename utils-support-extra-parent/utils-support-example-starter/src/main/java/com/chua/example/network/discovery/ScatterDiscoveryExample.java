@@ -12,8 +12,9 @@ import com.chua.common.support.network.server.http.ConfigServer;
 import com.chua.common.support.network.server.impl.JdkTcpServer;
 import com.chua.common.support.network.server.proxy.DiscoveryProxyTargetResolver;
 import com.chua.common.support.network.server.proxy.TcpProxyServer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.chua.common.support.utils.ThreadUtils;
+import com.chua.example.util.ExampleUtils;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.Socket;
 import java.net.URI;
@@ -25,9 +26,6 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import com.chua.common.support.utils.ThreadUtils;
-import com.chua.example.util.ExampleUtils;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * {@link ScatterDiscoveryExampleSpi} 的同名独立主示例（驱动型）。
