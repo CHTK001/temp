@@ -5,6 +5,9 @@ import com.chua.deeplearning.support.face.FacePipeline;
 import com.chua.deeplearning.support.face.FacePipelineDiskCallback;
 import com.chua.deeplearning.support.model.PredictRectangle;
 
+import static com.chua.deeplearning.support.utils.ImageCropUtils.crop;
+import static com.chua.deeplearning.support.liveness.LivenessDetector.create;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -43,10 +46,10 @@ public final class OnnxLivenessPipelineExample extends BaseExample {
         log.info("[liveness-pipeline] 检测框数=" + boxes.size());
         if (!boxes.isEmpty()) {
             var box = boxes.get(0);
-            byte[] face = com.chua.deeplearning.support.utils.ImageCropUtils.crop(img, box);
+            byte[] face = crop(img, box);
             log.info("[liveness-pipeline] 裁剪人脸 bytes=" + (face == null ? "null" : face.length));
-            com.chua.deeplearning.support.liveness.LivenessDetector ld =
-                    com.chua.deeplearning.support.liveness.LivenessDetector.create("face-liveness-flrgb");
+            LivenessDetector ld =
+                    create("face-liveness-flrgb");
             try {
                 log.info("[liveness-pipeline] isLive=" + ld.isLive(face));
             } catch (Exception e) {

@@ -11,6 +11,8 @@ import com.chua.datalake.support.spi.sink.DataSink;
 import lombok.extern.slf4j.Slf4j;
 import com.chua.example.util.UtilsExample;
 
+import static com.chua.common.support.lang.json.Json.toJson;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -132,7 +134,7 @@ public class PipelineEngineExample {
             stages.put("default", stage);
             cfg.setStages(stages);
 
-            String json = com.chua.common.support.lang.json.Json.toJson(cfg);
+            String json = toJson(cfg);
             pm.savePipeline("dsl-pipeline", json);
 
             DataEnvelope env = new DataEnvelope(sampleData());

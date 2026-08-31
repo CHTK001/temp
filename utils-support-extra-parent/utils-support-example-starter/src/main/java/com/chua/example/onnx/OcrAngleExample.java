@@ -9,6 +9,8 @@ import com.chua.deeplearning.support.ocr.OcrResult;
 import com.chua.deeplearning.support.translator.ITranslator;
 import org.opencv.core.Mat;
 
+import static com.chua.deeplearning.support.utils.ImageUtils.decode;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -55,7 +57,7 @@ public final class OcrAngleExample {
             byte[] corrected = ocr.correct(img);
             boolean rotated = !java.util.Arrays.equals(img, corrected);
             log.info("  整图矫正: " + (rotated ? "已旋转" : "未旋转(跳过或0°)"));
-            Mat correctedMat = com.chua.deeplearning.support.utils.ImageUtils.decode(corrected);
+            Mat correctedMat = decode(corrected);
             log.info("  矫正后尺寸: " + correctedMat.cols() + "x" + correctedMat.rows());
             correctedMat.release();
 

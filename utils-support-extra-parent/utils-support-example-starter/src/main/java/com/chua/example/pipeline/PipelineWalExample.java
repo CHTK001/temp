@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import com.chua.example.spi.Example;
 import com.chua.example.util.UtilsExample;
 
+import static com.chua.common.support.utils.FileUtils.deleteQuietly;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -316,7 +318,7 @@ public class PipelineWalExample implements Example {
      * @param dir 目标目录
      */
     private static void cleanupDir(Path dir) {
-        com.chua.common.support.utils.FileUtils.deleteQuietly(dir);
+        deleteQuietly(dir);
     }
 
     @Override

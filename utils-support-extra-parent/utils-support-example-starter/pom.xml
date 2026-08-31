@@ -743,7 +743,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
 <configuration>
                     <release>25</release>
-                    <failOnError>false</failOnError>
+                    <failOnError>true</failOnError>
                     <fork>false</fork>
                     <compilerArgs>
                         <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED</arg>
@@ -774,11 +774,7 @@
                             <version>${lombok.version}</version>
                         </path>
                     </annotationProcessorPaths>
-                    <!-- 排除引用了已失效 API 的历史遗留示例，修复后应逐个移出本清单 -->
-                    <excludes>
-                        <exclude>**/onnx/OnnxMiniLMEmbeddingExample.java</exclude>
-                        <exclude>**/taskasync/AsyncDeduplicateExample.java</exclude>
-                    </excludes>
+
 
                 </configuration>
             </plugin>

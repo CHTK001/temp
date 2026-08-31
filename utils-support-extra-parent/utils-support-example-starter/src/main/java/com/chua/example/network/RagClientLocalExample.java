@@ -13,6 +13,8 @@ import com.chua.common.support.vector.VectorStorage;
 import com.chua.common.support.vector.VectorStorageBuilder;
 import com.chua.example.util.UtilsExample;
 
+import static com.chua.common.support.utils.FileUtils.deleteQuietly;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -385,6 +387,6 @@ public final class RagClientLocalExample {
      * @param file 目标文件/目录
      */
     private static void deleteRecursively(File file) {
-        com.chua.common.support.utils.FileUtils.deleteQuietly(file);
+        deleteQuietly(file);
     }
 }

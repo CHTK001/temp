@@ -62,6 +62,10 @@ public final class PerfReportExample {
 
     /**
      * 打印环境信息（每个报告前必打）。
+     *
+     * @param serverName    服务器名称
+     * @param spiName       SPI 实现名称
+     * @param discoveryType 发现服务类型
      */
     public static void printEnvironment(String serverName, String spiName, String discoveryType) {
         Runtime rt = Runtime.getRuntime();

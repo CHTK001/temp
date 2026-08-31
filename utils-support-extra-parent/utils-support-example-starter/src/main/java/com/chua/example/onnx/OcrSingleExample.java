@@ -7,6 +7,8 @@ import com.chua.deeplearning.support.model.PredictRectangle;
 import com.chua.deeplearning.support.ocr.OcrPipeline;
 import com.chua.deeplearning.support.ocr.OcrResult;
 
+import static com.chua.deeplearning.support.utils.ImageUtils.decode;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -39,7 +41,7 @@ public final class OcrSingleExample {
         OcrPipeline.OcrRecognizeResult rr = ocr.recognizeDetailWithImage(img);
 
         byte[] corrected = rr.image();
-        var cimg = com.chua.deeplearning.support.utils.ImageUtils.decode(corrected);
+        var cimg = decode(corrected);
         log.info("[diag] 矫正后尺寸=" + cimg.cols() + "x" + cimg.rows());
         cimg.release();
 

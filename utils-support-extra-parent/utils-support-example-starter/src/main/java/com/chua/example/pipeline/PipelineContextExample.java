@@ -63,7 +63,11 @@ public class PipelineContextExample implements Example {
         return passed;
     }
 
-    /** currentData：节点间数据传递。 */
+    /**
+     * currentData：节点间数据传递。
+     *
+     * @return 测试是否通过
+     */
     public static boolean testCurrentData() {
         log.info("===== testCurrentData =====");
         try {
@@ -91,7 +95,11 @@ public class PipelineContextExample implements Example {
         }
     }
 
-    /** attributes：全局共享属性。 */
+    /**
+     * attributes：全局共享属性。
+     *
+     * @return 测试是否通过
+     */
     public static boolean testAttributes() {
         log.info("===== testAttributes =====");
         try {
@@ -119,7 +127,11 @@ public class PipelineContextExample implements Example {
         }
     }
 
-    /** nodeOutputs：引擎自动存储节点输出。 */
+    /**
+     * nodeOutputs：引擎自动存储节点输出。
+     *
+     * @return 测试是否通过
+     */
     public static boolean testNodeOutputs() {
         log.info("===== testNodeOutputs =====");
         try {
@@ -147,7 +159,11 @@ public class PipelineContextExample implements Example {
         }
     }
 
-    /** getData：便捷方法获取节点输出（带类型转换）。 */
+    /**
+     * getData：便捷方法获取节点输出（带类型转换）。
+     *
+     * @return 测试是否通过
+     */
     public static boolean testGetData() {
         log.info("===== testGetData =====");
         try {
@@ -174,7 +190,11 @@ public class PipelineContextExample implements Example {
         }
     }
 
-    /** nodeLocalData：节点本地数据，节点间隔离。 */
+    /**
+     * nodeLocalData：节点本地数据，节点间隔离。
+     *
+     * @return 测试是否通过
+     */
     public static boolean testNodeLocalData() {
         log.info("===== testNodeLocalData =====");
         try {
@@ -209,7 +229,11 @@ public class PipelineContextExample implements Example {
         }
     }
 
-    /** history：执行历史记录。 */
+    /**
+     * history：执行历史记录。
+     *
+     * @return 测试是否通过
+     */
     public static boolean testHistory() {
         log.info("===== testHistory =====");
         try {
