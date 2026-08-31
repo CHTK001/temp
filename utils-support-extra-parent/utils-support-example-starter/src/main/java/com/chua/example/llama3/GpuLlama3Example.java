@@ -5,6 +5,7 @@ import com.chua.common.support.ai.chat.ModelDefinition;
 import com.chua.deeplearning.support.ai.client.DeeplearningModels;
 import com.chua.deeplearning.support.gpu_llama3.GpuLlama3ChatClient;
 import com.chua.example.spi.Example;
+import com.chua.example.util.UtilsExample;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -15,9 +16,9 @@ import java.util.Map;
  *
  * <p>用法：</p>
  * <pre>
- *   java --example=gpu-llama3                          # 列出模型
- *   java --example=gpu-llama3 --model=gemma-4-E2B     # 指定模型对话
- *   java --example=gpu-llama3 --gpu=true              # 强制 GPU
+ *   java --example=gpu-llama3                        # 列出模型
+ *   java --example=gpu-llama3 --model=llama-3-2b-it  # 指定模型对话
+ *   java --example=gpu-llama3 --gpu=true --ctxSize=8192
  * </pre>
  *
  * @author CH
@@ -30,7 +31,7 @@ public final class GpuLlama3Example implements Example {
 
     /** Main */
     public static void main(String[] args) {
-        Map<String, String> parsed = com.chua.example.util.ExampleUtils.parseArgs(args);
+        Map<String, String> parsed = UtilsExample.parseArgs(args);
         new GpuLlama3Example().run(parsed);
     }
 
@@ -60,7 +61,7 @@ public final class GpuLlama3Example implements Example {
         // 2. 简单对话
         String modelId = args.getOrDefault("model", models.get(0).getId());
         boolean useGpu = Boolean.parseBoolean(args.getOrDefault("gpu", "true"));
-        int ctxSize = Integer.parseInt(args.getOrDefault("ctxSize", "4096"));
+        int ctxSize  = Integer.parseInt(args.getOrDefault("ctxSize", "4096"));
 
         ChatClientSetting setting = ChatClientSetting.builder()
                 .useGpu(useGpu)
@@ -71,7 +72,8 @@ public final class GpuLlama3Example implements Example {
         client.model(modelId);
         log.info("[GPU={} ctxSize={} model={}]", useGpu, ctxSize, modelId);
 
-        String prompt = args.containsKey("prompt") ? args.get("prompt") : "你好，用一句话介绍一下你自己。";
+        String prompt = args.containsKey("prompt") ? args.get("prompt")
+                : "你好，用一句话介绍一下你自己。";
         log.info("[INPUT] {}", prompt);
         try {
             String response = client.chatSync(prompt);
