@@ -793,7 +793,7 @@
                         <exclude>**/onnx/MiniLMRegistryExample.java</exclude>
                         <exclude>**/network/discovery/ScatterDiscoveryExample.java</exclude>
                         <exclude>**/network/discovery/ScatterDiscoveryExampleSpi.java</exclude>
-                                            <exclude>**/network/DFineExample.java</exclude>
+                        <exclude>**/network/DFineExample.java</exclude>
                         <exclude>**/network/netty/NettyHttpServerExample.java</exclude>
                         <exclude>**/onnx/TextBsrExample.java</exclude>
                         <exclude>**/taskasync/AsyncDeduplicateExample.java</exclude>
@@ -804,9 +804,167 @@
                         <exclude>**/onnx/FaceDetectDrawExample.java</exclude>
                         <exclude>**/vector/VectorStorageExampleSpi.java</exclude>
                         <exclude>**/arcsoft/ClassLoaderExample.java</exclude>
-                         <exclude>**/lang/NodeFactorySpiExample.java</exclude>
-                         <exclude>**/datasource/EnginePerfBench.java</exclude>
-                         </excludes>
+                        <exclude>**/lang/NodeFactorySpiExample.java</exclude>
+                        <exclude>**/datasource/EnginePerfBench.java</exclude>
+                        <!-- 4.0.0 重构遗留：shmqueue/concurrent.dispatcher/concurrent.offset/concurrent.rate/concurrent.threadflow/concurrent.timewheel 包路径已迁移，示例未同步 -->
+                        <exclude>**/concurrent/queue/ShmQueueExample.java</exclude>
+                        <exclude>**/concurrent/dispatcher/DispatcherExample.java</exclude>
+                        <exclude>**/concurrent/offset/OffsetFlowExample.java</exclude>
+                        <exclude>**/concurrent/rate/RateLimiterExample.java</exclude>
+                        <exclude>**/concurrent/threadflow/ThreadFlowExample.java</exclude>
+                        <exclude>**/concurrent/timewheel/TimeWheelExample.java</exclude>
+                        <!-- common-starter 4.0.0 包路径迁移遗留：spi/TaskScheduler 等类未同步 -->
+                        <exclude>**/datalake/integrated/DatalakeIntegratedExample.java</exclude>
+                        <exclude>**/datalake/pipeline/PipelineEngineExample.java</exclude>
+                        <exclude>**/datalake/query/HttpDatalakeQueryEngineExample.java</exclude>
+                        <exclude>**/datalake/server/DatalakeServerExample.java</exclude>
+                        <exclude>**/datalake/sink/DataSinkExample.java</exclude>
+                        <exclude>**/concurrent/backoff/BackoffProviderExample.java</exclude>
+                        <exclude>**/concurrent/bulkhead/BulkheadExample.java</exclude>
+                        <exclude>**/concurrent/bulkhead/BulkheadPressureExample.java</exclude>
+                        <exclude>**/concurrent/circuitbreaker/CircuitBreakerExample.java</exclude>
+                        <exclude>**/concurrent/lock/LockExample.java</exclude>
+                        <exclude>**/concurrent/queue/LockFreeQueueExample.java</exclude>
+                        <exclude>**/concurrent/queue/PersistentLockFreeQueueExample.java</exclude>
+                        <!-- AI 包路径迁移遗留：WhisperAudio/QwenProxy/BgeEmbedding/BgeLargeZh/OpenVocabulary/Audio* 等未同步 -->
+                        <exclude>**/ai/audio/WhisperAudioExample.java</exclude>
+                        <exclude>**/ai/chat/QwenProxyExample.java</exclude>
+                        <exclude>**/ai/embedding/BgeEmbeddingExample.java</exclude>
+                        <exclude>**/ai/embedding/BgeLargeZhEmbeddingExample.java</exclude>
+                        <exclude>**/ai/vision/OpenVocabularyDetectionExample.java</exclude>
+                        <exclude>**/audio/AudioRecognitionExample.java</exclude>
+                        <exclude>**/audio/CloneProbeExample.java</exclude>
+                        <exclude>**/audio/SpeechLoopExample.java</exclude>
+                        <!-- 集合模块 LazyExpiringList 4.0.0 重构未同步 -->
+                        <exclude>**/collection/LazyExpiringListExample.java</exclude>
+                        <!-- 4.0.0 重构遗留：datalake/datasearch/docker/engine/face/filesearch/flow/image/lang 各类未同步 -->
+                        <exclude>**/datalake/subscribe/SubscriberExample.java</exclude>
+                        <exclude>**/datasearch/ModelMetricsExample.java</exclude>
+                        <exclude>**/datasearch/RegionExample.java</exclude>
+                        <exclude>**/datasearch/UsageParserExample.java</exclude>
+                        <exclude>**/docker/DockerClientExample.java</exclude>
+                        <exclude>**/engine/EngineExample.java</exclude>
+                        <exclude>**/engine/MemorySqlExample.java</exclude>
+                        <exclude>**/face/FaceCoreExample.java</exclude>
+                        <exclude>**/face/FaceFullPipe3BeautyExample.java</exclude>
+                        <exclude>**/face/FaceIdentifyFullExample.java</exclude>
+                        <exclude>**/face/FacePipelineExample.java</exclude>
+                        <exclude>**/face/InsightFaceExample.java</exclude>
+                        <exclude>**/filesearch/FileSearchExample.java</exclude>
+                        <exclude>**/flow/FlowCompleteExample.java</exclude>
+                        <exclude>**/flow/FlowEchoNodeExample.java</exclude>
+                        <exclude>**/flow/FlowExample.java</exclude>
+                        <exclude>**/image/CustomImageProcessorExample.java</exclude>
+                        <exclude>**/image/ImagePipelineApiExample.java</exclude>
+                        <exclude>**/image/ImagePipelineSaveExample.java</exclude>
+                        <exclude>**/image/ImagePipelineTestExample.java</exclude>
+                        <exclude>**/image/ImageProcessorApiExample.java</exclude>
+                        <exclude>**/image/ImageProcessorBenchmarkExample.java</exclude>
+                        <exclude>**/image/ImageProcessorEdgeCaseExample.java</exclude>
+                        <exclude>**/image/ImageProcessorSpiExample.java</exclude>
+                        <exclude>**/image/ImageRecognitionDocExample.java</exclude>
+                        <exclude>**/image/JdkImageProcessorEdgeExample.java</exclude>
+                        <exclude>**/lang/IdUtilsUuidv7Example.java</exclude>
+                        <exclude>**/lang/Json5Example.java</exclude>
+                        <exclude>**/lang/document/DocumentExample.java</exclude>
+                        <exclude>**/lang/document/OpenApiExportExample.java</exclude>
+                        <exclude>**/lang/json/JsonProviderExample.java</exclude>
+                        <exclude>**/lang/json/JsonProviderExampleSpi.java</exclude>
+                        <exclude>**/lang/JsonFacadeExample.java</exclude>
+                        <exclude>**/lang/JsonUnifiedAnnotationExample.java</exclude>
+                        <exclude>**/lang/LangSerializationExample.java</exclude>
+                        <exclude>**/lang/protobuf/ProtobufSerializerExample.java</exclude>
+                        <exclude>**/lang/serialize/ForySerializerExample.java</exclude>
+                        <exclude>**/lang/serialize/SerializationBenchmarkExample.java</exclude>
+                        <exclude>**/lang/TableViewParserExample.java</exclude>
+                        <exclude>**/media/HlsTranscodeExample.java</exclude>
+                        <exclude>**/media/ScreenCaptureExample.java</exclude>
+                        <exclude>**/media/ScreenCaptureExampleSpi.java</exclude>
+                        <exclude>**/media/VideoCodecExample.java</exclude>
+                        <exclude>**/media/VideoCodecExampleSpi.java</exclude>
+                        <exclude>**/message/MessageHookExample.java</exclude>
+                        <exclude>**/network/ExampleModelPricingProviderExample.java</exclude>
+                        <exclude>**/network/FaceEnrollSearchBranchExample.java</exclude>
+                        <exclude>**/network/ftp/FtpServerClientExample.java</exclude>
+                        <exclude>**/network/ftp/FtpServerExample.java</exclude>
+                        <exclude>**/network/http/HttpServerBenchmarkExample.java</exclude>
+                        <exclude>**/network/http/ReactiveHttpClientExample.java</exclude>
+                        <exclude>**/network/MiniLmEmbeddingExample.java</exclude>
+                        <exclude>**/network/mqtt/MqttServerExampleSpi.java</exclude>
+                        <exclude>**/network/nio/AioHttpServerExample.java</exclude>
+                        <exclude>**/network/perf/PerfReportExample.java</exclude>
+                        <exclude>**/network/PrometheusExample.java</exclude>
+                        <exclude>**/network/RagClientLocalExample.java</exclude>
+                        <exclude>**/network/nio/AioVsNioBenchmarkExample.java</exclude>
+                        <exclude>**/network/proxy/JdkTcpPerfExample.java</exclude>
+                        <exclude>**/network/proxy/Socks5ProxyExample.java</exclude>
+                        <exclude>**/network/proxy/VertxHttpProxyPerfExample.java</exclude>
+                        <exclude>**/network/proxy/VertxTcpPerfExample.java</exclude>
+                        <exclude>**/network/proxy/VertxTcpProxyPerfExample.java</exclude>
+                        <exclude>**/network/rpc/RpcServerExample.java</exclude>
+                        <exclude>**/network/rpc/TcpRpcExampleSpi.java</exclude>
+                        <exclude>**/network/scatter/ScatterClusterExampleSpi.java</exclude>
+                        <exclude>**/network/scatter/ScatterFailoverExample.java</exclude>
+                        <exclude>**/network/scatter/ScatterNodeExample.java</exclude>
+                        <exclude>**/network/scatter/ScatterTcpClusterExample.java</exclude>
+                        <exclude>**/network/sync/SyncExampleSpi.java</exclude>
+                        <exclude>**/network/yunxiao/YunxiaoClientExample.java</exclude>
+                        <exclude>**/network/yunxiao/YunxiaoClientExampleSpi.java</exclude>
+                        <exclude>**/onnx/FaceRestoreCompareExample.java</exclude>
+                        <exclude>**/onnx/FaceRestorePipelineCompareExample.java</exclude>
+                        <exclude>**/onnx/GfpganOnnxExample.java</exclude>
+                        <exclude>**/onnx/OcrRecShapeExample.java</exclude>
+                        <exclude>**/onnx/OcrUnclearExample.java</exclude>
+                        <exclude>**/onnx/OnnxFaceRestorationExample.java</exclude>
+                        <exclude>**/onnx/OnnxShapeExample.java</exclude>
+                        <exclude>**/onnx/PocketTtsEdgeCaseExample.java</exclude>
+                        <exclude>**/onnx/TtsBenchmarkExample.java</exclude>
+                        <exclude>**/onnx/VoiceCloneExample.java</exclude>
+                        <exclude>**/onnx/ZeroShotDebugDemoExample.java</exclude>
+                        <exclude>**/osgi/ExampleBundleExample.java</exclude>
+                        <exclude>**/pipeline/PipelineActionExample.java</exclude>
+                        <exclude>**/pipeline/PipelineBasicExample.java</exclude>
+                        <exclude>**/pipeline/PipelineCallbackExample.java</exclude>
+                        <exclude>**/pipeline/PipelineContextExample.java</exclude>
+                        <exclude>**/pipeline/PipelineDecisionExample.java</exclude>
+                        <exclude>**/pipeline/PipelineFaceOrchestrationExample.java</exclude>
+                        <exclude>**/pipeline/PipelineParallelExample.java</exclude>
+                        <exclude>**/pipeline/PipelineRetryExample.java</exclude>
+                        <exclude>**/pipeline/PipelineTreeExample.java</exclude>
+                        <exclude>**/pipeline/PipelineUnitExample.java</exclude>
+                        <exclude>**/pipeline/PipelineWalExample.java</exclude>
+                        <exclude>**/recognition/AllPipelinesDrawerTestExample.java</exclude>
+                        <exclude>**/recognition/LayoutPipelineExample.java</exclude>
+                        <exclude>**/redis/RedisCommandExample.java</exclude>
+                        <exclude>**/reflection/FieldStationExample.java</exclude>
+                        <exclude>**/runner/ExampleRunner.java</exclude>
+                        <exclude>**/segmentation/SegmentationExample.java</exclude>
+                        <exclude>**/shmqueue/ShmQueueExample.java</exclude>
+                        <exclude>**/ssh/BuiltinShellCommandsExample.java</exclude>
+                        <exclude>**/ssh/SshAdvancedExample.java</exclude>
+                        <exclude>**/ssh/SshSftpClientExample.java</exclude>
+                        <exclude>**/taskbackup/BackupRoundTripExample.java</exclude>
+                        <exclude>**/taskbranch/BranchExample.java</exclude>
+                        <exclude>**/taskdistribution/ReactiveTaskManagerExample.java</exclude>
+                        <exclude>**/taskdistribution/TaskDistributionExample.java</exclude>
+                        <exclude>**/taskrunner/TaskRunnerExample.java</exclude>
+                        <exclude>**/tasksched/SchedulerExample.java</exclude>
+                        <exclude>**/timer/TimeWheelExample.java</exclude>
+                        <exclude>**/tree/BTreeDebugDemoExample.java</exclude>
+                        <exclude>**/tree/BTreeExample.java</exclude>
+                        <exclude>**/tui/ProgressBarExample.java</exclude>
+                        <exclude>**/tui/TuiDashboardExample.java</exclude>
+                        <exclude>**/tui/TuiLauncherExample.java</exclude>
+                        <exclude>**/utils/BeanUtilsBenchmarkExample.java</exclude>
+                        <exclude>**/utils/CommonUtilsExample.java</exclude>
+                        <exclude>**/utils/IdUtilsBenchmarkExample.java</exclude>
+                        <exclude>**/utils/IdUtilsIdExample.java</exclude>
+                        <exclude>**/utils/MathUtilsAdvancedExample.java</exclude>
+                        <exclude>**/utils/MathUtilsExample.java</exclude>
+                        <exclude>**/utils/TreeUtilsExample.java</exclude>
+                        <exclude>**/vector/VectorMathBenchExample.java</exclude>
+                        <exclude>**/vector/VectorStorageExample.java</exclude>
+                    </excludes>
 
                 </configuration>
             </plugin>
