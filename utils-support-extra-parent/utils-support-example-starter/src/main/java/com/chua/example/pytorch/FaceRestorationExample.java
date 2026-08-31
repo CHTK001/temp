@@ -10,6 +10,12 @@ import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 
+import static org.opencv.imgproc.Imgproc.circle;
+import static org.opencv.imgproc.Imgproc.cvtColor;
+import static org.opencv.imgproc.Imgproc.INTER_CUBIC;
+import static org.opencv.imgproc.Imgproc.rectangle;
+import static org.opencv.imgproc.Imgproc.warpAffine;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -78,11 +84,11 @@ public final class FaceRestorationExample {
         for (PredictRectangle box : boxes) {
             org.opencv.core.Rect r = new org.opencv.core.Rect(
                     (int) box.x(), (int) box.y(), (int) box.width(), (int) box.height());
-            org.opencv.imgproc.Imgproc.rectangle(draw, r,
+            rectangle(draw, r,
                     new Scalar(0, 200, 0), 2);
             if (box.keypoints() != null) {
                 for (float[] kp : box.keypoints()) {
-                    org.opencv.imgproc.Imgproc.circle(draw,
+                    circle(draw,
                             new Point(kp[0], kp[1]), 2, new Scalar(0, 0, 255), -1);
                 }
             }
@@ -127,9 +133,9 @@ public final class FaceRestorationExample {
             // 5 点 SVD 仿射对齐（保留矩阵供贴回）
             Mat affine = ImageUtils.estimateFaceAffine512(kps);
             Mat aligned = new Mat();
-            org.opencv.imgproc.Imgproc.warpAffine(sub, aligned, affine,
+            warpAffine(sub, aligned, affine,
                     new org.opencv.core.Size(512, 512),
-                    org.opencv.imgproc.Imgproc.INTER_CUBIC, 0, new Scalar(135, 133, 132));
+                    INTER_CUBIC, 0, new Scalar(135, 133, 132));
             Path alignOut = Path.of(OUT_DIR, "face" + i + "_align.png");
             Files.write(alignOut, ImageUtils.encode(aligned));
             log.info("[align] #" + i + " 已输出: " + alignOut);
@@ -149,7 +155,7 @@ public final class FaceRestorationExample {
             Mat softMask = ImageUtils.decode(maskBytes);
             if (softMask.channels() > 1) {
                 Mat g = new Mat();
-                org.opencv.imgproc.Imgproc.cvtColor(softMask, g, org.opencv.imgproc.Imgproc.COLOR_BGR2GRAY);
+                cvtColor(softMask, g, COLOR_BGR2GRAY);
                 softMask.release();
                 softMask = g;
             }
