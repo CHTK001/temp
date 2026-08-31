@@ -92,7 +92,7 @@ public class DataSinkExample {
     public static boolean testWrite() {
         log.info("===== write =====");
         List<DataSink> sinks = collectSinks();
-        DataEnvelope envelope = new DataEnvelope(sampleData());
+        DataEnvelope envelope = new DataEnvelope(Map.of("id", 1L, "name", "datalake", "ts", System.currentTimeMillis()));
         envelope.setPipelineId("example-pipeline");
         envelope.setTraceId("trace-001");
         boolean allOk = true;
