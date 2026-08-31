@@ -2,6 +2,7 @@ package com.chua.example.onnx;
 
 import com.chua.example.spi.Example;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Gemma3 ONNX 示例（存根：deeplearning-onnx-starter 未构建）。
@@ -9,6 +10,7 @@ import java.util.Map;
  * @author CH
  * @since 4.0.0
  */
+@Slf4j
 public class Gemma3Example implements Example {
     @Override
     public String name() { return "gemma3"; }
@@ -18,7 +20,7 @@ public class Gemma3Example implements Example {
     public String description() { return "Gemma3 ONNX 推理示例"; }
     @Override
     public boolean run(Map<String, String> args) {
-        System.out.println("[SKIP] Gemma3Example - deeplearning-onnx-starter not built");
+        log.debug("[SKIP] Gemma3Example - deeplearning-onnx-starter not built");
         return true;
     }
 }

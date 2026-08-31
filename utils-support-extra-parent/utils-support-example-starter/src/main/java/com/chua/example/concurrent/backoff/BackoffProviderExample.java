@@ -5,6 +5,7 @@ import com.chua.common.support.concurrent.backoff.provider.FixedBackoffProvider;
 import com.chua.common.support.concurrent.backoff.provider.FibonacciBackoffProvider;
 import com.chua.common.support.concurrent.backoff.provider.LinearBackoffProvider;
 import com.chua.example.util.UtilsExample;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 退避策略 {@link com.chua.common.support.concurrent.backoff.BackoffProvider} 全场景自检示例。
@@ -15,6 +16,7 @@ import com.chua.example.util.UtilsExample;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class BackoffProviderExample {
 
     private BackoffProviderExample() {
@@ -110,10 +112,10 @@ public final class BackoffProviderExample {
         passed &= UtilsExample.timed("beyondTestedRange", BackoffProviderExample::beyondTestedRange);
         passed &= UtilsExample.timed("allProvidersNoCrash", BackoffProviderExample::allProvidersNoCrash);
         if (!passed) {
-            System.out.println("[FAIL] BackoffProvider 存在失败场景");
+            log.error("[FAIL] BackoffProvider 存在失败场景");
             System.exit(UtilsExample.FAILURE);
         }
-        System.out.println("[PASS] BackoffProvider 全部场景通过");
+        log.info("[PASS] BackoffProvider 全部场景通过");
         System.exit(UtilsExample.SUCCESS);
     }
 }

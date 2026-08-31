@@ -107,7 +107,7 @@ public class MemoryFullCoverageExample extends AbstractEngineExample {
             log.error("[FAIL] 全覆盖失败数: {}", FAILED.get());
             System.exit(1);
         }
-        System.out.println("[PASS] full-coverage all scenarios passed");
+        log.info("[PASS] full-coverage all scenarios passed");
         System.exit(0);
     }
 

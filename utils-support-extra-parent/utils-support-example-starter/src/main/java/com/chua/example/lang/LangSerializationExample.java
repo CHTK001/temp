@@ -3,6 +3,7 @@ package com.chua.example.lang;
 import com.chua.common.support.lang.json.Json;
 import com.chua.common.support.lang.json.JsonObject;
 import com.chua.example.util.UtilsExample;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Lang/Serialization 基础自检示例。
@@ -12,6 +13,7 @@ import com.chua.example.util.UtilsExample;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class LangSerializationExample {
 
     private LangSerializationExample() {
@@ -28,10 +30,10 @@ public final class LangSerializationExample {
             String json = obj.toJSONString();
             boolean ok = json != null && json.contains("key1") && json.contains("value1");
             passed &= ok;
-            System.out.println((ok ? "[PASS]" : "[FAIL]") + " Json序列化基本功能");
+            log.info((ok ? "[PASS]" : "[FAIL]") + " Json序列化基本功能");
         } catch (Exception e) {
             passed = false;
-            System.out.println("[FAIL] Json序列化异常: " + e);
+            log.error("[FAIL] Json序列化异常", e);
         }
 
         // 2. 测试Json反序列化
@@ -40,17 +42,17 @@ public final class LangSerializationExample {
             JsonObject parsed = Json.getJsonObject(json);
             boolean ok = "test".equals(parsed.get("name")) && Integer.valueOf(parsed.get("age").toString()) == 18;
             passed &= ok;
-            System.out.println((ok ? "[PASS]" : "[FAIL]") + " Json反序列化基本功能");
+            log.info((ok ? "[PASS]" : "[FAIL]") + " Json反序列化基本功能");
         } catch (Exception e) {
             passed = false;
-            System.out.println("[FAIL] Json反序列化异常: " + e);
+            log.error("[FAIL] Json反序列化异常", e);
         }
 
         if (!passed) {
-            System.out.println("[FAIL] LangSerializationExample 存在失败场景");
+            log.error("[FAIL] LangSerializationExample 存在失败场景");
             System.exit(UtilsExample.FAILURE);
         }
-        System.out.println("[PASS] LangSerializationExample 全部场景通过");
+        log.info("[PASS] LangSerializationExample 全部场景通过");
         System.exit(UtilsExample.SUCCESS);
     }
 }

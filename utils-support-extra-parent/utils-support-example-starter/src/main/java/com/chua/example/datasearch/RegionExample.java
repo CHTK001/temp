@@ -52,7 +52,7 @@ public final class RegionExample {
         int treeLevel = Integer.parseInt(params.getOrDefault("level", String.valueOf(DEFAULT_TREE_LEVEL)));
         Map<String, RegionProvider> providers = resolveProviders(spiName);
         if (providers.isEmpty()) {
-            System.out.println("[FAIL] 未找到任何 RegionProvider 实现: spi=" + spiName);
+            log.error("[FAIL] 未找到任何 RegionProvider 实现: spi={}", spiName);
             System.exit(1);
         }
         int failures = 0;
@@ -87,48 +87,48 @@ public final class RegionExample {
             // getRegions() — 默认层级
             List<RegionInfo> regions = provider.getRegions();
             if (CollectionUtils.isEmpty(regions)) {
-                System.out.println("[FAIL] " + name + " getRegions() 返回空列表");
+                log.error("[FAIL] {} getRegions() 返回空列表", name);
                 return false;
             }
-            System.out.printf("[PASS] %-12s getRegions() rows=%d%n", name, regions.size());
+            log.info("[PASS] %-12s getRegions() rows=%d", name, regions.size());
 
             // getRegions(2) — 两级扁平列表
             List<RegionInfo> level2 = provider.getRegions(2);
             if (CollectionUtils.isEmpty(level2)) {
-                System.out.println("[FAIL] " + name + " getRegions(2) 返回空列表");
+                log.error("[FAIL] {} getRegions(2) 返回空列表", name);
                 return false;
             }
-            System.out.printf("[PASS] %-12s getRegions(2) rows=%d%n", name, level2.size());
+            log.info("[PASS] %-12s getRegions(2) rows=%d", name, level2.size());
 
             // getChildren(null) — 省级列表
             List<RegionInfo> provinces = provider.getChildren(null);
             if (CollectionUtils.isEmpty(provinces)) {
-                System.out.println("[FAIL] " + name + " getChildren(null) 返回空列表");
+                log.error("[FAIL] {} getChildren(null) 返回空列表", name);
                 return false;
             }
-            System.out.printf("[PASS] %-12s getChildren(省级) rows=%d%n", name, provinces.size());
+            log.info("[PASS] %-12s getChildren(省级) rows=%d", name, provinces.size());
 
             // getChildren(省级 adcode) — 市级列表
             String firstProvinceCode = provinces.get(0).getAdcode();
             List<RegionInfo> cities = provider.getChildren(firstProvinceCode);
             if (CollectionUtils.isEmpty(cities)) {
-                System.out.println("[FAIL] " + name + " getChildren(" + firstProvinceCode + ") 返回空列表");
+                log.error("[FAIL] {} getChildren({}) 返回空列表", name, firstProvinceCode);
                 return false;
             }
-            System.out.printf("[PASS] %-12s getChildren(%s) rows=%d%n", name, firstProvinceCode, cities.size());
+            log.info("[PASS] %-12s getChildren({}) rows=%d", name, firstProvinceCode, cities.size());
 
             // getTree(level) — 两级树
             RegionInfo tree = provider.getTree(treeLevel);
             if (tree == null || !("中国".equals(tree.getName()))) {
-                System.out.println("[FAIL] " + name + " getTree root 异常");
+                log.error("[FAIL] {} getTree root 异常", name);
                 return false;
             }
             int treeNodeCount = countTreeNodes(tree);
             if (treeNodeCount <= 1) {
-                System.out.println("[FAIL] " + name + " getTree 节点数不足: " + treeNodeCount);
+                log.error("[FAIL] {} getTree 节点数不足: {}", name, treeNodeCount);
                 return false;
             }
-            System.out.printf("[PASS] %-12s getTree(level=%d) nodes=%d%n", name, treeLevel, treeNodeCount);
+            log.info("[PASS] %-12s getTree(level=%d) nodes=%d", name, treeLevel, treeNodeCount);
 
             // 抽查节点属性完整性
             RegionInfo sample = regions.get(0);
@@ -136,7 +136,7 @@ public final class RegionExample {
 
             return true;
         } catch (Exception e) {
-            System.out.printf("[FAIL] %-12s exception: %s%n", name, e.getMessage());
+            log.error("[FAIL] %-12s exception: %s", name, e.getMessage());
             return false;
         }
     }
