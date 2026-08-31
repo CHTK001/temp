@@ -43,6 +43,9 @@ import java.nio.file.Path;
 @Slf4j
 public class OffsetFlowExample {
 
+    /** 私有构造，防止实例化 */
+    private OffsetFlowExample() { }
+
     /**
      * 默认能力点
      */

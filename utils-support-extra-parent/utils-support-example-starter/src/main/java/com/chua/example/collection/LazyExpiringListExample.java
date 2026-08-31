@@ -50,6 +50,9 @@ import java.util.concurrent.atomic.AtomicReference;
 @Slf4j
 public class LazyExpiringListExample implements Example {
 
+    /** 私有构造，防止实例化 */
+    private LazyExpiringListExample() { }
+
     /**
      * 示例名称，用于 ExampleRunner 匹配和调度。
      *

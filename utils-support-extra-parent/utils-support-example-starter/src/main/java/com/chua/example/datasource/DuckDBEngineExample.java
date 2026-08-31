@@ -20,6 +20,9 @@ import java.util.List;
 @Slf4j
 public class DuckDBEngineExample {
 
+    /** 私有构造，防止实例化 */
+    private DuckDBEngineExample() { }
+
     public static void main(String[] args) {
         try (DuckDBEngine engine = new DuckDBEngine()) {
             engine.addDataSource("default", "jdbc:duckdb:");

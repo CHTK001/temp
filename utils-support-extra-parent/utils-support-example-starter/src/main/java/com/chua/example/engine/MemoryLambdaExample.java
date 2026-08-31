@@ -29,6 +29,9 @@ import java.util.List;
 @Slf4j
 public class MemoryLambdaExample {
 
+    /** 私有构造，防止实例化 */
+    private MemoryLambdaExample() { }
+
     /** 测试员工实体 */
     public static class Emp {
         /** 主键 */

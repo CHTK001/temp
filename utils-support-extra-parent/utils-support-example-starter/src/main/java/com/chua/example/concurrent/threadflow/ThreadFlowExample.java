@@ -52,6 +52,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 public class ThreadFlowExample {
 
+    /** 私有构造，防止实例化 */
+    private ThreadFlowExample() { }
+
     /**
      * 默认能力点
      */

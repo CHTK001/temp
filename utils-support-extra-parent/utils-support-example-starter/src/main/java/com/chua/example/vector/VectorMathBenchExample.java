@@ -23,6 +23,9 @@ import static java.lang.Math.random;
 @Slf4j
 public class VectorMathBenchExample {
 
+    /** 私有构造，防止实例化 */
+    private VectorMathBenchExample() { }
+
     /** 基准测试维度集 */
     private static final int[] DIMS = {64, 256, 384, 512, 1024};
     /** 小维度的迭代次数 */

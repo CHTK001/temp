@@ -26,6 +26,9 @@ import java.util.Set;
  * @since 4.0.0.42
  */
 public class BTreeDebugDemoExample {
+
+    /** 私有构造，防止实例化 */
+    private BTreeDebugDemoExample() { }
     /**
      * 最大统计深度。
      */

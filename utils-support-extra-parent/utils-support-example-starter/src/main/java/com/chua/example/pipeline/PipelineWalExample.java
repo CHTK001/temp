@@ -29,6 +29,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 public class PipelineWalExample implements Example {
 
+    /** 私有构造，防止实例化 */
+    private PipelineWalExample() { }
+
     /** Main */
     public static void main(String[] args) {
         String type = PipelineBasicExample.parseType(args);

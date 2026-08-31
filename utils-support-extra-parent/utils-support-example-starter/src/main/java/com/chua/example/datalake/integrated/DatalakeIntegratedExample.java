@@ -73,6 +73,9 @@ import java.util.function.Consumer;
 @Slf4j
 public class DatalakeIntegratedExample {
 
+    /** 私有构造，防止实例化 */
+    private DatalakeIntegratedExample() { }
+
     /**
      * 默认运行时长（秒）
      */

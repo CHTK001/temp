@@ -15,6 +15,9 @@ import com.chua.common.support.spi.annotations.Spi;
 @Slf4j
 public class ExampleBundleExample implements BundleApplication {
 
+    /** 私有构造，防止实例化 */
+    private ExampleBundleExample() { }
+
     /** 服务名称 */
     private static final String serviceName = "example-service";
 

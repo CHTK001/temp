@@ -24,6 +24,9 @@ import java.util.Objects;
 @Slf4j
 public class Seq2SeqComprehensiveExample {
 
+    /** 私有构造，防止实例化 */
+    private Seq2SeqComprehensiveExample() { }
+
     /** 需下载模型用例的开关参数名 */
     private static final String PARAM_DOWNLOAD = "download";
 

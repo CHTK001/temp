@@ -30,6 +30,9 @@ import java.util.concurrent.CountDownLatch;
  */
 public class FtpServerExample {
 
+    /** 私有构造，防止实例化 */
+    private FtpServerExample() { }
+
     /**
      * 默认 FTP 控制端口
      */

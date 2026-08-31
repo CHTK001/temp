@@ -34,6 +34,9 @@ import static com.chua.common.support.utils.CollectionUtils.isNotEmpty;
 @Slf4j
 public class MemorySqlExample {
 
+    /** 私有构造，防止实例化 */
+    private MemorySqlExample() { }
+
     /** 员工测试实体：内存 SQL 的 UPDATE SET 需要可变 bean，故不使用 record */
     public static class Emp {
         /** 主键 */

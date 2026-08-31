@@ -27,6 +27,9 @@ import java.util.concurrent.atomic.LongAdder;
 @Slf4j
 public class AsyncHttpPerfExample {
 
+    /** 私有构造，防止实例化 */
+    private AsyncHttpPerfExample() { }
+
     /** Main */
     public static void main(String[] args) throws Exception {
         int port = args.length > 0 ? Integer.parseInt(args[0]) : 0;

@@ -28,6 +28,9 @@ import java.util.Map;
 @Slf4j
 public class Seq2SeqTranslationExample {
 
+    /** 私有构造，防止实例化 */
+    private Seq2SeqTranslationExample() { }
+
     /** 需下载模型用例的开关参数名 */
     private static final String PARAM_DOWNLOAD = "download";
 

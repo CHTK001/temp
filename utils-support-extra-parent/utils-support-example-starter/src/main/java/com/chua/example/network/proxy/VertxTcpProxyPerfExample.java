@@ -29,6 +29,9 @@ import java.util.concurrent.atomic.LongAdder;
 @Slf4j
 public class VertxTcpProxyPerfExample {
 
+    /** 私有构造，防止实例化 */
+    private VertxTcpProxyPerfExample() { }
+
     /**
      * 最小回显后端。
      */

@@ -30,6 +30,9 @@ import java.util.concurrent.atomic.LongAdder;
 @Slf4j
 public class AsyncTcpServerPerfExample {
 
+    /** 私有构造，防止实例化 */
+    private AsyncTcpServerPerfExample() { }
+
     /** log */
 /** 单次 echo 载荷（64B，与 VertxTcpPerfMain 一致） */
     private static final byte[] PAYLOAD = new byte[64];

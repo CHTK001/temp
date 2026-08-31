@@ -50,6 +50,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ImageProcessorSpiExample {
 
+    /** 私有构造，防止实例化 */
+    private ImageProcessorSpiExample() { }
+
     /** 默认类型 */
     private static final String DEFAULT_TYPE = "all";
     /** 默认输入路径 */

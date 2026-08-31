@@ -22,6 +22,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SshAdvancedExample {
 
+    /** 私有构造，防止实例化 */
+    private SshAdvancedExample() { }
+
     public static void main(String[] args) {
         String host = args.length > 0 ? args[0] : "172.16.0.40";
         int port = args.length > 1 ? Integer.parseInt(args[1]) : 2222;

@@ -24,6 +24,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class BgeEmbeddingExample {
 
+    /** 私有构造，防止实例化 */
+    private BgeEmbeddingExample() { }
+
     /** Main */
     public static void main(String[] args) {
         BgeEmbeddingExample example = new BgeEmbeddingExample();

@@ -22,6 +22,9 @@ import java.nio.file.Path;
  */
 public class GfpganOnnxExample {
 
+    /** 私有构造，防止实例化 */
+    private GfpganOnnxExample() { }
+
     /** 默认输入图片 */
     private static final String DEFAULT_IMAGE = "D:/images/3peoplebeauty.jpg";
     /** 输出目录 */

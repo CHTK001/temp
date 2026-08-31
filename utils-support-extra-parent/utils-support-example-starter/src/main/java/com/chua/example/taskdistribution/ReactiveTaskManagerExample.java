@@ -35,6 +35,9 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class ReactiveTaskManagerExample {
 
+    /** 私有构造，防止实例化 */
+    private ReactiveTaskManagerExample() { }
+
     /**
      * 模拟工作端延迟（毫秒）
      */

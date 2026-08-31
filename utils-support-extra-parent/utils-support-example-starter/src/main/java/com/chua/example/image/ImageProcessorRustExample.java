@@ -14,6 +14,9 @@ import java.util.Map;
  */
 public class ImageProcessorRustExample implements Example {
 
+    /** 私有构造，防止实例化 */
+    private ImageProcessorRustExample() { }
+
     @Override
     /** Name */
     public String name() {

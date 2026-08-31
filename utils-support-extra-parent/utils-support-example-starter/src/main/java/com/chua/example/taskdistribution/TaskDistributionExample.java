@@ -34,6 +34,9 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class TaskDistributionExample {
 
+    /** 私有构造，防止实例化 */
+    private TaskDistributionExample() { }
+
     /**
      * 测试超时时间（秒）
      */

@@ -26,6 +26,9 @@ import com.chua.example.spi.Example;
 @Slf4j
 public class PipelineActionExample implements Example {
 
+    /** 私有构造，防止实例化 */
+    private PipelineActionExample() { }
+
     /** Main */
     public static void main(String[] args) {
         String type = PipelineBasicExample.parseType(args);

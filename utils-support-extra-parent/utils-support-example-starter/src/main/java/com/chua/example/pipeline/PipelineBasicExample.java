@@ -27,6 +27,9 @@ import com.chua.example.util.ExampleUtils;
 @Slf4j
 public class PipelineBasicExample implements Example {
 
+    /** 私有构造，防止实例化 */
+    private PipelineBasicExample() { }
+
     /**
      * 入口方法，解析命令行参数并运行对应示例。
      * @param args 命令行参数，支持 --key=value 格式

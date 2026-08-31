@@ -35,6 +35,9 @@ import java.util.List;
  */
 public class FtpServerClientExample {
 
+    /** 私有构造，防止实例化 */
+    private FtpServerClientExample() { }
+
     /**
      * 测试用 FTP 端口
      */

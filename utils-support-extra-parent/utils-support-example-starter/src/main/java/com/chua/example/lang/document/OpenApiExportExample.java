@@ -48,6 +48,9 @@ import java.util.Map;
 @Slf4j
 public class OpenApiExportExample implements Example {
 
+    /** 私有构造，防止实例化 */
+    private OpenApiExportExample() { }
+
     @Override
     /** Name */
     public String name() {

@@ -57,6 +57,9 @@ import java.util.function.Function;
 @Slf4j
 public class SerializationBenchmarkExample implements Example {
 
+    /** 私有构造，防止实例化 */
+    private SerializationBenchmarkExample() { }
+
     @Override
     /** Name */
     public String name() {

@@ -35,6 +35,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class BuiltinShellCommandsExample {
 
+    /** 私有构造，防止实例化 */
+    private BuiltinShellCommandsExample() { }
+
     /** 当前工作目录，每个线程独立的上下文 */
     private final ThreadLocal<Path> workingDirectory = ThreadLocal.withInitial(() ->
             Paths.get(System.getProperty("user.dir")).toAbsolutePath().normalize());

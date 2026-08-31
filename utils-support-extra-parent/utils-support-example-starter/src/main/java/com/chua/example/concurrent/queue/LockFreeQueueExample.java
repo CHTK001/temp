@@ -43,6 +43,9 @@ import java.util.concurrent.atomic.AtomicLong;
 @Slf4j
 public class LockFreeQueueExample {
 
+    /** 私有构造，防止实例化 */
+    private LockFreeQueueExample() { }
+
     /**
      * 并发测试每生产者投递元素数
      */

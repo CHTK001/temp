@@ -14,6 +14,9 @@ import java.util.List;
  */
 public class FaceAllDetectorsExample {
 
+    /** 私有构造，防止实例化 */
+    private FaceAllDetectorsExample() { }
+
     private static final String[] IMAGES = {
             "D:\\images\\largest_selfie.jpg",
             "D:\\images\\anime.jpg",

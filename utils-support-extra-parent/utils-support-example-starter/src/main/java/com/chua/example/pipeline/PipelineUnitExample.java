@@ -33,6 +33,9 @@ import com.chua.example.util.ExampleUtils;
 @Slf4j
 public class PipelineUnitExample implements Example {
 
+    /** 私有构造，防止实例化 */
+    private PipelineUnitExample() { }
+
     /** Main */
     public static void main(String[] args) {
         String type = PipelineBasicExample.parseType(args);

@@ -37,6 +37,9 @@ import java.util.Set;
 @Slf4j
 public class DataSinkExample {
 
+    /** 私有构造，防止实例化 */
+    private DataSinkExample() { }
+
     /** Main */
     public static void main(String[] args) {
         Args parsed = parseArgs(args);
@@ -94,7 +97,7 @@ public class DataSinkExample {
         envelope.setTraceId("trace-001");
         boolean allOk = true;
         for (DataSink sink : sinks) {
-            boolean ok = sink.write(envelope, new HashMap<>());
+            boolean ok = sink.write(envelope, new HashMap<>(8));
             if (!ok) {
                 log.warn("sink={} 写入返回 false", sink.type());
             }

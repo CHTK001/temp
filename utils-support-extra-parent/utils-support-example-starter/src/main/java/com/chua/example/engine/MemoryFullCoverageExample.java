@@ -27,6 +27,9 @@ import java.util.Map;
  */
 public class MemoryFullCoverageExample extends AbstractEngineExample {
 
+    /** 私有构造，防止实例化 */
+    private MemoryFullCoverageExample() { }
+
     private static final int MAGIC_AGE_MIN = 20;
     private static final int MAGIC_AGE_THRESHOLD = 25;
     private static final String DB_TYPE_SQLITE = "sqlite";

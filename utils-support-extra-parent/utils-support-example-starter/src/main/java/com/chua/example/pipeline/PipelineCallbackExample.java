@@ -32,6 +32,9 @@ import java.util.Map;
 @Slf4j
 public class PipelineCallbackExample implements Example {
 
+    /** 私有构造，防止实例化 */
+    private PipelineCallbackExample() { }
+
     /** Main */
     public static void main(String[] args) {
         String type = PipelineBasicExample.parseType(args);

@@ -25,6 +25,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MiniLmEmbeddingExample {
 
+    /** 私有构造，防止实例化 */
+    private MiniLmEmbeddingExample() { }
+
     /** Main */
     public static void main(String[] args) {
         MiniLmEmbeddingExample example = new MiniLmEmbeddingExample();

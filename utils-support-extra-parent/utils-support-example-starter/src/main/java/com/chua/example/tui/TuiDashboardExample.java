@@ -70,6 +70,9 @@ import java.util.Map;
 @Slf4j
 public class TuiDashboardExample implements Example {
 
+    /** 私有构造，防止实例化 */
+    private TuiDashboardExample() { }
+
     /**
      * 默认能力点类型
      */

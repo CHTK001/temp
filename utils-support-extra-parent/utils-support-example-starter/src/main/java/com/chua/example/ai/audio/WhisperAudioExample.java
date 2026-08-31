@@ -46,6 +46,9 @@ import java.nio.file.Path;
 @Slf4j
 public class WhisperAudioExample {
 
+    /** 私有构造，防止实例化 */
+    private WhisperAudioExample() { }
+
     /**
      * 默认 provider
      */

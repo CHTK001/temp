@@ -19,6 +19,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ExampleModelPricingProviderExample implements ModelPricingProvider {
 
+    /** 私有构造，防止实例化 */
+    private ExampleModelPricingProviderExample() { }
+
     @Override
     /** 获取ModelPricing */
     public ModelDefinition getModelPricing(String provider, String model) {

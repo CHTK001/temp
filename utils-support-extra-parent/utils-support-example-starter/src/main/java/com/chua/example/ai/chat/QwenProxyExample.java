@@ -28,6 +28,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class QwenProxyExample {
 
+    /** 私有构造，防止实例化 */
+    private QwenProxyExample() { }
+
     /**
      * 默认模型
      */

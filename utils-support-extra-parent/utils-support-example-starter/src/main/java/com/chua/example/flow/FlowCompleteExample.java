@@ -28,6 +28,9 @@ import java.util.Map;
 @Slf4j
 public class FlowCompleteExample {
 
+    /** 私有构造，防止实例化 */
+    private FlowCompleteExample() { }
+
     /** Main */
     public static void main(String[] args) {
         log.info("========== 1. DSL 构建流程 ==========");

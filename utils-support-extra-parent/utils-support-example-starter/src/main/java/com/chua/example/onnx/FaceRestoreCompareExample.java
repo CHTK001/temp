@@ -23,6 +23,9 @@ import java.util.List;
  */
 public class FaceRestoreCompareExample {
 
+    /** 私有构造，防止实例化 */
+    private FaceRestoreCompareExample() { }
+
     /** 日志 */
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(FaceRestoreCompareExample.class);
     /** 输出目录 */

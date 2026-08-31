@@ -28,6 +28,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class FlowEchoNodeExample implements FlowNode {
 
+    /** 私有构造，防止实例化 */
+    private FlowEchoNodeExample() { }
+
     /**
      * 默认回显内容
      */

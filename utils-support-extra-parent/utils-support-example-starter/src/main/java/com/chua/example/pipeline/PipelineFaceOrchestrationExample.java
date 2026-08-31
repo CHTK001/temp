@@ -55,6 +55,9 @@ import java.util.*;
 @Slf4j
 public class PipelineFaceOrchestrationExample implements Example {
 
+    /** 私有构造，防止实例化 */
+    private PipelineFaceOrchestrationExample() { }
+
     /** 人脸特征向量维度 */
     private static final int FACE_FEATURE_DIM = 128;
     /** 默认活体检测阈值 */

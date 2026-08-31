@@ -20,6 +20,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RpcPayloadExample implements Serializable {
 
+    /** 私有构造，防止实例化 */
+    private RpcPayloadExample() { }
+
     /**
      * JDK 序列化版本号
      */

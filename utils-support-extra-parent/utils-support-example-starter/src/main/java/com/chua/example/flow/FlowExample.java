@@ -51,6 +51,9 @@ import java.util.Map;
 @Slf4j
 public class FlowExample {
 
+    /** 私有构造，防止实例化 */
+    private FlowExample() { }
+
     /** Main */
     public static void main(String[] args) {
         String type = parseType(args);

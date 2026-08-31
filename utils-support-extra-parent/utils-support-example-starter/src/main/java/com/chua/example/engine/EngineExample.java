@@ -52,6 +52,9 @@ import java.util.Objects;
 @Slf4j
 public class EngineExample {
 
+    /** 私有构造，防止实例化 */
+    private EngineExample() { }
+
     /**
      * 测试用户实体。
      *

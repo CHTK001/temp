@@ -18,6 +18,9 @@ import java.util.List;
  */
 public class SshServerExample {
 
+    /** 私有构造，防止实例化 */
+    private SshServerExample() { }
+
     /**
      * 启动入口。
      *

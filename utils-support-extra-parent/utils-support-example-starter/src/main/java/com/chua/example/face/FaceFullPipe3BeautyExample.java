@@ -15,6 +15,9 @@ import java.util.List;
  * @since 4.0.0
  */
 public class FaceFullPipe3BeautyExample {
+
+    /** 私有构造，防止实例化 */
+    private FaceFullPipe3BeautyExample() { }
     public static void main(String[] args) throws Exception {
         String imgPath = "D:\\images\\3peoplebeauty.jpg";
         String outBase = "D:\\images\\output";

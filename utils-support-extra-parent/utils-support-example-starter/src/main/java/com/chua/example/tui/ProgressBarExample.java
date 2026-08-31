@@ -62,6 +62,9 @@ import java.util.Map;
 @Slf4j
 public class ProgressBarExample implements Example {
 
+    /** 私有构造，防止实例化 */
+    private ProgressBarExample() { }
+
     private static final String DEFAULT_TYPE = "all";
 
     // ==================== SPI 调度入口 ====================

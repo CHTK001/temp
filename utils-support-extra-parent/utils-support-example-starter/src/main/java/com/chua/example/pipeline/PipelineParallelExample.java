@@ -29,6 +29,9 @@ import java.util.concurrent.atomic.AtomicReference;
 @Slf4j
 public class PipelineParallelExample implements Example {
 
+    /** 私有构造，防止实例化 */
+    private PipelineParallelExample() { }
+
     /**
      * 入口方法，解析命令行参数并运行对应示例。
      * @param args 命令行参数，支持 --key=value 格式

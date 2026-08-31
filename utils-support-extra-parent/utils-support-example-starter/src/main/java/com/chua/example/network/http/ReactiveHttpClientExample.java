@@ -30,6 +30,9 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class ReactiveHttpClientExample {
 
+    /** 私有构造，防止实例化 */
+    private ReactiveHttpClientExample() { }
+
     /**
      * 必然连接拒绝的目标地址（端口 1 无服务监听）
      */

@@ -44,6 +44,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 public class DataSyncExample implements Example {
 
+    /** 私有构造，防止实例化 */
+    private DataSyncExample() { }
+
     /**
      * 等待时间（毫秒），让调度器轮询并执行
      */
