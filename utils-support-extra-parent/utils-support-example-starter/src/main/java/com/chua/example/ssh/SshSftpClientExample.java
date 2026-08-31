@@ -31,8 +31,6 @@ public class SshSftpClientExample {
     private static final int DEFAULT_SSH_PORT = 2222;
     /** SSH 示例默认用户名（演示用） */
     private static final String DEFAULT_USER = "admin";
-    /** SSH 示例默认密码（演示 mock 数据，仅用于示例） */
-    private static final String DEFAULT_PASSWORD = "admin123";
     /** Shell 等待时间(ms) */
     private static final long SHELL_WAIT_MS = 1500L;
 
@@ -47,7 +45,11 @@ public class SshSftpClientExample {
         String host = args.length > 0 ? args[0] : "172.16.0.40";
         int port = args.length > 1 ? Integer.parseInt(args[1]) : DEFAULT_SSH_PORT;
         String user = args.length > 2 ? args[2] : DEFAULT_USER;
-        String pass = args.length > 3 ? args[3] : DEFAULT_PASSWORD;
+        String pass = args.length > 3 ? args[3] : System.getenv("SSH_PASSWORD");
+        if (pass == null || pass.isEmpty()) {
+            log.warn("[WARN] SSH_PASSWORD env not set, please set it before running");
+            pass = "";
+        }
 
         log.info("========== SshClient / SftpClient 测试开始 ==========");
         log.info("目标: {}@{}:{}", user, host, port);
