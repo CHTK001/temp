@@ -144,7 +144,7 @@ public class WhisperAudioExample {
                     .transcribe(audio);
             long elapsed = System.currentTimeMillis() - start;
             boolean passed = text != null && !text.isEmpty();
-            printResult(provider + " 同步转写", passed, elapsed + "ms → '" + text + "'");
+            ExampleUtils.print(provider + " 同步转写", passed, elapsed + "ms → '" + text + "'");
             return passed;
         } catch (Exception e) {
             log.error("[FAIL] {} 同步异常: {}", provider, e.getMessage(), e);
@@ -172,7 +172,7 @@ public class WhisperAudioExample {
                     && resp.getStatus() == AudioResponse.Status.SUCCESS
                     && resp.getTranscript() != null
                     && !resp.getTranscript().isEmpty();
-            printResult(provider + " 异步任务",
+            ExampleUtils.print(provider + " 异步任务",
                     passed,
                     "taskId=" + taskId + " status=" + resp.getStatus() + " text='" + resp.getTranscript() + "'");
             return passed;
@@ -198,20 +198,5 @@ public class WhisperAudioExample {
             return Path.of(DEFAULT_AUDIO_PATH);
         }
         return Path.of(filePath);
-    }
-
-    /**
-     * 打印单个能力点的测试结果。
-     *
-     * @param name   能力点名称
-     * @param passed 是否通过
-     * @param detail 详细信息
-     */
-    private void printResult(String name, boolean passed, String detail) {
-        if (passed) {
-            log.info("[PASS] {} → {}", name, detail);
-        } else {
-            log.info("[FAIL] {} → {}", name, detail);
-        }
     }
 }
