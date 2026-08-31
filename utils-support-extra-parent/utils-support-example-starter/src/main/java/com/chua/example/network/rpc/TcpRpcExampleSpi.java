@@ -62,7 +62,6 @@ public class TcpRpcExampleSpi implements Example {
     }
 
     @Override
-    /** 运行 */
     public boolean run(Map<String, String> args) {
         log.info("===== tcp-rpc 示例开始 =====");
         SyncServer server = null;
