@@ -91,7 +91,7 @@ public final class UtilsExample {
      * @param ok   是否通过
      */
     public static void print(String name, boolean ok) {
-        System.out.println((ok ? "[PASS] " : "[FAIL] ") + name);
+        log.info("{} {} → {}", ok ? "[PASS]" : "[FAIL]", name, "");
     }
 
     /**
