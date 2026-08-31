@@ -51,7 +51,7 @@ import java.util.stream.Collectors;
 public class ImageProcessorSpiExample {
 
     /** 私有构造，防止实例化 */
-    private ImageProcessorSpiExample() { }
+    public ImageProcessorSpiExample() { }
 
     /** 默认类型 */
     private static final String DEFAULT_TYPE = "all";

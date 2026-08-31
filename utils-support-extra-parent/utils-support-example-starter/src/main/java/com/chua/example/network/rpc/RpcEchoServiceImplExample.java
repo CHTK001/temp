@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 public class RpcEchoServiceImplExample implements RpcEchoServiceExample {
 
     /** 私有构造，防止实例化 */
-    private RpcEchoServiceImplExample() { }
+    public RpcEchoServiceImplExample() { }
 
     /**
      * 回显：原样返回输入消息，前置 {@code echo:} 前缀。

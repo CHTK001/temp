@@ -53,7 +53,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ThreadFlowExample {
 
     /** 私有构造，防止实例化 */
-    private ThreadFlowExample() { }
+    public ThreadFlowExample() { }
 
     /**
      * 默认能力点

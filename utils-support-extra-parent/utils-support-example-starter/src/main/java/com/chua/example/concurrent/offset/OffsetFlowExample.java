@@ -44,7 +44,7 @@ import java.nio.file.Path;
 public class OffsetFlowExample {
 
     /** 私有构造，防止实例化 */
-    private OffsetFlowExample() { }
+    public OffsetFlowExample() { }
 
     /**
      * 默认能力点
