@@ -51,7 +51,7 @@ public final class Socks5ProxyExample {
     public static void main(String[] args) throws Exception {
         Map<String, String> arg = ExampleUtils.parseArgs(args);
         EchoServer backend = EchoServer.start(intVal(arg.get("backend-port"), DEFAULT_BACKEND_PORT));
-        LOG.info("===== socks5-proxy 主示例 [echo-backend=127.0.0.1:{}] =====", backend.getPort());
+        log.info("===== socks5-proxy 主示例 [echo-backend=127.0.0.1:{}] =====", backend.getPort());
         boolean passed;
         try {
             passed = testSpiSwitch();
@@ -74,11 +74,11 @@ public final class Socks5ProxyExample {
      * @return 断言通过返回 true
      */
     private static boolean testSpiSwitch() {
-        LOG.info("  [SOCKS-01] SPI 切换 socks5-proxy");
+        log.info("  [SOCKS-01] SPI 切换 socks5-proxy");
         try (Server proxy = ServerBuilder.create().type("socks5-proxy").host("127.0.0.1").port(0).build()) {
             assertTrue(proxy instanceof Socks5ProxyServer,
                     "实际类型应为 Socks5ProxyServer，实际: " + proxy.getClass().getName());
-            LOG.info("    SPI 加载实现: {} ✓", proxy.getClass().getName());
+            log.info("    SPI 加载实现: {} ✓", proxy.getClass().getName());
             return true;
         } catch (Exception e) {
             return ExampleUtils.fail("SPI 切换异常: " + e.getMessage());
@@ -92,7 +92,7 @@ public final class Socks5ProxyExample {
      * @return 断言通过返回 true
      */
     private static boolean testConnectIpv4(EchoServer backend) {
-        LOG.info("  [SOCKS-02] IPv4 CONNECT");
+        log.info("  [SOCKS-02] IPv4 CONNECT");
         Socks5ProxyServer proxy;
         try {
             proxy = startProxy(false);
@@ -104,7 +104,7 @@ public final class Socks5ProxyExample {
             greet(client, new byte[]{0x00}, 0x00);
             connectIpv4(client, backend.getPort());
             exchange(client, "socks5-ipv4\n");
-            LOG.info("    CONNECT 成功且经代理回显一致 ✓");
+            log.info("    CONNECT 成功且经代理回显一致 ✓");
             return true;
         } catch (Exception e) {
             return ExampleUtils.fail("IPv4 CONNECT 异常: " + e.getMessage());
@@ -120,7 +120,7 @@ public final class Socks5ProxyExample {
      * @return 断言通过返回 true
      */
     private static boolean testConnectDomain(EchoServer backend) {
-        LOG.info("  [SOCKS-03] 域名 CONNECT");
+        log.info("  [SOCKS-03] 域名 CONNECT");
         Socks5ProxyServer proxy;
         try {
             proxy = startProxy(false);
@@ -139,7 +139,7 @@ public final class Socks5ProxyExample {
             byte[] reply = readExact(client.getInputStream(), 10);
             assertEquals(0x00, reply[1] & 0xFF, "域名 CONNECT 应成功");
             exchange(client, "ping");
-            LOG.info("    域名 CONNECT 成功且经代理回显一致 ✓");
+            log.info("    域名 CONNECT 成功且经代理回显一致 ✓");
             return true;
         } catch (Exception e) {
             return ExampleUtils.fail("域名 CONNECT 异常: " + e.getMessage());
@@ -154,7 +154,7 @@ public final class Socks5ProxyExample {
      * @return 断言通过返回 true
      */
     private static boolean testUnsupportedMethod() {
-        LOG.info("  [SOCKS-04] 不支持的认证方法 → 0xFF");
+        log.info("  [SOCKS-04] 不支持的认证方法 → 0xFF");
         Socks5ProxyServer proxy;
         try {
             proxy = startProxy(false);
@@ -178,7 +178,7 @@ public final class Socks5ProxyExample {
      * @return 断言通过返回 true
      */
     private static boolean testUserPassAuth() {
-        LOG.info("  [SOCKS-05] 用户名/口令认证 alice/secret");
+        log.info("  [SOCKS-05] 用户名/口令认证 alice/secret");
         Socks5ProxyServer proxy;
         try {
             proxy = startProxy(true);
@@ -199,7 +199,7 @@ public final class Socks5ProxyExample {
             byte[] authReply = readExact(client.getInputStream(), 2);
             assertEquals(0x01, authReply[0] & 0xFF, "子协商版本应为 0x01");
             assertEquals(0x00, authReply[1] & 0xFF, "认证应成功");
-            LOG.info("    服务端选择 USER_PASS 且认证成功 ✓");
+            log.info("    服务端选择 USER_PASS 且认证成功 ✓");
             return true;
         } catch (Exception e) {
             return ExampleUtils.fail("用户名/口令认证异常: " + e.getMessage());

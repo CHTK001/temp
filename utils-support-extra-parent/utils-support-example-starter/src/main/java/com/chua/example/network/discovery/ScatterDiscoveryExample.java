@@ -70,7 +70,7 @@ public final class ScatterDiscoveryExample {
         int portUser = intVal(arg.get("port-user"), DEFAULT_PORT_USER);
         int portTcp = intVal(arg.get("port-tcp"), DEFAULT_PORT_TCP);
         String mode = arg.getOrDefault("mode", "all");
-        LOG.info("===== scatter-discovery 主示例 [mode={}] =====", mode);
+        log.info("===== scatter-discovery 主示例 [mode={}] =====", mode);
         boolean passed = true;
         if ("all".equals(mode) || "isolation".equals(mode)) {
             passed &= testRegistryRouting(portHttpA, portHttpB, portUser, portTcp);
@@ -97,7 +97,7 @@ public final class ScatterDiscoveryExample {
      * @return 全部断言通过返回 true
      */
     private static boolean testRegistryRouting(int portHttpA, int portHttpB, int portUser, int portTcp) {
-        LOG.info("  [SCATTER-01/02] scatterId 业务隔离 + 协议过滤");
+        log.info("  [SCATTER-01/02] scatterId 业务隔离 + 协议过滤");
         ServiceDiscovery sd = null;
         try {
             sd = buildRegistry(portHttpA, portHttpB, portUser, portTcp);
@@ -114,7 +114,7 @@ public final class ScatterDiscoveryExample {
                     "order/tcp 应路由到端口 " + portTcp);
             assertTrue(sd.getService("/api", "not-exist", "weight", "http") == null,
                     "不存在的 scatterId 应返回 null");
-            LOG.info("    order/http 20 次路由均落在 {}/{}，tcp → {}，未知分组 → null ✓",
+            log.info("    order/http 20 次路由均落在 {}/{}，tcp → {}，未知分组 → null ✓",
                     portHttpA, portHttpB, portTcp);
             return true;
         } catch (Exception e) {
@@ -159,7 +159,7 @@ public final class ScatterDiscoveryExample {
      * @return 全部断言通过返回 true
      */
     private static boolean testHttpProxyRoute(int portHttpA, int portHttpB, int portUser) {
-        LOG.info("  [SCATTER-03] HTTP 代理按 scatterId 路由");
+        log.info("  [SCATTER-03] HTTP 代理按 scatterId 路由");
         Server backendA = null;
         Server backendB = null;
         ReverseProxyServer proxy = null;
@@ -195,7 +195,7 @@ public final class ScatterDiscoveryExample {
                 assertTrue("order-A".equals(body) || "order-B".equals(body),
                         "HTTP 代理应只路由 order 组，实际: " + body);
             }
-            LOG.info("    HTTP 代理 10 次请求全部路由到 order 组（order-A/order-B）✓");
+            log.info("    HTTP 代理 10 次请求全部路由到 order 组（order-A/order-B）✓");
             return true;
         } catch (Exception e) {
             return fail("HTTP 代理路由异常: " + e.getMessage());
@@ -230,7 +230,7 @@ public final class ScatterDiscoveryExample {
      * @return 全部断言通过返回 true
      */
     private static boolean testTcpProxyRoute(int portTcp) {
-        LOG.info("  [SCATTER-04] TCP 代理按 scatterId + 协议路由");
+        log.info("  [SCATTER-04] TCP 代理按 scatterId + 协议路由");
         JdkTcpServer backend = null;
         TcpProxyServer proxy = null;
         ServiceDiscovery sd = null;
@@ -253,7 +253,7 @@ public final class ScatterDiscoveryExample {
 
             assertEquals("scatter-tcp\n", tcpRoundTrip("127.0.0.1", proxy.getPort(), "scatter-tcp\n"),
                     "TCP 代理回显应与发送一致");
-            LOG.info("    TCP 代理按 order+tcp 路由到后端 {}，回显一致 ✓", portTcp);
+            log.info("    TCP 代理按 order+tcp 路由到后端 {}，回显一致 ✓", portTcp);
             return true;
         } catch (Exception e) {
             return fail("TCP 代理路由异常: " + e.getMessage());
@@ -324,7 +324,7 @@ public final class ScatterDiscoveryExample {
      * @return 恒为 false
      */
     private static boolean fail(String msg) {
-        LOG.error("    ✗ 失败: {}", msg);
+        log.error("    ✗ 失败: {}", msg);
         return false;
     }
 
