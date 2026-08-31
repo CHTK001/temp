@@ -3,6 +3,9 @@ package com.chua.example.onnx;
 import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.image.ImageDetector;
 import com.chua.deeplearning.support.model.DetectionInfo;
+import com.chua.deeplearning.support.onnx.classification.CardCorrectionTranslator;
+
+import static java.nio.file.Files.write;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -49,12 +52,12 @@ public final class CardCorrectionExample extends BaseExample {
                 log.info(String.format("       角点[%s] conf=%.3f box=(%.0f,%.0f) %.0fx%.0f",
                         c.label(), c.confidence(), c.x(), c.y(), c.width(), c.height()));
             }
-            com.chua.deeplearning.support.onnx.classification.CardCorrectionTranslator translator =
-                    com.chua.deeplearning.support.onnx.classification.CardCorrectionTranslator.shared();
+            CardCorrectionTranslator translator =
+                    CardCorrectionTranslator.shared();
             byte[] corrected = translator.correct(img);
             if (corrected != null) {
                 java.nio.file.Path out = outputRoot.toPath().resolve(f.getName().replaceAll("\\.[^.]+$", "_corrected.png"));
-                java.nio.file.Files.write(out, corrected);
+                write(out, corrected);
                 log.info("[card-correction] 已输出矫正图: " + out);
             } else {
                 log.info("[card-correction] 未检测到卡片，无矫正图");

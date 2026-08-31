@@ -7,6 +7,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import com.chua.common.support.image.ImagePipeline;
 
+import static com.chua.common.support.image.ImagePipeline.builder;
+
 /**
  * ImagePipeline 手动验证（main 方式）。
  *
@@ -31,11 +33,11 @@ public final class ImagePipelineDemoExample {
         log.info("[ImagePipeline] 测试图 64x64: 左黑/中灰/右白");
 
         // 1) 默认全关闭
-        byte[] out0 = com.chua.common.support.image.ImagePipeline.builder().build().process(in);
+        byte[] out0 = builder().build().process(in);
         log.info("[all-off] 尺寸保持: " + size(out0) + " (原 " + size(in) + ")");
 
         // 2) 灰度化
-        byte[] out1 = com.chua.common.support.image.ImagePipeline.builder().grayscale(true).build().process(in);
+        byte[] out1 = builder().grayscale(true).build().process(in);
         log.info("[grayscale] 灰度化完成: " + size(out1) + ", 中部像素 RGB 应相等");
 
         // 3) 二值化
