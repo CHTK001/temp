@@ -21,8 +21,8 @@ import static org.opencv.core.Core.absdiff;
 import static org.opencv.core.Core.mean;
 import static org.opencv.core.Core.meanStdDev;
 import static org.opencv.core.CvType.CV_32F;
-import static org.opencv.core.MatOfDouble;
-import static org.opencv.core.Size;
+import org.opencv.core.MatOfDouble;
+import org.opencv.core.Size;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
