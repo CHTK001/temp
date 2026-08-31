@@ -12,6 +12,9 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
+import static org.opencv.core.Core.BORDER_CONSTANT;
+import static org.opencv.core.Scalar;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -41,7 +44,7 @@ public final class OcrBigAngleExample {
         Size outSize = new Size(src.cols() * 1.7, src.rows() * 1.7);
         Mat rotBig = new Mat();
         Imgproc.warpAffine(src, rotBig, rot, outSize, Imgproc.INTER_CUBIC,
-                org.opencv.core.Core.BORDER_CONSTANT, new Scalar(255, 255, 255));
+                BORDER_CONSTANT, new Scalar(255, 255, 255));
         // 平移矩阵让内容居中
         double tx = (outSize.width - src.cols()) / 2.0;
         double ty = (outSize.height - src.rows()) / 2.0;
@@ -49,7 +52,7 @@ public final class OcrBigAngleExample {
         rot.put(1, 2, rot.get(1, 2)[0] + ty);
         Mat finalMat = new Mat();
         Imgproc.warpAffine(src, finalMat, rot, outSize, Imgproc.INTER_CUBIC,
-                org.opencv.core.Core.BORDER_CONSTANT, new Scalar(255, 255, 255));
+                BORDER_CONSTANT, new Scalar(255, 255, 255));
         byte[] bigImg = ImageUtils.encode(finalMat);
         String bigPath = "G:\\images\\output\\big_angle_35.png";
         Files.write(Path.of(bigPath), bigImg);

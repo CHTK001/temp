@@ -11,6 +11,9 @@ import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
+import static org.opencv.core.CvType.CV_8UC1;
+import static org.opencv.core.CvType.CV_8UC3;
+
 import java.nio.FloatBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -62,7 +65,7 @@ public final class OcrDetExample {
 
         Mat resized = new Mat();
         Imgproc.resize(src, resized, new Size(w, h), 0, 0, Imgproc.INTER_LINEAR);
-        log.info("resized type: " + resized.type() + " (CV_8UC3=" + org.opencv.core.CvType.CV_8UC3 + ")");
+        log.info("resized type: " + resized.type() + " (CV_8UC3=" + CV_8UC3 + ")");
 
         float[] mean = {0.485f, 0.456f, 0.406f};
         float[] std = {0.229f, 0.224f, 0.225f};
@@ -135,7 +138,7 @@ public final class OcrDetExample {
                             + " max=" + pMax2 + " >0.3=" + over03b + " total=" + (probs.length * probs[0].length));
                     int mapH = probs.length;
                     int mapW = probs[0].length;
-                    Mat binary = new Mat(mapH, mapW, org.opencv.core.CvType.CV_8UC1);
+                    Mat binary = new Mat(mapH, mapW, CV_8UC1);
                     byte[] binData = new byte[mapH * mapW];
                     int white = 0;
                     for (int y = 0; y < mapH; y++) {

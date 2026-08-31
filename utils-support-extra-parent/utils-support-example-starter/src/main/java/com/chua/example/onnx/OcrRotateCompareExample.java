@@ -13,6 +13,16 @@ import static org.opencv.core.Core.rotate;
 import static org.opencv.core.Core.ROTATE_180;
 import static org.opencv.core.Core.ROTATE_90_CLOCKWISE;
 import static org.opencv.core.Core.ROTATE_90_COUNTERCLOCKWISE;
+import static org.opencv.imgproc.Imgproc.INTER_LINEAR;
+import static org.opencv.imgproc.Imgproc.INTER_NEAREST;
+import static org.opencv.imgproc.Imgproc.resize;
+import static org.opencv.imgcodecs.Imgcodecs.imwrite;
+import static org.opencv.core.Core.absdiff;
+import static org.opencv.core.Core.mean;
+import static org.opencv.core.Core.meanStdDev;
+import static org.opencv.core.CvType.CV_32F;
+import static org.opencv.core.MatOfDouble;
+import static org.opencv.core.Size;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -81,8 +91,8 @@ public final class OcrRotateCompareExample {
             Mat ms = ImageUtils.decode(src);
             // 将 src 缩放到 ref 尺寸
             Mat msScaled = new Mat();
-            org.opencv.imgproc.Imgproc.resize(ms, msScaled, new org.opencv.core.Size(mr.cols(), mr.rows()),
-                    0, 0, org.opencv.imgproc.Imgproc.INTER_LINEAR);
+            resize(ms, msScaled, new Size(mr.cols(), mr.rows()),
+                    0, 0, INTER_LINEAR);
             saveZoomedHelper(mr, x, y, w, h, outRef);
             saveZoomedHelper(msScaled, x, y, w, h, outSrc);
             msScaled.release();
@@ -97,9 +107,9 @@ public final class OcrRotateCompareExample {
     private static void saveZoomedHelper(Mat src, int x, int y, int w, int h, String out) {
         Mat crop = new Mat(src, new org.opencv.core.Rect(x, y, w, h));
         Mat big = new Mat();
-        org.opencv.imgproc.Imgproc.resize(crop, big, new org.opencv.core.Size(w * 8, h * 8),
-                0, 0, org.opencv.imgproc.Imgproc.INTER_NEAREST);
-        org.opencv.imgcodecs.Imgcodecs.imwrite(out, big);
+        resize(crop, big, new Size(w * 8, h * 8),
+                0, 0, INTER_NEAREST);
+        imwrite(out, big);
         crop.release();
         big.release();
     }
@@ -117,12 +127,12 @@ public final class OcrRotateCompareExample {
             try {
                 Mat ra = new Mat(ma, new org.opencv.core.Rect(x, y, w, h));
                 Mat rb = new Mat(mb, new org.opencv.core.Rect(x, y, w, h));
-                ra.convertTo(ra, org.opencv.core.CvType.CV_32F);
-                rb.convertTo(rb, org.opencv.core.CvType.CV_32F);
-                Mat diff = new Mat();
-                org.opencv.core.Core.absdiff(ra, rb, diff);
-                org.opencv.core.Core.meanStdDev(diff, new org.opencv.core.MatOfDouble(), new org.opencv.core.MatOfDouble());
-                double mean = org.opencv.core.Core.mean(diff).val[0];
+                ra.convertTo(ra, CV_32F);
+                rb.convertTo(rb, CV_32F);
+
+                absdiff(ra, rb, diff);
+                meanStdDev(diff, new MatOfDouble(), new MatOfDouble());
+                double mean = mean(diff).val[0];
                 ra.release();
                 rb.release();
                 diff.release();
