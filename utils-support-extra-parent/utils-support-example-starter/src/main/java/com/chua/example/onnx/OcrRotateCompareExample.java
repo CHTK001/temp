@@ -137,7 +137,7 @@ public final class OcrRotateCompareExample {
                 ra.release();
                 rb.release();
                 diff.release();
-                return mean;
+                return m;
             } finally {
                 ma.release();
                 mb.release();
