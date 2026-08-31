@@ -5,6 +5,7 @@ import com.chua.deeplearning.support.face.FacePipeline;
 import com.chua.deeplearning.support.face.FacePipelineDiskCallback;
 import com.chua.deeplearning.support.model.PredictRectangle;
 
+import com.chua.deeplearning.support.liveness.LivenessDetector;
 import static com.chua.deeplearning.support.utils.ImageCropUtils.crop;
 import static com.chua.deeplearning.support.liveness.LivenessDetector.create;
 
