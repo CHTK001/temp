@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Lambda 全操作符测试：InMemoryEngine + FileEngine（CSV/JSON）完整操作符矩阵。
@@ -60,7 +61,7 @@ public class MemoryLambdaExample {
     /** 文件引擎模式 */
     private static final String MODE_FILE = "file";
     /** 失败计数 */
-    private static int failed;
+    private static final AtomicInteger failed = new AtomicInteger();
 
     /**
      * 入口。
