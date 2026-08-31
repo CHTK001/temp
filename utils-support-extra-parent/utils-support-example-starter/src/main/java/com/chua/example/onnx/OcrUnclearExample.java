@@ -8,6 +8,7 @@ import com.chua.deeplearning.support.translator.ITranslator;
 import com.chua.deeplearning.support.utils.ImageUtils;
 import org.opencv.core.Mat;
 
+import static com.chua.deeplearning.support.engine.AbstractIdentificationEngine.getInstance;
 import static java.util.Arrays.equals;
 
 import java.nio.file.Files;
@@ -36,7 +37,7 @@ public final class OcrUnclearExample {
         };
         @SuppressWarnings("unchecked")
         ITranslator<Object, Object> dirT = (ITranslator<Object, Object>)
-                com.chua.deeplearning.support.engine.AbstractIdentificationEngine.getInstance()
+                getInstance()
                         .get("doc-orientation", ITranslator.class);
 
         OcrPipeline ocr = OcrPipeline.builder()
