@@ -776,8 +776,6 @@
                     </annotationProcessorPaths>
                     <!-- 排除引用了已失效 API 的历史遗留示例，修复后应逐个移出本清单 -->
                     <excludes>
-                        <exclude>**/engine/SimpleEngineDataSourceExample.java</exclude>
-                        <exclude>**/engine/EngineExample.java</exclude>
                         <exclude>**/image/ImageProcessorRustExample.java</exclude>
                         <exclude>**/lang/NodeFactorySpiExample.java</exclude>
                         <exclude>**/network/DFineExample.java</exclude>
