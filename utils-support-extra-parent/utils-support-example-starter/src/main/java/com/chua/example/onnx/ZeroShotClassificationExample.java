@@ -7,6 +7,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 
+import static java.util.Arrays.stream;
+
 /**
  * 零样本分类端到端测试。
  *
@@ -48,7 +50,7 @@ public final class ZeroShotClassificationExample extends BaseExample {
 
         if ("list".equalsIgnoreCase(model)) {
             printModels("zero-shot-classify", "onnx",
-                    java.util.Arrays.stream(MODELS)
+                    stream(MODELS)
                             .map(id -> com.chua.common.support.ai.chat.ModelDefinition.builder().id(id).build())
                             .toList());
             return;

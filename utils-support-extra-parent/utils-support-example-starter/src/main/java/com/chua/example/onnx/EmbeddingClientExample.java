@@ -3,6 +3,9 @@ package com.chua.example.onnx;
 import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.ai.embedding.EmbeddingClient;
 
+import static java.util.Arrays.copyOf;
+import static java.util.Arrays.toString;
+
 /**
  * 文本嵌入能力 SPI 示例。
  *
