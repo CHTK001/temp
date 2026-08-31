@@ -135,13 +135,7 @@ public class BTreeDebugDemoExample {
         }
 
         if (depth <= 2) {
-            System.out.println("  ".repeat(depth)
-                    + "INT keys=" + keys.size()
-                    + " children=" + children.size()
-                    + " start=" + start
-                    + " end=" + end
-                    + " key[start-1]=" + (start > 0 ? keys.get(start - 1) : "N/A")
-                    + " key[end-1]=" + (end > 0 ? keys.get(Math.min(end - 1, keys.size() - 1)) : "N/A"));
+            log.info("  {}INT keys={} children={} start={} end={} key[start-1]={} key[end-1]={}", "  ".repeat(depth), keys.size(), children.size(), start, end, start > 0 ? keys.get(start - 1) : "N/A", end > 0 ? keys.get(Math.min(end - 1, keys.size() - 1)) : "N/A");
         }
 
         for (int j = start; j < end; j++) {
