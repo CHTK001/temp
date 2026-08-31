@@ -8,6 +8,8 @@ import com.chua.deeplearning.support.translator.ITranslator;
 
 import java.util.List;
 
+import static java.util.Arrays.copyOfRange;
+
 /**
  * Seq2Seq 文本生成能力示例。
  *
@@ -71,7 +73,7 @@ public final class Seq2SeqExample extends BaseExample {
             return;
         }
 
-        String text = args.length > 1 ? String.join(" ", java.util.Arrays.copyOfRange(args, 1, args.length)) : null;
+        String text = args.length > 1 ? String.join(" ", copyOfRange(args, 1, args.length)) : null;
 
         if ("opus".equalsIgnoreCase(model)) {
             runOpus(text);
@@ -134,10 +136,10 @@ public final class Seq2SeqExample extends BaseExample {
                 maxTokens = Integer.parseInt(args[2]);
                 contentStart = 3;
             }
-            input = String.join(" ", java.util.Arrays.copyOfRange(args, contentStart, args.length));
+            input = String.join(" ", copyOfRange(args, contentStart, args.length));
         } else if ("translate".equalsIgnoreCase(task) && args.length > 5 && "to".equalsIgnoreCase(args[3])) {
             // 翻译任务：t5 translate English to Chinese <text>
-            input = String.join(" ", java.util.Arrays.copyOfRange(args, 5, args.length));
+            input = String.join(" ", copyOfRange(args, 5, args.length));
             prefix = "translate " + args[2] + " to " + args[4] + ": ";
         } else {
             // 默认生成任务（不拼接前缀）

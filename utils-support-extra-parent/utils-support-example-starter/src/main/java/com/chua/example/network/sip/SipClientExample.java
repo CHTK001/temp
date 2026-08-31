@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
+import static java.util.Arrays.asList;
+
 /**
  * SIP 隧道客户端常驻入口（内网穿透节点）。
  *
