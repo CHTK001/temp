@@ -54,7 +54,7 @@ public final class ZeroShotDetectionExample extends BaseExample {
 
         if ("list".equalsIgnoreCase(model)) {
             printModels("zero-shot-detect", "onnx",
-                    java.util.Arrays.stream(MODELS)
+                    stream(MODELS)
                             .map(id -> com.chua.common.support.ai.chat.ModelDefinition.builder().id(id).build())
                             .toList());
             return;
