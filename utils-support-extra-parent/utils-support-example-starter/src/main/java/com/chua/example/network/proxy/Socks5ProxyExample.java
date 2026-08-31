@@ -39,9 +39,6 @@ public final class Socks5ProxyExample {
     /** 私有构造，防止实例化 */
     private Socks5ProxyExample() { }
 
-    /** 日志 */
-    private static final Logger LOG = LoggerFactory.getLogger(Socks5ProxyExample.class);
-
     /** 本地回显后端默认端口（28xxx，可经 --backend-port 调整；代理监听端口自动分配） */
     private static final int DEFAULT_BACKEND_PORT = 28087;
 

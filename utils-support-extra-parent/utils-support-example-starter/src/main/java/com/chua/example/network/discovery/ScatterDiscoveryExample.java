@@ -47,9 +47,6 @@ import java.util.Objects;
 @Slf4j
 public final class ScatterDiscoveryExample {
 
-    /** 日志 */
-    private static final Logger LOG = LoggerFactory.getLogger(ScatterDiscoveryExample.class);
-
     /** order 组 HTTP 节点 A 默认端口 */
     private static final int DEFAULT_PORT_HTTP_A = 28081;
     /** order 组 HTTP 节点 B 默认端口 */
