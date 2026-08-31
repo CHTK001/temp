@@ -97,11 +97,12 @@ public final class TimeWheelExample {
     }
 
     /**
-     * 固定时长睡眠（测试专用）。
+     * 固定时长睡眠（测试专用），委托 {@link ThreadUtils#sleepMillisecondsQuietly(long)}。
      *
      * @param millis 毫秒数
      */
     private static void sleepMillis(long millis) {
+        ThreadUtils.sleepMillisecondsQuietly(millis);
     }
 
     // ==================== 场景 ====================

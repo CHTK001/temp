@@ -154,11 +154,12 @@ public final class BackupRoundTripExample {
     }
 
     /**
-     * 可中断睡眠（TTL 等待用）。
+     * 可中断睡眠（TTL 等待用），委托 {@link ThreadUtils#sleepMillisecondsQuietly(long)}。
      *
      * @param millis 毫秒数
      */
     private static void sleepMillis(long millis) {
+        ThreadUtils.sleepMillisecondsQuietly(millis);
     }
 
     /**

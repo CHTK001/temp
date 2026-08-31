@@ -705,10 +705,11 @@ public final class TaskRunnerExample {
     }
 
     /**
-     * 可中断睡眠（仅用于超时模拟）。
+     * 可中断睡眠（仅用于超时模拟），委托 {@link ThreadUtils#sleepMillisecondsQuietly(long)}。
      *
      * @param millis 毫秒数
      */
     private static void sleepMillis(long millis) {
+        ThreadUtils.sleepMillisecondsQuietly(millis);
     }
 }
