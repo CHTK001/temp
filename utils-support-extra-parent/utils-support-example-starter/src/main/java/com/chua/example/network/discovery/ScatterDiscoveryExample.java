@@ -367,5 +367,4 @@ public final class ScatterDiscoveryExample {
         }
     }
 
-    /**
-     * 断言相等（统一装箱比较）。
+}
