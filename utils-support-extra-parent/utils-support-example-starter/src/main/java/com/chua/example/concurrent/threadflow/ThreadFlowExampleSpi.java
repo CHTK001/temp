@@ -5,7 +5,7 @@ import com.chua.example.spi.Example;
 import java.util.Map;
 
 /**
- * ThreadFlowExample SPI 适配器 — 通过 {@link com.chua.example.runner.ExampleRunner} 调度。
+ * ThreadFlowExample SPI 适配器 — 通过 {@link com.chua.example.runner.RunnerExample} 调度。
  *
  * <p>{@link ThreadFlowExample#runTest(String)} 是公共 API，
  * 这里直接转发到原示例的入口以保持行为一致。</p>

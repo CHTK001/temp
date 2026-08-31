@@ -5,7 +5,7 @@ import com.chua.common.support.task.pipeline.core.Pipeline;
 import com.chua.common.support.task.pipeline.core.PipelineContext;
 import lombok.extern.slf4j.Slf4j;
 import com.chua.example.spi.Example;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 
 /**
  * Pipeline unit 数据依赖示例 — 声明式数据依赖与自动注入。
@@ -41,7 +41,7 @@ public class PipelineUnitExample implements Example {
         String type = PipelineBasicExample.parseType(args);
         boolean passed = runTest(type);
         log.info("[PipelineUnitExample] type=" + type + ", passed=" + passed);
-        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
+        System.exit(passed ? UtilsExample.SUCCESS : UtilsExample.FAILURE);
     }
 
     /** 运行Test */

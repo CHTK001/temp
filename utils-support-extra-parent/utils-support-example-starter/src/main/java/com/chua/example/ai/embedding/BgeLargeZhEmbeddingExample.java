@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.ai.embedding.EmbeddingClient;
 import com.chua.common.support.utils.MathUtils;
 import com.chua.common.support.ai.embedding.EmbeddingClientSetting;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 
 /**
  * BGE-large-zh 文本嵌入示例 — 本地离线（bge-large-zh）句向量。
@@ -24,7 +24,7 @@ public final class BgeLargeZhEmbeddingExample {
     /** Main */
     public static void main(String[] args) {
         boolean passed = new BgeLargeZhEmbeddingExample().runSelfTest();
-        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
+        System.exit(passed ? UtilsExample.SUCCESS : UtilsExample.FAILURE);
     }
 
     /** 自检：计算 BGE-large-zh 句向量并校验维度 + 相似度排序合理性。 */

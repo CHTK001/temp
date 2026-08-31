@@ -5,7 +5,7 @@ import com.chua.common.support.task.pipeline.core.Pipeline;
 import com.chua.common.support.task.pipeline.core.PipelineContext;
 import lombok.extern.slf4j.Slf4j;
 import com.chua.example.spi.Example;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -37,7 +37,7 @@ public class PipelineWalExample implements Example {
         String type = PipelineBasicExample.parseType(args);
         boolean passed = runTest(type);
         log.info("[PipelineWalExample] type=" + type + ", passed=" + passed);
-        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
+        System.exit(passed ? UtilsExample.SUCCESS : UtilsExample.FAILURE);
     }
 
     /** 运行Test */

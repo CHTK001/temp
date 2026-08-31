@@ -11,7 +11,7 @@ import com.chua.common.support.ai.splitter.TextSplitter;
 import com.chua.common.support.ai.splitter.TextSplitterProvider;
 import com.chua.common.support.vector.VectorStorage;
 import com.chua.common.support.vector.VectorStorageBuilder;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 
 import java.io.File;
 import java.io.IOException;
@@ -90,11 +90,11 @@ public final class RagClientLocalExample {
         }
         if (!passed) {
             log.info("[FAIL] RagClient 本地链路存在失败场景");
-            System.exit(ExampleUtils.FAILURE);
+            System.exit(UtilsExample.FAILURE);
         } else {
             log.info("[PASS] RagClient 本地链路全部场景通过");
         }
-        System.exit(ExampleUtils.SUCCESS);
+        System.exit(UtilsExample.SUCCESS);
     }
 
     // ==================== 场景 ====================
@@ -116,13 +116,13 @@ public final class RagClientLocalExample {
                 ok &= "test.txt".equals(doc.fileName());
                 ok &= "READY".equals(doc.status());
                 ok &= doc.chunkCount() > 0;
-                ExampleUtils.print("uploadDocument 返回 READY 文档", ok);
+                UtilsExample.print("uploadDocument 返回 READY 文档", ok);
                 return ok;
             } finally {
                 client.close();
             }
         } catch (Exception e) {
-            return ExampleUtils.fail("uploadDocument 返回 READY 文档", e);
+            return UtilsExample.fail("uploadDocument 返回 READY 文档", e);
         }
     }
 
@@ -150,13 +150,13 @@ public final class RagClientLocalExample {
                     }
                 }
                 boolean ok = removed && gone && fileCleaned;
-                ExampleUtils.print("deleteDocument 清理向量与文件", ok);
+                UtilsExample.print("deleteDocument 清理向量与文件", ok);
                 return ok;
             } finally {
                 client.close();
             }
         } catch (Exception e) {
-            return ExampleUtils.fail("deleteDocument 清理向量与文件", e);
+            return UtilsExample.fail("deleteDocument 清理向量与文件", e);
         }
     }
 
@@ -178,13 +178,13 @@ public final class RagClientLocalExample {
                 boolean ok = newDoc != null;
                 ok &= docId.equals(newDoc.id());
                 ok &= "READY".equals(newDoc.status());
-                ExampleUtils.print("updateDocument 原位替换", ok);
+                UtilsExample.print("updateDocument 原位替换", ok);
                 return ok;
             } finally {
                 client.close();
             }
         } catch (Exception e) {
-            return ExampleUtils.fail("updateDocument 原位替换", e);
+            return UtilsExample.fail("updateDocument 原位替换", e);
         }
     }
 
@@ -209,13 +209,13 @@ public final class RagClientLocalExample {
                 ok &= page1.size() == 2;
                 ok &= page2.size() == 1;
                 ok &= page3.isEmpty();
-                ExampleUtils.print("listDocuments 分页正确", ok);
+                UtilsExample.print("listDocuments 分页正确", ok);
                 return ok;
             } finally {
                 client.close();
             }
         } catch (Exception e) {
-            return ExampleUtils.fail("listDocuments 分页正确", e);
+            return UtilsExample.fail("listDocuments 分页正确", e);
         }
     }
 
@@ -234,13 +234,13 @@ public final class RagClientLocalExample {
                 String docId = client.uploadDocument("read-test.txt", data).id();
                 String readBack = client.readDocumentContent(docId);
                 boolean ok = readBack != null && readBack.contains("读取测试");
-                ExampleUtils.print("readDocumentContent 读回原文", ok);
+                UtilsExample.print("readDocumentContent 读回原文", ok);
                 return ok;
             } finally {
                 client.close();
             }
         } catch (Exception e) {
-            return ExampleUtils.fail("readDocumentContent 读回原文", e);
+            return UtilsExample.fail("readDocumentContent 读回原文", e);
         }
     }
 
@@ -263,13 +263,13 @@ public final class RagClientLocalExample {
                         .getBytes(StandardCharsets.UTF_8));
                 var response = client.query("什么是RAG？");
                 boolean ok = response != null && response.answer() != null && !response.answer().isBlank();
-                ExampleUtils.print("远端问答返回非空回答", ok);
+                UtilsExample.print("远端问答返回非空回答", ok);
                 return ok;
             } finally {
                 client.close();
             }
         } catch (Exception e) {
-            return ExampleUtils.fail("远端问答返回非空回答", e);
+            return UtilsExample.fail("远端问答返回非空回答", e);
         }
     }
 

@@ -13,7 +13,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.extern.slf4j.Slf4j;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 
 /**
  * 调度器全场景自检示例：Cron 表达式解析、三种触发器的触发时间推算、
@@ -51,10 +51,10 @@ public final class SchedulerExample {
                     && times.get(0).isAfter(times.get(1)) == false
                     && times.get(1).isBefore(times.get(2))
                     && times.get(0).getSecond() % 10 == 0;
-            ExampleUtils.print("cronParseAndFireTimes", ok);
+            UtilsExample.print("cronParseAndFireTimes", ok);
             return ok;
         } catch (Exception e) {
-            return ExampleUtils.fail("cronParseAndFireTimes", e);
+            return UtilsExample.fail("cronParseAndFireTimes", e);
         }
     }
 
@@ -66,10 +66,10 @@ public final class SchedulerExample {
     private static boolean cronInvalidRejected() {
         try {
             new CronExpression("not-a-cron");
-            ExampleUtils.print("cronInvalidRejected", false);
+            UtilsExample.print("cronInvalidRejected", false);
             return false;
         } catch (RuntimeException expected) {
-            ExampleUtils.print("cronInvalidRejected", true);
+            UtilsExample.print("cronInvalidRejected", true);
             return true;
         }
     }
@@ -89,10 +89,10 @@ public final class SchedulerExample {
             boolean ok = fixed.get(0).equals(base.plusSeconds(30))
                     && fixed.get(1).equals(base.plusSeconds(60))
                     && simple.get(0).equals(base.plusMinutes(1));
-            ExampleUtils.print("fixedIntervalTriggers", ok);
+            UtilsExample.print("fixedIntervalTriggers", ok);
             return ok;
         } catch (Exception e) {
-            return ExampleUtils.fail("fixedIntervalTriggers", e);
+            return UtilsExample.fail("fixedIntervalTriggers", e);
         }
     }
 
@@ -115,12 +115,12 @@ public final class SchedulerExample {
             provider.shutdown();
             boolean stopped = !provider.isRunning();
             boolean ok = executed && registered && cancelled && stopped;
-            ExampleUtils.print("providerLifecycle (executed=" + executed
+            UtilsExample.print("providerLifecycle (executed=" + executed
                     + " registered=" + registered + " cancelled=" + cancelled + ")", ok);
             return ok;
         } catch (Exception e) {
             counter.incrementAndGet();
-            return ExampleUtils.fail("providerLifecycle", e);
+            return UtilsExample.fail("providerLifecycle", e);
         }
     }
 
@@ -147,16 +147,16 @@ public final class SchedulerExample {
      */
     public static void main(String[] args) {
         boolean passed = true;
-        passed &= ExampleUtils.timed("cronParseAndFireTimes", SchedulerExample::cronParseAndFireTimes);
-        passed &= ExampleUtils.timed("cronInvalidRejected", SchedulerExample::cronInvalidRejected);
-        passed &= ExampleUtils.timed("fixedIntervalTriggers", SchedulerExample::fixedIntervalTriggers);
-        passed &= ExampleUtils.timed("providerLifecycle", SchedulerExample::providerLifecycle);
+        passed &= UtilsExample.timed("cronParseAndFireTimes", SchedulerExample::cronParseAndFireTimes);
+        passed &= UtilsExample.timed("cronInvalidRejected", SchedulerExample::cronInvalidRejected);
+        passed &= UtilsExample.timed("fixedIntervalTriggers", SchedulerExample::fixedIntervalTriggers);
+        passed &= UtilsExample.timed("providerLifecycle", SchedulerExample::providerLifecycle);
         if (!passed) {
             log.info("[FAIL] Scheduler 存在失败场景");
-            System.exit(ExampleUtils.FAILURE);
+            System.exit(UtilsExample.FAILURE);
         }
         log.info("[PASS] Scheduler 全部场景通过");
-        System.exit(ExampleUtils.SUCCESS);
+        System.exit(UtilsExample.SUCCESS);
     }
 
 

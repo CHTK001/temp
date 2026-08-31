@@ -1,7 +1,7 @@
 package com.chua.example.concurrent.circuitbreaker;
 
 import com.chua.common.support.concurrent.circuitbreaker.CircuitBreakerFlow;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -29,7 +29,7 @@ public final class CircuitBreakerExample {
                 .waitDuration(60_000);
         Integer r = flow.execute(() -> counter.incrementAndGet());
         var ok = r != null && r == 1;
-        ExampleUtils.print("closedStateAllowsThrough", ok);
+        UtilsExample.print("closedStateAllowsThrough", ok);
         return ok;
     }
 
@@ -50,7 +50,7 @@ public final class CircuitBreakerExample {
         }
         var result = flow.execute(() -> "should-not-reach");
         var ok = "fallback".equals(result);
-        ExampleUtils.print("failureTripsOpenCircuit (result=" + result + ")", ok);
+        UtilsExample.print("failureTripsOpenCircuit (result=" + result + ")", ok);
         return ok;
     }
 
@@ -72,20 +72,20 @@ public final class CircuitBreakerExample {
         // 未设置 fallback 时异常上抛，但已计入熔断计数
         var result = flow.execute(() -> "ok-after-exception");
         var ok = "ok-after-exception".equals(result) || result == null;
-        ExampleUtils.print("nativeExceptionRecorded (result=" + result + ")", ok);
+        UtilsExample.print("nativeExceptionRecorded (result=" + result + ")", ok);
         return ok;
     }
 
     public static void main(String[] args) {
         boolean passed = true;
-        passed &= ExampleUtils.timed("closedStateAllowsThrough", CircuitBreakerExample::closedStateAllowsThrough);
-        passed &= ExampleUtils.timed("failureTripsOpenCircuit", CircuitBreakerExample::failureTripsOpenCircuit);
-        passed &= ExampleUtils.timed("nativeExceptionRecorded", CircuitBreakerExample::nativeExceptionRecorded);
+        passed &= UtilsExample.timed("closedStateAllowsThrough", CircuitBreakerExample::closedStateAllowsThrough);
+        passed &= UtilsExample.timed("failureTripsOpenCircuit", CircuitBreakerExample::failureTripsOpenCircuit);
+        passed &= UtilsExample.timed("nativeExceptionRecorded", CircuitBreakerExample::nativeExceptionRecorded);
         if (!passed) {
             System.out.println("[FAIL] CircuitBreaker 存在失败场景");
-            System.exit(ExampleUtils.FAILURE);
+            System.exit(UtilsExample.FAILURE);
         }
         System.out.println("[PASS] CircuitBreaker 全部场景通过");
-        System.exit(ExampleUtils.SUCCESS);
+        System.exit(UtilsExample.SUCCESS);
     }
 }

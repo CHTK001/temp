@@ -6,7 +6,7 @@ import com.chua.ssh.support.server.SshProgress;
 import com.chua.tui.support.MordantHelper;
 import lombok.extern.slf4j.Slf4j;
 import com.chua.example.spi.Example;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Map;
@@ -122,7 +122,7 @@ public class ProgressBarExample implements Example {
         String type = cli.get("type", DEFAULT_TYPE);
         boolean passed = example.runTest(type);
         log.info("[ProgressBarExample] self-test type={}, passed={}", type, passed);
-        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
+        System.exit(passed ? UtilsExample.SUCCESS : UtilsExample.FAILURE);
     }
 
     public boolean runTest(String type) {

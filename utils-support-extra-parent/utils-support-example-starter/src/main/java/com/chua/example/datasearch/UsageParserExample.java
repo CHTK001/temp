@@ -3,7 +3,7 @@ package com.chua.example.datasearch;
 import com.chua.common.support.ai.AiUsage;
 import com.chua.common.support.datasearch.usage.spi.UsageParser;
 import com.chua.common.support.spi.ServiceProvider;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -51,7 +51,7 @@ public final class UsageParserExample {
      * @param args 命令行参数
      */
     public static void main(String[] args) {
-        Map<String, String> params = ExampleUtils.parseArgs(args);
+        Map<String, String> params = UtilsExample.parseArgs(args);
         String spiName = params.getOrDefault("spi", SPI_ALL);
         Map<String, UsageParser> parsers = resolveParsers(spiName);
         if (parsers.isEmpty()) {

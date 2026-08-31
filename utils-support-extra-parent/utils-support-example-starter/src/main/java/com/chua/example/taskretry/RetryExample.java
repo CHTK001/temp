@@ -5,7 +5,7 @@ import com.chua.common.support.concurrent.backoff.provider.FixedBackoffProvider;
 import com.chua.common.support.task.retry.RetryFlow;
 
 import java.util.concurrent.atomic.AtomicInteger;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -51,10 +51,10 @@ public final class RetryExample {
                         return 42;
                     });
             boolean ok = result == 42 && attempts.get() == 3 && retriesObserved.get() == 2;
-            ExampleUtils.print("recoverAfterTransientFailures", ok);
+            UtilsExample.print("recoverAfterTransientFailures", ok);
             return ok;
         } catch (Exception e) {
-            return ExampleUtils.fail("recoverAfterTransientFailures", e);
+            return UtilsExample.fail("recoverAfterTransientFailures", e);
         }
     }
 
@@ -73,10 +73,10 @@ public final class RetryExample {
                         throw new IllegalStateException("always");
                     });
             boolean ok = result == -1;
-            ExampleUtils.print("exhaustedFallsBack", ok);
+            UtilsExample.print("exhaustedFallsBack", ok);
             return ok;
         } catch (Exception e) {
-            return ExampleUtils.fail("exhaustedFallsBack", e);
+            return UtilsExample.fail("exhaustedFallsBack", e);
         }
     }
 
@@ -96,13 +96,13 @@ public final class RetryExample {
                         attempts.incrementAndGet();
                         throw new NumberFormatException("not retryable");
                     });
-            return ExampleUtils.fail("nonMatchingExceptionSkipsRetry", "不应到达此处");
+            return UtilsExample.fail("nonMatchingExceptionSkipsRetry", "不应到达此处");
         } catch (NumberFormatException expected) {
             boolean ok = attempts.get() == 1;
-            ExampleUtils.print("nonMatchingExceptionSkipsRetry", ok);
+            UtilsExample.print("nonMatchingExceptionSkipsRetry", ok);
             return ok;
         } catch (Exception e) {
-            return ExampleUtils.fail("nonMatchingExceptionSkipsRetry", e);
+            return UtilsExample.fail("nonMatchingExceptionSkipsRetry", e);
         }
     }
 
@@ -122,10 +122,10 @@ public final class RetryExample {
                         return "ok";
                     });
             boolean ok = "ok".equals(result) && attempts.get() == 1;
-            ExampleUtils.print("immediateSuccessNoRetry", ok);
+            UtilsExample.print("immediateSuccessNoRetry", ok);
             return ok;
         } catch (Exception e) {
-            return ExampleUtils.fail("immediateSuccessNoRetry", e);
+            return UtilsExample.fail("immediateSuccessNoRetry", e);
         }
     }
 
@@ -136,15 +136,15 @@ public final class RetryExample {
      */
     public static void main(String[] args) {
         boolean passed = true;
-        passed &= ExampleUtils.timed("recoverAfterTransientFailures", RetryExample::recoverAfterTransientFailures);
-        passed &= ExampleUtils.timed("exhaustedFallsBack", RetryExample::exhaustedFallsBack);
-        passed &= ExampleUtils.timed("nonMatchingExceptionSkipsRetry", RetryExample::nonMatchingExceptionSkipsRetry);
-        passed &= ExampleUtils.timed("immediateSuccessNoRetry", RetryExample::immediateSuccessNoRetry);
+        passed &= UtilsExample.timed("recoverAfterTransientFailures", RetryExample::recoverAfterTransientFailures);
+        passed &= UtilsExample.timed("exhaustedFallsBack", RetryExample::exhaustedFallsBack);
+        passed &= UtilsExample.timed("nonMatchingExceptionSkipsRetry", RetryExample::nonMatchingExceptionSkipsRetry);
+        passed &= UtilsExample.timed("immediateSuccessNoRetry", RetryExample::immediateSuccessNoRetry);
         if (!passed) {
             log.info("[FAIL] Retry 存在失败场景");
-            System.exit(ExampleUtils.FAILURE);
+            System.exit(UtilsExample.FAILURE);
         }
         log.info("[PASS] Retry 全部场景通过");
-        System.exit(ExampleUtils.SUCCESS);
+        System.exit(UtilsExample.SUCCESS);
     }
 }

@@ -6,7 +6,7 @@ import com.chua.common.support.task.pipeline.core.PipelineContext;
 import lombok.extern.slf4j.Slf4j;
 import com.chua.example.spi.Example;
 import java.util.Map;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 
 /**
  * Pipeline 基本能力示例 — 顺序任务、taskStart/onStep/step、exit/start。
@@ -38,7 +38,7 @@ public class PipelineBasicExample implements Example {
         String type = parseType(args);
         boolean passed = runTest(type);
         log.info("[PipelineBasicExample] type=" + type + ", passed=" + passed);
-        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
+        System.exit(passed ? UtilsExample.SUCCESS : UtilsExample.FAILURE);
     }
 
     /**

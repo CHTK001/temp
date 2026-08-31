@@ -11,7 +11,7 @@ import com.chua.common.support.taskdistribution.spi.TaskExecutorRegistry;
 import com.chua.common.support.taskdistribution.strategy.DispatchStrategy;
 import com.chua.common.support.taskdistribution.task.*;
 import lombok.extern.slf4j.Slf4j;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -46,7 +46,7 @@ public class TaskDistributionExample {
     public static void main(String[] args) {
         TaskDistributionExample example = new TaskDistributionExample();
         boolean passed = example.runTest();
-        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
+        System.exit(passed ? UtilsExample.SUCCESS : UtilsExample.FAILURE);
     }
 
     /** 运行Test */

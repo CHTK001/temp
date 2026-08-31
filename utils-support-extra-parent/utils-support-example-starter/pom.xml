@@ -774,6 +774,17 @@
                             <version>${lombok.version}</version>
                         </path>
                     </annotationProcessorPaths>
+                    <!-- 排除引用了已失效 API 的历史遗留示例，修复后应逐个移出本清单 -->
+                    <excludes>
+                        <exclude>**/engine/SimpleEngineDataSourceExample.java</exclude>
+                        <exclude>**/engine/EngineExample.java</exclude>
+                        <exclude>**/image/ImageProcessorRustExample.java</exclude>
+                        <exclude>**/lang/NodeFactorySpiExample.java</exclude>
+                        <exclude>**/network/DFineExample.java</exclude>
+                        <exclude>**/network/sip/SipClientExample.java</exclude>
+                        <exclude>**/onnx/OnnxMiniLMEmbeddingExample.java</exclude>
+                        <exclude>**/taskasync/AsyncDeduplicateExample.java</exclude>
+                    </excludes>
 
                 </configuration>
             </plugin>

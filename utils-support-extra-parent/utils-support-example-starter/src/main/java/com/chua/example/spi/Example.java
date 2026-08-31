@@ -5,7 +5,7 @@ import java.util.Map;
 /**
  * 示例 SPI 接口 — 所有 Example 实现该接口，通过 SPI 自动注册与发现。
  *
- * <p>统一调度入口 {@code com.chua.example.runner.ExampleRunner} 根据
+ * <p>统一调度入口 {@code com.chua.example.runner.RunnerExample} 根据
  * {@link #name()} 路由到对应实现；每个实现应专注于一个 starter 的核心能力演示。</p>
  *
  * @author CH

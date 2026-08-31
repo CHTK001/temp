@@ -14,7 +14,7 @@ import java.util.Comparator;
 import java.util.List;
 import com.chua.common.support.utils.ThreadUtils;
 import lombok.extern.slf4j.Slf4j;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 
 /**
  * 备份/恢复 {@link DefaultDailyBackupStrategy} + {@link DefaultBackupRestore} 往返自检示例。
@@ -83,10 +83,10 @@ public final class BackupRoundTripExample {
         if (!ok) {
             log.info("[DBG] result=" + result);
         }
-        ExampleUtils.print("dailyBackupExecutes", ok);
+        UtilsExample.print("dailyBackupExecutes", ok);
         return ok;
         } catch (IOException e) {
-            return ExampleUtils.fail("dailyBackupExecutes", e);
+            return UtilsExample.fail("dailyBackupExecutes", e);
         }
     }
 
@@ -115,10 +115,10 @@ public final class BackupRoundTripExample {
             bOk = Files.exists(rb) && "{\"k\":1}".equals(Files.readString(rb));
         }
         boolean ok = restored.isSuccess() && aOk && bOk;
-        ExampleUtils.print("restoreLatestMatchesSource", ok);
+        UtilsExample.print("restoreLatestMatchesSource", ok);
         return ok;
         } catch (IOException e) {
-            return ExampleUtils.fail("restoreLatestMatchesSource", e);
+            return UtilsExample.fail("restoreLatestMatchesSource", e);
         }
     }
 
@@ -146,10 +146,10 @@ public final class BackupRoundTripExample {
         boolean oldGone = !Files.exists(archive.resolve(makeDate(-30) + ".zip"));
         boolean newKept = Files.exists(archive.resolve(makeDate(0) + ".zip"));
         boolean ok = backups.size() == 2 && cleaned >= 1 && oldGone && newKept;
-        ExampleUtils.print("listAndCleanExpired (cleaned=" + cleaned + ")", ok);
+        UtilsExample.print("listAndCleanExpired (cleaned=" + cleaned + ")", ok);
         return ok;
         } catch (IOException e) {
-            return ExampleUtils.fail("listAndCleanExpired", e);
+            return UtilsExample.fail("listAndCleanExpired", e);
         }
     }
 
@@ -181,18 +181,18 @@ public final class BackupRoundTripExample {
     public static void main(String[] args) {
         boolean passed = true;
         try {
-            passed &= ExampleUtils.timed("dailyBackupExecutes", BackupRoundTripExample::dailyBackupExecutes);
-            passed &= ExampleUtils.timed("restoreLatestMatchesSource", BackupRoundTripExample::restoreLatestMatchesSource);
-            passed &= ExampleUtils.timed("listAndCleanExpired", BackupRoundTripExample::listAndCleanExpired);
+            passed &= UtilsExample.timed("dailyBackupExecutes", BackupRoundTripExample::dailyBackupExecutes);
+            passed &= UtilsExample.timed("restoreLatestMatchesSource", BackupRoundTripExample::restoreLatestMatchesSource);
+            passed &= UtilsExample.timed("listAndCleanExpired", BackupRoundTripExample::listAndCleanExpired);
         } finally {
             cleanupTestRoot();
         }
         if (!passed) {
             log.info("[FAIL] Backup 存在失败场景");
-            System.exit(ExampleUtils.FAILURE);
+            System.exit(UtilsExample.FAILURE);
         }
         log.info("[PASS] Backup 全部场景通过");
-        System.exit(ExampleUtils.SUCCESS);
+        System.exit(UtilsExample.SUCCESS);
     }
 
     /**

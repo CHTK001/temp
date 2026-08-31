@@ -5,7 +5,7 @@ import com.chua.deeplearning.support.face.FaceDetectionHit;
 import com.chua.deeplearning.support.face.FacePipeline;
 import com.chua.deeplearning.support.face.FacePipelineDiskCallback;
 import lombok.extern.slf4j.Slf4j;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,7 +27,7 @@ public class FaceCoreExample {
 
     public static void main(String[] args) throws Exception {
         boolean passed = runTest();
-        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
+        System.exit(passed ? UtilsExample.SUCCESS : UtilsExample.FAILURE);
     }
 
     public static boolean runTest() throws Exception {

@@ -15,7 +15,7 @@ public class RpcProbeExample {
     private RpcProbeExample() { }
 
     public static void main(String[] args) {
-        log.info("[RpcProbeExample] 直接运行 RpcExample（绕过 ExampleRunner 静态扫描）...");
+        log.info("[RpcProbeExample] 直接运行 RpcExample（绕过 RunnerExample 静态扫描）...");
         boolean ok = new RpcExample().run(Map.of());
         log.info(String.valueOf("[RpcProbeExample] RESULT: " + (ok ? "PASS" : "FAIL")));
         System.exit(ok ? 0 : 1);

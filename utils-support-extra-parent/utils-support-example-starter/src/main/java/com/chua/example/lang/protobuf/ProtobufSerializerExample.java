@@ -2,7 +2,7 @@ package com.chua.example.lang.protobuf;
 
 import com.chua.common.support.spi.ServiceProvider;
 import com.chua.example.spi.Example;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -38,7 +38,7 @@ public final class ProtobufSerializerExample {
      * @param args 支持 --key=value 与 --key value（SPI 内部未使用，仅验证容错）
      */
     public static void main(String[] args) {
-        Map<String, String> params = ExampleUtils.parseArgs(args);
+        Map<String, String> params = UtilsExample.parseArgs(args);
         Example example = discover("protobuf-serializer");
         if (example == null || !"protobuf".equals(example.module())) {
             log.info("[FAIL] spi-discovery: 应发现 protobuf-serializer 且 module=protobuf");

@@ -1,6 +1,6 @@
 package com.chua.example.network.sync;
 
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
@@ -32,7 +32,7 @@ public class SyncExample {
      * @param args 命令行参数，支持 {@code --key=value} 与 {@code --key value}
      */
     public static void main(String[] args) {
-        Map<String, String> parsed = ExampleUtils.parseArgs(args);
+        Map<String, String> parsed = UtilsExample.parseArgs(args);
         log.info("[SYNC] 自检启动 params={}", parsed);
         boolean passed = new SyncExampleSpi().run(parsed);
         if (!passed) {

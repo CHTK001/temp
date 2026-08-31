@@ -11,7 +11,7 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
  * <p>起本地 SOCKS5 服务与回显后端，用原生 {@link Socket} 直连发送握手字节做最小协议校验：
  * NO_AUTH 下 IPv4/域名 CONNECT 转发回显、不支持的认证方法拒绝（0xFF）、
  * 用户名/口令认证（RFC 1929 子协商）。复杂协商与压测不在本示例执行：
- * [SKIP] perf/sweep 场景请经 {@code ExampleRunner --example=socks5-proxy --mode=perf|sweep}
+ * [SKIP] perf/sweep 场景请经 {@code RunnerExample --example=socks5-proxy --mode=perf|sweep}
  * 触发 {@link Socks5ProxyExampleSpi}。</p>
  *
  * <h2>用法</h2>
@@ -49,7 +49,7 @@ public final class Socks5ProxyExample {
      * @throws Exception 后端启动失败等异常
      */
     public static void main(String[] args) throws Exception {
-        Map<String, String> arg = ExampleUtils.parseArgs(args);
+        Map<String, String> arg = UtilsExample.parseArgs(args);
         EchoServer backend = EchoServer.start(intVal(arg.get("backend-port"), DEFAULT_BACKEND_PORT));
         log.info("===== socks5-proxy 主示例 [echo-backend=127.0.0.1:{}] =====", backend.getPort());
         boolean passed;
@@ -81,7 +81,7 @@ public final class Socks5ProxyExample {
             log.info("    SPI 加载实现: {} ✓", proxy.getClass().getName());
             return true;
         } catch (Exception e) {
-            return ExampleUtils.fail("SPI 切换异常: " + e.getMessage());
+            return UtilsExample.fail("SPI 切换异常: " + e.getMessage());
         }
     }
 
@@ -97,7 +97,7 @@ public final class Socks5ProxyExample {
         try {
             proxy = startProxy(false);
         } catch (Exception e) {
-            return ExampleUtils.fail("IPv4 场景代理启动异常: " + e.getMessage());
+            return UtilsExample.fail("IPv4 场景代理启动异常: " + e.getMessage());
         }
         try (Socket client = new Socket("127.0.0.1", proxy.getPort())) {
             client.setSoTimeout(5000);
@@ -107,7 +107,7 @@ public final class Socks5ProxyExample {
             log.info("    CONNECT 成功且经代理回显一致 ✓");
             return true;
         } catch (Exception e) {
-            return ExampleUtils.fail("IPv4 CONNECT 异常: " + e.getMessage());
+            return UtilsExample.fail("IPv4 CONNECT 异常: " + e.getMessage());
         } finally {
             closeQuietly(proxy);
         }
@@ -125,7 +125,7 @@ public final class Socks5ProxyExample {
         try {
             proxy = startProxy(false);
         } catch (Exception e) {
-            return ExampleUtils.fail("域名场景代理启动异常: " + e.getMessage());
+            return UtilsExample.fail("域名场景代理启动异常: " + e.getMessage());
         }
         try (Socket client = new Socket("127.0.0.1", proxy.getPort())) {
             client.setSoTimeout(5000);
@@ -142,7 +142,7 @@ public final class Socks5ProxyExample {
             log.info("    域名 CONNECT 成功且经代理回显一致 ✓");
             return true;
         } catch (Exception e) {
-            return ExampleUtils.fail("域名 CONNECT 异常: " + e.getMessage());
+            return UtilsExample.fail("域名 CONNECT 异常: " + e.getMessage());
         } finally {
             closeQuietly(proxy);
         }
@@ -159,14 +159,14 @@ public final class Socks5ProxyExample {
         try {
             proxy = startProxy(false);
         } catch (Exception e) {
-            return ExampleUtils.fail("不支持方法场景代理启动异常: " + e.getMessage());
+            return UtilsExample.fail("不支持方法场景代理启动异常: " + e.getMessage());
         }
         try (Socket client = new Socket("127.0.0.1", proxy.getPort())) {
             client.setSoTimeout(5000);
             greet(client, new byte[]{(byte) 0x80}, 0xFF);
             return true;
         } catch (Exception e) {
-            return ExampleUtils.fail("不支持方法异常: " + e.getMessage());
+            return UtilsExample.fail("不支持方法异常: " + e.getMessage());
         } finally {
             closeQuietly(proxy);
         }
@@ -183,7 +183,7 @@ public final class Socks5ProxyExample {
         try {
             proxy = startProxy(true);
         } catch (Exception e) {
-            return ExampleUtils.fail("认证场景代理启动异常: " + e.getMessage());
+            return UtilsExample.fail("认证场景代理启动异常: " + e.getMessage());
         }
         try (Socket client = new Socket("127.0.0.1", proxy.getPort())) {
             client.setSoTimeout(5000);
@@ -202,7 +202,7 @@ public final class Socks5ProxyExample {
             log.info("    服务端选择 USER_PASS 且认证成功 ✓");
             return true;
         } catch (Exception e) {
-            return ExampleUtils.fail("用户名/口令认证异常: " + e.getMessage());
+            return UtilsExample.fail("用户名/口令认证异常: " + e.getMessage());
         } finally {
             closeQuietly(proxy);
         }

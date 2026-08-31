@@ -2,7 +2,7 @@ package com.chua.example.ai.vision;
 
 import com.chua.deeplearning.support.image.ImageDetector;
 import com.chua.deeplearning.support.model.DetectionInfo;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -49,7 +49,7 @@ public class YoloWorldExample {
     public static void main(String[] args) throws IOException {
         String imagePath = args.length > 0 ? args[0] : DEFAULT_PATH;
         boolean passed = runTest(imagePath, DEFAULT_CANDIDATES);
-        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
+        System.exit(passed ? UtilsExample.SUCCESS : UtilsExample.FAILURE);
     }
 
     /**

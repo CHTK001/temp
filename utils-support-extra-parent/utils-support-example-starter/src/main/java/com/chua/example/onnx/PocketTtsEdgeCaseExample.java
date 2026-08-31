@@ -40,8 +40,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public final class PocketTtsEdgeCaseExample {
 
-    private static int passed = 0;
-    private static String onlyFilter = "";
+    private static final java.util.concurrent.atomic.AtomicInteger passed = new java.util.concurrent.atomic.AtomicInteger(0);
+    private static final java.util.concurrent.atomic.AtomicReference<String> onlyFilter = new java.util.concurrent.atomic.AtomicReference<>("");
 
     private PocketTtsEdgeCaseExample() {
     }
@@ -55,7 +55,7 @@ public final class PocketTtsEdgeCaseExample {
     public static void main(String[] args) throws Exception {
         for (String a : args) {
             if (a.startsWith("--only=")) {
-                onlyFilter = a.substring("--only=".length());
+                onlyFilter.set(a.substring("--only=".length()));
             }
         }
 
@@ -89,7 +89,7 @@ public final class PocketTtsEdgeCaseExample {
         gated("synthesize.emptyTextThrows", PocketTtsEdgeCaseExample::t25, failures, skipped);
         gated("synthesize.withRefAudio", PocketTtsEdgeCaseExample::t26, failures, skipped);
 
-        log.info("===== 汇总 通过=" + passed + " 跳过=" + skipped.size()
+        log.info("===== 汇总 通过=" + passed.get() + " 跳过=" + skipped.size()
                 + " 失败=" + failures.size() + " =====");
         for (String s : skipped) {
             log.info("  [SKIP] " + s);
@@ -103,12 +103,12 @@ public final class PocketTtsEdgeCaseExample {
     // ==================== 运行器 ====================
 
     private static void run(String name, ThrowingCheck check, List<String> failures) {
-        if (!name.contains(onlyFilter)) {
+        if (!name.contains(onlyFilter.get())) {
             return;
         }
         try {
             check.run();
-            passed++;
+            passed.incrementAndGet();
             log.info("[PASS] " + name);
         } catch (Throwable t) {
             failures.add(name + " -> " + t);

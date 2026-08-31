@@ -2,7 +2,7 @@ package com.chua.example.network.sip;
 
 import com.chua.common.support.network.sip.SipClient;
 import com.chua.common.support.network.sip.SipTunnelService;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
@@ -83,7 +83,7 @@ public class SipClientExample {
      * @param args 命令行参数
      */
     public static void main(String[] args) {
-        Map<String, String> kv = ExampleUtils.parseArgs(args);
+        Map<String, String> kv = UtilsExample.parseArgs(args);
         String mode = kv.getOrDefault("mode", "provider");
         String server = kv.getOrDefault("server", "tcp://127.0.0.1:19460");
         String token = kv.getOrDefault("token", DEFAULT_TOKEN);

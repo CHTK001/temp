@@ -7,7 +7,7 @@ import com.chua.example.spi.Example;
 import com.chua.protobuf.support.serialize.ProtobufSerialization;
 import com.chua.protobuf.support.serialize.ProtobufSerializer;
 import lombok.extern.slf4j.Slf4j;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -17,12 +17,12 @@ import java.util.Map;
 /**
  * Protobuf 序列化自检示例（SPI 形式）— 演示 ProtobufSerializer / ProtobufSerialization 往返能力。
  *
- * <p>通过统一入口 {@code com.chua.example.runner.ExampleRunner --example=protobuf-serializer} 调用，
+ * <p>通过统一入口 {@code com.chua.example.runner.RunnerExample --example=protobuf-serializer} 调用，
  * 内部覆盖：基本类型往返、嵌套对象、集合字段、null/空输入、Serialization 接口实现、压缩比对比。</p>
  *
  * <h2>用法</h2>
  * <pre>
- *   java ExampleRunner --example=protobuf-serializer
+ *   java RunnerExample --example=protobuf-serializer
  * </pre>
  *
  * @author CH
@@ -105,10 +105,10 @@ public class ProtobufSerializerExampleSpi implements Example {
             assertEquals(18, result.getAge(), "age 字段");
             assertEquals("chua@example.com", result.getEmail(), "email 字段");
             assertTrue(result.isActive(), "active 字段");
-            ExampleUtils.pass();
+            UtilsExample.pass();
             return true;
         } catch (Exception e) {
-            ExampleUtils.fail("基本类型往返异常: " + e.getMessage());
+            UtilsExample.fail("基本类型往返异常: " + e.getMessage());
             return false;
         }
     }
@@ -141,10 +141,10 @@ public class ProtobufSerializerExampleSpi implements Example {
             assertNotNull(result.getBuyer(), "buyer 不应为 null");
             assertEquals("buyer", result.getBuyer().getName(), "buyer.name 字段");
             assertEquals(25, result.getBuyer().getAge(), "buyer.age 字段");
-            ExampleUtils.pass();
+            UtilsExample.pass();
             return true;
         } catch (Exception e) {
-            ExampleUtils.fail("嵌套对象往返异常: " + e.getMessage());
+            UtilsExample.fail("嵌套对象往返异常: " + e.getMessage());
             return false;
         }
     }
@@ -172,10 +172,10 @@ public class ProtobufSerializerExampleSpi implements Example {
             assertEquals(2, result.getTags().size(), "tags 大小");
             assertEquals("java", result.getTags().get(0), "tags[0] 内容");
             assertEquals("protobuf", result.getTags().get(1), "tags[1] 内容");
-            ExampleUtils.pass();
+            UtilsExample.pass();
             return true;
         } catch (Exception e) {
-            ExampleUtils.fail("集合字段往返异常: " + e.getMessage());
+            UtilsExample.fail("集合字段往返异常: " + e.getMessage());
             return false;
         }
     }
@@ -192,10 +192,10 @@ public class ProtobufSerializerExampleSpi implements Example {
             assertEquals(0, serializer.serialize(null).length, "serialize(null) 应返回空数组");
             assertEquals(null, serializer.deserialize(null), "deserialize(null) 应返回 null");
             assertEquals(null, serializer.deserialize(new byte[0]), "deserialize(空数组) 应返回 null");
-            ExampleUtils.pass();
+            UtilsExample.pass();
             return true;
         } catch (Exception e) {
-            ExampleUtils.fail("null 输入异常: " + e.getMessage());
+            UtilsExample.fail("null 输入异常: " + e.getMessage());
             return false;
         }
     }
@@ -220,10 +220,10 @@ public class ProtobufSerializerExampleSpi implements Example {
             assertNotNull(result, "接口反序列化结果不应为 null");
             assertEquals("interface", result.getName(), "接口反序列化 name");
             assertEquals(30, result.getAge(), "接口反序列化 age");
-            ExampleUtils.pass();
+            UtilsExample.pass();
             return true;
         } catch (Exception e) {
-            ExampleUtils.fail("Serialization 接口异常: " + e.getMessage());
+            UtilsExample.fail("Serialization 接口异常: " + e.getMessage());
             return false;
         }
     }
@@ -260,10 +260,10 @@ public class ProtobufSerializerExampleSpi implements Example {
             // Protobuf 通常比 JSON 更紧凑
             assertTrue(protobufBytes.length > 0, "Protobuf 序列化结果不为空");
             assertTrue(jsonBytes.length > 0, "JSON 序列化结果不为空");
-            ExampleUtils.pass();
+            UtilsExample.pass();
             return true;
         } catch (Exception e) {
-            ExampleUtils.fail("压缩比对比异常: " + e.getMessage());
+            UtilsExample.fail("压缩比对比异常: " + e.getMessage());
             return false;
         }
     }

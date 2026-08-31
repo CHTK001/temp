@@ -1,6 +1,6 @@
 package com.chua.example.network.scatter;
 
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
@@ -35,7 +35,7 @@ public class ScatterClusterExample {
      * @param args 命令行参数，支持 {@code --key=value} 与 {@code --key value}
      */
     public static void main(String[] args) {
-        Map<String, String> parsed = ExampleUtils.parseArgs(args);
+        Map<String, String> parsed = UtilsExample.parseArgs(args);
         parsed.putIfAbsent("mode", DEFAULT_MODE);
         log.info("[SCATTER-CLUSTER] 启动 mode={}", parsed.get("mode"));
         boolean passed = new ScatterClusterExampleSpi().run(parsed);

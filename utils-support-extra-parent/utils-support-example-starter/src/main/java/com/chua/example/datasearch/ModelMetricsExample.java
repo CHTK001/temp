@@ -4,7 +4,7 @@ import com.chua.common.support.ai.chat.ModelDefinition;
 import com.chua.common.support.datasearch.pricing.spi.AbstractModelMetricsProvider;
 import com.chua.common.support.datasearch.pricing.spi.ModelMetricsProvider;
 import com.chua.common.support.reflection.ReflectUtils;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 
 import java.util.List;
 import java.util.ServiceLoader;
@@ -51,7 +51,7 @@ public final class ModelMetricsExample {
      * @param args 命令行参数
      */
     public static void main(String[] args) {
-        String spiName = ExampleUtils.parseArgs(args).getOrDefault("spi", SPI_ALL);
+        String spiName = UtilsExample.parseArgs(args).getOrDefault("spi", SPI_ALL);
         int failures = 0;
         int total = 0;
         System.out.printf("%-18s %7s %8s   %s%n",

@@ -84,7 +84,7 @@ public final class JsonUnifiedAnnotationExample {
             LocalDateTime bridgeTime = LocalDateTime.of(2026, 8, 15, 12, 30, 0);
             Order source = new Order("A002", "secret", bridgeTime, 10.0);
             Object mapped = JsonBeanMapper.toMap(source);
-            if (!(mapped instanceof Map)) {
+            if (!(mapped instanceof Map<?, ?>)) {
                 log.info("[FAIL] 桥接器: toMap 应返回 Map 类型");
                 System.exit(1);
             }

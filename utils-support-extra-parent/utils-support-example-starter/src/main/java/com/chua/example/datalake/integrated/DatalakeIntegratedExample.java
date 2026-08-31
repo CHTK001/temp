@@ -24,7 +24,7 @@ import com.chua.starter.datasync.agent.AgentServerManager;
 import com.chua.starter.datasync.mapping.DataSyncFieldMapping;
 import com.chua.starter.datasync.model.DataSyncMapping;
 import lombok.extern.slf4j.Slf4j;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.GlobalMemory;
 import oshi.hardware.HardwareAbstractionLayer;
@@ -98,7 +98,7 @@ public class DatalakeIntegratedExample {
         DatalakeIntegratedExample example = new DatalakeIntegratedExample();
         boolean passed = example.runTest(duration);
         log.info("[DatalakeIntegratedExample] self-test duration={}s, passed={}", duration, passed);
-        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
+        System.exit(passed ? UtilsExample.SUCCESS : UtilsExample.FAILURE);
     }
 
     /**

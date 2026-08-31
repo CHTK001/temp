@@ -5,7 +5,7 @@ import com.chua.common.support.ai.chat.ChatClientSetting;
 import com.chua.common.support.ai.generation.ImageGenerationResult;
 import com.chua.common.support.ai.generation.VideoGenerationResult;
 import com.chua.common.support.utils.CommandLine;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -77,7 +77,7 @@ public class QwenProxyExample {
         String module = cli.get("module", "all");
 
         boolean passed = new QwenProxyExample().runTest(cookie, module);
-        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
+        System.exit(passed ? UtilsExample.SUCCESS : UtilsExample.FAILURE);
     }
 
     /**

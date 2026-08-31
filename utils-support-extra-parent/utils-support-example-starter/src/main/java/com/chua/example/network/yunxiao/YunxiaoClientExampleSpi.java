@@ -32,11 +32,11 @@ import java.util.Map;
  * <h2>用法</h2>
  * <pre>
  *   # 查询仓库与制品（只读）
- *   java ExampleRunner --example=yunxiao --domain=devops.cn-hangzhou.aliyuncs.com \
+ *   java RunnerExample --example=yunxiao --domain=devops.cn-hangzhou.aliyuncs.com \
  *       --token=pt-xxxx --org=60d54f3daccf2bbd6659f3ad --repo=my-repo --repoType=MAVEN
  *
  *   # 演示删除（需读写权限，谨慎使用）
- *   java ExampleRunner --example=yunxiao --domain=devops.cn-hangzhou.aliyuncs.com \
+ *   java RunnerExample --example=yunxiao --domain=devops.cn-hangzhou.aliyuncs.com \
  *       --token=pt-xxxx --org=60d54f3daccf2bbd6659f3ad --repo=my-repo --repoType=MAVEN --delete
  * </pre>
  *

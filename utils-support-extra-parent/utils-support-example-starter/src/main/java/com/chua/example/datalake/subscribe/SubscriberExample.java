@@ -5,7 +5,7 @@ import com.chua.common.support.utils.CommandLine;
 import com.chua.datalake.support.model.DataEnvelope;
 import com.chua.datalake.support.subscriber.RealTimeDatalakeSubscriber;
 import lombok.extern.slf4j.Slf4j;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 import reactor.core.publisher.Mono;
 
 import java.nio.file.Path;
@@ -69,7 +69,7 @@ public class SubscriberExample {
                 yield false;
             }
         };
-        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
+        System.exit(passed ? UtilsExample.SUCCESS : UtilsExample.FAILURE);
     }
 
     /**

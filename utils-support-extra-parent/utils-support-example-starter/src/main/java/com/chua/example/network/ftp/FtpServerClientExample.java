@@ -56,12 +56,12 @@ public class FtpServerClientExample {
     /**
      * 通过总数
      */
-    private static int passed = 0;
+    private static final java.util.concurrent.atomic.AtomicInteger passed = new java.util.concurrent.atomic.AtomicInteger(0);
 
     /**
      * 失败总数
      */
-    private static int failed = 0;
+    private static final java.util.concurrent.atomic.AtomicInteger failed = new java.util.concurrent.atomic.AtomicInteger(0);
 
     /**
      * 程序入口。
@@ -94,9 +94,9 @@ public class FtpServerClientExample {
             testAllCapabilities();
             System.out.println();
             System.out.println("========================================");
-            System.out.println("测试结果: 通过=" + passed + ", 失败=" + failed);
+            System.out.println("测试结果: 通过=" + passed.get() + ", 失败=" + failed.get());
             System.out.println("========================================");
-            if (failed > 0) {
+            if (failed.get() > 0) {
                 System.exit(1);
             }
         } catch (Exception e) {
@@ -285,7 +285,7 @@ public class FtpServerClientExample {
         } catch (Exception e) {
             System.err.println("[ERROR] 客户端异常: " + e.getMessage());
             e.printStackTrace();
-            failed++;
+            failed.incrementAndGet();
         }
     }
 
@@ -300,7 +300,7 @@ public class FtpServerClientExample {
             test.run();
         } catch (Exception e) {
             System.err.println("[FAIL] " + name + " - " + e.getMessage());
-            failed++;
+            failed.incrementAndGet();
         }
     }
 
@@ -326,10 +326,10 @@ public class FtpServerClientExample {
     private static void assertResult(String desc, boolean result) {
         if (result) {
             System.out.println("[PASS] " + desc);
-            passed++;
+            passed.incrementAndGet();
         } else {
             System.out.println("[FAIL] " + desc);
-            failed++;
+            failed.incrementAndGet();
         }
     }
 

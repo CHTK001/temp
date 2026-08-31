@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import com.chua.common.support.utils.ThreadUtils;
 import lombok.extern.slf4j.Slf4j;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 
 /**
  * 异步流 {@link AsyncFlow} 与幂等去重器 {@link MemoryDeduplicator} 全场景自检示例。
@@ -49,7 +49,7 @@ public final class AsyncDeduplicateExample {
         boolean ok = "async-value".equals(value)
                 && ran.getCount() == 0
                 && batch.equals(List.of(1, 2, 3));
-        ExampleUtils.print("asyncSupplyRunAndBatch", ok);
+        UtilsExample.print("asyncSupplyRunAndBatch", ok);
         return ok;
     }
 
@@ -73,10 +73,10 @@ public final class AsyncDeduplicateExample {
                     && executions.get() == 1
                     && dedup.isDuplicate("order:1001")
                     && dedup.size() == 1;
-            ExampleUtils.print("dedupExecutesOnceOnly", ok);
+            UtilsExample.print("dedupExecutesOnceOnly", ok);
             return ok;
         } catch (Exception e) {
-            return ExampleUtils.fail("dedupExecutesOnceOnly", e);
+            return UtilsExample.fail("dedupExecutesOnceOnly", e);
         }
     }
 
@@ -95,7 +95,7 @@ public final class AsyncDeduplicateExample {
             dedup.clear();
             boolean cleared = dedup.size() == 0;
             boolean ok = markedBefore && expiredAfter && cleared;
-            ExampleUtils.print("ttlExpiryAllowsReprocess", ok);
+            UtilsExample.print("ttlExpiryAllowsReprocess", ok);
             return ok;
         }
     }
@@ -107,15 +107,15 @@ public final class AsyncDeduplicateExample {
      */
     public static void main(String[] args) {
         boolean passed = true;
-        passed &= ExampleUtils.timed("asyncSupplyRunAndBatch", AsyncDeduplicateExample::asyncSupplyRunAndBatch);
-        passed &= ExampleUtils.timed("dedupExecutesOnceOnly", AsyncDeduplicateExample::dedupExecutesOnceOnly);
-        passed &= ExampleUtils.timed("ttlExpiryAllowsReprocess", AsyncDeduplicateExample::ttlExpiryAllowsReprocess);
+        passed &= UtilsExample.timed("asyncSupplyRunAndBatch", AsyncDeduplicateExample::asyncSupplyRunAndBatch);
+        passed &= UtilsExample.timed("dedupExecutesOnceOnly", AsyncDeduplicateExample::dedupExecutesOnceOnly);
+        passed &= UtilsExample.timed("ttlExpiryAllowsReprocess", AsyncDeduplicateExample::ttlExpiryAllowsReprocess);
         if (!passed) {
             log.info("[FAIL] Async/Deduplicate 存在失败场景");
-            System.exit(ExampleUtils.FAILURE);
+            System.exit(UtilsExample.FAILURE);
         }
         log.info("[PASS] Async/Deduplicate 全部场景通过");
-        System.exit(ExampleUtils.SUCCESS);
+        System.exit(UtilsExample.SUCCESS);
     }
 
 

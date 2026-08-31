@@ -9,7 +9,7 @@ import com.chua.common.support.task.flow.FlowNode;
 import com.chua.common.support.task.flow.FlowNodeRegistry;
 import com.chua.common.support.task.flow.FlowProps;
 import com.chua.common.support.task.flow.FlowStatus;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 import com.chua.flow.support.FlowEngine;
 import com.chua.flow.support.node.ConditionFlowNode;
 import com.chua.flow.support.node.EndFlowNode;
@@ -59,7 +59,7 @@ public class FlowExample {
         String type = parseType(args);
         boolean passed = new FlowExample().runTest(type);
         log.info("[FlowExample] self-test type=" + type + ", passed=" + passed);
-        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
+        System.exit(passed ? UtilsExample.SUCCESS : UtilsExample.FAILURE);
     }
 
     /**
@@ -478,7 +478,7 @@ public class FlowExample {
             instance.run();
             Object result = instance.getContext().getAttribute("spider.result");
             boolean ok = instance.isCompleted()
-                    && result instanceof List && !((List<?>) result).isEmpty();
+                    && result instanceof List<?> list && !list.isEmpty();
             printResult("spider 节点抓取完成", ok);
             return ok;
         } catch (Exception e) {

@@ -3,7 +3,7 @@ package com.chua.example.redis;
 import com.chua.common.support.spi.ServiceProvider;
 import com.chua.redis.support.command.RedisCommandHandler;
 import com.chua.redis.support.engine.RedisEngine;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 import lombok.extern.slf4j.Slf4j;
 
 /**

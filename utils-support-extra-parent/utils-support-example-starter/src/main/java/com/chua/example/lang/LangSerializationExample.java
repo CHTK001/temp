@@ -2,7 +2,7 @@ package com.chua.example.lang;
 
 import com.chua.common.support.lang.json.Json;
 import com.chua.common.support.lang.json.JsonObject;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 
 /**
  * Lang/Serialization 基础自检示例。
@@ -48,9 +48,9 @@ public final class LangSerializationExample {
 
         if (!passed) {
             System.out.println("[FAIL] LangSerializationExample 存在失败场景");
-            System.exit(ExampleUtils.FAILURE);
+            System.exit(UtilsExample.FAILURE);
         }
         System.out.println("[PASS] LangSerializationExample 全部场景通过");
-        System.exit(ExampleUtils.SUCCESS);
+        System.exit(UtilsExample.SUCCESS);
     }
 }

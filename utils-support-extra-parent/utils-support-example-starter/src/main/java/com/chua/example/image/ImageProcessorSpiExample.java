@@ -4,7 +4,7 @@ import com.chua.common.support.image.ImageProcessor;
 import com.chua.common.support.image.ImageProcessors;
 import com.chua.common.support.spi.ServiceProvider;
 import com.chua.common.support.utils.CommandLine;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.imageio.ImageIO;
@@ -51,7 +51,7 @@ import java.util.stream.Collectors;
 public class ImageProcessorSpiExample {
 
     /** 私有构造，防止实例化 */
-    public ImageProcessorSpiExample() { }
+    ImageProcessorSpiExample() { }
 
     /** 默认类型 */
     private static final String DEFAULT_TYPE = "all";
@@ -83,7 +83,7 @@ public class ImageProcessorSpiExample {
         ImageProcessorSpiExample example = new ImageProcessorSpiExample();
         boolean passed = example.runTest(type, input, output);
         log.info("[ImageProcessorSpiExample] self-test type={}, passed={}", type, passed);
-        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
+        System.exit(passed ? UtilsExample.SUCCESS : UtilsExample.FAILURE);
     }
 
     /** 运行Test */

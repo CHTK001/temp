@@ -4,7 +4,7 @@ import com.chua.common.support.task.loader.SingletonLoader;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.extern.slf4j.Slf4j;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 
 /**
  * 惰性加载器 {@link SingletonLoader} 全场景自检示例。
@@ -32,7 +32,7 @@ public final class LoaderExample {
         String second = loader.get();
         boolean ok = !loadedBefore && creations.get() == 1
                 && "instance".equals(first) && first == second && loader.isLoaded();
-        ExampleUtils.print("lazyCreateOnce", ok);
+        UtilsExample.print("lazyCreateOnce", ok);
         return ok;
     }
 
@@ -44,7 +44,7 @@ public final class LoaderExample {
         boolean unloaded = !loader.isLoaded();
         String recreated = loader.get();
         boolean ok = unloaded && creations.get() == 2 && "v2".equals(recreated);
-        ExampleUtils.print("resetTriggersRecreate", ok);
+        UtilsExample.print("resetTriggersRecreate", ok);
         return ok;
     }
 
@@ -70,17 +70,17 @@ public final class LoaderExample {
         }
         long distinct = java.util.Arrays.stream(results).distinct().count();
         boolean ok = creations.get() == 1 && distinct == 1;
-        ExampleUtils.print("concurrentGetCreatesOnce", ok);
+        UtilsExample.print("concurrentGetCreatesOnce", ok);
         return ok;
     }
 
     private static boolean nullSupplierRejected() {
         try {
             SingletonLoader.of(null);
-            ExampleUtils.print("nullSupplierRejected", false);
+            UtilsExample.print("nullSupplierRejected", false);
             return false;
         } catch (RuntimeException expected) {
-            ExampleUtils.print("nullSupplierRejected", true);
+            UtilsExample.print("nullSupplierRejected", true);
             return true;
         }
     }
@@ -88,19 +88,19 @@ public final class LoaderExample {
     public static void main(String[] args) {
         try {
             boolean passed = true;
-            passed &= ExampleUtils.timed("lazyCreateOnce", LoaderExample::lazyCreateOnce);
-            passed &= ExampleUtils.timed("resetTriggersRecreate", LoaderExample::resetTriggersRecreate);
-            passed &= ExampleUtils.timed("concurrentGetCreatesOnce", LoaderExample::concurrentGetCreatesOnce);
-            passed &= ExampleUtils.timed("nullSupplierRejected", LoaderExample::nullSupplierRejected);
+            passed &= UtilsExample.timed("lazyCreateOnce", LoaderExample::lazyCreateOnce);
+            passed &= UtilsExample.timed("resetTriggersRecreate", LoaderExample::resetTriggersRecreate);
+            passed &= UtilsExample.timed("concurrentGetCreatesOnce", LoaderExample::concurrentGetCreatesOnce);
+            passed &= UtilsExample.timed("nullSupplierRejected", LoaderExample::nullSupplierRejected);
             if (!passed) {
                 log.info("[FAIL] Loader 存在失败场景");
-System.exit(ExampleUtils.FAILURE);
+System.exit(UtilsExample.FAILURE);
             }
             log.info("[PASS] Loader 全部场景通过");
-            System.exit(ExampleUtils.SUCCESS);
+            System.exit(UtilsExample.SUCCESS);
         } catch (Exception e) {
             log.info("[FAIL] 未预期异常: " + e);
-            System.exit(ExampleUtils.FAILURE);
+            System.exit(UtilsExample.FAILURE);
         }
     }
 }

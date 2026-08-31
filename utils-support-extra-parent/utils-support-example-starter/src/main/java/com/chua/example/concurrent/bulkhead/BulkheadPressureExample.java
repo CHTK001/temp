@@ -2,7 +2,7 @@ package com.chua.example.concurrent.bulkhead;
 
 import com.chua.common.support.concurrent.bulkhead.BulkheadFlow;
 import com.chua.common.support.utils.ThreadUtils;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.CountDownLatch;
@@ -57,7 +57,7 @@ public final class BulkheadPressureExample {
 
         /** 验证：失败计数 >= 90 且 成功计数 <= 10 */
         boolean ok = failed.get() >= 90 && succeeded.get() <= 10;
-        ExampleUtils.print("extremeContention (fail=" + failed.get() + ", success=" + succeeded.get() + ")", ok);
+        UtilsExample.print("extremeContention (fail=" + failed.get() + ", success=" + succeeded.get() + ")", ok);
         return ok;
     }
 
@@ -94,7 +94,7 @@ public final class BulkheadPressureExample {
 
         /** 验证总计执行次数 = 9次 */
         boolean ok = counter.get() == 9;
-        ExampleUtils.print("alternatingPasses (count=" + counter.get() + ")", ok);
+        UtilsExample.print("alternatingPasses (count=" + counter.get() + ")", ok);
         return ok;
     }
 
@@ -127,7 +127,7 @@ public final class BulkheadPressureExample {
             Thread.currentThread().interrupt();
         }
             boolean ok = innerCounter.get() <= 1;
-            ExampleUtils.print("extremeReentry (innerCounter=" + innerCounter.get() + ")", ok);
+            UtilsExample.print("extremeReentry (innerCounter=" + innerCounter.get() + ")", ok);
         });
 
         try {
@@ -137,22 +137,22 @@ public final class BulkheadPressureExample {
         }
 
         boolean ok = !Thread.currentThread().isInterrupted();
-        ExampleUtils.print("extremeReentry (noException)", ok);
+        UtilsExample.print("extremeReentry (noException)", ok);
         return ok;
     }
 
     public static void main(String[] args) {
         boolean passed = true;
-        passed &= ExampleUtils.timed("extremeContention", BulkheadPressureExample::extremeContention);
-        passed &= ExampleUtils.timed("alternatingPasses", BulkheadPressureExample::alternatingPasses);
-        passed &= ExampleUtils.timed("extremeReentry", BulkheadPressureExample::extremeReentry);
+        passed &= UtilsExample.timed("extremeContention", BulkheadPressureExample::extremeContention);
+        passed &= UtilsExample.timed("alternatingPasses", BulkheadPressureExample::alternatingPasses);
+        passed &= UtilsExample.timed("extremeReentry", BulkheadPressureExample::extremeReentry);
         if (!passed) {
             
             System.out.println("[FAIL] Bulkhead压力测试存在失败场景");
             
-            System.exit(ExampleUtils.FAILURE);
+            System.exit(UtilsExample.FAILURE);
         }
         System.out.println("[PASS] Bulkhead压力测试全部通过");
-        System.exit(ExampleUtils.SUCCESS);
+        System.exit(UtilsExample.SUCCESS);
     }
 }

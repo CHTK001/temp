@@ -2,7 +2,7 @@ package com.chua.example.lang.document;
 
 import com.chua.common.support.lang.document.*;
 import com.chua.common.support.utils.CommandLine;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -103,7 +103,7 @@ public class DocumentExample {
         DocumentExample example = new DocumentExample();
         boolean passed = example.runTest(host, port, schema, version, user, password, outDir);
         log.info("[DocumentExample] 自检结果: passed={}", passed);
-        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
+        System.exit(passed ? UtilsExample.SUCCESS : UtilsExample.FAILURE);
     }
 
     /**

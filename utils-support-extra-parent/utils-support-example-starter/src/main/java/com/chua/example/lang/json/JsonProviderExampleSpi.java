@@ -23,7 +23,7 @@ import com.chua.gson.support.json.GsonJsonNode;
 import com.chua.gson.support.json.GsonJsonObject;
 import com.chua.gson.support.json.GsonJsonProvider;
 import lombok.extern.slf4j.Slf4j;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -38,19 +38,19 @@ import java.util.Map;
 /**
  * JsonProvider 统一门户自检示例（SPI 形式）— 演示 gson / fory / fastjson 三实现切换。
  *
- * <p>通过统一入口 {@code com.chua.example.runner.ExampleRunner --example=json-provider} 调用，
+ * <p>通过统一入口 {@code com.chua.example.runner.RunnerExample --example=json-provider} 调用，
  * 内部覆盖：SPI 发现、门面切换、统一门户注解（@JsonName / @JsonIgnore）、编解码往返、
  * ignores、通用 Type 反序列化、stream 入口与节点子类切换。</p>
  *
  * <h2>用法</h2>
  * <pre>
  *   # 全部实现（默认）
- *   java ExampleRunner --example=json-provider
+ *   java RunnerExample --example=json-provider
  *
  *   # 指定实现
- *   java ExampleRunner --example=json-provider --type=gson
- *   java ExampleRunner --example=json-provider --type=fory
- *   java ExampleRunner --example=json-provider --type=fastjson
+ *   java RunnerExample --example=json-provider --type=gson
+ *   java RunnerExample --example=json-provider --type=fory
+ *   java RunnerExample --example=json-provider --type=fastjson
  * </pre>
  *
  * @author CH
@@ -143,10 +143,10 @@ public class JsonProviderExampleSpi implements Example {
             JsonProvider byName = ServiceProvider.of(JsonProvider.class).getExtension(type);
             assertNotNull(byName, "应能通过 SPI 发现 " + type + " 实现");
             assertInstanceOf(provider.getClass(), byName, "SPI 返回类型应为 " + provider.getClass().getSimpleName());
-            ExampleUtils.pass();
+            UtilsExample.pass();
             return true;
         } catch (Exception e) {
-            ExampleUtils.fail("SPI 发现异常: " + e.getMessage());
+            UtilsExample.fail("SPI 发现异常: " + e.getMessage());
             return false;
         }
     }
@@ -157,10 +157,10 @@ public class JsonProviderExampleSpi implements Example {
         try {
             Json.setImplementation(provider);
             assertSame(provider, Json.getImplementation(), "门面实现应切换为 " + provider.getClass().getSimpleName());
-            ExampleUtils.pass();
+            UtilsExample.pass();
             return true;
         } catch (Exception e) {
-            ExampleUtils.fail("setImplementation 异常: " + e.getMessage());
+            UtilsExample.fail("setImplementation 异常: " + e.getMessage());
             return false;
         }
     }
@@ -183,10 +183,10 @@ public class JsonProviderExampleSpi implements Example {
             String pretty = Json.prettyFormat(new User("chua", "secret", 18));
             assertTrue(pretty.contains("user_name"), "prettyFormat 应输出 @JsonName 字段");
             assertFalse(pretty.contains("password"), "prettyFormat 也应排除 @JsonIgnore 字段");
-            ExampleUtils.pass();
+            UtilsExample.pass();
             return true;
         } catch (Exception e) {
-            ExampleUtils.fail("统一注解异常: " + e.getMessage());
+            UtilsExample.fail("统一注解异常: " + e.getMessage());
             return false;
         }
     }
@@ -208,10 +208,10 @@ public class JsonProviderExampleSpi implements Example {
 
             Map<String, Object> map = Json.fromJson("{\"a\":1}");
             assertEquals(1, ((Number) map.get("a")).intValue(), "fromJson 到 Map");
-            ExampleUtils.pass();
+            UtilsExample.pass();
             return true;
         } catch (Exception e) {
-            ExampleUtils.fail("往返异常: " + e.getMessage());
+            UtilsExample.fail("往返异常: " + e.getMessage());
             return false;
         }
     }
@@ -223,10 +223,10 @@ public class JsonProviderExampleSpi implements Example {
             String json = provider.toJson(new User("chua", "secret", 18), "age");
             assertFalse(json.contains("age"), "ignores 字段不应输出");
             assertTrue(json.contains("user_name"), "其余字段正常输出");
-            ExampleUtils.pass();
+            UtilsExample.pass();
             return true;
         } catch (Exception e) {
-            ExampleUtils.fail("ignores 异常: " + e.getMessage());
+            UtilsExample.fail("ignores 异常: " + e.getMessage());
             return false;
         }
     }
@@ -265,10 +265,10 @@ public class JsonProviderExampleSpi implements Example {
             assertNotNull(list, "Type 反序列化结果不应为 null");
             assertEquals(1, list.size(), "列表长度");
             assertEquals("a", list.get(0).get("name"), "元素字段");
-            ExampleUtils.pass();
+            UtilsExample.pass();
             return true;
         } catch (Exception e) {
-            ExampleUtils.fail("Type 反序列化异常: " + e.getMessage());
+            UtilsExample.fail("Type 反序列化异常: " + e.getMessage());
             return false;
         }
     }
@@ -289,10 +289,10 @@ public class JsonProviderExampleSpi implements Example {
             Writer writer = new java.io.StringWriter();
             provider.toJson(new User("chua", "secret", 18), writer);
             assertTrue(writer.toString().contains("user_name"), "toJson(Writer) 应输出 @JsonName 字段");
-            ExampleUtils.pass();
+            UtilsExample.pass();
             return true;
         } catch (Exception e) {
-            ExampleUtils.fail("stream 入口异常: " + e.getMessage());
+            UtilsExample.fail("stream 入口异常: " + e.getMessage());
             return false;
         }
     }
@@ -314,10 +314,10 @@ public class JsonProviderExampleSpi implements Example {
             assertInstanceOf(nodeCls, Json.parse("{\"a\":1}"), "Json.parse");
             assertInstanceOf(nodeCls, Json.build(), "Json.build");
             assertInstanceOf(nodeCls, Json.buildArray(), "Json.buildArray");
-            ExampleUtils.pass();
+            UtilsExample.pass();
             return true;
         } catch (Exception e) {
-            ExampleUtils.fail("节点工厂异常: " + e.getMessage());
+            UtilsExample.fail("节点工厂异常: " + e.getMessage());
             return false;
         }
     }

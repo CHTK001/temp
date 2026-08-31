@@ -4,7 +4,7 @@ import com.chua.common.support.utils.CommandLine;
 import com.chua.datalake.support.server.DatalakeServer;
 import com.chua.datalake.support.server.DatalakeServerBuilder;
 import lombok.extern.slf4j.Slf4j;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 
 /**
  * DatalakeServer 综合示例 — 启动 DatalakeServer 并验证生命周期。
@@ -47,7 +47,7 @@ public class DatalakeServerExample {
                 yield false;
             }
         };
-        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
+        System.exit(passed ? UtilsExample.SUCCESS : UtilsExample.FAILURE);
     }
 
     /**

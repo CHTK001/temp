@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author CH
  * @since 4.0.0
   *
- * <p>SPI 实现载体：SPI 服务实现载体，由 ExampleRunner 按类型加载，无独立 main 入口。</p>
+ * <p>SPI 实现载体：SPI 服务实现载体，由 RunnerExample 按类型加载，无独立 main 入口。</p>
  */
 @Extension("openai")
 @Slf4j

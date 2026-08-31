@@ -7,7 +7,7 @@ import com.chua.common.support.utils.ThreadUtils;
 import com.chua.example.network.perf.PerfReportExample;
 import com.chua.example.spi.Example;
 import lombok.extern.slf4j.Slf4j;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -27,14 +27,14 @@ import java.util.concurrent.atomic.LongAdder;
 /**
  * MqttServer 自检 + 性能基准（SPI 形式）。
  *
- * <p>通过 {@code ExampleRunner --example=mqtt-server} 调用。
+ * <p>通过 {@code RunnerExample --example=mqtt-server} 调用。
  * MQTT 服务器：基于原生 JDK ServerSocket 实现的 MQTT 3.1.1 嵌入式服务器，
  * 通过 {@code @Spi("mqtt")} 注册。</p>
  *
  * <h2>用法</h2>
  * <pre>
- *   java ExampleRunner --example=mqtt-server
- *   java ExampleRunner --example=mqtt-server --mode=perf
+ *   java RunnerExample --example=mqtt-server
+ *   java RunnerExample --example=mqtt-server --mode=perf
  * </pre>
  *
  * @author CH
@@ -135,10 +135,10 @@ public class MqttServerExampleSpi implements Example {
 
             assertTrue(received.await(5, TimeUnit.SECONDS), "应在 5s 内收到消息");
             assertEquals("mqtt-publish-test", receivedMsg[0], "消息体应一致");
-            ExampleUtils.pass();
+            UtilsExample.pass();
             return true;
         } catch (Exception e) {
-            ExampleUtils.fail("MQTT 自检异常: " + e.getMessage());
+            UtilsExample.fail("MQTT 自检异常: " + e.getMessage());
             return false;
         } finally {
             closeQuietly(client);
@@ -162,10 +162,10 @@ public class MqttServerExampleSpi implements Example {
             }
             PerfReportExample.printResult("mqtt-server PUBLISH bench/topic 压力", row.concurrency, row.connections, row.requestsPerConn,
                     payloadSize, row.total, row.errors, row.elapsedMs, row.sortedLatencyNs, 0L);
-            ExampleUtils.pass();
+            UtilsExample.pass();
             return true;
         } catch (Exception e) {
-            ExampleUtils.fail("PERF 异常: " + e.getMessage());
+            UtilsExample.fail("PERF 异常: " + e.getMessage());
             return false;
         } finally {
             closeQuietly(server);
@@ -195,7 +195,7 @@ public class MqttServerExampleSpi implements Example {
             return !rows.isEmpty();
         } catch (Exception e) {
             log.error("SWEEP 异常: {}", e.getMessage(), e);
-            ExampleUtils.fail("SWEEP 异常: " + e.getMessage());
+            UtilsExample.fail("SWEEP 异常: " + e.getMessage());
             return false;
         } finally {
             closeQuietly(server);

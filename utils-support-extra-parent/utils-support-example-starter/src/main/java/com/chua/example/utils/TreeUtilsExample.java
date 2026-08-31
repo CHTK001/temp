@@ -5,7 +5,7 @@ import com.chua.common.support.utils.TreeUtils;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -114,24 +114,24 @@ public final class TreeUtilsExample {
      */
     public static void main(String[] args) {
         var passed = true;
-        passed &= ExampleUtils.timed("buildNormalTree", TreeUtilsExample::buildNormalTree);
-        passed &= ExampleUtils.timed("buildOrphanBecomesRoot", TreeUtilsExample::buildOrphanBecomesRoot);
-        passed &= ExampleUtils.timed("buildRejectsDuplicateId", TreeUtilsExample::buildRejectsDuplicateId);
-        passed &= ExampleUtils.timed("buildDetectsCycle", TreeUtilsExample::buildDetectsCycle);
-        passed &= ExampleUtils.timed("findByIdAndFindNode", TreeUtilsExample::findByIdAndFindNode);
-        passed &= ExampleUtils.timed("directAndAllChildren", TreeUtilsExample::directAndAllChildren);
-        passed &= ExampleUtils.timed("parentChainAndParents", TreeUtilsExample::parentChainAndParents);
-        passed &= ExampleUtils.timed("siblingsExcludeSelf", TreeUtilsExample::siblingsExcludeSelf);
-        passed &= ExampleUtils.timed("rootSiblingsAreOtherRoots", TreeUtilsExample::rootSiblingsAreOtherRoots);
-        passed &= ExampleUtils.timed("sortTreeRecursive", TreeUtilsExample::sortTreeRecursive);
-        passed &= ExampleUtils.timed("flattenPreOrder", TreeUtilsExample::flattenPreOrder);
-        passed &= ExampleUtils.timed("depthCalculation", TreeUtilsExample::depthCalculation);
+        passed &= UtilsExample.timed("buildNormalTree", TreeUtilsExample::buildNormalTree);
+        passed &= UtilsExample.timed("buildOrphanBecomesRoot", TreeUtilsExample::buildOrphanBecomesRoot);
+        passed &= UtilsExample.timed("buildRejectsDuplicateId", TreeUtilsExample::buildRejectsDuplicateId);
+        passed &= UtilsExample.timed("buildDetectsCycle", TreeUtilsExample::buildDetectsCycle);
+        passed &= UtilsExample.timed("findByIdAndFindNode", TreeUtilsExample::findByIdAndFindNode);
+        passed &= UtilsExample.timed("directAndAllChildren", TreeUtilsExample::directAndAllChildren);
+        passed &= UtilsExample.timed("parentChainAndParents", TreeUtilsExample::parentChainAndParents);
+        passed &= UtilsExample.timed("siblingsExcludeSelf", TreeUtilsExample::siblingsExcludeSelf);
+        passed &= UtilsExample.timed("rootSiblingsAreOtherRoots", TreeUtilsExample::rootSiblingsAreOtherRoots);
+        passed &= UtilsExample.timed("sortTreeRecursive", TreeUtilsExample::sortTreeRecursive);
+        passed &= UtilsExample.timed("flattenPreOrder", TreeUtilsExample::flattenPreOrder);
+        passed &= UtilsExample.timed("depthCalculation", TreeUtilsExample::depthCalculation);
         if (!passed) {
             log.info("[FAIL] TreeUtils 存在失败场景");
-            System.exit(ExampleUtils.FAILURE);
+            System.exit(UtilsExample.FAILURE);
         }
         log.info("[PASS] TreeUtils 全部场景通过");
-        System.exit(ExampleUtils.SUCCESS);
+        System.exit(UtilsExample.SUCCESS);
     }
 
     // ==================== 场景 ====================
@@ -151,10 +151,10 @@ public final class TreeUtilsExample {
                     && "2".equals(roots.getFirst().children.get(0).id)
                     && "3".equals(roots.getFirst().children.get(1).id)
                     && roots.getFirst().children.get(0).children.size() == 2;
-            ExampleUtils.print("buildNormalTree", ok);
+            UtilsExample.print("buildNormalTree", ok);
             return ok;
         } catch (Exception e) {
-            return ExampleUtils.fail("buildNormalTree", e);
+            return UtilsExample.fail("buildNormalTree", e);
         }
     }
 
@@ -171,10 +171,10 @@ public final class TreeUtilsExample {
             List<Node> roots = TreeUtils.build(flat, idOf(), pidOf(),
                     (n, kids) -> n.children = kids);
             var ok = roots.size() == 2;
-            ExampleUtils.print("buildOrphanBecomesRoot", ok);
+            UtilsExample.print("buildOrphanBecomesRoot", ok);
             return ok;
         } catch (Exception e) {
-            return ExampleUtils.fail("buildOrphanBecomesRoot", e);
+            return UtilsExample.fail("buildOrphanBecomesRoot", e);
         }
     }
 
@@ -189,13 +189,13 @@ public final class TreeUtilsExample {
             flat.add(new Node("dup", null));
             flat.add(new Node("dup", null));
             TreeUtils.build(flat, idOf(), pidOf(), (n, kids) -> n.children = kids);
-            return ExampleUtils.fail("buildRejectsDuplicateId", "未拒绝重复 ID");
+            return UtilsExample.fail("buildRejectsDuplicateId", "未拒绝重复 ID");
         } catch (IllegalArgumentException expected) {
             boolean ok = expected.getMessage().contains("重复");
-            ExampleUtils.print("buildRejectsDuplicateId", ok);
+            UtilsExample.print("buildRejectsDuplicateId", ok);
             return ok;
         } catch (Exception e) {
-            return ExampleUtils.fail("buildRejectsDuplicateId", e);
+            return UtilsExample.fail("buildRejectsDuplicateId", e);
         }
     }
 
@@ -211,13 +211,13 @@ public final class TreeUtilsExample {
             flat.add(new Node("b", "c"));
             flat.add(new Node("c", "b"));
             TreeUtils.build(flat, idOf(), pidOf(), (n, kids) -> n.children = kids);
-            return ExampleUtils.fail("buildDetectsCycle", "未检测到循环引用");
+            return UtilsExample.fail("buildDetectsCycle", "未检测到循环引用");
         } catch (IllegalStateException expected) {
             boolean ok = expected.getMessage().contains("循环引用");
-            ExampleUtils.print("buildDetectsCycle", ok);
+            UtilsExample.print("buildDetectsCycle", ok);
             return ok;
         } catch (Exception e) {
-            return ExampleUtils.fail("buildDetectsCycle", e);
+            return UtilsExample.fail("buildDetectsCycle", e);
         }
     }
 
@@ -236,10 +236,10 @@ public final class TreeUtilsExample {
             boolean ok = hitById != null && "5".equals(hitById.id)
                     && miss == null
                     && firstWithoutKids != null && "4".equals(firstWithoutKids.id);
-            ExampleUtils.print("findByIdAndFindNode", ok);
+            UtilsExample.print("findByIdAndFindNode", ok);
             return ok;
         } catch (Exception e) {
-            return ExampleUtils.fail("findByIdAndFindNode", e);
+            return UtilsExample.fail("findByIdAndFindNode", e);
         }
     }
 
@@ -259,10 +259,10 @@ public final class TreeUtilsExample {
             var ok = direct.size() == 2
                     && all.size() == 5
                     && leafDescendants.size() == 2;
-            ExampleUtils.print("directAndAllChildren", ok);
+            UtilsExample.print("directAndAllChildren", ok);
             return ok;
         } catch (Exception e) {
-            return ExampleUtils.fail("directAndAllChildren", e);
+            return UtilsExample.fail("directAndAllChildren", e);
         }
     }
 
@@ -282,10 +282,10 @@ public final class TreeUtilsExample {
             var ok = chainIds.equals(List.of("1", "2", "5"))
                     && parentIds.equals(List.of("2", "1"))
                     && TreeUtils.getParents(roots, roots.getFirst(), kidsOf()).isEmpty();
-            ExampleUtils.print("parentChainAndParents", ok);
+            UtilsExample.print("parentChainAndParents", ok);
             return ok;
         } catch (Exception e) {
-            return ExampleUtils.fail("parentChainAndParents", e);
+            return UtilsExample.fail("parentChainAndParents", e);
         }
     }
 
@@ -301,10 +301,10 @@ public final class TreeUtilsExample {
             List<Node> siblings = TreeUtils.getSiblings(roots, node5, kidsOf());
             var ids = siblings.stream().map(n -> n.id).toList();
             var ok = ids.equals(List.of("4"));
-            ExampleUtils.print("siblingsExcludeSelf", ok);
+            UtilsExample.print("siblingsExcludeSelf", ok);
             return ok;
         } catch (Exception e) {
-            return ExampleUtils.fail("siblingsExcludeSelf", e);
+            return UtilsExample.fail("siblingsExcludeSelf", e);
         }
     }
 
@@ -323,10 +323,10 @@ public final class TreeUtilsExample {
             List<Node> siblings = TreeUtils.getSiblings(roots, roots.getFirst(), kidsOf());
             var ids = siblings.stream().map(n -> n.id).toList();
             var ok = ids.equals(List.of("r2"));
-            ExampleUtils.print("rootSiblingsAreOtherRoots", ok);
+            UtilsExample.print("rootSiblingsAreOtherRoots", ok);
             return ok;
         } catch (Exception e) {
-            return ExampleUtils.fail("rootSiblingsAreOtherRoots", e);
+            return UtilsExample.fail("rootSiblingsAreOtherRoots", e);
         }
     }
 
@@ -348,10 +348,10 @@ public final class TreeUtilsExample {
             var ok = rootIds.equals(List.of("1"))
                     && kidIds.equals(List.of("3", "2"))
                     && grandKidIds.equals(List.of("5", "4"));
-            ExampleUtils.print("sortTreeRecursive", ok);
+            UtilsExample.print("sortTreeRecursive", ok);
             return ok;
         } catch (Exception e) {
-            return ExampleUtils.fail("sortTreeRecursive", e);
+            return UtilsExample.fail("sortTreeRecursive", e);
         }
     }
 
@@ -366,10 +366,10 @@ public final class TreeUtilsExample {
             List<Node> flat = TreeUtils.flatten(roots, kidsOf());
             var ids = flat.stream().map(n -> n.id).toList();
             var ok = ids.equals(List.of("1", "2", "4", "5", "3", "6"));
-            ExampleUtils.print("flattenPreOrder (" + ids + ")", ok);
+            UtilsExample.print("flattenPreOrder (" + ids + ")", ok);
             return ok;
         } catch (Exception e) {
-            return ExampleUtils.fail("flattenPreOrder", e);
+            return UtilsExample.fail("flattenPreOrder", e);
         }
     }
 
@@ -388,10 +388,10 @@ public final class TreeUtilsExample {
             int dLeaf = TreeUtils.getDepth(roots, node5, kidsOf());
             int dMiss = TreeUtils.getDepth(roots, new Node("ghost", null), kidsOf());
             var ok = dRoot == 0 && dMid == 1 && dLeaf == 2 && dMiss == -1;
-            ExampleUtils.print("depthCalculation", ok);
+            UtilsExample.print("depthCalculation", ok);
             return ok;
         } catch (Exception e) {
-            return ExampleUtils.fail("depthCalculation", e);
+            return UtilsExample.fail("depthCalculation", e);
         }
     }
 

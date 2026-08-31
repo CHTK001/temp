@@ -2,7 +2,7 @@ package com.chua.example.concurrent.bulkhead;
 
 import com.chua.common.support.concurrent.bulkhead.BulkheadFlow;
 import com.chua.common.support.utils.ThreadUtils;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -25,7 +25,7 @@ public final class BulkheadExample {
         Integer r = BulkheadFlow.of("normal-test").maxConcurrent(2)
                 .execute(counter::incrementAndGet);
         var ok = r != null && r == 1;
-        ExampleUtils.print("normalExecute", ok);
+        UtilsExample.print("normalExecute", ok);
         return ok;
     }
 
@@ -39,7 +39,7 @@ public final class BulkheadExample {
         block.countDown();
         ThreadUtils.sleepMillisecondsQuietly(100);
         var ok = "overloaded".equals(result);
-        ExampleUtils.print("fallbackOnOverload", ok);
+        UtilsExample.print("fallbackOnOverload", ok);
         return ok;
     }
 
@@ -53,15 +53,15 @@ public final class BulkheadExample {
 
     public static void main(String[] args) {
         boolean passed = true;
-        passed &= ExampleUtils.timed("normalExecute", BulkheadExample::normalExecute);
-        passed &= ExampleUtils.timed("fallbackOnOverload", BulkheadExample::fallbackOnOverload);
+        passed &= UtilsExample.timed("normalExecute", BulkheadExample::normalExecute);
+        passed &= UtilsExample.timed("fallbackOnOverload", BulkheadExample::fallbackOnOverload);
         if (!passed) {
             
             System.out.println("[FAIL] Bulkhead 瀛樺湪澶辫触鍦烘櫙");
             
-            System.exit(ExampleUtils.FAILURE);
+            System.exit(UtilsExample.FAILURE);
         }
         System.out.println("[PASS] Bulkhead 鍏ㄩ儴鍦烘櫙閫氳繃");
-        System.exit(ExampleUtils.SUCCESS);
+        System.exit(UtilsExample.SUCCESS);
     }
 }

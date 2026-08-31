@@ -4,7 +4,7 @@ package com.chua.example.ai.vision;
 import com.chua.deeplearning.support.image.ImageDetector;
 import com.chua.deeplearning.support.model.DetectionInfo;
 import com.chua.deeplearning.support.utils.ImageUtils;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -50,7 +50,7 @@ public class MultiModelBatchDrawExample {
     public static void main(String[] args) throws Exception {
         String input = args.length > 0 ? args[0] : DEFAULT_INPUT;
         boolean passed = runTest(Path.of(input), Path.of(DEFAULT_OUTPUT_ROOT));
-        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
+        System.exit(passed ? UtilsExample.SUCCESS : UtilsExample.FAILURE);
     }
 
     public static boolean runTest(Path inputDir, Path outputRoot) throws Exception {

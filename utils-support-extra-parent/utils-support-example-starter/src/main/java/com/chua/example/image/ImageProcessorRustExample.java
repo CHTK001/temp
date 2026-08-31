@@ -5,7 +5,7 @@ import com.chua.example.spi.Example;
 import java.util.Map;
 
 /**
- * ImageProcessorSpiExample SPI 适配器 — 通过 {@link com.chua.example.runner.ExampleRunner} 调度。
+ * ImageProcessorSpiExample SPI 适配器 — 通过 {@link com.chua.example.runner.RunnerExample} 调度。
  *
  * <p>转发到 {@link ImageProcessorSpiExample#runTest(String)} 保持行为一致。</p>
  *

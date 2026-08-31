@@ -15,7 +15,7 @@ import com.chua.starter.datasync.mapping.DefaultDataSyncMapping;
 import com.chua.starter.datasync.model.DataSyncMapping;
 import lombok.extern.slf4j.Slf4j;
 import com.chua.example.spi.Example;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
@@ -73,7 +73,7 @@ public class DataSyncExample implements Example {
         printResult("总结果", passed);
         System.out.flush();
         System.err.flush();
-        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
+        System.exit(passed ? UtilsExample.SUCCESS : UtilsExample.FAILURE);
     }
 
     /**

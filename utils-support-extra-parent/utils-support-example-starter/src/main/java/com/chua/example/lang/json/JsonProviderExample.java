@@ -2,7 +2,7 @@ package com.chua.example.lang.json;
 
 import com.chua.common.support.spi.ServiceProvider;
 import com.chua.example.spi.Example;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -41,7 +41,7 @@ public final class JsonProviderExample {
      * @param args 支持 --type=gson|fory|fastjson|all（默认 all）
      */
     public static void main(String[] args) {
-        Map<String, String> params = ExampleUtils.parseArgs(args);
+        Map<String, String> params = UtilsExample.parseArgs(args);
         Example example = discover("json-provider");
         if (example == null || !"json".equals(example.module())) {
             log.info("[FAIL] spi-discovery: getExtension(json-provider) 应命中且 module=json");

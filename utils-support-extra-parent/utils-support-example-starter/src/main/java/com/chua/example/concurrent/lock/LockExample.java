@@ -5,7 +5,7 @@ import com.chua.common.support.utils.ThreadUtils;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 
 /**
  * 分布式锁 {@link LockFlow} 全场景自检示例。
@@ -23,7 +23,7 @@ public final class LockExample {
     private static boolean tryLockReturnsTrue() {
         var lock = LockFlow.of("tl-test").lockType("local");
         boolean acquired = lock.tryLock();
-        ExampleUtils.print("tryLockReturnsTrue", acquired);
+        UtilsExample.print("tryLockReturnsTrue", acquired);
         return acquired;
     }
 
@@ -33,7 +33,7 @@ public final class LockExample {
             LockFlow.of("ex-lock-test").lockType("local")
                     .execute(() -> counter.incrementAndGet());
             var ok = counter.get() == 1;
-            ExampleUtils.print("executeHoldsLock", ok);
+            UtilsExample.print("executeHoldsLock", ok);
             return ok;
         } catch (Exception e) {
             System.out.println("[FAIL] executeHoldsLock 异常: " + e);
@@ -47,7 +47,7 @@ public final class LockExample {
             var lock = LockFlow.of("fb-lock").lockType("local");
             lock.execute(() -> counter.incrementAndGet());
             var ok = counter.get() == 1;
-            ExampleUtils.print("fallbackOnUnresolvable", ok);
+            UtilsExample.print("fallbackOnUnresolvable", ok);
             return ok;
         } catch (Exception e) {
             System.out.println("[FAIL] fallbackOnUnresolvable 异常: " + e);
@@ -74,23 +74,23 @@ public final class LockExample {
             Thread.currentThread().interrupt();
         }
         var ok = successes.get() == 1;
-        ExampleUtils.print("concurrentTryLockContention", ok);
+        UtilsExample.print("concurrentTryLockContention", ok);
         return ok;
     }
 
     public static void main(String[] args) {
         boolean passed = true;
-        passed &= ExampleUtils.timed("tryLockReturnsTrue", LockExample::tryLockReturnsTrue);
-        passed &= ExampleUtils.timed("executeHoldsLock", LockExample::executeHoldsLock);
-        passed &= ExampleUtils.timed("fallbackOnUnresolvable", LockExample::fallbackOnUnresolvable);
-        passed &= ExampleUtils.timed("concurrentTryLockContention", LockExample::concurrentTryLockContention);
+        passed &= UtilsExample.timed("tryLockReturnsTrue", LockExample::tryLockReturnsTrue);
+        passed &= UtilsExample.timed("executeHoldsLock", LockExample::executeHoldsLock);
+        passed &= UtilsExample.timed("fallbackOnUnresolvable", LockExample::fallbackOnUnresolvable);
+        passed &= UtilsExample.timed("concurrentTryLockContention", LockExample::concurrentTryLockContention);
         if (!passed) {
             
             System.out.println("[FAIL] Lock 存在失败场景");
             
-            System.exit(ExampleUtils.FAILURE);
+            System.exit(UtilsExample.FAILURE);
         }
         System.out.println("[PASS] Lock 全部场景通过");
-        System.exit(ExampleUtils.SUCCESS);
+        System.exit(UtilsExample.SUCCESS);
     }
 }

@@ -4,7 +4,7 @@ import com.chua.common.support.concurrent.offset.OffsetFlow;
 import com.chua.common.support.concurrent.offset.OffsetStore;
 import com.chua.common.support.spi.ServiceProvider;
 import com.chua.common.support.utils.CommandLine;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Path;
@@ -78,7 +78,7 @@ public class OffsetFlowExample {
         OffsetFlowExample example = new OffsetFlowExample();
         boolean passed = example.runTest(type);
         log.info("[OffsetFlowExample] self-test type={}, passed={}", type, passed);
-        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
+        System.exit(passed ? UtilsExample.SUCCESS : UtilsExample.FAILURE);
     }
 
     /**

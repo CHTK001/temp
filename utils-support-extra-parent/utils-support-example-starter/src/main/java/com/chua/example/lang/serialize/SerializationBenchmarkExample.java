@@ -3,7 +3,7 @@ package com.chua.example.lang.serialize;
 import com.chua.common.support.base.serialize.Serialization;
 import com.chua.common.support.lang.json.JacksonJsonProvider;
 import com.chua.common.support.lang.json.JsonProvider;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 import com.chua.common.support.serialize.JavaSerializer;
 import com.chua.common.support.serialize.JsonSerializer;
 import com.chua.common.support.serialize.Serializer;
@@ -28,7 +28,7 @@ import java.util.function.Function;
 /**
  * 全部序列化实现性能基准（SPI 形式）— 覆盖当前 classpath 上全部序列化实现。
  *
- * <p>通过统一入口 {@code com.chua.example.runner.ExampleRunner --example=serialization-bench} 调用。
+ * <p>通过统一入口 {@code com.chua.example.runner.RunnerExample --example=serialization-bench} 调用。
  * 覆盖三类实现：</p>
  * <ul>
  *   <li><b>JSON 文本</b>（{@link JsonProvider} 门面实现）：jackson / gson / fastjson / fory-json</li>
@@ -42,13 +42,13 @@ import java.util.function.Function;
  * <h2>用法</h2>
  * <pre>
  *   # 全部实现（默认）
- *   java ExampleRunner --example=serialization-bench
+ *   java RunnerExample --example=serialization-bench
  *
  *   # 指定实现（按名称模糊匹配，如 jackson / gson / fastjson / fory / fury / protobuf / smile / java / json）
- *   java ExampleRunner --example=serialization-bench --impl=fury
+ *   java RunnerExample --example=serialization-bench --impl=fury
  *
  *   # 调整测量参数
- *   java ExampleRunner --example=serialization-bench --warmup-ms=500 --measure-ms=1000 --rounds=3 --list-size=100
+ *   java RunnerExample --example=serialization-bench --warmup-ms=500 --measure-ms=1000 --rounds=3 --list-size=100
  * </pre>
  *
  * @author CH
@@ -617,7 +617,7 @@ public class SerializationBenchmarkExample implements Example {
      * 独立入口：支持 --impl=xxx --warmup-ms=N --measure-ms=N --rounds=N --list-size=N 参数。
      */
     public static void main(String[] args) {
-        Map<String, String> parsed = ExampleUtils.parseArgs(args);
+        Map<String, String> parsed = UtilsExample.parseArgs(args);
         boolean passed = new SerializationBenchmarkExample().run(parsed);
         log.info("[SerializationBenchmarkExample] impl={}, passed={}",
                 parsed.getOrDefault("impl", "all"), passed);

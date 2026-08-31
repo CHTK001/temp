@@ -1,7 +1,7 @@
 package com.chua.example.ocr;
 
 import lombok.extern.slf4j.Slf4j;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 import com.chua.deeplearning.support.ocr.OcrPipeline;
 import com.chua.deeplearning.support.ocr.OcrPipelineDiskCallback;
 import com.chua.deeplearning.support.ocr.DrawerPipeline;
@@ -30,7 +30,7 @@ public class OcrPipelineExample {
     /** Main */
     public static void main(String[] args) throws Exception {
         boolean passed = runTest();
-        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
+        System.exit(passed ? UtilsExample.SUCCESS : UtilsExample.FAILURE);
     }
 
     /** 运行Test */

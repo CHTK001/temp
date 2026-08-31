@@ -4,7 +4,7 @@ import com.chua.common.support.concurrent.backoff.provider.ExponentialBackoffPro
 import com.chua.common.support.concurrent.backoff.provider.FixedBackoffProvider;
 import com.chua.common.support.concurrent.backoff.provider.FibonacciBackoffProvider;
 import com.chua.common.support.concurrent.backoff.provider.LinearBackoffProvider;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 
 /**
  * 退避策略 {@link com.chua.common.support.concurrent.backoff.BackoffProvider} 全场景自检示例。
@@ -23,7 +23,7 @@ public final class BackoffProviderExample {
     private static boolean fixedBackoff() {
         var p = new FixedBackoffProvider(100L);
         var ok = p.nextDelay(0) == 100L && p.nextDelay(5) == 100L && p.nextDelay(99) == 100L;
-        ExampleUtils.print("fixedBackoff", ok);
+        UtilsExample.print("fixedBackoff", ok);
         return ok;
     }
 
@@ -33,7 +33,7 @@ public final class BackoffProviderExample {
         var ok = p.nextDelay(0) == 50L
                 && p.nextDelay(1) == 60L
                 && p.nextDelay(2) == 70L;
-        ExampleUtils.print("linearBackoff", ok);
+        UtilsExample.print("linearBackoff", ok);
         return ok;
     }
 
@@ -45,7 +45,7 @@ public final class BackoffProviderExample {
                 && p.nextDelay(2) == 20L
                 && p.nextDelay(3) == 30L
                 && p.nextDelay(4) == 50L;
-        ExampleUtils.print("fibonacciBackoff", ok);
+        UtilsExample.print("fibonacciBackoff", ok);
         return ok;
     }
 
@@ -55,7 +55,7 @@ public final class BackoffProviderExample {
         var ok = p.nextDelay(0) == 100L
                 && p.nextDelay(1) == 200L
                 && p.nextDelay(2) == 400L;
-        ExampleUtils.print("exponentialBackoff", ok);
+        UtilsExample.print("exponentialBackoff", ok);
         return ok;
     }
 
@@ -81,7 +81,7 @@ public final class BackoffProviderExample {
         } catch (Exception e) {
             allOk = false;
         }
-        ExampleUtils.print("beyondTestedRange", allOk);
+        UtilsExample.print("beyondTestedRange", allOk);
         return allOk;
     }
 
@@ -97,23 +97,23 @@ public final class BackoffProviderExample {
         } catch (Exception e) {
             ok = false;
         }
-        ExampleUtils.print("allProvidersNoCrash", ok);
+        UtilsExample.print("allProvidersNoCrash", ok);
         return ok;
     }
 
     public static void main(String[] args) {
         boolean passed = true;
-        passed &= ExampleUtils.timed("fixedBackoff", BackoffProviderExample::fixedBackoff);
-        passed &= ExampleUtils.timed("linearBackoff", BackoffProviderExample::linearBackoff);
-        passed &= ExampleUtils.timed("fibonacciBackoff", BackoffProviderExample::fibonacciBackoff);
-        passed &= ExampleUtils.timed("exponentialBackoff", BackoffProviderExample::exponentialBackoff);
-        passed &= ExampleUtils.timed("beyondTestedRange", BackoffProviderExample::beyondTestedRange);
-        passed &= ExampleUtils.timed("allProvidersNoCrash", BackoffProviderExample::allProvidersNoCrash);
+        passed &= UtilsExample.timed("fixedBackoff", BackoffProviderExample::fixedBackoff);
+        passed &= UtilsExample.timed("linearBackoff", BackoffProviderExample::linearBackoff);
+        passed &= UtilsExample.timed("fibonacciBackoff", BackoffProviderExample::fibonacciBackoff);
+        passed &= UtilsExample.timed("exponentialBackoff", BackoffProviderExample::exponentialBackoff);
+        passed &= UtilsExample.timed("beyondTestedRange", BackoffProviderExample::beyondTestedRange);
+        passed &= UtilsExample.timed("allProvidersNoCrash", BackoffProviderExample::allProvidersNoCrash);
         if (!passed) {
             System.out.println("[FAIL] BackoffProvider 存在失败场景");
-            System.exit(ExampleUtils.FAILURE);
+            System.exit(UtilsExample.FAILURE);
         }
         System.out.println("[PASS] BackoffProvider 全部场景通过");
-        System.exit(ExampleUtils.SUCCESS);
+        System.exit(UtilsExample.SUCCESS);
     }
 }

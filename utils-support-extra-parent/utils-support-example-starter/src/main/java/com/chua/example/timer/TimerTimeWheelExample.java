@@ -9,7 +9,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.extern.slf4j.Slf4j;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 
 /**
  * 哈希时间轮 {@link Timer} / {@link TimerTask} 全场景自检示例。
@@ -53,22 +53,22 @@ public final class TimerTimeWheelExample {
      */
     public static void main(String[] args) {
         var passed = true;
-        passed &= ExampleUtils.timed("singleShotFiresOnTime", TimerTimeWheelExample::singleShotFiresOnTime);
-        passed &= ExampleUtils.timed("multipleTasksAllFire", TimerTimeWheelExample::multipleTasksAllFire);
-        passed &= ExampleUtils.timed("periodicFiresThenCancelStops", TimerTimeWheelExample::periodicFiresThenCancelStops);
-        passed &= ExampleUtils.timed("cancelPreventsExecution", TimerTimeWheelExample::cancelPreventsExecution);
-        passed &= ExampleUtils.timed("taskExceptionDoesNotKillWheel", TimerTimeWheelExample::taskExceptionDoesNotKillWheel);
-        passed &= ExampleUtils.timed("shutdownStopsScheduling", TimerTimeWheelExample::shutdownStopsScheduling);
-        passed &= ExampleUtils.timed("tickCountProgresses", TimerTimeWheelExample::tickCountProgresses);
-        passed &= ExampleUtils.timed("slowTaskDoesNotBlockWheel", TimerTimeWheelExample::slowTaskDoesNotBlockWheel);
-        passed &= ExampleUtils.timed("cancelInterruptsRunningTask", TimerTimeWheelExample::cancelInterruptsRunningTask);
-        passed &= ExampleUtils.timed("taskCountMatchesScheduled", TimerTimeWheelExample::taskCountMatchesScheduled);
+        passed &= UtilsExample.timed("singleShotFiresOnTime", TimerTimeWheelExample::singleShotFiresOnTime);
+        passed &= UtilsExample.timed("multipleTasksAllFire", TimerTimeWheelExample::multipleTasksAllFire);
+        passed &= UtilsExample.timed("periodicFiresThenCancelStops", TimerTimeWheelExample::periodicFiresThenCancelStops);
+        passed &= UtilsExample.timed("cancelPreventsExecution", TimerTimeWheelExample::cancelPreventsExecution);
+        passed &= UtilsExample.timed("taskExceptionDoesNotKillWheel", TimerTimeWheelExample::taskExceptionDoesNotKillWheel);
+        passed &= UtilsExample.timed("shutdownStopsScheduling", TimerTimeWheelExample::shutdownStopsScheduling);
+        passed &= UtilsExample.timed("tickCountProgresses", TimerTimeWheelExample::tickCountProgresses);
+        passed &= UtilsExample.timed("slowTaskDoesNotBlockWheel", TimerTimeWheelExample::slowTaskDoesNotBlockWheel);
+        passed &= UtilsExample.timed("cancelInterruptsRunningTask", TimerTimeWheelExample::cancelInterruptsRunningTask);
+        passed &= UtilsExample.timed("taskCountMatchesScheduled", TimerTimeWheelExample::taskCountMatchesScheduled);
         if (!passed) {
             log.info("[FAIL] TimeWheel 存在失败场景");
-            System.exit(ExampleUtils.FAILURE);
+            System.exit(UtilsExample.FAILURE);
         }
         log.info("[PASS] TimeWheel 全部场景通过");
-        System.exit(ExampleUtils.SUCCESS);
+        System.exit(UtilsExample.SUCCESS);
     }
 
     /**
@@ -118,7 +118,7 @@ public final class TimerTimeWheelExample {
         try {
             wheel.schedule(fired::countDown, 100, TimeUnit.MILLISECONDS);
             var ok = await(fired, 2000);
-            ExampleUtils.print("singleShotFiresOnTime", ok);
+            UtilsExample.print("singleShotFiresOnTime", ok);
             return ok;
         } finally {
             wheel.shutdown();
@@ -143,7 +143,7 @@ public final class TimerTimeWheelExample {
                 }, delay, TimeUnit.MILLISECONDS);
             }
             var ok = await(allDone, 2000) && counter.get() == 3;
-            ExampleUtils.print("multipleTasksAllFire (" + counter.get() + "/3)", ok);
+            UtilsExample.print("multipleTasksAllFire (" + counter.get() + "/3)", ok);
             return ok;
         } finally {
             wheel.shutdown();
@@ -165,7 +165,7 @@ public final class TimerTimeWheelExample {
             sleepMillis(600);
             int countBeforeCancel = counter.get();
             if (countBeforeCancel < 3) {
-                ExampleUtils.print("periodicFiresThenCancelStops (触发不足: " + countBeforeCancel + ")", false);
+                UtilsExample.print("periodicFiresThenCancelStops (触发不足: " + countBeforeCancel + ")", false);
                 return false;
             }
             wheel.cancel(periodic);
@@ -173,7 +173,7 @@ public final class TimerTimeWheelExample {
             sleepMillis(400);
             int countAfterWait = counter.get();
             var ok = countAfterWait == countAtCancel || countAfterWait == countAtCancel + 1;
-            ExampleUtils.print("periodicFiresThenCancelStops (before=" + countBeforeCancel
+            UtilsExample.print("periodicFiresThenCancelStops (before=" + countBeforeCancel
                     + " after=" + countAfterWait + ")", ok);
             return ok;
         } finally {
@@ -195,7 +195,7 @@ public final class TimerTimeWheelExample {
             wheel.cancel(doomed);
             sleepMillis(500);
             var ok = counter.get() == 0 && doomed.isCancelled();
-            ExampleUtils.print("cancelPreventsExecution", ok);
+            UtilsExample.print("cancelPreventsExecution", ok);
             return ok;
         } finally {
             wheel.shutdown();
@@ -218,7 +218,7 @@ public final class TimerTimeWheelExample {
             sleepMillis(120);
             wheel.schedule(survivor::countDown, 50, TimeUnit.MILLISECONDS);
             var ok = await(survivor, 2000) && wheel.isRunning();
-            ExampleUtils.print("taskExceptionDoesNotKillWheel", ok);
+            UtilsExample.print("taskExceptionDoesNotKillWheel", ok);
             return ok;
         } finally {
             wheel.shutdown();
@@ -236,7 +236,7 @@ public final class TimerTimeWheelExample {
         wheel.shutdown();
         TimerTask rejected = wheel.schedule(() -> { }, 10_000, TimeUnit.MILLISECONDS);
         var ok = !wheel.isRunning() && rejected == null;
-        ExampleUtils.print("shutdownStopsScheduling", ok);
+        UtilsExample.print("shutdownStopsScheduling", ok);
         return ok;
     }
 
@@ -252,7 +252,7 @@ public final class TimerTimeWheelExample {
             sleepMillis(300);
             long after = wheel.getTickCount();
             var ok = after > before;
-            ExampleUtils.print("tickCountProgresses (" + before + "->" + after + ")", ok);
+            UtilsExample.print("tickCountProgresses (" + before + "->" + after + ")", ok);
             return ok;
         } finally {
             wheel.shutdown();
@@ -274,7 +274,7 @@ public final class TimerTimeWheelExample {
             wheel.schedule(shortFired::countDown, 40, TimeUnit.MILLISECONDS);
             // 高负载环境下 tick 可能变慢，窗口给足裕量但仍小于阻塞路径的 450ms 下限
             var ok = await(shortFired, 800);
-            ExampleUtils.print("slowTaskDoesNotBlockWheel", ok);
+            UtilsExample.print("slowTaskDoesNotBlockWheel", ok);
             return ok;
         } finally {
             wheel.shutdown();
@@ -295,7 +295,7 @@ public final class TimerTimeWheelExample {
                 started.countDown();
             }, 30, TimeUnit.MILLISECONDS);
             if (!await(started, 2000)) {
-                ExampleUtils.print("cancelInterruptsRunningTask (未启动)", false);
+                UtilsExample.print("cancelInterruptsRunningTask (未启动)", false);
                 return false;
             }
             wheel.cancel(task);
@@ -304,7 +304,7 @@ public final class TimerTimeWheelExample {
                 sleepMillis(100);
             }
             var ok = interruptedFlag.get() > 0 && task.isCancelled();
-            ExampleUtils.print("cancelInterruptsRunningTask", ok);
+            UtilsExample.print("cancelInterruptsRunningTask", ok);
             return ok;
         } finally {
             wheel.shutdown();
@@ -326,7 +326,7 @@ public final class TimerTimeWheelExample {
             sleepMillis(900);
             int afterFire = wheel.getTaskCount();
             var ok = pending == 5 && afterFire == 0;
-            ExampleUtils.print("taskCountMatchesScheduled (pending=" + pending + " after=" + afterFire + ")", ok);
+            UtilsExample.print("taskCountMatchesScheduled (pending=" + pending + " after=" + afterFire + ")", ok);
             return ok;
         } finally {
             wheel.shutdown();

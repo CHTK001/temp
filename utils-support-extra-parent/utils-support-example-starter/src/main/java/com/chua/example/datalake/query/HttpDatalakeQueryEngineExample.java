@@ -3,7 +3,7 @@ package com.chua.example.datalake.query;
 import com.chua.common.support.utils.CommandLine;
 import com.chua.datalake.support.engine.HttpDatalakeQueryEngine;
 import lombok.extern.slf4j.Slf4j;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 
 /**
  * HttpDatalakeQueryEngine 综合示例 — 演示查询 Engine 的实例化与基本调用。
@@ -46,7 +46,7 @@ public class HttpDatalakeQueryEngineExample {
                 yield false;
             }
         };
-        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
+        System.exit(passed ? UtilsExample.SUCCESS : UtilsExample.FAILURE);
     }
 
     /**

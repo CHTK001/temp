@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * <p>覆盖 common 的 tcp/udp/http/websocket 与 kcp 共 5 个 sync 协议子类：
  * 每个协议起服务端 + 客户端，验证 publish → onMessage、send → subscribe 双向链路。</p>
  *
- * <p>通过 {@code ExampleRunner --example=sync} 调用。</p>
+ * <p>通过 {@code RunnerExample --example=sync} 调用。</p>
  *
  * @author CH
  * @since 4.0.0.42
@@ -92,7 +92,7 @@ public class SyncExampleSpi implements Example {
     /**
      * 并发请求-响应吞吐测试：客户端 N 线程并发 send 请求，服务端收到后立即 publish 响应，
      * 客户端订阅响应计数——测真实网络往返（请求+响应一次计 1）。
-     * <p>调用：{@code ExampleRunner --example=sync --mode=rpc --protocol=tcp --messages=5000 --threads=4}</p>
+     * <p>调用：{@code RunnerExample --example=sync --mode=rpc --protocol=tcp --messages=5000 --threads=4}</p>
      *
      * @param protocol 协议名
      * @param messages 总请求数
@@ -207,7 +207,7 @@ public class SyncExampleSpi implements Example {
 
     /**
      * 吞吐量测试：长连接场景下循环 publish/send，统计服务端下行与客户端上行 ops/s。
-     * <p>调用：{@code ExampleRunner --example=sync --mode=throughput --protocol=tcp --messages=2000}</p>
+     * <p>调用：{@code RunnerExample --example=sync --mode=throughput --protocol=tcp --messages=2000}</p>
      *
      * @param protocol 协议名
      * @param messages 消息条数

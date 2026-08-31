@@ -56,7 +56,7 @@ public class ScatterTcpClusterExample {
     private static final CountDownLatch PACE_LATCH = new CountDownLatch(1);
 
     /** 端口分配游标：保证多次分配不回退、不相邻冲突。 */
-    private static int portCursor = -1;
+    private static final java.util.concurrent.atomic.AtomicInteger portCursor = new java.util.concurrent.atomic.AtomicInteger(-1);
 
     /**
      * 主入口：依次执行 seed 互发现与心跳剔除两个场景，任一失败即以退出码 1 结束。
@@ -238,11 +238,11 @@ public class ScatterTcpClusterExample {
      * @throws IOException 连续 5 次均被占用时抛出
      */
     private static synchronized int allocatePort(int basePort) throws IOException {
-        int start = Math.max(portCursor + PORT_STEP, basePort);
+        int start = Math.max(portCursor.get() + PORT_STEP, basePort);
         for (int i = 0; i < MAX_PORT_RETRY; i++) {
             int candidate = start + i * PORT_STEP;
             if (isPortFree(candidate)) {
-                portCursor = candidate;
+                portCursor.set(candidate);
                 return candidate;
             }
         }

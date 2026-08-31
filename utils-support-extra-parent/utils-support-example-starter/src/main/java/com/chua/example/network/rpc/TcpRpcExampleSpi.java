@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * （内存 {@link DefaultServiceDiscovery}）；客户端经 ServiceDiscovery 发现服务地址，
  * 再用 {@code tcp} SyncClient 发起 RPC 调用（send 请求 → 服务端 publish 响应 → 客户端订阅收到）。</p>
  *
- * <p>调用：{@code ExampleRunner --example=tcp-rpc} 或 {@code java ... TcpRpcExampleSpi}</p>
+ * <p>调用：{@code RunnerExample --example=tcp-rpc} 或 {@code java ... TcpRpcExampleSpi}</p>
  *
  * @author CH
  * @since 4.0.0.42

@@ -6,7 +6,7 @@ import com.chua.common.support.task.timer.TimerTask;
 import com.chua.common.support.utils.CommandLine;
 import com.chua.common.support.utils.ThreadUtils;
 import lombok.extern.slf4j.Slf4j;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -120,10 +120,10 @@ public class TimeWheelExample {
 
         if (ok) {
             log.info("[TimeWheelExample] ALL PASS");
-            System.exit(ExampleUtils.SUCCESS);
+            System.exit(UtilsExample.SUCCESS);
         } else {
             log.error("[TimeWheelExample] FAILED");
-            System.exit(ExampleUtils.FAILURE);
+            System.exit(UtilsExample.FAILURE);
         }
     }
 

@@ -9,7 +9,7 @@ import com.chua.common.support.taskdistribution.task.TaskStatus;
 import com.chua.common.support.utils.ThreadUtils;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
@@ -53,7 +53,7 @@ public class ReactiveTaskManagerExample {
     public static void main(String[] args) {
         ReactiveTaskManagerExample example = new ReactiveTaskManagerExample();
         boolean passed = example.runTest();
-        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
+        System.exit(passed ? UtilsExample.SUCCESS : UtilsExample.FAILURE);
     }
 
     /**

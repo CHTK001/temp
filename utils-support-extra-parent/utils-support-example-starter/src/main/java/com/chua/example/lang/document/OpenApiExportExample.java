@@ -32,7 +32,7 @@ import java.util.Map;
  *
  * <h2>使用方式</h2>
  * <pre>
- *   java ExampleRunner --example=openapi-export-test
+ *   java RunnerExample --example=openapi-export-test
  * </pre>
  *
  * <h2>验证项</h2>

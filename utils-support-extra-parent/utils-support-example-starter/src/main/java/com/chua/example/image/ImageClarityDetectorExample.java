@@ -4,7 +4,7 @@ import com.chua.deeplearning.support.face.FaceClarityDetector;
 import com.chua.deeplearning.support.image.ImageClarityDetector;
 import com.chua.deeplearning.support.model.FaceQualityInfo;
 import com.chua.deeplearning.support.model.ImageQualityInfo;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -37,7 +37,7 @@ public class ImageClarityDetectorExample {
     public static void main(String[] args) throws IOException {
         String imagePath = args.length > 0 ? args[0] : DEFAULT_IMAGE_DIR;
         boolean passed = runTest(imagePath);
-        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
+        System.exit(passed ? UtilsExample.SUCCESS : UtilsExample.FAILURE);
     }
 
     /**

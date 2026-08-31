@@ -54,7 +54,7 @@ public class LazyExpiringListExample implements Example {
     private LazyExpiringListExample() { }
 
     /**
-     * 示例名称，用于 ExampleRunner 匹配和调度。
+     * 示例名称，用于 RunnerExample 匹配和调度。
      *
      * @return 示例唯一标识 "lazy-expiring-list"
      */

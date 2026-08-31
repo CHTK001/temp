@@ -13,7 +13,7 @@ import com.chua.common.support.network.server.impl.JdkTcpServer;
 import com.chua.common.support.network.server.proxy.DiscoveryProxyTargetResolver;
 import com.chua.common.support.network.server.proxy.TcpProxyServer;
 import com.chua.common.support.utils.ThreadUtils;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.Socket;
@@ -64,7 +64,7 @@ public final class ScatterDiscoveryExample {
      * @throws Exception 场景执行异常
      */
     public static void main(String[] args) throws Exception {
-        Map<String, String> arg = ExampleUtils.parseArgs(args);
+        Map<String, String> arg = UtilsExample.parseArgs(args);
         int portHttpA = intVal(arg.get("port-http-a"), DEFAULT_PORT_HTTP_A);
         int portHttpB = intVal(arg.get("port-http-b"), DEFAULT_PORT_HTTP_B);
         int portUser = intVal(arg.get("port-user"), DEFAULT_PORT_USER);

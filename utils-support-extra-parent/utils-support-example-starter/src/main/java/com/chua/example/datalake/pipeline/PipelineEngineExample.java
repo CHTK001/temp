@@ -9,7 +9,7 @@ import com.chua.datalake.support.spi.pipeline.PipelineConfig.PipelineStageConfig
 import com.chua.datalake.support.spi.pipeline.PipelineManager;
 import com.chua.datalake.support.spi.sink.DataSink;
 import lombok.extern.slf4j.Slf4j;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -66,7 +66,7 @@ public class PipelineEngineExample {
                 yield false;
             }
         };
-        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
+        System.exit(passed ? UtilsExample.SUCCESS : UtilsExample.FAILURE);
     }
 
     /**

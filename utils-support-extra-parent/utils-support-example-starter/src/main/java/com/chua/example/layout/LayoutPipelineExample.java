@@ -4,7 +4,7 @@ import com.chua.deeplearning.support.draw.DrawerPipeline;
 import com.chua.deeplearning.support.model.DetectionInfo;
 import com.chua.deeplearning.support.model.PredictRectangle;
 import com.chua.deeplearning.support.recognition.LayoutPipeline;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Files;
@@ -50,7 +50,7 @@ public class LayoutPipelineExample {
     /** Main */
     public static void main(String[] args) throws Exception {
         boolean passed = runTest();
-        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
+        System.exit(passed ? UtilsExample.SUCCESS : UtilsExample.FAILURE);
     }
 
     /** 运行Test */

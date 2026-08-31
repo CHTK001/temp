@@ -6,7 +6,7 @@ import com.chua.prometheus.support.client.PrometheusClient;
 import com.chua.prometheus.support.engine.PrometheusEngine;
 import com.chua.prometheus.support.model.PrometheusMetric;
 import com.chua.prometheus.support.model.QueryResult;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -46,7 +46,7 @@ public class PrometheusExample {
 
         PrometheusExample example = new PrometheusExample();
         boolean passed = example.runTest(url);
-        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
+        System.exit(passed ? UtilsExample.SUCCESS : UtilsExample.FAILURE);
     }
 
     /**

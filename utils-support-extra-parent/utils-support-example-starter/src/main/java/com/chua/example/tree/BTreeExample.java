@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 
 /**
  * B+/B 树引擎全场景自检示例。
@@ -28,23 +28,23 @@ public final class BTreeExample {
 
     public static void main(String[] args) {
         var passed = true;
-        passed &= ExampleUtils.timed("bplusPutAndGet", BTreeExample::bplusPutAndGet);
-        passed &= ExampleUtils.timed("bplusRangeQuery", BTreeExample::bplusRangeQuery);
-        passed &= ExampleUtils.timed("bplusDelete", BTreeExample::bplusDelete);
-        passed &= ExampleUtils.timed("bplusLargeScale", BTreeExample::bplusLargeScale);
-        passed &= ExampleUtils.timed("bplusPerf", BTreeExample::bplusPerf);
-        passed &= ExampleUtils.timed("btreePerf", BTreeExample::btreePerf);
-        passed &= ExampleUtils.timed("bplusToBinaryAndBack", BTreeExample::bplusToBinaryAndBack);
-        passed &= ExampleUtils.timed("btreePutAndGet", BTreeExample::btreePutAndGet);
-        passed &= ExampleUtils.timed("btreeRangeQuery", BTreeExample::btreeRangeQuery);
-        passed &= ExampleUtils.timed("btreeDelete", BTreeExample::btreeDelete);
-        passed &= ExampleUtils.timed("btreeToBinaryAndBack", BTreeExample::btreeToBinaryAndBack);
+        passed &= UtilsExample.timed("bplusPutAndGet", BTreeExample::bplusPutAndGet);
+        passed &= UtilsExample.timed("bplusRangeQuery", BTreeExample::bplusRangeQuery);
+        passed &= UtilsExample.timed("bplusDelete", BTreeExample::bplusDelete);
+        passed &= UtilsExample.timed("bplusLargeScale", BTreeExample::bplusLargeScale);
+        passed &= UtilsExample.timed("bplusPerf", BTreeExample::bplusPerf);
+        passed &= UtilsExample.timed("btreePerf", BTreeExample::btreePerf);
+        passed &= UtilsExample.timed("bplusToBinaryAndBack", BTreeExample::bplusToBinaryAndBack);
+        passed &= UtilsExample.timed("btreePutAndGet", BTreeExample::btreePutAndGet);
+        passed &= UtilsExample.timed("btreeRangeQuery", BTreeExample::btreeRangeQuery);
+        passed &= UtilsExample.timed("btreeDelete", BTreeExample::btreeDelete);
+        passed &= UtilsExample.timed("btreeToBinaryAndBack", BTreeExample::btreeToBinaryAndBack);
         if (!passed) {
             log.info("[FAIL] BTreeExample 存在失败场景");
-            System.exit(ExampleUtils.FAILURE);
+            System.exit(UtilsExample.FAILURE);
         }
         log.info("[PASS] BTreeExample 全部场景通过");
-        System.exit(ExampleUtils.SUCCESS);
+        System.exit(UtilsExample.SUCCESS);
     }
 
 
@@ -62,10 +62,10 @@ public final class BTreeExample {
             assert tree.get(1).equals(Optional.of("one")) : "bplusPutAndGet get 1";
             assert tree.get(99).equals(Optional.empty()) : "bplusPutAndGet get miss";
             assert tree.size() == 4 : "bplusPutAndGet size";
-            ExampleUtils.print("bplusPutAndGet", true);
+            UtilsExample.print("bplusPutAndGet", true);
             return true;
         } catch (Exception e) {
-            return ExampleUtils.fail("bplusPutAndGet", e);
+            return UtilsExample.fail("bplusPutAndGet", e);
         }
     }
 
@@ -78,10 +78,10 @@ public final class BTreeExample {
             List<Map.Entry<Integer, String>> range = tree.range(3, 8);
             var ids = range.stream().map(Map.Entry::getKey).toList();
             boolean ok = ids.equals(List.of(3, 4, 5, 6, 7));
-            ExampleUtils.print("bplusRangeQuery", ok);
+            UtilsExample.print("bplusRangeQuery", ok);
             return ok;
         } catch (Exception e) {
-            return ExampleUtils.fail("bplusRangeQuery", e);
+            return UtilsExample.fail("bplusRangeQuery", e);
         }
     }
 
@@ -99,10 +99,10 @@ public final class BTreeExample {
 
             Optional<String> miss = tree.remove(99);
             assert miss.equals(Optional.empty()) : "bplusDelete remove miss";
-            ExampleUtils.print("bplusDelete", true);
+            UtilsExample.print("bplusDelete", true);
             return true;
         } catch (Exception e) {
-            return ExampleUtils.fail("bplusDelete", e);
+            return UtilsExample.fail("bplusDelete", e);
         }
     }
 
@@ -125,10 +125,10 @@ public final class BTreeExample {
 
             List<Map.Entry<Integer, String>> range = tree.range(500_000, 500_100);
             boolean ok = range.size() == 100;
-            ExampleUtils.print("bplusLargeScale", ok);
+            UtilsExample.print("bplusLargeScale", ok);
             return ok;
         } catch (Exception e) {
-            return ExampleUtils.fail("bplusLargeScale", e);
+            return UtilsExample.fail("bplusLargeScale", e);
         }
     }
 
@@ -162,7 +162,7 @@ public final class BTreeExample {
 
             return all.size() == total && k10k.size() == 10_000;
         } catch (Exception e) {
-            return ExampleUtils.fail("bplusPerf", e);
+            return UtilsExample.fail("bplusPerf", e);
         }
     }
 
@@ -196,7 +196,7 @@ public final class BTreeExample {
 
             return all.size() == total && k10k.size() == 10_000;
         } catch (Exception e) {
-            return ExampleUtils.fail("btreePerf", e);
+            return UtilsExample.fail("btreePerf", e);
         }
     }
 
@@ -216,10 +216,10 @@ public final class BTreeExample {
             assert restored.get(30).equals(Optional.of("thirty")) : "bplusToBinaryAndBack 30";
             assert restored.get(5).equals(Optional.of("five")) : "bplusToBinaryAndBack 5";
             assert restored.size() == 4 : "bplusToBinaryAndBack size";
-            ExampleUtils.print("bplusToBinaryAndBack", true);
+            UtilsExample.print("bplusToBinaryAndBack", true);
             return true;
         } catch (Exception e) {
-            return ExampleUtils.fail("bplusToBinaryAndBack", e);
+            return UtilsExample.fail("bplusToBinaryAndBack", e);
         }
     }
 
@@ -234,10 +234,10 @@ public final class BTreeExample {
             assert tree.get(1).equals(Optional.of("one")) : "btreePutAndGet get 1";
             assert !tree.containsKey(99) : "btreePutAndGet containsKey miss";
             assert tree.size() == 3 : "btreePutAndGet size";
-            ExampleUtils.print("btreePutAndGet", true);
+            UtilsExample.print("btreePutAndGet", true);
             return true;
         } catch (Exception e) {
-            return ExampleUtils.fail("btreePutAndGet", e);
+            return UtilsExample.fail("btreePutAndGet", e);
         }
     }
 
@@ -250,10 +250,10 @@ public final class BTreeExample {
             List<Map.Entry<Integer, String>> range = tree.range(3, 8);
             var ids = range.stream().map(Map.Entry::getKey).toList();
             boolean ok = ids.equals(List.of(3, 4, 5, 6, 7));
-            ExampleUtils.print("btreeRangeQuery", ok);
+            UtilsExample.print("btreeRangeQuery", ok);
             return ok;
         } catch (Exception e) {
-            return ExampleUtils.fail("btreeRangeQuery", e);
+            return UtilsExample.fail("btreeRangeQuery", e);
         }
     }
 
@@ -268,10 +268,10 @@ public final class BTreeExample {
             assert removed.equals(Optional.of("b")) : "btreeDelete remove 2";
             assert !tree.containsKey(2) : "btreeDelete containsKey 2";
             assert tree.size() == 2 : "btreeDelete size";
-            ExampleUtils.print("btreeDelete", true);
+            UtilsExample.print("btreeDelete", true);
             return true;
         } catch (Exception e) {
-            return ExampleUtils.fail("btreeDelete", e);
+            return UtilsExample.fail("btreeDelete", e);
         }
     }
 
@@ -291,10 +291,10 @@ public final class BTreeExample {
             assert restored.get(30).equals(Optional.of("thirty")) : "btreeToBinaryAndBack 30";
             assert restored.get(5).equals(Optional.of("five")) : "btreeToBinaryAndBack 5";
             assert restored.size() == 4 : "btreeToBinaryAndBack size";
-            ExampleUtils.print("btreeToBinaryAndBack", true);
+            UtilsExample.print("btreeToBinaryAndBack", true);
             return true;
         } catch (Exception e) {
-            return ExampleUtils.fail("btreeToBinaryAndBack", e);
+            return UtilsExample.fail("btreeToBinaryAndBack", e);
         }
     }
 

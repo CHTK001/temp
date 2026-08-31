@@ -3,7 +3,7 @@ package com.chua.example.ai.embedding;
 import com.chua.common.support.ai.embedding.EmbeddingClient;
 import com.chua.common.support.utils.MathUtils;
 import com.chua.common.support.ai.embedding.EmbeddingClientSetting;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -32,7 +32,7 @@ public class MiniLmEmbeddingExample {
     public static void main(String[] args) {
         MiniLmEmbeddingExample example = new MiniLmEmbeddingExample();
         boolean passed = example.runSelfTest();
-        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
+        System.exit(passed ? UtilsExample.SUCCESS : UtilsExample.FAILURE);
     }
 
     /**

@@ -1,7 +1,7 @@
 package com.chua.example.reid;
 
 import lombok.extern.slf4j.Slf4j;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 import com.chua.deeplearning.support.feature.FeatureExtractor;
 import com.chua.deeplearning.support.reid.PersonReidPipeline;
 import com.chua.deeplearning.support.reid.PersonReidPipeline.SearchResult;
@@ -33,7 +33,7 @@ public class PersonReidExample {
     /** Main */
     public static void main(String[] args) throws Exception {
         boolean passed = runTest();
-        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
+        System.exit(passed ? UtilsExample.SUCCESS : UtilsExample.FAILURE);
     }
 
     /** 运行Test */

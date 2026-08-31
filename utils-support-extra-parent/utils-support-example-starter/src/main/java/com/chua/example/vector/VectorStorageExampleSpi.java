@@ -8,7 +8,7 @@ import com.chua.example.spi.Example;
 import com.chua.jvector.support.configuration.JVectorStorageProperties;
 import com.chua.milvus.support.storage.MilvusVectorStorage;
 import lombok.extern.slf4j.Slf4j;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -19,30 +19,30 @@ import java.util.Random;
 /**
  * 向量存储综合示例（SPI 形式）— 演示 {@link com.chua.example.spi.Example} 接口实现。
  *
- * <p>通过统一入口 {@code com.chua.example.runner.ExampleRunner --example=vector-storage} 调用，
+ * <p>通过统一入口 {@code com.chua.example.runner.RunnerExample --example=vector-storage} 调用，
  * 内部基于 {@link VectorStorageProvider} SPI，支持 memory / jvector / milvus 三种实现。</p>
  *
  * <h2>用法</h2>
  * <pre>
  *   # 列出全部示例
- *   java ExampleRunner --list
+ *   java RunnerExample --list
  *
  *   # memory 实现
- *   java ExampleRunner --example=vector-storage --type=memory
+ *   java RunnerExample --example=vector-storage --type=memory
  *
  *   # jvector 三种模式
- *   java ExampleRunner --example=vector-storage --type=jvector --mode=MEMORY
- *   java ExampleRunner --example=vector-storage --type=jvector --mode=ON_DISK
+ *   java RunnerExample --example=vector-storage --type=jvector --mode=MEMORY
+ *   java RunnerExample --example=vector-storage --type=jvector --mode=ON_DISK
  *
  *   # milvus / Zilliz Cloud
- *   java ExampleRunner --example=vector-storage --type=milvus \
+ *   java RunnerExample --example=vector-storage --type=milvus \
  *       --host=in03-xxx.serverless.gcp-us-west1.cloud.zilliz.com \
  *       --port=443 --collection=vector_store_v4 --token=xxx
  *   # vector（cuVS GPU / jvector CPU 自动切换）
- *   java ExampleRunner --example=vector-storage --type=vector
+ *   java RunnerExample --example=vector-storage --type=vector
  *
  *   # vector 强制 CPU
- *   java ExampleRunner --example=vector-storage --type=vector --force-cpu=true
+ *   java RunnerExample --example=vector-storage --type=vector --force-cpu=true
  * </pre>
  *
  * @author CH
@@ -134,10 +134,10 @@ public class VectorStorageExampleSpi implements Example {
             VectorStorage s = VectorStorageProvider.of("memory").dimension(DIM).build();
             seedAndSearch(s, "memory-default");
             s.close();
-            ExampleUtils.pass();
+            UtilsExample.pass();
             return true;
         } catch (Exception e) {
-            ExampleUtils.fail("memory 默认构建异常: " + e.getMessage());
+            UtilsExample.fail("memory 默认构建异常: " + e.getMessage());
             return false;
         }
     }
@@ -150,10 +150,10 @@ public class VectorStorageExampleSpi implements Example {
                     .algorithm(VectorCompareAlgorithm.cosine()).build();
             seedAndSearch(s, "memory-cosine");
             s.close();
-            ExampleUtils.pass();
+            UtilsExample.pass();
             return true;
         } catch (Exception e) {
-            ExampleUtils.fail("memory 算法构建异常: " + e.getMessage());
+            UtilsExample.fail("memory 算法构建异常: " + e.getMessage());
             return false;
         }
     }
@@ -169,10 +169,10 @@ public class VectorStorageExampleSpi implements Example {
             assertEquals(true, s.remove("drop"), "删除存在的 id");
             assertEquals(1, s.size(), "删除后 size");
             assertEquals(false, s.remove("drop"), "删除不存在的 id");
-            ExampleUtils.pass();
+            UtilsExample.pass();
             return true;
         } catch (Exception e) {
-            ExampleUtils.fail("remove 异常: " + e.getMessage());
+            UtilsExample.fail("remove 异常: " + e.getMessage());
             return false;
         } finally {
             closeQuietly(s);
@@ -191,10 +191,10 @@ public class VectorStorageExampleSpi implements Example {
             assertEquals(true, s.update("a", new float[]{0f, 0f, 0f, 1f}), "更新存在的 id");
             assertEquals(3, s.size(), "更新不改 size");
             assertEquals(false, s.update("nope", new float[]{1f, 0f, 0f, 0f}), "更新不存在的 id");
-            ExampleUtils.pass();
+            UtilsExample.pass();
             return true;
         } catch (Exception e) {
-            ExampleUtils.fail("update 异常: " + e.getMessage());
+            UtilsExample.fail("update 异常: " + e.getMessage());
             return false;
         } finally {
             closeQuietly(s);
@@ -211,10 +211,10 @@ public class VectorStorageExampleSpi implements Example {
             s.clear();
             assertEquals(0, s.size(), "clear 后 size");
             s.close();
-            ExampleUtils.pass();
+            UtilsExample.pass();
             return true;
         } catch (Exception e) {
-            ExampleUtils.fail("clear 异常: " + e.getMessage());
+            UtilsExample.fail("clear 异常: " + e.getMessage());
             return false;
         }
     }
@@ -230,10 +230,10 @@ public class VectorStorageExampleSpi implements Example {
             }
             assertEquals(5, s.size(), "添加后 size");
             s.close();
-            ExampleUtils.pass();
+            UtilsExample.pass();
             return true;
         } catch (Exception e) {
-            ExampleUtils.fail("size 异常: " + e.getMessage());
+            UtilsExample.fail("size 异常: " + e.getMessage());
             return false;
         }
     }
@@ -263,10 +263,10 @@ public class VectorStorageExampleSpi implements Example {
             VectorStorage s = createJVectorStorage(mode);
             seedJVector(s, "jv-addsearch");
             s.close();
-            ExampleUtils.pass();
+            UtilsExample.pass();
             return true;
         } catch (Exception e) {
-            ExampleUtils.fail("jvector add/search 异常: " + e.getMessage());
+            UtilsExample.fail("jvector add/search 异常: " + e.getMessage());
             return false;
         }
     }
@@ -282,10 +282,10 @@ public class VectorStorageExampleSpi implements Example {
             assertEquals(3, s.size(), "jvector 更新前 size");
             assertEquals(true, s.update("a", new float[]{0f, 0f, 0f, 1f}), "更新存在的 id");
             assertEquals(3, s.size(), "jvector 更新不改 size");
-            ExampleUtils.pass();
+            UtilsExample.pass();
             return true;
         } catch (Exception e) {
-            ExampleUtils.fail("jvector update 异常: " + e.getMessage());
+            UtilsExample.fail("jvector update 异常: " + e.getMessage());
             return false;
         } finally {
             closeQuietly(s);
@@ -302,10 +302,10 @@ public class VectorStorageExampleSpi implements Example {
             assertEquals(2, s.size(), "删除前 size");
             assertEquals(true, s.remove("drop"), "删除存在的 id");
             assertEquals(1, s.size(), "删除后 size");
-            ExampleUtils.pass();
+            UtilsExample.pass();
             return true;
         } catch (Exception e) {
-            ExampleUtils.fail("jvector remove 异常: " + e.getMessage());
+            UtilsExample.fail("jvector remove 异常: " + e.getMessage());
             return false;
         } finally {
             closeQuietly(s);
@@ -322,10 +322,10 @@ public class VectorStorageExampleSpi implements Example {
             s.clear();
             assertEquals(0, s.size(), "clear 后 size");
             s.close();
-            ExampleUtils.pass();
+            UtilsExample.pass();
             return true;
         } catch (Exception e) {
-            ExampleUtils.fail("jvector clear 异常: " + e.getMessage());
+            UtilsExample.fail("jvector clear 异常: " + e.getMessage());
             return false;
         }
     }
@@ -341,10 +341,10 @@ public class VectorStorageExampleSpi implements Example {
             }
             assertEquals(5, s.size(), "添加后 size");
             s.close();
-            ExampleUtils.pass();
+            UtilsExample.pass();
             return true;
         } catch (Exception e) {
-            ExampleUtils.fail("jvector size 异常: " + e.getMessage());
+            UtilsExample.fail("jvector size 异常: " + e.getMessage());
             return false;
         }
     }
@@ -365,13 +365,13 @@ public class VectorStorageExampleSpi implements Example {
             boolean exists = Files.exists(graphPath);
             log.info("    磁盘图文件: {} exists={}", graphPath.toAbsolutePath(), exists);
             if (!exists) {
-                ExampleUtils.fail("ON_DISK 模式下索引图文件未生成");
+                UtilsExample.fail("ON_DISK 模式下索引图文件未生成");
                 return false;
             }
-            ExampleUtils.pass();
+            UtilsExample.pass();
             return true;
         } catch (Exception e) {
-            ExampleUtils.fail("ON_DISK 磁盘文件验证异常: " + e.getMessage());
+            UtilsExample.fail("ON_DISK 磁盘文件验证异常: " + e.getMessage());
             return false;
         }
     }
@@ -401,10 +401,10 @@ public class VectorStorageExampleSpi implements Example {
                     .algorithm(VectorCompareAlgorithm.cosine()).properties(props2).build();
             assertEquals(5, s2.size(), "重启后 size 应为 5");
             s2.close();
-            ExampleUtils.pass();
+            UtilsExample.pass();
             return true;
         } catch (Exception e) {
-            ExampleUtils.fail("jvector 持久化往返异常: " + e.getMessage());
+            UtilsExample.fail("jvector 持久化往返异常: " + e.getMessage());
             return false;
         }
     }
@@ -427,10 +427,10 @@ public class VectorStorageExampleSpi implements Example {
         MilvusVectorStorage s = new MilvusVectorStorage(DIM, VectorCompareAlgorithm.cosine(), host, port, collection, token);
         try {
             seedAndSearch(s, "milvus");
-            ExampleUtils.pass();
+            UtilsExample.pass();
             return true;
         } catch (Exception e) {
-            ExampleUtils.fail("milvus 构建异常: " + e.getMessage());
+            UtilsExample.fail("milvus 构建异常: " + e.getMessage());
             return false;
         } finally {
             closeQuietly(s);
@@ -444,10 +444,10 @@ public class VectorStorageExampleSpi implements Example {
         try {
             s.add("del_test", new float[]{1f, 0f, 0f, 0f});
             assertEquals(true, s.remove("del_test"), "milvus 删除存在的 id");
-            ExampleUtils.pass();
+            UtilsExample.pass();
             return true;
         } catch (Exception e) {
-            ExampleUtils.fail("milvus 删除异常: " + e.getMessage());
+            UtilsExample.fail("milvus 删除异常: " + e.getMessage());
             return false;
         } finally {
             closeQuietly(s);
@@ -461,10 +461,10 @@ public class VectorStorageExampleSpi implements Example {
         try {
             s.add("upsert_key", new float[]{1f, 0f, 0f, 0f});
             assertEquals(true, s.update("upsert_key", new float[]{0f, 1f, 0f, 0f}), "milvus 更新存在的 id");
-            ExampleUtils.pass();
+            UtilsExample.pass();
             return true;
         } catch (Exception e) {
-            ExampleUtils.fail("milvus upsert 异常: " + e.getMessage());
+            UtilsExample.fail("milvus upsert 异常: " + e.getMessage());
             return false;
         } finally {
             closeQuietly(s);
@@ -498,10 +498,10 @@ public class VectorStorageExampleSpi implements Example {
             assertEquals(DIM, s.dimension(), "auto-detect");
             seedJVector(s, "vec-auto");
             s.close();
-            ExampleUtils.pass();
+            UtilsExample.pass();
             return true;
         } catch (Exception e) {
-            ExampleUtils.fail("vector AUTO 检测异常: " + e.getMessage());
+            UtilsExample.fail("vector AUTO 检测异常: " + e.getMessage());
             return false;
         }
     }
@@ -518,10 +518,10 @@ public class VectorStorageExampleSpi implements Example {
             assertEquals(DIM, s.dimension(), "force-cpu");
             seedJVector(s, "vec-cpu");
             s.close();
-            ExampleUtils.pass();
+            UtilsExample.pass();
             return true;
         } catch (Exception e) {
-            ExampleUtils.fail("vector forceCpu 异常: " + e.getMessage());
+            UtilsExample.fail("vector forceCpu 异常: " + e.getMessage());
             return false;
         }
     }
@@ -542,7 +542,7 @@ public class VectorStorageExampleSpi implements Example {
             log.info("  ✓ 正确抛出: {}", msg);
             return true;
         } catch (Exception e) {
-            ExampleUtils.fail("requireGpu 异常类型不对: " + e.getClass().getSimpleName());
+            UtilsExample.fail("requireGpu 异常类型不对: " + e.getClass().getSimpleName());
             return false;
         }
     }
@@ -560,10 +560,10 @@ public class VectorStorageExampleSpi implements Example {
             assertEquals(DIM, s.dimension(), "explicit-jvector");
             seedJVector(s, "vec-explicit");
             s.close();
-            ExampleUtils.pass();
+            UtilsExample.pass();
             return true;
         } catch (Exception e) {
-            ExampleUtils.fail("vector 显式 backend 异常: " + e.getMessage());
+            UtilsExample.fail("vector 显式 backend 异常: " + e.getMessage());
             return false;
         }
     }
@@ -581,10 +581,10 @@ public class VectorStorageExampleSpi implements Example {
                 boolean available = d.isAvailable();
                 log.info("    - {} (priority={}, available={})", d.name(), d.priority(), available);
             }
-            ExampleUtils.pass();
+            UtilsExample.pass();
             return true;
         } catch (Exception e) {
-            ExampleUtils.fail("RuntimeDetector SPI 异常: " + e.getMessage());
+            UtilsExample.fail("RuntimeDetector SPI 异常: " + e.getMessage());
             return false;
         }
     }

@@ -1,6 +1,6 @@
 package com.chua.example.network.http;
 
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
@@ -30,7 +30,7 @@ public class HttpServerExample {
      * @param args 命令行参数，支持 {@code --key=value} 与 {@code --key value}
      */
     public static void main(String[] args) {
-        Map<String, String> parsed = ExampleUtils.parseArgs(args);
+        Map<String, String> parsed = UtilsExample.parseArgs(args);
         log.info("[HTTP-SERVER] 启动参数 {}", parsed);
         boolean passed = new HttpServerExampleSpi().run(parsed);
         if (!passed) {

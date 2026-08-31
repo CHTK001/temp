@@ -9,7 +9,7 @@ import com.chua.common.support.concurrent.threadflow.ThreadFlowResult;
 import com.chua.common.support.concurrent.threadflow.ThreadStrategy;
 import com.chua.common.support.utils.CommandLine;
 import com.chua.common.support.utils.ThreadUtils;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.TimeUnit;
@@ -77,7 +77,7 @@ public class ThreadFlowExample {
         ThreadFlowExample example = new ThreadFlowExample();
         boolean passed = example.runTest(type);
         log.info("[ThreadFlowExample] self-test type={}, passed={}", type, passed);
-        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
+        System.exit(passed ? UtilsExample.SUCCESS : UtilsExample.FAILURE);
     }
 
     /**

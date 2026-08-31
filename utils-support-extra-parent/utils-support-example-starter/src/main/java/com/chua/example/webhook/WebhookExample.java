@@ -1,7 +1,7 @@
 package com.chua.example.webhook;
 
 import com.chua.webhook.support.message.WebhookMessagePush;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -29,7 +29,7 @@ public final class WebhookExample {
     /** 1. 直接实例化 */
     private static boolean instanceCreate() {
         var push = new WebhookMessagePush();
-        ExampleUtils.print("instanceCreate", push != null);
+        UtilsExample.print("instanceCreate", push != null);
         return push != null;
     }
 
@@ -37,7 +37,7 @@ public final class WebhookExample {
     private static boolean providerName() {
         var push = new WebhookMessagePush();
         var ok = "webhook".equals(push.getProvider());
-        ExampleUtils.print("providerName", ok);
+        UtilsExample.print("providerName", ok);
         return ok;
     }
 
@@ -47,10 +47,10 @@ public final class WebhookExample {
         try {
             // TemplateInfo 来自 common-task 模块，此处跳过实际实例化，
             // 仅验证方法存在性与调用不报错
-            ExampleUtils.print("templateManage-skipped", true);
+            UtilsExample.print("templateManage-skipped", true);
             return true;
         } catch (Exception e) {
-            ExampleUtils.print("templateManage", false);
+            UtilsExample.print("templateManage", false);
             return false;
         }
     }
@@ -60,7 +60,7 @@ public final class WebhookExample {
         var push = new WebhookMessagePush();
         var templates = push.listTemplates();
         var ok = templates != null;
-        ExampleUtils.print("listTemplates", ok);
+        UtilsExample.print("listTemplates", ok);
         return ok;
     }
 
@@ -72,9 +72,9 @@ public final class WebhookExample {
         passed &= timed("listTemplates", WebhookExample::listTemplates);
         if (!passed) {
             log.error("[FAIL] Webhook 存在失败场景");
-            System.exit(ExampleUtils.FAILURE);
+            System.exit(UtilsExample.FAILURE);
         }
         log.info("[PASS] Webhook 全部场景通过");
-        System.exit(ExampleUtils.SUCCESS);
+        System.exit(UtilsExample.SUCCESS);
     }
 }

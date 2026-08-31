@@ -4,7 +4,7 @@ import com.chua.common.support.datasearch.region.model.RegionInfo;
 import com.chua.common.support.datasearch.region.spi.RegionProvider;
 import com.chua.common.support.spi.ServiceProvider;
 import com.chua.common.support.utils.CollectionUtils;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -47,7 +47,7 @@ public final class RegionExample {
     }
 
     public static void main(String[] args) {
-        Map<String, String> params = ExampleUtils.parseArgs(args);
+        Map<String, String> params = UtilsExample.parseArgs(args);
         String spiName = params.getOrDefault("spi", SPI_ALL);
         int treeLevel = Integer.parseInt(params.getOrDefault("level", String.valueOf(DEFAULT_TREE_LEVEL)));
         Map<String, RegionProvider> providers = resolveProviders(spiName);

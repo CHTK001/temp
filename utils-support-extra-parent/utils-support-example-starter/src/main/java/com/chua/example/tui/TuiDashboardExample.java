@@ -15,7 +15,7 @@ import com.chua.tui.support.widgets.HtopWidget;
 import com.chua.tui.support.widgets.MemoryWidget;
 import lombok.extern.slf4j.Slf4j;
 import com.chua.example.spi.Example;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 
 import java.util.Map;
 
@@ -176,7 +176,7 @@ public class TuiDashboardExample implements Example {
         String type = cli.get("type", DEFAULT_TYPE);
         boolean passed = example.runTest(type);
         log.info("[TuiDashboardExample] self-test type={}, passed={}", type, passed);
-        System.exit(passed ? ExampleUtils.SUCCESS : ExampleUtils.FAILURE);
+        System.exit(passed ? UtilsExample.SUCCESS : UtilsExample.FAILURE);
     }
 
     /**

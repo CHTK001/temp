@@ -4,7 +4,7 @@ import com.chua.common.support.network.client.yunxiao.YunxiaoClient;
 import com.chua.common.support.network.client.yunxiao.YunxiaoClientSetting;
 import com.chua.common.support.network.client.yunxiao.constant.RepoType;
 import lombok.extern.slf4j.Slf4j;
-import com.chua.example.util.ExampleUtils;
+import com.chua.example.util.UtilsExample;
 
 import java.util.Map;
 
@@ -48,7 +48,7 @@ public class YunxiaoClientExample {
      * @param args 命令行参数，支持 {@code --key=value} 与 {@code --key value}
      */
     public static void main(String[] args) {
-        Map<String, String> parsed = ExampleUtils.parseArgs(args);
+        Map<String, String> parsed = UtilsExample.parseArgs(args);
         String remoteFlag = parsed.get(PARAM_REMOTE);
         boolean passed;
         String scene;
