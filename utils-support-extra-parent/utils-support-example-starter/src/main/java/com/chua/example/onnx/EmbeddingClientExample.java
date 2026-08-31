@@ -51,7 +51,7 @@ public final class EmbeddingClientExample extends BaseExample {
         float[] vec = client.embedding(text);
         log.info("[embedding] text: " + text);
         log.info("       dim: " + vec.length);
-        log.info("       head: " + java.util.Arrays.toString(java.util.Arrays.copyOf(vec, 5)));
+        log.info("       head: " + toString(copyOf(vec, 5)));
         printResult("embedding", provider, model, t0);
         client.close();
     }
