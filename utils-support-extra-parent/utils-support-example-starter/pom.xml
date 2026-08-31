@@ -52,7 +52,7 @@
             <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-models-onnx-sensevoice</artifactId>
-            <version>\</version>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
     </dependencyManagement>
