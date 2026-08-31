@@ -69,10 +69,10 @@ public final class DFineExample {
         }
 
         try (DjlModelFactory factory =
-                     new DjlModelFactory("dfine-l-obj2coco", weights, DFineTranslator::new)) {
+                     new DjlModelFactory("dfine-l-obj2coco", weights, cfg -> new DFineTranslator(cfg != null ? cfg : com.chua.deeplearning.support.ai.DetectionConfiguration.empty()))) {
             Image img = ImageFactory.getInstance().fromFile(Path.of(imagePath));
             DetectedObjects result = factory.predict(img);
-            log.info(result);
+            log.info(result.toString());
             img.drawBoundingBoxes(result);
             Path out = Path.of(outPath);
             img.save(Files.newOutputStream(out), "png");

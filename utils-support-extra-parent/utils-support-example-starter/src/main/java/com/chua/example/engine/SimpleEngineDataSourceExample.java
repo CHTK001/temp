@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 public class SimpleEngineDataSourceExample implements EngineDataSource<Object> {
 
     /** 私有构造，防止实例化 */
-    private SimpleEngineDataSourceExample() { }
+    public SimpleEngineDataSourceExample() { this.name = "default"; }
 
     /** 名称 */
     private final String name;
