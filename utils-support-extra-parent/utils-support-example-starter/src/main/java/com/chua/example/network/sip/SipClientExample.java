@@ -126,10 +126,6 @@ public class SipClientExample {
                 log.info("SIP 服务提供方已启动: 服务[{}] -> {}:{} 加密={} 复用={}",
                         service, host, port, encrypt, mux);
             }
-        } else if (socks5Port > 0) {
-            // ===== Visitor SOCKS5 模式 =====
-            client.socks5(socks5Port);
-            log.info("SIP SOCKS5 代理已启动: 127.0.0.1:{} -> 所有隧道服务 (加密={})", socks5Port, encrypt);
         } else {
             // ===== Visitor 端口映射模式 =====
             client.tunnel(service).listen(host, port);

@@ -5,6 +5,7 @@ import com.chua.deeplearning.support.face.FacePipeline;
 import com.chua.deeplearning.support.face.FacePipelineDiskCallback;
 import java.nio.file.*;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 全量人脸检测器对比测试 —— 同一组图跑所有可用检测器，输出能力矩阵。
@@ -12,6 +13,7 @@ import java.util.List;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public class FaceAllDetectorsExample {
 
     /** 私有构造，防止实例化 */
@@ -43,11 +45,11 @@ public class FaceAllDetectorsExample {
         } catch (Throwable ignored) {
         }
 
-        System.out.println("=== 人脸检测器全量对比 ===");
+        log.info("=== 人脸检测器全量对比 ===");
         System.out.printf("%-20s", "Detector");
         for (String n : IMAGE_NAMES) System.out.printf(" | %-12s", n);
-        System.out.println(" | Status");
-        System.out.println("-".repeat(90));
+        log.info(" | Status");
+        log.info("-".repeat(90));
 
         int okCount = 0, failCount = 0;
         for (String[] det : DETECTORS) {
@@ -82,9 +84,9 @@ public class FaceAllDetectorsExample {
                 row.append(String.format(" | INIT_FAIL: %.40s", e.getMessage()));
                 failCount++;
             }
-            System.out.println(row);
+            log.info("{}", row);
         }
-        System.out.println("-".repeat(90));
+        log.info("-".repeat(90));
         System.out.printf("Total: %d OK, %d FAIL / %d detectors%n", okCount, failCount, DETECTORS.length);
         System.exit(0);
     }

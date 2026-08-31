@@ -31,20 +31,20 @@ public class SshAdvancedExample {
         String user = args.length > 2 ? args[2] : "admin";
         String pass = args.length > 3 ? args[3] : "admin123";
 
-        System.out.println("========== SshClient 高级功能测试开始 ==========");
-        System.out.println("目标: " + user + "@" + host + ":" + port);
+        log.info("========== SshClient 高级功能测试开始 ==========");
+        log.info("目标: {}@{}:{}", user, host, port);
 
         testTerminal(host, port, user, pass);
         testLocalForward(host, port, user, pass);
         testDynamicForward(host, port, user, pass);
         testRemoteForward(host, port, user, pass);
 
-        System.out.println("\n========== 测试结束 ==========");
+        log.info("\n========== 测试结束 ==========");
     }
 
     /** PTY 实时终端测试 */
     private static void testTerminal(String host, int port, String user, String pass) {
-        System.out.println("\n--- 1. PTY 实时终端 ---");
+        log.info("\n--- 1. PTY 实时终端 ---");
         try (SshClient ssh = SshClient.builder()
                 .host(host).port(port)
                 .username(user).password(pass)
@@ -53,20 +53,19 @@ public class SshAdvancedExample {
             ssh.connect();
             var term = ssh.terminal().width(120).height(30).connect();
             boolean connected = term.isConnected();
-            System.out.println("PASS: PTY 连接, connected=" + connected);
+            log.info("PASS: PTY 连接, connected={}", connected);
 
             term.send("echo TERMINAL_OK_$((6*7))");
             String output = waitFor(term, "TERMINAL_OK_42", 8000);
             boolean found = output.contains("TERMINAL_OK_42");
-            System.out.println((found ? "PASS" : "FAIL")
-                    + ": 命令回显含计算结果 42=" + found);
+            log.info("{}: 命令回显含计算结果 42={}", found ? "PASS" : "FAIL", found);
 
             // sendKey 演示: Ctrl+C 中断一个长命令
             term.send("sleep 30");
             ThreadUtils.sleepOfUnSafe(500);
             term.sendKey("ctrl+c");
             ThreadUtils.sleepOfUnSafe(1000);
-            System.out.println("PASS: sendKey(ctrl+c) 已发送");
+            log.info("PASS: sendKey(ctrl+c) 已发送");
 
             term.close();
         } catch (Exception e) {
@@ -76,7 +75,7 @@ public class SshAdvancedExample {
 
     /** 正向隧道: 本地端口 -> 远程 redis(6379) */
     private static void testLocalForward(String host, int port, String user, String pass) {
-        System.out.println("\n--- 2. 正向隧道 (本地 16379 -> 远程 redis 6379) ---");
+        log.info("\n--- 2. 正向隧道 (本地 16379 -> 远程 redis 6379) ---");
         try (SshClient ssh = SshClient.builder()
                 .host(host).port(port)
                 .username(user).password(pass)
@@ -85,7 +84,7 @@ public class SshAdvancedExample {
             ssh.connect();
             AutoCloseable tunnel = ssh.forward().local(16379, "172.17.0.9", 6379).start();
             ThreadUtils.sleepOfUnSafe(1000);
-            System.out.println("PASS: 隧道启动");
+            log.info("PASS: 隧道启动");
 
             try (Socket sock = new Socket()) {
                 sock.connect(new InetSocketAddress("127.0.0.1", 16379), 5000);
@@ -97,11 +96,10 @@ public class SshAdvancedExample {
                 byte[] buf = new byte[64];
                 int len = in.read(buf);
                 String reply = len > 0 ? new String(buf, 0, len, StandardCharsets.UTF_8).trim() : "";
-                System.out.println(("+PONG".equals(reply) ? "PASS" : "FAIL")
-                        + ": redis PING 响应 = " + reply);
+                log.info("{}: redis PING 响应 = {}", "+PONG".equals(reply) ? "PASS" : "FAIL", reply);
             }
             tunnel.close();
-            System.out.println("PASS: 隧道关闭");
+            log.info("PASS: 隧道关闭");
         } catch (Exception e) {
             log.error("FAIL: {}", e.getMessage(), e);
         }
@@ -109,7 +107,7 @@ public class SshAdvancedExample {
 
     /** SOCKS5 动态隧道 */
     private static void testDynamicForward(String host, int port, String user, String pass) {
-        System.out.println("\n--- 3. 动态隧道 SOCKS5 (本地 11080) ---");
+        log.info("\n--- 3. 动态隧道 SOCKS5 (本地 11080) ---");
         try (SshClient ssh = SshClient.builder()
                 .host(host).port(port)
                 .username(user).password(pass)
@@ -118,7 +116,7 @@ public class SshAdvancedExample {
             ssh.connect();
             AutoCloseable tunnel = ssh.forward().dynamic(11080).start();
             ThreadUtils.sleepOfUnSafe(1000);
-            System.out.println("PASS: SOCKS5 启动");
+            log.info("PASS: SOCKS5 启动");
 
             // 通过 SOCKS5 代理访问远程 redis 端口验证代理链路
             try (Socket sock = new Socket("127.0.0.1", 11080)) {
@@ -131,11 +129,10 @@ public class SshAdvancedExample {
                 byte[] resp = new byte[2];
                 int n = in.read(resp);
                 boolean ok = n == 2 && resp[0] == 5 && resp[1] == 0;
-                System.out.println((ok ? "PASS" : "FAIL")
-                        + ": SOCKS5 握手响应 = [" + resp[0] + "," + resp[1] + "]");
+                log.info("{}: SOCKS5 握手响应 = [{},{}]", ok ? "PASS" : "FAIL", resp[0], resp[1]);
             }
             tunnel.close();
-            System.out.println("PASS: SOCKS5 关闭");
+            log.info("PASS: SOCKS5 关闭");
         } catch (Exception e) {
             log.error("FAIL: {}", e.getMessage(), e);
         }
@@ -143,7 +140,7 @@ public class SshAdvancedExample {
 
     /** 反向隧道: 远程 19990 -> 本地回声服务 19991 */
     private static void testRemoteForward(String host, int port, String user, String pass) {
-        System.out.println("\n--- 4. 反向隧道 (远程 19990 -> 本地 19991) ---");
+        log.info("\n--- 4. 反向隧道 (远程 19990 -> 本地 19991) ---");
         try (SshClient ssh = SshClient.builder()
                 .host(host).port(port)
                 .username(user).password(pass)
@@ -170,7 +167,7 @@ public class SshAdvancedExample {
 
             AutoCloseable tunnel = ssh.forward().remote(19990, "127.0.0.1", 19991).bindAddress("0.0.0.0").start();
             ThreadUtils.sleepOfUnSafe(1500);
-            System.out.println("PASS: 反向隧道注册与远程端口绑定 (netstat 确认 LISTEN)");
+            log.info("PASS: 反向隧道注册与远程端口绑定 (netstat 确认 LISTEN)");
 
             // 远程端口位于容器网络内(未映射到宿主机), 从容器内部自连验证完整环回:
             // 容器内 127.0.0.1:19990 --SSH--> 客户端本地回声服务 19991
@@ -180,12 +177,10 @@ public class SshAdvancedExample {
             String reply = ssh.exec().command("echo " + marker + " | nc -w 3 127.0.0.1 19990")
                     .executeAndGetOutput().trim();
             boolean loopOk = marker.equals(reply);
-            System.out.println((loopOk ? "PASS" : "WARN")
-                    + ": 环回校验 = [" + reply + "]"
-                    + (loopOk ? "" : " (服务端 forwarded-tcpip 未下发, 见报告)"));
+            log.info("{}: 环回校验 = [{}]{}", loopOk ? "PASS" : "WARN", reply, loopOk ? "" : " (服务端 forwarded-tcpip 未下发, 见报告)");
             tunnel.close();
             echo.join(2000);
-            System.out.println("PASS: 反向隧道关闭");
+            log.info("PASS: 反向隧道关闭");
         } catch (Exception e) {
             log.error("FAIL: {}", e.getMessage(), e);
         }

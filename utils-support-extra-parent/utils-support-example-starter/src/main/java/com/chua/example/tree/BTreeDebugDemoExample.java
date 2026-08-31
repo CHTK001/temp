@@ -2,6 +2,7 @@ package com.chua.example.tree;
 
 import com.chua.common.support.reflection.ReflectUtils;
 import com.chua.common.support.tree.BTree;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ import java.util.Set;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public class BTreeDebugDemoExample {
 
     /** 私有构造，防止实例化 */
@@ -49,39 +51,34 @@ public class BTreeDebugDemoExample {
         boolean isLeaf = (boolean) ReflectUtils.getField(root, "leaf");
         List<?> rKeys = (List<?>) ReflectUtils.getField(root, "keys");
         List<?> children = (List<?>) ReflectUtils.getField(root, "children");
-        System.out.println("Root: isLeaf=" + isLeaf
-                + " keys=" + rKeys.size()
-                + " children=" + children.size());
-        System.out.println("Root firstKey=" + rKeys.get(0)
-                + " lastKey=" + rKeys.get(rKeys.size() - 1));
+        log.info("Root: isLeaf={} keys={} children={}", isLeaf, rKeys.size(), children.size());
+        log.info("Root firstKey={} lastKey={}", rKeys.get(0), rKeys.get(rKeys.size() - 1));
 
         int[] leafCountByDepth = new int[MAX_DEPTH];
         int[] internalCountByDepth = new int[MAX_DEPTH];
         countNodesByDepth(root, 0, leafCountByDepth, internalCountByDepth);
-        System.out.println("\nNode counts by depth:");
+        log.info("\nNode counts by depth:");
         for (int d = 0; d < MAX_DEPTH; d++) {
             if (leafCountByDepth[d] > 0 || internalCountByDepth[d] > 0) {
-                System.out.println("  Depth " + d
-                        + ": internals=" + internalCountByDepth[d]
-                        + " leaves=" + leafCountByDepth[d]);
+                log.info("  Depth {} internals={} leaves={}", d, internalCountByDepth[d], leafCountByDepth[d]);
             }
         }
 
         int[] entriesByDepth = new int[MAX_DEPTH];
         countEntriesByDepth(root, 0, entriesByDepth);
-        System.out.println("\nEntries per depth:");
+        log.info("\nEntries per depth:");
         for (int d = 0; d < MAX_DEPTH; d++) {
             if (entriesByDepth[d] > 0) {
-                System.out.println("  Depth " + d + ": " + entriesByDepth[d] + " entries");
+                log.info("  Depth {}: {} entries", d, entriesByDepth[d]);
             }
         }
 
-        System.out.println("\n=== Range [490000, 500000) ===");
+        log.info("\n=== Range [490000, 500000) ===");
         int from = 490_000;
         int to = 500_000;
         List<Map.Entry<Integer, String>> result = new ArrayList<>();
         traceCollectRange(root, from, to, result, 0);
-        System.out.println("Found: " + result.size() + " entries");
+        log.info("Found: {} entries", result.size());
 
         Set<Integer> found = new HashSet<>();
         for (Map.Entry<Integer, String> e : result) {
@@ -93,10 +90,10 @@ public class BTreeDebugDemoExample {
                 missing.add(j);
             }
         }
-        System.out.println("Missing: " + missing.size());
+        log.info("Missing: {}", missing.size());
         if (!missing.isEmpty()) {
-            System.out.println("First 5: " + missing.subList(0, Math.min(5, missing.size())));
-            System.out.println("Last 5: " + missing.subList(Math.max(0, missing.size() - 5), missing.size()));
+            log.info("First 5: {}", missing.subList(0, Math.min(5, missing.size())));
+            log.info("Last 5: {}", missing.subList(Math.max(0, missing.size() - 5), missing.size()));
         }
     }
 

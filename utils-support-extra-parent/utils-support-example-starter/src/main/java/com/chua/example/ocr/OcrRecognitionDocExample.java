@@ -1,6 +1,7 @@
 package com.chua.example.ocr;
 
 import com.chua.deeplearning.support.ocr.OcrPipeline;
+import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -47,11 +48,12 @@ import java.nio.file.Path;
  *
  * @since 4.0.0
  */
+@Slf4j
 public class OcrRecognitionDocExample {
     private OcrRecognitionDocExample() { }
 
     public static void main(String[] args) throws Exception {
-        System.out.println("===== OCR 文字识别 — 完整配置 =====");
+        log.info("===== OCR 文字识别 — 完整配置 =====");
         OcrPipeline ocr = OcrPipeline.builder()
                 // ★ 必填
                 .detector("paddleocrv6-det")            // 文字检测：定位文字区域
@@ -64,7 +66,7 @@ public class OcrRecognitionDocExample {
                 .sortReadingOrder(true)                 // 按阅读顺序重排
                 .build();
 
-        System.out.println("  pipeline ready");
+        log.info("  pipeline ready");
 
         // OCR 示例（输出标注图）
         byte[] drawn = ocr.toDrawer(

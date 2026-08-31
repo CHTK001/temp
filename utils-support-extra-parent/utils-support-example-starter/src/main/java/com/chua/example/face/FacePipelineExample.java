@@ -5,6 +5,7 @@ import com.chua.deeplearning.support.face.FacePipeline;
 import com.chua.deeplearning.support.face.FacePipelineDiskCallback;
 import com.chua.deeplearning.support.face.FaceRestoreResult;
 import com.chua.deeplearning.support.model.PredictRectangle;
+import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,6 +20,7 @@ import java.util.List;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public final class FacePipelineExample {
 
     /** 测试图片路径，可通过 args[0] 覆盖 */
@@ -39,11 +41,11 @@ public final class FacePipelineExample {
         Files.createDirectories(Path.of(OUT_DIR));
 
         // ── 1. ONNX GFPGAN ──
-        System.out.println("===== ONNX GFPGAN =====");
+        log.info("===== ONNX GFPGAN =====");
         runPipeline(img, "onnx-gfpgan", "onnx");
 
         // ── 2. PT GFPGAN ──
-        System.out.println("===== PT GFPGAN =====");
+        log.info("===== PT GFPGAN =====");
         runPipeline(img, "pytorch-gfpgan", "pt");
     }
 

@@ -11,6 +11,7 @@ import com.chua.deeplearning.support.face.FacePipeline;
 import com.chua.deeplearning.support.face.FacePipelineDiskCallback;
 
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 人脸识别 — 完整处理流程图 + Builder 配置标注（修正版）。
@@ -69,18 +70,19 @@ import java.util.List;
  *
  * @since 4.0.0
  */
+@Slf4j
 public class FaceRecognitionDocExample {
     private FaceRecognitionDocExample() { }
 
     public static void main(String[] args) throws Exception {
-        System.out.println("===== 最小配置（仅必填）=====");
+        log.info("===== 最小配置（仅必填）=====");
         FacePipeline minimal = FacePipeline.builder()
                 .detector("faceplugin-face-detect-slim")   // ★ 人脸检测
                 .feature("faceplugin-face-feature")         // ★ 特征提取
                 .build();                                    // ★ 向量库自动创建
         minimal.setCallback(new FacePipelineDiskCallback(Path.of("D:\\images\\output\\minimal")));
 
-        System.out.println("\n===== 完整配置（必填 + 关键流程项）=====");
+        log.info("\n===== 完整配置（必填 + 关键流程项）=====");
         FacePipeline full = FacePipeline.builder()
                 .detector("faceplugin-face-detect-slim")
                 .feature("faceplugin-face-feature")
@@ -100,7 +102,7 @@ public class FaceRecognitionDocExample {
                 .build();
         full.setCallback(new FacePipelineDiskCallback(Path.of("D:\\images\\output\\full")));
 
-        System.out.println("  pipeline ready");
+        log.info("  pipeline ready");
 
         // 示例：执行完整识别流程
         byte[] imageData = Files.readAllBytes(Path.of("test.jpg"));
@@ -108,12 +110,12 @@ public class FaceRecognitionDocExample {
         // 1. 人脸检测 + 活体过滤
         List<FaceDetectionHit> hits = full.detectPipeline(imageData);
         if (hits.isEmpty()) {
-            System.out.println("  检测无人脸");
+            log.info("  检测无人脸");
             System.exit(0);
         }
 
         // 2. 完整识别（含活体→对齐→修复→超分→特征→检索）
         List<FaceIdentifyHit> results = full.identifyPipeline(imageData);
-        System.out.println("  识别结果数: " + results.size());
+        log.info("  识别结果数: {}", results.size());
     }
 }

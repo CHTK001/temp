@@ -218,7 +218,7 @@ public final class NodeFactorySpiExample {
 
         /** 创建JsonObject */
         @Override
-        public JsonObject createJsonObject(Map<String, Object> map) {
+        public JsonObject createJsonObject(Map map) {
             return new StubJsonObject(map);
         }
 
@@ -230,7 +230,7 @@ public final class NodeFactorySpiExample {
 
         /** 创建JsonArray */
         @Override
-        public JsonArray createJsonArray(Collection<?> collection) {
+        public JsonArray createJsonArray(Collection collection) {
             return new StubJsonArray(collection);
         }
 

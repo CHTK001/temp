@@ -47,7 +47,9 @@ public final class OnnxMiniLMEmbeddingExample {
             float[] v2 = client.embedding("hello world");
             boolean ok = v1 != null && v1.length == 384
                     && v2 != null && v2.length == 384;
-            double norm = MathUtils.l2Norm(v1);
+            double[] v1d = new double[v1.length];
+            for (int i = 0; i < v1.length; i++) v1d[i] = v1[i];
+            double norm = MathUtils.l2Norm(v1d);
             ok = ok && Math.abs(norm - 1.0) < 1e-3;
             System.out.printf("[%s] model=%s dim=%d norm=%.4f equal(重复输入)=%s%n",
                     label, model, v1 == null ? 0 : v1.length, norm, ok && near(v1, v2));

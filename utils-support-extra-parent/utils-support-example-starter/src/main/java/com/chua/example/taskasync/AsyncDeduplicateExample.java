@@ -107,9 +107,9 @@ public final class AsyncDeduplicateExample {
      */
     public static void main(String[] args) {
         boolean passed = true;
-        passed &= UtilsExample.timed("asyncSupplyRunAndBatch", AsyncDeduplicateExample::asyncSupplyRunAndBatch);
+        passed &= UtilsExample.timed("asyncSupplyRunAndBatch", () -> { try { return asyncSupplyRunAndBatch(); } catch (Exception e) { return false; } });
         passed &= UtilsExample.timed("dedupExecutesOnceOnly", AsyncDeduplicateExample::dedupExecutesOnceOnly);
-        passed &= UtilsExample.timed("ttlExpiryAllowsReprocess", AsyncDeduplicateExample::ttlExpiryAllowsReprocess);
+        passed &= UtilsExample.timed("ttlExpiryAllowsReprocess", () -> { try { return ttlExpiryAllowsReprocess(); } catch (Exception e) { return false; } });
         if (!passed) {
             log.info("[FAIL] Async/Deduplicate 存在失败场景");
             System.exit(UtilsExample.FAILURE);

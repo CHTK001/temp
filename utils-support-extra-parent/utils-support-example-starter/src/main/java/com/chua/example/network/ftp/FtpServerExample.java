@@ -3,6 +3,7 @@ package com.chua.example.network.ftp;
 import com.chua.common.support.network.ftp.FtpConfig;
 import com.chua.common.support.network.ftp.FtpServer;
 import com.chua.common.support.network.ftp.FtpsServer;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.util.concurrent.CountDownLatch;
@@ -28,6 +29,7 @@ import java.util.concurrent.CountDownLatch;
  * @author CH
  * @since 4.0.0.43
  */
+@Slf4j
 public class FtpServerExample {
 
     /** 私有构造，防止实例化 */
@@ -78,11 +80,11 @@ public class FtpServerExample {
             config.setSelfSignedAuto(true);
             FtpsServer server = new FtpsServer(config);
             server.start();
-            System.out.println("[FTPS] 服务器就绪: 0.0.0.0:" + port + " 根目录=" + home + " 匿名只读");
+            log.info("[FTPS] 服务器就绪: 0.0.0.0:{} 根目录={} 匿名只读", port, home);
         } else {
             FtpServer server = new FtpServer(config);
             server.start();
-            System.out.println("[FTP] 服务器就绪: 0.0.0.0:" + port + " 根目录=" + home + " 匿名只读");
+            log.info("[FTP] 服务器就绪: 0.0.0.0:{} 根目录={} 匿名只读", port, home);
         }
 
         try {

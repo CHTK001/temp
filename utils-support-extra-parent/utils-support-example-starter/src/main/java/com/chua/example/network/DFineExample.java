@@ -69,7 +69,7 @@ public final class DFineExample {
         }
 
         try (DjlModelFactory factory =
-                     new DjlModelFactory("dfine-l-obj2coco", weights, cfg -> new DFineTranslator(cfg != null ? cfg : com.chua.deeplearning.support.ai.DetectionConfiguration.empty()))) {
+                     new DjlModelFactory("dfine-l-obj2coco", weights, () -> new DFineTranslator(com.chua.deeplearning.support.ai.DetectionConfiguration.DEFAULT))) {
             Image img = ImageFactory.getInstance().fromFile(Path.of(imagePath));
             DetectedObjects result = factory.predict(img);
             log.info(result.toString());

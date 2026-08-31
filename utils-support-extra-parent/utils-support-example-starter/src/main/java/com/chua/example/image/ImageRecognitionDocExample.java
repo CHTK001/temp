@@ -1,6 +1,7 @@
 package com.chua.example.image;
 
 import com.chua.common.support.image.ImagePipeline;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 图片检索 — 完整处理流程图 + Builder 配置标注。
@@ -41,16 +42,17 @@ import com.chua.common.support.image.ImagePipeline;
  *
  * @since 4.0.0
  */
+@Slf4j
 public class ImageRecognitionDocExample {
     private ImageRecognitionDocExample() { }
 
     public static void main(String[] args) throws Exception {
-        System.out.println("===== 图片检索 — Builder 配置 =====");
+        log.info("===== 图片检索 — Builder 配置 =====");
         ImagePipeline searcher = ImagePipeline.builder()
                 .grayscale(true)   // ★ 灰度化预处理
                 .build();                                     // ★ 管线自动构建
 
-        System.out.println("  pipeline ready");
+        log.info("  pipeline ready");
     }
 }
 

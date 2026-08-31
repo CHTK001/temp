@@ -3,9 +3,9 @@ package com.chua.example.onnx;
 import com.chua.common.support.reflection.ReflectUtils;
 import com.chua.deeplearning.support.image.ImageEnhancer;
 import com.chua.deeplearning.support.utils.ImageUtils;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * GFPGAN ONNX 人脸修复快速验证示例。
@@ -20,6 +20,7 @@ import java.nio.file.Path;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public class GfpganOnnxExample {
 
     /** 私有构造，防止实例化 */
@@ -37,23 +38,23 @@ public class GfpganOnnxExample {
         String outDir = DEFAULT_OUT_DIR;
         Files.createDirectories(Path.of(outDir));
 
-        System.out.println("Forcing OnnxModelRegistrar SPI...");
+        log.info("Forcing OnnxModelRegistrar SPI...");
         ReflectUtils.forName("com.chua.deeplearning.support.onnx.OnnxModelRegistrar");
 
-        System.out.println("Loading GFPGAN ONNX (onnx-gfpgan)...");
+        log.info("Loading GFPGAN ONNX (onnx-gfpgan)...");
         long t0 = System.currentTimeMillis();
         ImageEnhancer gfpgan = ImageEnhancer.create("onnx-gfpgan");
-        System.out.println("Model loaded in " + (System.currentTimeMillis() - t0) + "ms");
+        log.info("Model loaded in {}ms", System.currentTimeMillis() - t0);
 
-        System.out.println("Loading image: " + imagePath);
+        log.info("Loading image: {}", imagePath);
         byte[] img = Files.readAllBytes(Path.of(imagePath));
-        System.out.println("Image bytes: " + img.length);
+        log.info("Image bytes: {}", img.length);
 
-        System.out.println("Running GFPGAN ONNX inference...");
+        log.info("Running GFPGAN ONNX inference...");
         long t1 = System.currentTimeMillis();
         byte[] restored = gfpgan.enhance(img);
         long cost = System.currentTimeMillis() - t1;
-        System.out.println("Inference done in " + cost + "ms");
+        log.info("Inference done in {}ms", cost);
 
         if (restored == null || restored.length == 0) {
             System.err.println("ERROR: output is null/empty!");
@@ -62,7 +63,7 @@ public class GfpganOnnxExample {
 
         Path outPath = Path.of(outDir, OUT_FILE);
         Files.write(outPath, restored);
-        System.out.println("Output bytes: " + restored.length + " -> " + outPath.toAbsolutePath());
-        System.out.println("DONE");
+        log.info("Output bytes: {} -> {}", restored.length, outPath.toAbsolutePath());
+        log.info("DONE");
     }
 }

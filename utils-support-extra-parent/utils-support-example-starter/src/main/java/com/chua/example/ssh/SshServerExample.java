@@ -1,6 +1,7 @@
 package com.chua.example.ssh;
 
 import com.chua.ssh.support.server.SshServer;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ import java.util.List;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public class SshServerExample {
 
     /** 私有构造，防止实例化 */
@@ -52,9 +54,9 @@ public class SshServerExample {
         server.start();
 
         List<String> cmds = server.getCommandNames();
-        System.out.println("[SshServerExample] SSH 服务已启动: ssh://0.0.0.0:" + port);
-        System.out.println("[SshServerExample] 已注册命令数: " + cmds.size() + " -> " + cmds);
-        System.out.println("[SshServerExample] ShellMethod 路由: /demo/hello, /demo/time, /demo/jvm, /demo/calc");
+        log.info("[SshServerExample] SSH 服务已启动: ssh://0.0.0.0:{}", port);
+        log.info("[SshServerExample] 已注册命令数: {} -> {}", cmds.size(), cmds);
+        log.info("[SshServerExample] ShellMethod 路由: /demo/hello, /demo/time, /demo/jvm, /demo/calc");
 
         Thread.currentThread().join();
     }

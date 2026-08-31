@@ -6,6 +6,7 @@ import com.chua.common.support.vector.MemoryVectorStorage;
 import com.chua.common.support.vector.VectorCompareAlgorithm;
 import java.nio.file.*;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 3peoplebeauty.jpg 全流程：检测→裁剪→输出到各模型子目录。
@@ -14,6 +15,7 @@ import java.util.List;
  *
  * @since 4.0.0
  */
+@Slf4j
 public class FaceFullPipe3BeautyExample {
 
     /** 私有构造，防止实例化 */
@@ -34,7 +36,7 @@ public class FaceFullPipe3BeautyExample {
         face.setCallback(new FacePipelineDiskCallback(Path.of(outBase, "yolo-face-detector")));
 
         List<FaceDetectionHit> hits = face.detect(img);
-        System.out.println("detected: " + hits.size() + " faces");
+        log.info("detected: {} faces", hits.size());
 
         // ── ② 保存标注图 + 裁剪人脸 ──
         Path detDir = Path.of(outBase, "yolo-face-detector");
@@ -59,7 +61,7 @@ public class FaceFullPipe3BeautyExample {
         @SuppressWarnings("unchecked")
         byte[] drawn = (byte[]) ReflectUtils.invoke(dp, "done", byte[].class);
         Files.write(Path.of(detDir.toString(), "3peoplebeauty_annotated.png"), drawn);
-        System.out.println("annotated -> yolo-face-detector/3peoplebeauty_annotated.png");
+        log.info("annotated -> yolo-face-detector/3peoplebeauty_annotated.png");
 
         // 裁剪脸
         Path cropDir = Path.of(outBase, "yolo-face-detector", "crops");
@@ -69,15 +71,14 @@ public class FaceFullPipe3BeautyExample {
             if (faceImg != null && faceImg.length > 0) {
                 Path fp = Path.of(cropDir.toString(), "face_" + (i + 1) + ".png");
                 Files.write(fp, faceImg);
-                System.out.println("crop_" + (i + 1) + " -> " + fp.getFileName()
-                        + " (" + faceImg.length / 1024 + "KB)");
+                log.info("crop_{} -> {} ({}KB)", i + 1, fp.getFileName(), faceImg.length / 1024);
             }
         }
 
         // 特征
         float[] feat = face.extractFeature(img);
         if (feat != null && feat.length > 0) {
-            System.out.println("feature dim=" + feat.length);
+            log.info("feature dim={}", feat.length);
         }
 
         System.out.println("[DONE] pipeline complete for 3peoplebeauty.jpg");

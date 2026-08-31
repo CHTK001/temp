@@ -9,6 +9,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * FTP Server 全能力综合测试 — 启动内嵌服务器，客户端链式操作覆盖全部 FTP 命令。
@@ -33,6 +34,7 @@ import java.util.List;
  * @author CH
  * @since 4.0.0.43
  */
+@Slf4j
 public class FtpServerClientExample {
 
     /** 私有构造，防止实例化 */
@@ -69,9 +71,9 @@ public class FtpServerClientExample {
      * @param args 命令行参数
      */
     public static void main(String[] args) {
-        System.out.println("========================================");
-        System.out.println("FTP Server 全能力综合测试");
-        System.out.println("========================================");
+        log.info("========================================");
+        log.info("FTP Server 全能力综合测试");
+        log.info("========================================");
 
         // 确保测试目录存在
         var homeDir = new File(TEST_HOME);
@@ -92,10 +94,10 @@ public class FtpServerClientExample {
         try {
             ThreadUtils.sleepOfUnSafe(500);
             testAllCapabilities();
-            System.out.println();
-            System.out.println("========================================");
-            System.out.println("测试结果: 通过=" + passed.get() + ", 失败=" + failed.get());
-            System.out.println("========================================");
+            log.info("");
+            log.info("========================================");
+            log.info("测试结果: 通过={}, 失败={}", passed.get(), failed.get());
+            log.info("========================================");
             if (failed.get() > 0) {
                 System.exit(1);
             }
