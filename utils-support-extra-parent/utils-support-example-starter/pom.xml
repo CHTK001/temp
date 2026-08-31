@@ -979,6 +979,7 @@
                         <exclude>**/onnx/ArcFaceExample.java</exclude>
                         <exclude>**/onnx/AudioClientExample.java</exclude>
                         <exclude>**/onnx/BaseExample.java</exclude>
+                        <exclude>com/chua/example/onnx/BaseExample.java</exclude>
                         <exclude>**/onnx/ChatClientExample.java</exclude>
                         <exclude>**/onnx/EmbeddingClientExample.java</exclude>
                         <exclude>**/onnx/FacePluginExample.java</exclude>
