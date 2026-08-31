@@ -49,6 +49,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public final class ScatterDiscoveryExample {
 
+    /** 私有构造，防止实例化 */
+    private ScatterDiscoveryExample() { }
+
     /** 日志 */
     private static final Logger LOG = LoggerFactory.getLogger(ScatterDiscoveryExample.class);
 

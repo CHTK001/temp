@@ -15,8 +15,8 @@ import java.util.List;
  * 检测（paddleocrv6-det）→ 方向矫正（pp-word-rotate）→ 文字修复（text-bsr）→ 识别（paddleocrv6-rec）。</p>
  *
  * <pre>{@code
- *   OcrPipelineExample
- *   OcrPipelineExample G:\images\车票.png
+ *   OnnxOcrPipelineExample
+ *   OnnxOcrPipelineExample G:\images\车票.png
  * }</pre>
  *
  * @author CH
@@ -24,10 +24,10 @@ import java.util.List;
  * @since 4.0.0.42
  */
 @Slf4j
-public final class OcrPipelineExample extends BaseExample {
+public final class OnnxOcrPipelineExample extends BaseExample {
 
-    /** 创建 OcrPipelineExample 实例 */
-    private OcrPipelineExample() {
+    /** 创建 OnnxOcrPipelineExample 实例 */
+    private OnnxOcrPipelineExample() {
     }
 
     /** 默认图片路径 */

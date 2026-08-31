@@ -18,6 +18,9 @@ import com.chua.example.util.ExampleUtils;
 @Slf4j
 public final class BgeLargeZhEmbeddingExample {
 
+    /** 私有构造，防止实例化 */
+    private BgeLargeZhEmbeddingExample() { }
+
     /** Main */
     public static void main(String[] args) {
         boolean passed = new BgeLargeZhEmbeddingExample().runSelfTest();

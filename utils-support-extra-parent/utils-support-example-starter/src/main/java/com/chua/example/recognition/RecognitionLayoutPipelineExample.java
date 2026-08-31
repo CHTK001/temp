@@ -13,15 +13,15 @@ import java.nio.file.Path;
 import java.util.List;
 
 /**
- * Example: LayoutPipelineExample
+ * Example: RecognitionLayoutPipelineExample
  *
  * @author CH
  * @since 4.0.0.42
  */
 @Slf4j
-public final class LayoutPipelineExample {
+public final class RecognitionLayoutPipelineExample {
 
-    private LayoutPipelineExample() {
+    private RecognitionLayoutPipelineExample() {
     }
 
     public static void main(String[] args) throws Exception {

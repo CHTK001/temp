@@ -117,7 +117,7 @@ public class SubscriberExample {
 
     /** SampleEnvelope */
     private static DataEnvelope sampleEnvelope() {
-        Map<String, Object> data = new HashMap<>();
+        Map<String, Object> data = new HashMap<>(8);
         data.put("id", 1);
         data.put("name", "subscribe");
         DataEnvelope envelope = new DataEnvelope(data);

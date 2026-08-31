@@ -13,17 +13,17 @@ import java.util.List;
  * FLRGB 活体链路验证：onnx-retinaface 检测 → FLRGB 活体判定。
  *
  * <pre>{@code
- *   LivenessPipelineExample G:\images\三个人.jpg
+ *   OnnxLivenessPipelineExample G:\images\三个人.jpg
  * }</pre>
  *@author CH
  *
  * @since 4.0.0.42
  */
 @Slf4j
-public final class LivenessPipelineExample extends BaseExample {
+public final class OnnxLivenessPipelineExample extends BaseExample {
 
-    /** 创建 LivenessPipelineExample 实例 */
-    private LivenessPipelineExample() {
+    /** 创建 OnnxLivenessPipelineExample 实例 */
+    private OnnxLivenessPipelineExample() {
     }
 
     /** Main */

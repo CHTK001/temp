@@ -72,7 +72,7 @@ public final class JdkImageProcessorEdgeExample {
     private static boolean runEdge(JdkImageProcessor processor, byte[] input, String direction) {
         String label = direction == null ? "default" : direction;
         try {
-            Map<String, Object> params = new HashMap<>();
+            Map<String, Object> params = new HashMap<>(8);
             if (direction != null) {
                 params.put("direction", direction);
             }

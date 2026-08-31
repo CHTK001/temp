@@ -311,7 +311,7 @@ public class ImageProcessorBenchmarkExample {
      * @return 参数表
      */
     private static Map<String, Object> params(Object... keyValues) {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(8);
         for (int i = 0; i < keyValues.length; i += 2) {
             map.put(keyValues[i].toString(), keyValues[i + 1]);
         }

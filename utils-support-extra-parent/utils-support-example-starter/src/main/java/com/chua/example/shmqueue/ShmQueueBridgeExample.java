@@ -20,19 +20,19 @@ import lombok.extern.slf4j.Slf4j;
  *
  * <h2>用法</h2>
  * <pre>
- *   java com.chua.example.shmqueue.ShmQueueExample
+ *   java com.chua.example.shmqueue.ShmQueueBridgeExample
  * </pre>
  *
  * @author CH
  * @since 4.0.0.42
  */
 @Slf4j
-public final class ShmQueueExample {
+public final class ShmQueueBridgeExample {
 
     /**
      * 私有构造，防止实例化
      */
-    private ShmQueueExample() {
+    private ShmQueueBridgeExample() {
     }
 
     /**

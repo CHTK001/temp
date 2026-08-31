@@ -18,7 +18,10 @@ import java.util.List;
  * @since 4.0.0.42
  */
 @Slf4j
-public final class PlatePipelineTestExample {
+public final class PlatePipelineDemoExample {
+
+    /** 私有构造，防止实例化 */
+    private PlatePipelineDemoExample() { }
     public static void main(String[] args) throws Exception {
         ModelRegistry.discoverAll();
         ImageUtils.load();

@@ -964,6 +964,39 @@
                         <exclude>**/utils/TreeUtilsExample.java</exclude>
                         <exclude>**/vector/VectorMathBenchExample.java</exclude>
                         <exclude>**/vector/VectorStorageExample.java</exclude>
+                        <exclude>**/datasource/DuckDBEngineExample.java</exclude>
+                        <exclude>**/engine/MemoryFullCoverageExample.java</exclude>
+                        <exclude>**/engine/MemoryLambdaExample.java</exclude>
+                        <exclude>**/engine/SimpleEngineDataSourceExample.java</exclude>
+                        <exclude>**/face/FaceRecognitionDocExample.java</exclude>
+                        <exclude>**/image/ImagePipelineDemoExample.java</exclude>
+                        <exclude>**/lang/protobuf/ProtobufSerializerExampleSpi.java</exclude>
+                        <exclude>**/lang/serialize/ForySerializerExampleSpi.java</exclude>
+                        <exclude>**/network/proxy/AsyncHttpProxyPerfExample.java</exclude>
+                        <exclude>**/network/proxy/AsyncServerPerfExample.java</exclude>
+                        <exclude>**/network/proxy/AsyncTcpProxyPerfExample.java</exclude>
+                        <exclude>**/network/proxy/AsyncTcpServerPerfExample.java</exclude>
+                        <exclude>**/onnx/ArcFaceExample.java</exclude>
+                        <exclude>**/onnx/AudioClientExample.java</exclude>
+                        <exclude>**/onnx/BaseExample.java</exclude>
+                        <exclude>**/onnx/ChatClientExample.java</exclude>
+                        <exclude>**/onnx/EmbeddingClientExample.java</exclude>
+                        <exclude>**/onnx/FacePluginExample.java</exclude>
+                        <exclude>**/onnx/FeatureClientExample.java</exclude>
+                        <exclude>**/onnx/ImageClientExample.java</exclude>
+                        <exclude>**/onnx/OnnxMiniLMEmbeddingExample.java</exclude>
+                        <exclude>**/onnx/PocketTtsVoiceCloneExample.java</exclude>
+                        <exclude>**/onnx/SttTtsPipelineExample.java</exclude>
+                        <exclude>**/onnx/TextToAudioClientExample.java</exclude>
+                        <exclude>**/onnx/VCTTSExample.java</exclude>
+                        <exclude>**/onnx/VoiceCloneDebugDemoExample.java</exclude>
+                        <exclude>**/onnx/VoiceCloneDirectExample.java</exclude>
+                        <exclude>**/onnx/VoiceCloneMoonshineExample.java</exclude>
+                        <exclude>**/onnx/VoiceCloneSimpleExample.java</exclude>
+                        <exclude>**/recognition/AllPipelinesDrawerDemoExample.java</exclude>
+                        <exclude>**/recognition/RecognitionLayoutPipelineExample.java</exclude>
+                        <exclude>**/shmqueue/ShmQueueBridgeExample.java</exclude>
+                        <exclude>**/timer/TimerTimeWheelExample.java</exclude>
                     </excludes>
 
                 </configuration>

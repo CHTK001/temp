@@ -16,9 +16,9 @@ import com.chua.common.support.image.ImagePipeline;
  * @since 4.0.0.42
  */
 @Slf4j
-public final class ImagePipelineTestExample {
+public final class ImagePipelineDemoExample {
 
-    private ImagePipelineTestExample() {
+    private ImagePipelineDemoExample() {
     }
 
     /**

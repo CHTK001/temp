@@ -171,7 +171,7 @@ public final class ImageProcessorEdgeCaseExample {
     private static boolean runSingleEdge(ImageProcessor processor, byte[] input, String direction) {
         String label = processor.name() + "/" + (direction == null ? "default" : direction);
         try {
-            Map<String, Object> params = new HashMap<>();
+            Map<String, Object> params = new HashMap<>(8);
             if (direction != null) {
                 params.put("direction", direction);
             }

@@ -15,7 +15,10 @@ import java.nio.file.Path;
  * @since 4.0.0.42
  */
 @Slf4j
-public final class ModelRealTestExample {
+public final class ModelRealDemoExample {
+
+    /** 私有构造，防止实例化 */
+    private ModelRealDemoExample() { }
     public static void main(String[] args) throws Exception {
         ModelRegistry.discoverAll();
         ImageUtils.load();

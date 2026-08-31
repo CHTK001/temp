@@ -19,14 +19,14 @@ import com.chua.example.util.ExampleUtils;
  *
  * <h2>用法</h2>
  * <pre>
- *   java TimeWheelExample            # 运行全部自检
+ *   java TimerTimeWheelExample            # 运行全部自检
  * </pre>
  *
  * @author CH
  * @since 4.0.0.42
  */
 @Slf4j
-public final class TimeWheelExample {
+public final class TimerTimeWheelExample {
 
     /**
      * 时间轮槽位数
@@ -41,7 +41,7 @@ public final class TimeWheelExample {
     /**
      * 防止实例化工具类。
      */
-    private TimeWheelExample() {
+    private TimerTimeWheelExample() {
     }
 
     // ==================== main ====================
@@ -53,16 +53,16 @@ public final class TimeWheelExample {
      */
     public static void main(String[] args) {
         var passed = true;
-        passed &= ExampleUtils.timed("singleShotFiresOnTime", TimeWheelExample::singleShotFiresOnTime);
-        passed &= ExampleUtils.timed("multipleTasksAllFire", TimeWheelExample::multipleTasksAllFire);
-        passed &= ExampleUtils.timed("periodicFiresThenCancelStops", TimeWheelExample::periodicFiresThenCancelStops);
-        passed &= ExampleUtils.timed("cancelPreventsExecution", TimeWheelExample::cancelPreventsExecution);
-        passed &= ExampleUtils.timed("taskExceptionDoesNotKillWheel", TimeWheelExample::taskExceptionDoesNotKillWheel);
-        passed &= ExampleUtils.timed("shutdownStopsScheduling", TimeWheelExample::shutdownStopsScheduling);
-        passed &= ExampleUtils.timed("tickCountProgresses", TimeWheelExample::tickCountProgresses);
-        passed &= ExampleUtils.timed("slowTaskDoesNotBlockWheel", TimeWheelExample::slowTaskDoesNotBlockWheel);
-        passed &= ExampleUtils.timed("cancelInterruptsRunningTask", TimeWheelExample::cancelInterruptsRunningTask);
-        passed &= ExampleUtils.timed("taskCountMatchesScheduled", TimeWheelExample::taskCountMatchesScheduled);
+        passed &= ExampleUtils.timed("singleShotFiresOnTime", TimerTimeWheelExample::singleShotFiresOnTime);
+        passed &= ExampleUtils.timed("multipleTasksAllFire", TimerTimeWheelExample::multipleTasksAllFire);
+        passed &= ExampleUtils.timed("periodicFiresThenCancelStops", TimerTimeWheelExample::periodicFiresThenCancelStops);
+        passed &= ExampleUtils.timed("cancelPreventsExecution", TimerTimeWheelExample::cancelPreventsExecution);
+        passed &= ExampleUtils.timed("taskExceptionDoesNotKillWheel", TimerTimeWheelExample::taskExceptionDoesNotKillWheel);
+        passed &= ExampleUtils.timed("shutdownStopsScheduling", TimerTimeWheelExample::shutdownStopsScheduling);
+        passed &= ExampleUtils.timed("tickCountProgresses", TimerTimeWheelExample::tickCountProgresses);
+        passed &= ExampleUtils.timed("slowTaskDoesNotBlockWheel", TimerTimeWheelExample::slowTaskDoesNotBlockWheel);
+        passed &= ExampleUtils.timed("cancelInterruptsRunningTask", TimerTimeWheelExample::cancelInterruptsRunningTask);
+        passed &= ExampleUtils.timed("taskCountMatchesScheduled", TimerTimeWheelExample::taskCountMatchesScheduled);
         if (!passed) {
             log.info("[FAIL] TimeWheel 存在失败场景");
             System.exit(ExampleUtils.FAILURE);

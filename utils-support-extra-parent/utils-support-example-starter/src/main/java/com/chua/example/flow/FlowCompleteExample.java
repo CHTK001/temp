@@ -47,7 +47,7 @@ public class FlowCompleteExample {
                 .next("transform").next("end")
                 .end()
                 .createInstance();
-        Map<String, Object> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>(8);
         params.put("bizId", "CH-1001");
         instance.run(params);
 

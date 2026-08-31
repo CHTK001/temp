@@ -77,7 +77,7 @@ public class PipelineEngineExample {
         try {
             PipelineManager pm = new DefaultPipelineManager();
             // memory 模式无可用 dispatcher 时回退
-            Map<String, DataSink> sinks = new HashMap<>();
+            Map<String, DataSink> sinks = new HashMap<>(8);
             com.chua.common.support.concurrent.dispatcher.DispatcherProvider dp =
                     com.chua.common.support.concurrent.dispatcher.provider.MemoryDispatcherProvider
                             .class.cast(com.chua.common.support.spi.ServiceProvider
@@ -111,7 +111,7 @@ public class PipelineEngineExample {
             // 注册 log sink 用于验证
             com.chua.datalake.support.spi.sink.DataSink logSink = new com.chua.datalake.support.sink.LogSink();
             logSink.start();
-            Map<String, DataSink> sinks = new HashMap<>();
+            Map<String, DataSink> sinks = new HashMap<>(8);
             sinks.put(logSink.type(), logSink);
 
             com.chua.common.support.concurrent.dispatcher.DispatcherProvider dp =
@@ -128,7 +128,7 @@ public class PipelineEngineExample {
             cfg.setId("dsl-pipeline");
             PipelineStageConfig stage = new PipelineStageConfig();
             stage.setSink(Collections.singletonList(Map.of("type", "log")));
-            Map<String, PipelineStageConfig> stages = new HashMap<>();
+            Map<String, PipelineStageConfig> stages = new HashMap<>(8);
             stages.put("default", stage);
             cfg.setStages(stages);
 
@@ -150,7 +150,7 @@ public class PipelineEngineExample {
 
     /** SampleData */
     public static Map<String, Object> sampleData() {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(8);
         map.put("id", 1);
         map.put("name", "pipeline-engine-example");
         return map;

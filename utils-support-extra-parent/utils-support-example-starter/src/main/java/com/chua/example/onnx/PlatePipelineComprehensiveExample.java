@@ -30,6 +30,9 @@ import java.util.List;
 @Slf4j
 public final class PlatePipelineComprehensiveExample {
 
+    /** 私有构造，防止实例化 */
+    private PlatePipelineComprehensiveExample() { }
+
     /**
      * 默认测试图列表。
      */

@@ -122,12 +122,17 @@ public class DataSinkExample {
     /**
      * 示例业务数据。
      */
-    public static Map<String, Object> sampleData() {
-        Map<String, Object> map = new HashMap<>();
-        map.put("id", 1);
-        map.put("name", "datalake");
-        map.put("ts", System.currentTimeMillis());
-        return map;
+    
+    /** 示例业务数据记录 */
+    public record SampleRecord(long id, String name, long ts) {}
+
+    /**
+     * 示例业务数据。
+     *
+     * @return 示例数据记录
+     */
+    public static SampleRecord sampleData() {
+        return new SampleRecord(1L, "datalake", System.currentTimeMillis());
     }
 
     /** PrintResult */

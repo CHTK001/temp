@@ -266,7 +266,7 @@ public class ImageProcessorSpiExample {
             log.warn("[degrade] 无法读取测试图片");
             return false;
         }
-        Map<String, Object> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>(8);
         params.put("width", 100);
         params.put("height", 80);
         long t0 = System.nanoTime();
@@ -652,7 +652,7 @@ public class ImageProcessorSpiExample {
 
     /** Params */
     private static Map<String, Object> params(Object... keyValues) {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(8);
         for (int i = 0; i < keyValues.length; i += 2) {
             map.put(keyValues[i].toString(), keyValues[i + 1]);
         }

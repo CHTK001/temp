@@ -15,15 +15,15 @@ import com.chua.common.support.utils.MathUtils;
  * </ul>
  *
  * <p>用法：{@code mvn -o exec:java -Dexec.classpathScope=test
- * -Dexec.mainClass=com.chua.deeplearning.support.onnx.example.MiniLMEmbeddingExample}</p>
+ * -Dexec.mainClass=com.chua.deeplearning.support.onnx.example.OnnxMiniLMEmbeddingExample}</p>
  *@author CH
  *
  * @since 4.0.0.42
  */
 @Slf4j
-public final class MiniLMEmbeddingExample {
+public final class OnnxMiniLMEmbeddingExample {
 
-    private MiniLMEmbeddingExample() {
+    private OnnxMiniLMEmbeddingExample() {
     }
 
     /** Main */
@@ -33,9 +33,9 @@ public final class MiniLMEmbeddingExample {
         pass &= check("fp32", "minilm", "minilm-fp32");
         pass &= similarityCheck();
         if (pass) {
-            log.info("[MiniLMEmbeddingExample] ALL PASS");
+            log.info("[OnnxMiniLMEmbeddingExample] ALL PASS");
         } else {
-            log.info("[MiniLMEmbeddingExample] FAIL");
+            log.info("[OnnxMiniLMEmbeddingExample] FAIL");
             System.exit(1);
         }
     }

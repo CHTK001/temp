@@ -245,7 +245,7 @@ public class DatalakeIntegratedExample {
 
         /** SnapshotOnce */
         private Map<String, Object> snapshotOnce() {
-            Map<String, Object> row = new HashMap<>();
+            Map<String, Object> row = new HashMap<>(8);
             try {
                 HardwareAbstractionLayer hal = new oshi.SystemInfo().getHardware();
                 CentralProcessor cpu = hal.getProcessor();
