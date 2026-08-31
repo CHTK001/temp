@@ -68,7 +68,7 @@ public final class LoaderExample {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-        long distinct = java.util.Arrays.stream(results).distinct().count();
+        long distinct = stream(results).distinct().count();
         boolean ok = creations.get() == 1 && distinct == 1;
         UtilsExample.print("concurrentGetCreatesOnce", ok);
         return ok;

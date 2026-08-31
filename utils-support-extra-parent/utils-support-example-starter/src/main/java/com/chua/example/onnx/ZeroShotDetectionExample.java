@@ -9,6 +9,8 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.util.Arrays.stream;
+
 /**
  * 零样本检测端到端测试。
  *
