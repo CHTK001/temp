@@ -12,7 +12,8 @@ import org.opencv.core.Scalar;
 import static org.opencv.imgproc.Imgproc.cvtColor;
 import static org.opencv.imgproc.Imgproc.INTER_CUBIC;
 import static org.opencv.imgproc.Imgproc.warpAffine;
-import static org.opencv.core.Size;
+import static org.opencv.imgproc.Imgproc.COLOR_BGR2GRAY;
+import org.opencv.core.Size;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

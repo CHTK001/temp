@@ -13,7 +13,6 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import static org.opencv.core.Core.BORDER_CONSTANT;
-import static org.opencv.core.Scalar;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

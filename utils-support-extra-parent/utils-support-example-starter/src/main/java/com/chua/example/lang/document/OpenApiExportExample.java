@@ -24,6 +24,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Arrays.stream;
+import static java.util.Arrays.toString;
+import java.util.stream.Collectors;
+
 /**
  * OpenApiDocumentProvider 烟雾测试 Example。
  *
@@ -94,7 +98,7 @@ public class OpenApiExportExample implements Example {
                 return false;
             }
             log.info("  SPI Provider: " + provider.getClass().getName() + " extensions="
-                    + java.util.Arrays.toString(provider.getExtensions()));
+                    + toString(provider.getExtensions()));
 
             // 4) 导出
             File out = new File("./target/openapi-export-test.html");
@@ -267,7 +271,7 @@ public class OpenApiExportExample implements Example {
     }
 
     public static void main(String[] args) {
-        new OpenApiExportExample().run(java.util.Arrays.stream(args).collect(java.util.stream.Collectors.toMap(a -> a.split("=")[0], a -> a.split("=")[1])));
+        new OpenApiExportExample().run(stream(args).collect(Collectors.toMap(a -> a.split("=")[0], a -> a.split("=")[1])));
     }
 
 }

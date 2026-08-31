@@ -13,6 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.stream.Collectors;
+
+import static java.util.Arrays.stream;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -918,7 +921,7 @@ public class LazyExpiringListExample implements Example {
     }
 
     public static void main(String[] args) {
-        new LazyExpiringListExample().run(java.util.Arrays.stream(args).collect(java.util.stream.Collectors.toMap(a -> a.split("=")[0], a -> a.split("=")[1])));
+        new LazyExpiringListExample().run(stream(args).collect(Collectors.toMap(a -> a.split("=")[0], a -> a.split("=")[1])));
     }
 
 }

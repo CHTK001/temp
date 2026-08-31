@@ -12,6 +12,8 @@ import io.vertx.core.net.NetServer;
 import io.vertx.core.net.NetServerOptions;
 import io.vertx.core.net.NetSocket;
 
+import static java.util.Arrays.fill;
+
 import java.net.InetSocketAddress;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Semaphore;
@@ -38,7 +40,7 @@ public class AsyncTcpProxyPerfExample {
     private static final byte[] PAYLOAD = new byte[64];
 
     static {
-        java.util.Arrays.fill(PAYLOAD, (byte) 'A');
+        fill(PAYLOAD, (byte) 'A');
     }
 
     /** Main */

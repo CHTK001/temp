@@ -4,6 +4,9 @@ import com.chua.example.spi.Example;
 
 import java.util.Map;
 
+import static java.util.Arrays.stream;
+import java.util.stream.Collectors;
+
 /**
  * ImageProcessorSpiExample SPI 适配器 — 通过 {@link com.chua.example.runner.RunnerExample} 调度。
  *
@@ -45,7 +48,7 @@ public class ImageProcessorRustExample implements Example {
     }
 
     public static void main(String[] args) {
-        new ImageProcessorRustExample().run(java.util.Arrays.stream(args).collect(java.util.stream.Collectors.toMap(a -> a.split("=")[0], a -> a.split("=")[1])));
+        new ImageProcessorRustExample().run(stream(args).collect(Collectors.toMap(a -> a.split("=")[0], a -> a.split("=")[1])));
     }
 
 }

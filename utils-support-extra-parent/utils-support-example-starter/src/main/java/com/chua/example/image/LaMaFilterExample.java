@@ -10,6 +10,8 @@ import com.chua.image.support.filter.lama.LaMaConfiguration;
 import com.chua.image.support.filter.lama.LaMaFilterFactory;
 import com.chua.image.support.filter.lama.LaMaImageUtils;
 
+import static java.util.Arrays.toString;
+
 
 /**
  * LaMa滤镜测试类
@@ -217,8 +219,8 @@ public class LaMaFilterExample {
         // 测试输入形状
         long[] inputShape = chainConfig.getInputShape();
         long[] maskShape = chainConfig.getMaskShape();
-        log.info("输入形状: " + java.util.Arrays.toString(inputShape));
-        log.info("Mask形状: " + java.util.Arrays.toString(maskShape));
+        log.info("输入形状: " + toString(inputShape));
+        log.info("Mask形状: " + toString(maskShape));
 
         log.info("✅ 配置组合测试完成");
     }

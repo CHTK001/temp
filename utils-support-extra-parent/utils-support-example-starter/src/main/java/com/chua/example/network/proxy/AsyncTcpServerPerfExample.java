@@ -38,7 +38,7 @@ public class AsyncTcpServerPerfExample {
     private static final byte[] PAYLOAD = new byte[64];
 
     static {
-        java.util.Arrays.fill(PAYLOAD, (byte) 'A');
+        fill(PAYLOAD, (byte) 'A');
     }
 
     /** Main */
