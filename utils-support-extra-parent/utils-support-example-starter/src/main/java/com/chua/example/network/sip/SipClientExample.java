@@ -110,7 +110,7 @@ public class SipClientExample {
         }
         String allowStr = kv.get("allow");
         java.util.List<String> allow = allowStr == null || allowStr.isEmpty()
-                ? null : java.util.Arrays.asList(allowStr.split(","));
+                ? null : asList(allowStr.split(","));
 
         Runtime.getRuntime().addShutdownHook(new Thread(STOP_LATCH::countDown, "sip-client-shutdown-hook"));
 
