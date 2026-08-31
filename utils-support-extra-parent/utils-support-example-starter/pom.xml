@@ -774,8 +774,19 @@
                             <version>${lombok.version}</version>
                         </path>
                     </annotationProcessorPaths>
-
-
+                    <excludes>
+                        <exclude>**/image/LaMaFilterExample.java</exclude>
+                        <exclude>**/lang/document/OpenApiExportExample.java</exclude>
+                        <exclude>**/llama3/GpuLlama3Example.java</exclude>
+                        <exclude>**/network/proxy/AsyncTcpServerPerfExample.java</exclude>
+                        <exclude>**/onnx/EmbeddingClientExample.java</exclude>
+                        <exclude>**/onnx/OcrAngleExample.java</exclude>
+                        <exclude>**/onnx/OcrRotateCompareExample.java</exclude>
+                        <exclude>**/onnx/OcrUnclearExample.java</exclude>
+                        <exclude>**/shmqueue/ShmQueueBridgeExample.java</exclude>
+                        <exclude>**/ssh/SshSftpClientExample.java</exclude>
+                        <exclude>**/taskloader/LoaderExample.java</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
         </plugins>
