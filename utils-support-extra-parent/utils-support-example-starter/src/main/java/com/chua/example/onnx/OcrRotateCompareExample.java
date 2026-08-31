@@ -130,9 +130,10 @@ public final class OcrRotateCompareExample {
                 ra.convertTo(ra, CV_32F);
                 rb.convertTo(rb, CV_32F);
 
+                Mat diff = new Mat();
                 absdiff(ra, rb, diff);
                 meanStdDev(diff, new MatOfDouble(), new MatOfDouble());
-                double mean = mean(diff).val[0];
+                double m = mean(diff).val[0];
                 ra.release();
                 rb.release();
                 diff.release();
