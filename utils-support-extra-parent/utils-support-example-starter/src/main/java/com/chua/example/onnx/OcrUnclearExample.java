@@ -8,6 +8,8 @@ import com.chua.deeplearning.support.translator.ITranslator;
 import com.chua.deeplearning.support.utils.ImageUtils;
 import org.opencv.core.Mat;
 
+import static java.util.Arrays.equals;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -55,7 +57,7 @@ public final class OcrUnclearExample {
             log.info("  方向分类=" + cls + " prob=" + String.format("%.3f", prob));
 
             byte[] corrected = ocr.correct(img);
-            boolean rotated = !java.util.Arrays.equals(img, corrected);
+            boolean rotated = !equals(img, corrected);
             Mat m1 = ImageUtils.decode(corrected);
             log.info("  矫正后=" + (rotated ? "已旋转" : "未旋转") + " 尺寸=" + m1.cols() + "x" + m1.rows());
             m0.release();

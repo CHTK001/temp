@@ -12,6 +12,8 @@ import java.util.Map;
 
 import lombok.extern.slf4j.Slf4j;
 
+import static java.util.Arrays.equals;
+
 /**
  * SshClient / SftpClient 测试示例
  *
@@ -203,6 +205,6 @@ public class SshSftpClientExample {
 
     /** 数组比较 */
     private static boolean arraysEquals(byte[] a, byte[] b) {
-        return java.util.Arrays.equals(a, b);
+        return equals(a, b);
     }
 }

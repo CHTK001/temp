@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 
+import static java.util.Arrays.equals;
+
 /**
  * ShmQueue 抽象 API 层示例：覆盖单条收发、顺序性、队列满、数据过大、超时、attach、大批量等场景。
  *
@@ -121,7 +123,7 @@ public final class ShmQueueBridgeExample {
         try (ShmQueue q = ShmQueue.create(name, 16, 128, ShmQueue.Mode.HYBRID)) {
             q.send(7, data);
             ShmQueue.Message msg = q.recv();
-            return msg.type() == 7 && java.util.Arrays.equals(data, msg.bytes());
+            return msg.type() == 7 && equals(data, msg.bytes());
         } catch (Throwable t) {
             return detail("create-send-recv", t);
         }
@@ -247,7 +249,7 @@ public final class ShmQueueBridgeExample {
             creator.send(100, payload);
             try (ShmQueue attacher = ShmQueue.attach(name)) {
                 ShmQueue.Message msg = attacher.recv();
-                return msg.type() == 100 && java.util.Arrays.equals(payload, msg.bytes());
+                return msg.type() == 100 && equals(payload, msg.bytes());
             }
         } catch (Throwable t) {
             return detail("attach-existing", t);

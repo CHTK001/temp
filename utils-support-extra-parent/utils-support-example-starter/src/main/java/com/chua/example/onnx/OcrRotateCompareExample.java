@@ -8,6 +8,12 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.imgcodecs.Imgcodecs;
 
+import static java.util.Arrays.equals;
+import static org.opencv.core.Core.rotate;
+import static org.opencv.core.Core.ROTATE_180;
+import static org.opencv.core.Core.ROTATE_90_CLOCKWISE;
+import static org.opencv.core.Core.ROTATE_90_COUNTERCLOCKWISE;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -162,7 +168,7 @@ public final class OcrRotateCompareExample {
 
     /** SameBytes */
     private static boolean sameBytes(byte[] a, byte[] b) {
-        return java.util.Arrays.equals(a, b);
+        return equals(a, b);
     }
 
     /** RotateLocal */
@@ -174,9 +180,9 @@ public final class OcrRotateCompareExample {
         Mat out = new Mat();
         try {
             switch (degree) {
-                case 90 -> org.opencv.core.Core.rotate(src, out, org.opencv.core.Core.ROTATE_90_CLOCKWISE);
-                case 270 -> org.opencv.core.Core.rotate(src, out, org.opencv.core.Core.ROTATE_90_COUNTERCLOCKWISE);
-                default -> org.opencv.core.Core.rotate(src, out, org.opencv.core.Core.ROTATE_180);
+                case 90 -> rotate(src, out, ROTATE_90_CLOCKWISE);
+                case 270 -> rotate(src, out, ROTATE_90_COUNTERCLOCKWISE);
+                default -> rotate(src, out, ROTATE_180);
             }
             MatOfByte mob = new MatOfByte();
             Imgcodecs.imencode(".png", out, mob);
