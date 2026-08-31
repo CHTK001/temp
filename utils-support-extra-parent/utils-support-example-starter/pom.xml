@@ -292,12 +292,12 @@
             <version>${project.version}</version>
                     <optional>true</optional>
         </dependency>
-        <!--
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-deeplearning-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!--
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-deeplearning-safetensors-starter</artifactId>

@@ -9,6 +9,11 @@ import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 
+import static org.opencv.imgproc.Imgproc.cvtColor;
+import static org.opencv.imgproc.Imgproc.INTER_CUBIC;
+import static org.opencv.imgproc.Imgproc.warpAffine;
+import static org.opencv.core.Size;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -84,9 +89,9 @@ public class FaceRestoreCompareExample {
 
                 Mat affine = ImageUtils.estimateFaceAffine512(kps);
                 Mat aligned = new Mat();
-                org.opencv.imgproc.Imgproc.warpAffine(sub, aligned, affine,
-                        new org.opencv.core.Size(ALIGN_SIZE, ALIGN_SIZE),
-                        org.opencv.imgproc.Imgproc.INTER_CUBIC, 0, new Scalar(135, 133, 132));
+                warpAffine(sub, aligned, affine,
+                        new Size(ALIGN_SIZE, ALIGN_SIZE),
+                        INTER_CUBIC, 0, new Scalar(135, 133, 132));
                 byte[] face = ImageUtils.encode(aligned);
 
                 long t1 = System.currentTimeMillis();
@@ -102,7 +107,7 @@ public class FaceRestoreCompareExample {
                 Mat softMask = ImageUtils.decode(parsenet.enhance(restored));
                 if (softMask.channels() > 1) {
                     Mat g = new Mat();
-                    org.opencv.imgproc.Imgproc.cvtColor(softMask, g, org.opencv.imgproc.Imgproc.COLOR_BGR2GRAY);
+                    cvtColor(softMask, g, COLOR_BGR2GRAY);
                     softMask.release(); softMask = g;
                 }
                 Mat restoredMat = ImageUtils.decode(restored);
