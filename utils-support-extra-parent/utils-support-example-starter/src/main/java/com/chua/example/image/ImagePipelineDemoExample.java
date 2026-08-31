@@ -53,11 +53,11 @@ public final class ImagePipelineDemoExample {
         log.info("[erode] 腐蚀完成: " + size(out4));
 
         // 6) 膨胀
-        byte[] out5 = com.chua.common.support.image.ImagePipeline.builder().dilate(true, 3).build().process(in);
+        byte[] out5 = builder().dilate(true, 3).build().process(in);
         log.info("[dilate] 膨胀完成: " + size(out5));
 
         // 7) 全链路
-        byte[] out6 = com.chua.common.support.image.ImagePipeline.builder()
+        byte[] out6 = builder()
                 .grayscale(true).binarize(true, 128)
                 .denoise(true, 1).erode(true, 3).dilate(true, 3)
                 .build().process(in);
