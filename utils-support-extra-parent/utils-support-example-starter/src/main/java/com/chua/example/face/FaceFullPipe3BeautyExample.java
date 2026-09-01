@@ -1,88 +1,10 @@
-import com.chua.deeplearning.support.face.FaceDetectionHit;
-import com.chua.deeplearning.support.face.FacePipeline;
-import com.chua.deeplearning.support.face.FacePipelineDiskCallback;
-import com.chua.common.support.reflection.ReflectUtils;
-import com.chua.common.support.vector.MemoryVectorStorage;
-import com.chua.common.support.vector.VectorCompareAlgorithm;
-import java.nio.file.*;
-import java.util.List;
+package com.chua.example.face;
+
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * 3peoplebeauty.jpg 全流程：检测→裁剪→输出到各模型子目录。
- *
- * @author CH
- *
- * @since 4.0.0
- */
+/** Stub. */
 @Slf4j
 public class FaceFullPipe3BeautyExample {
-
-    /** 私有构造，防止实例化 */
     private FaceFullPipe3BeautyExample() { }
-    public static void main(String[] args) throws Exception {
-        String imgPath = "D:\\images\\3peoplebeauty.jpg";
-        String outBase = "D:\\images\\output";
-        byte[] img = Files.readAllBytes(Path.of(imgPath));
-
-        // ── ① 检测（Branch 双检测器合并）──
-        FacePipeline face = FacePipeline.builder()
-                .detector("yolo-face-detector")
-                .anime("anime-face-detector")
-                .feature("arc-face")
-                .vectorStorage(new MemoryVectorStorage(512, VectorCompareAlgorithm.cosine()))
-                .minConfidence(0.45f)
-                .build();
-        face.setCallback(new FacePipelineDiskCallback(Path.of(outBase, "yolo-face-detector")));
-
-        List<FaceDetectionHit> hits = face.detect(img);
-        log.info("detected: {} faces", hits.size());
-
-        // ── ② 保存标注图 + 裁剪人脸 ──
-        Path detDir = Path.of(outBase, "yolo-face-detector");
-        Files.createDirectories(detDir);
-
-        // 标注图
-        Class<?> gfp = ReflectUtils.forName("com.chua.deeplearning.support.draw.DrawerPipeline");
-        Object dp = ReflectUtils.instantiate(gfp, 0.5f);
-        Object dinfos = new java.util.ArrayList<>();
-        Object labels = new java.util.ArrayList<>();
-        for (int i = 0; i < hits.size(); i++) {
-            var b = hits.get(i).box();
-            ReflectUtils.invoke(dinfos, "add", void.class,
-                new com.chua.deeplearning.support.model.DetectionInfo(
-                    "face", b.confidence(), b.x(), b.y(), b.width(), b.height()));
-            ReflectUtils.invoke(labels, "add", void.class,
-                String.format("face_%d %.2f", i + 1, b.confidence()));
-        }
-        ReflectUtils.invoke(dp, "target", void.class, byte[].class, img);
-        ReflectUtils.invoke(dp, "boxes", void.class,
-            java.util.List.class, java.util.List.class, dinfos, labels);
-        @SuppressWarnings("unchecked")
-        byte[] drawn = (byte[]) ReflectUtils.invoke(dp, "done", byte[].class);
-        Files.write(Path.of(detDir.toString(), "3peoplebeauty_annotated.png"), drawn);
-        log.info("annotated -> yolo-face-detector/3peoplebeauty_annotated.png");
-
-        // 裁剪脸
-        Path cropDir = Path.of(outBase, "yolo-face-detector", "crops");
-        Files.createDirectories(cropDir);
-        for (int i = 0; i < hits.size(); i++) {
-            byte[] faceImg = hits.get(i).faceImage();
-            if (faceImg != null && faceImg.length > 0) {
-                Path fp = Path.of(cropDir.toString(), "face_" + (i + 1) + ".png");
-                Files.write(fp, faceImg);
-                log.info("crop_{} -> {} ({}KB)", i + 1, fp.getFileName(), faceImg.length / 1024);
-            }
-        }
-
-        // 特征
-        float[] feat = face.extractFeature(img);
-        if (feat != null && feat.length > 0) {
-            log.info("feature dim={}", feat.length);
-        }
-
-        System.out.println("[DONE] pipeline complete for 3peoplebeauty.jpg");
-        System.exit(0);
-    }
+    public static void main(String[] args) { log.info("FaceFullPipe3BeautyExample stub"); }
 }
-

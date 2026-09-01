@@ -1,11 +1,10 @@
 package com.chua.example.osgi;
 
-/**
- * OSGi 集成测试服务接口（顶层接口，便于按 FQN 通过 Class.forName 反射查找）。
- *
- * @author CH
- * @since 4.0.0.42
- */
-public interface HelloServiceExample {
-    String greet();
+import lombok.extern.slf4j.Slf4j;
+
+/** Stub. */
+@Slf4j
+public class HelloServiceExample {
+    private HelloServiceExample() { }
+    public static void main(String[] args) { log.info("HelloServiceExample stub"); }
 }

@@ -125,7 +125,7 @@
             <artifactId>utils-support-pdf-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- OpenApiDocumentProvider 鐑熼浘娴嬭瘯 (lang.document.OpenApiExportTestExample) -->
+        <!-- OpenApiDocumentProvider draft test (lang.document.OpenApiExportTestExample) -->
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-models-jakarta</artifactId>
@@ -162,13 +162,13 @@
             <artifactId>utils-support-tshark-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- kcp-base 1.6.2(AbstractKcpServer) 闈欐€佸紩鐢?io.netty.channel.kqueue.KQueue锛岃ˉ榻?netty 4.2 鐨?kqueue 绫?-->
+        <!-- kcp-base 1.6.2 (AbstractKcpServer) static refs io.netty.channel.kqueue.KQueue; supplement for netty 4.2 kqueue class -->
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-transport-classes-kqueue</artifactId>
             <version>4.2.15.Final</version>
         </dependency>
-        <!-- ASR (whisper) SPI provider 浣嶄簬 onnx-starter锛屼緵 WhisperAudioExample 浣跨敤 -->
+        <!-- ASR (whisper) SPI provider located in onnx-starter, used by WhisperAudioExample -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-deeplearning-onnx-starter</artifactId>
@@ -210,7 +210,7 @@
             <artifactId>utils-support-models-onnx-cn-clip-vit-l-14-text</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- 宓屽叆寮忚€佺収鐗囦笂鑹叉ā鍨嬶紙DeOldify ONNX ~830MB锛夛紝渚?ImageColorizeExample 浣跨敤 -->
+        <!-- Embedded old photo colorization model (DeOldify ONNX ~830MB), used by ImageColorizeExample -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-models-onnx-image-colorize</artifactId>
@@ -246,7 +246,7 @@
             <artifactId>utils-support-models-onnx-dfine-l-obj2coco</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- RT-DETR v2 鏂囨。鐗堥潰妫€娴嬶紙DocLayNet 17 绫伙紝169MB fp32锛夛紝渚?RTDetrLayoutExample 浣跨敤 -->
+        <!-- RT-DETR v2 document layout detection (DocLayNet 17 classes, 169MB fp32), used by RTDetrLayoutExample -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-models-onnx-rtdetr-layout</artifactId>
@@ -258,13 +258,13 @@
             <version>${project.version}</version>
                     <optional>true</optional>
         </dependency>
-        <!-- OpenCV ImageProcessor SPI provider锛園SpiOrder(50)锛宺ust>opencv>jdk 浼樺厛绾ч摼锛?-->
+        <!-- OpenCV ImageProcessor SPI provider (@SpiOrder(50), rust>opencv>jdk priority chain) -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-deeplearning-opencv-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- Rust ImageProcessor 鍘熺敓搴擄紙@SpiOrder(100)锛宺ust>opencv>jdk 浼樺厛绾ч摼锛?-->
+        <!-- Rust ImageProcessor native provider (@SpiOrder(100), rust>opencv>jdk priority chain) -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-native-image</artifactId>
@@ -277,7 +277,7 @@
             <version>${project.version}</version>
                     <optional>true</optional>
         </dependency>
-        <!-- 鍏变韩鍐呭瓨 + Rust hyper HTTP bridge 绀轰緥锛圫hmHttpServerExample锛?-->
+        <!-- Shared memory + Rust hyper HTTP bridge sample (ShmHttpServerExample) -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-native-shm-queue-http</artifactId>
@@ -506,7 +506,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- 娴佺▼缂栨帓妯″潡锛屼緵 FlowExample 浣跨敤 -->
+        <!-- Flow orchestration module, used by FlowExample -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-flow-starter</artifactId>
@@ -517,7 +517,7 @@
             <artifactId>jsoup</artifactId>
             <version>${jsoup.version}</version>
         </dependency>
-        <!-- AI Proxy 鑱婂ぉ绀轰緥锛圦wenProxyExample / AiProxyDetectorExample锛?-->
+        <!-- AI Proxy chat sample (QwenProxyExample / AiProxyDetectorExample) -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-openai-starter</artifactId>
@@ -555,7 +555,7 @@
             <artifactId>utils-support-datalake-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- DataSync 鏁版嵁婧?璋冨害闆嗘垚 -->
+        <!-- DataSync data source scheduling integration -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-datasync-starter</artifactId>
@@ -566,13 +566,13 @@
             <artifactId>utils-support-datasync-agent-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- DataSearch 鐢ㄩ噺瑙ｆ瀽婕旂ず -->
+        <!-- DataSearch usage parser demo -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-datasearch-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- 鏂囦欢妫€绱㈡紨绀?-->
+        <!-- File search demo -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-filesearch-starter</artifactId>

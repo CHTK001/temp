@@ -1,4 +1,4 @@
-﻿package com.chua.example.image;
+package com.chua.example.image;
 
 import lombok.extern.slf4j.Slf4j;
 
