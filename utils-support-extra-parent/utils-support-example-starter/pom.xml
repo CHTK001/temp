@@ -710,10 +710,6 @@
                 <version>3.5.0</version>
                 <configuration>
                     <classpathScope>runtime</classpathScope>
-                    <mainClass>com.chua.example.runner.ExampleRunner</mainClass>
-                    <arguments>
-                        <argument>${exec.args}</argument>
-                    </arguments>
                     <jvmArgs>
                         <jvmArg>--enable-preview</jvmArg>
                     </jvmArgs>

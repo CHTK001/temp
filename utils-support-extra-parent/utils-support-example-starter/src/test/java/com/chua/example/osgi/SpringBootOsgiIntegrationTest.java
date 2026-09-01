@@ -6,6 +6,7 @@ import com.chua.common.support.osgi.OsgiBundle;
 import com.chua.common.support.osgi.OsgiLauncher;
 import com.chua.common.support.osgi.OsgiLauncherHolder;
 import com.chua.common.support.spi.annotations.Spi;
+import com.chua.common.support.reflection.ReflectUtils;
 import com.chua.osgi.support.FelixOsgiLauncher;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
@@ -362,9 +363,7 @@ public class SpringBootOsgiIntegrationTest {
 
     public org.osgi.framework.Framework unwrapFramework() {
         try {
-            java.lang.reflect.Field f = FelixOsgiLauncher.class.getDeclaredField("framework");
-            f.setAccessible(true);
-            return (org.osgi.framework.Framework) f.get(launcher);
+            return (org.osgi.framework.Framework) ReflectUtils.getField(launcher, "framework");
         } catch (Exception e) {
             throw new RuntimeException("无法获取 Framework", e);
         }

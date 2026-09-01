@@ -18,12 +18,12 @@ import java.util.Enumeration;
  * @since 4.0.0.42
  */
 @Slf4j
-public final class VoiceCloneDebugDemoExample {
+public final class VoiceCloneResourceInspectExample {
 
-    private VoiceCloneDebugDemoExample() {}
+    private VoiceCloneResourceInspectExample() {}
 
     public static void main(String[] args) throws Exception {
-        String text = args.length > 0 ? args[0] : "Hello world";
+        String text = args != null && args.length > 0 && args[0] != null ? args[0] : "Hello world";
         log.info("[debug] text: {}", text);
 
         byte[] audio = synthesizeTts(text);
@@ -72,3 +72,4 @@ public final class VoiceCloneDebugDemoExample {
         }
     }
 }
+
