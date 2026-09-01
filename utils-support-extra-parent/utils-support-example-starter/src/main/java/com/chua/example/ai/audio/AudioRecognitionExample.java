@@ -1,4 +1,4 @@
-package com.chua.deeplearning.support.onnx.audio;
+package com.chua.example.ai.audio;
 
 import com.chua.common.support.ai.audio.TextToAudioClient;
 import com.chua.deeplearning.support.onnx.audio.AsrPipeline;
