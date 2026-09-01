@@ -28,7 +28,9 @@ public final class VoiceCloneDebugDemoExample {
 
         byte[] audio = synthesizeTts(text);
         log.info("[debug] audio bytes: {}", audio.length);
-        Path wavPath = Files.createTempFile("voice-debug-", ".wav");
+        Path outputDir = Path.of(System.getProperty("java.io.tmpdir"), "test-output", "voice-clone-debug");
+        Files.createDirectories(outputDir);
+        Path wavPath = Files.createTempFile(outputDir, "voice-", ".wav");
         Files.write(wavPath, audio);
         log.info("[debug] wav: {}", wavPath);
 
@@ -51,7 +53,7 @@ public final class VoiceCloneDebugDemoExample {
 
         log.info("[debug] calling WhisperTranslator.prepare directly...");
         WhisperTranslator translator = new WhisperTranslator();
-        Path modelDir = Files.createTempDirectory("whisper-model-");
+        Path modelDir = Files.createTempDirectory(outputDir, "whisper-model-");
         try {
             translator.prepare(modelDir);
             log.info("[debug] prepare done, modelDir: {}", modelDir);
@@ -59,8 +61,7 @@ public final class VoiceCloneDebugDemoExample {
             String result = translator.transcribe(wavPath);
             log.info("[debug] transcribe result: [{}]", result);
         } catch (Exception e) {
-            log.info("[debug] prepare failed: {}", e.getMessage());
-            e.printStackTrace();
+            log.error("[debug] prepare failed: {}", e.getMessage(), e);
         }
     }
 

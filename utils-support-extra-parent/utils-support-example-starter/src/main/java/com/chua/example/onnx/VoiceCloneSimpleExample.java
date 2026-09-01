@@ -21,10 +21,12 @@ import java.util.Enumeration;
 @Slf4j
 public final class VoiceCloneSimpleExample {
 
+    private static final String OUTPUT_DIR_NAME = "test-output/voice-clone-simple";
+
     private VoiceCloneSimpleExample() {}
 
     public static void main(String[] args) throws Exception {
-        String text = args.length > 0 ? args[0] : "Hello world";
+        String text = args != null && args.length > 0 && args[0] != null ? args[0] : "Hello world";
         log.info("===== TTS->STT Pipeline =====");
         log.info("[pipeline] text: {}", text);
 
@@ -32,7 +34,9 @@ public final class VoiceCloneSimpleExample {
         byte[] audio = synthesizeTts(text);
         log.info("[tts] bytes: {}", audio.length);
 
-        Path wavPath = Files.createTempFile("voice-test-", ".wav");
+        Path outputDir = Path.of(System.getProperty("java.io.tmpdir"), "test-output", "voice-clone-simple");
+        Files.createDirectories(outputDir);
+        Path wavPath = Files.createTempFile(outputDir, "voice-", ".wav");
         Files.write(wavPath, audio);
         log.info("[tts] wav: {} ({} bytes)", wavPath, wavPath.toFile().length());
 
@@ -67,7 +71,9 @@ public final class VoiceCloneSimpleExample {
     }
 
     static Path extractWhisperModel() throws Exception {
-        Path modelDir = Files.createTempDirectory("whisper-model-");
+        Path outputDir = Path.of(System.getProperty("java.io.tmpdir"), OUTPUT_DIR_NAME);
+        Files.createDirectories(outputDir);
+        Path modelDir = Files.createTempDirectory(outputDir, "whisper-model-");
         Enumeration<java.net.URL> resources =
                 WhisperTranslator.class.getClassLoader().getResources("audio/asr/whisper-tiny");
         int extracted = 0;
@@ -86,7 +92,7 @@ public final class VoiceCloneSimpleExample {
                                 Files.copy(p, target, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
                             }
                         } catch (Exception e) {
-                            throw new RuntimeException(e);
+                            throw new RuntimeException("extract whisper model failed", e);
                         }
                     });
                 }
@@ -126,7 +132,7 @@ public final class VoiceCloneSimpleExample {
             }
         }
         if (extracted == 0) {
-            throw new RuntimeException("No whisper resources found");
+            throw new RuntimeException("No whisper resources found in classpath");
         }
         return modelDir;
     }

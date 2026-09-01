@@ -6,6 +6,7 @@ import com.chua.common.support.ai.agent.AgentHookEvent;
 import com.chua.common.support.ai.agent.AgentMode;
 import com.chua.common.support.ai.agent.AgentResponse;
 import com.chua.common.support.ai.chat.ChatClient;
+import com.chua.common.support.lang.json.Json;
 import com.chua.common.support.network.client.HttpClientFactory;
 
 import java.io.ByteArrayOutputStream;
@@ -38,7 +39,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AgentWeatherFileExample {
 
+    /** 工作目录，运行时由 main 初始化，存储 Agent 中间产物 */
     private static Path workDir;
+    /** 记录 AgentHookEvent，供 printSummary() 统计展示 */
     private static final List<AgentHookEvent> hookEvents = new CopyOnWriteArrayList<>();
 
     public static void main(String[] args) throws Exception {
@@ -244,20 +247,20 @@ public class AgentWeatherFileExample {
 
     private static int parseJsonInt(String json, String key) {
         try {
-            String pattern = "\"" + key + "\"\\s*:\\s*\"?(\\d+)\"?";
-            java.util.regex.Matcher m = java.util.regex.Pattern.compile(pattern).matcher(json);
-            if (m.find()) return Integer.parseInt(m.group(1));
-        } catch (Exception e) {}
-        return -1;
+            return Json.parse(json).get(key).toIntValue(-1);
+        } catch (Exception e) {
+            log.warn("[WARN] parseJsonInt key='{}': {}", key, e.getMessage());
+            return -1;
+        }
     }
 
     private static String extractJsonValue(String json, String key) {
         try {
-            String pattern = "\"" + key + "\"\\s*:\\s*\"([^\"]+)\"";
-            java.util.regex.Matcher m = java.util.regex.Pattern.compile(pattern).matcher(json);
-            if (m.find()) return m.group(1);
-        } catch (Exception e) {}
-        return "?";
+            return Json.parse(json).get(key).toStringValue("?");
+        } catch (Exception e) {
+            log.warn("[WARN] extractJsonValue key='{}': {}", key, e.getMessage());
+            return "?";
+        }
     }
 
     private static void printSummary() {
@@ -289,7 +292,9 @@ public class AgentWeatherFileExample {
                 if (Files.exists(report)) {
                     log.info("\n--- 文件内容 ({}) ---%n%s", report, Files.readString(report, StandardCharsets.UTF_8));
                 }
-            } catch (Exception e) {}
+            } catch (Exception e) {
+                log.warn("[WARN] read report file: {}", e.getMessage());
+            }
         }
         log.info("==============================");
     }
