@@ -10,17 +10,17 @@ import lombok.extern.slf4j.Slf4j;
 import static java.util.Arrays.equals;
 
 /**
- * ShmQueue 抽象 API 层示例：覆盖单条收发、顺序性、队列满、数据过大、超时、attach、大批量等场景。
+ * ShmQueue 鎶借薄 API 灞傜ず渚嬶細瑕嗙洊鍗曟潯鏀跺彂銆侀『搴忔€с€侀槦鍒楁弧銆佹暟鎹繃澶с€佽秴鏃躲€乤ttach銆佸ぇ鎵归噺绛夊満鏅€?
  *
- * <p>改写自 common-starter 测试代码 shmqueue/ShmQueueTest，共 7 个场景：
- * create+send/recv、200 条消息不丢不乱、队列满错误码、数据过大错误码、recv 超时及时长边界、
- * attach 已存在队列、5000 条大批量消息。</p>
+ * <p>鏀瑰啓鑷?common-starter 娴嬭瘯浠ｇ爜 shmqueue/ShmQueueTest锛屽叡 7 涓満鏅細
+ * create+send/recv銆?00 鏉℃秷鎭笉涓笉涔便€侀槦鍒楁弧閿欒鐮併€佹暟鎹繃澶ч敊璇爜銆乺ecv 瓒呮椂鍙婃椂闀胯竟鐣屻€?
+ * attach 宸插瓨鍦ㄩ槦鍒椼€?000 鏉″ぇ鎵归噺娑堟伅銆?/p>
  *
- * <p>前置条件：classpath 中需存在至少一个 {@link com.chua.common.support.shmqueue.ShmQueueProvider}
- * SPI 实现（通常由 utils-support-native-shm-queue 模块提供）。native 库加载失败时打印
- * {@code [SKIP] native-unavailable} 并正常退出（退出码 0），不计为 FAIL。</p>
+ * <p>鍓嶇疆鏉′欢锛歝lasspath 涓渶瀛樺湪鑷冲皯涓€涓?{@link com.chua.common.support.shmqueue.ShmQueueProvider}
+ * SPI 瀹炵幇锛堥€氬父鐢?utils-support-native-shm-queue 妯″潡鎻愪緵锛夈€俷ative 搴撳姞杞藉け璐ユ椂鎵撳嵃
+ * {@code [SKIP] native-unavailable} 骞舵甯搁€€鍑猴紙閫€鍑虹爜 0锛夛紝涓嶈涓?FAIL銆?/p>
  *
- * <h2>用法</h2>
+ * <h2>鐢ㄦ硶</h2>
  * <pre>
  *   java com.chua.example.shmqueue.ShmQueueBridgeExample
  * </pre>
@@ -32,15 +32,15 @@ import static java.util.Arrays.equals;
 public final class ShmQueueBridgeExample {
 
     /**
-     * 私有构造，防止实例化
+     * 绉佹湁鏋勯€狅紝闃叉瀹炰緥鍖?
      */
     private ShmQueueBridgeExample() {
     }
 
     /**
-     * 入口：先探测 native 可用性，随后依次执行 7 个自检场景，任一失败立即退出非零。
+     * 鍏ュ彛锛氬厛鎺㈡祴 native 鍙敤鎬э紝闅忓悗渚濇鎵ц 7 涓嚜妫€鍦烘櫙锛屼换涓€澶辫触绔嬪嵆閫€鍑洪潪闆躲€?
      *
-     * @param args 未使用
+     * @param args 鏈娇鐢?
      */
     public static void main(String[] args) {
         if (!probeNative()) {
@@ -89,17 +89,17 @@ public final class ShmQueueBridgeExample {
         } else {
             log.info("[PASS] large-burst-5000");
         }
-        log.info("[PASS] shm-queue 全部 7 个场景通过");
+        log.info("[PASS] shm-queue 鍏ㄩ儴 7 涓満鏅€氳繃");
     }
 
     /**
-     * 探测 native 库与 Provider 是否可用。
+     * 鎺㈡祴 native 搴撲笌 Provider 鏄惁鍙敤銆?
      *
-     * <p>创建一个最小队列验证链路；任何 Throwable（含 UnsatisfiedLinkError、
-     * Provider 缺失的 IllegalStateException）均视为环境不可用，
-     * 打印 {@code [SKIP] native-unavailable} 后正常返回 false，进程以 0 退出。</p>
+     * <p>鍒涘缓涓€涓渶灏忛槦鍒楅獙璇侀摼璺紱浠讳綍 Throwable锛堝惈 UnsatisfiedLinkError銆?
+     * Provider 缂哄け鐨?IllegalStateException锛夊潎瑙嗕负鐜涓嶅彲鐢紝
+     * 鎵撳嵃 {@code [SKIP] native-unavailable} 鍚庢甯歌繑鍥?false锛岃繘绋嬩互 0 閫€鍑恒€?/p>
      *
-     * @return 可用返回 true；不可用返回 false（跳过而非失败）
+     * @return 鍙敤杩斿洖 true锛涗笉鍙敤杩斿洖 false锛堣烦杩囪€岄潪澶辫触锛?
      */
     private static boolean probeNative() {
         String name = "/shmq_ex_probe_" + System.nanoTime();
@@ -113,9 +113,9 @@ public final class ShmQueueBridgeExample {
     }
 
     /**
-     * 场景 1：创建队列后单条 send/recv 往返一致。
+     * 鍦烘櫙 1锛氬垱寤洪槦鍒楀悗鍗曟潯 send/recv 寰€杩斾竴鑷淬€?
      *
-     * @return 通过返回 true
+     * @return 閫氳繃杩斿洖 true
      */
     private static boolean runCreateAndSendRecv() {
         String name = uniqueName();
@@ -130,9 +130,9 @@ public final class ShmQueueBridgeExample {
     }
 
     /**
-     * 场景 2：200 条消息按序不丢不乱。
+     * 鍦烘櫙 2锛?00 鏉℃秷鎭寜搴忎笉涓笉涔便€?
      *
-     * @return 通过返回 true
+     * @return 閫氳繃杩斿洖 true
      */
     private static boolean runOrderPreserved() {
         String name = uniqueName();
@@ -155,9 +155,9 @@ public final class ShmQueueBridgeExample {
     }
 
     /**
-     * 场景 3：容量 4 的队列发满后再发应抛 ERR_QUEUE_FULL。
+     * 鍦烘櫙 3锛氬閲?4 鐨勯槦鍒楀彂婊″悗鍐嶅彂搴旀姏 ERR_QUEUE_FULL銆?
      *
-     * @return 通过返回 true
+     * @return 閫氳繃杩斿洖 true
      */
     private static boolean runQueueFull() {
         String name = uniqueName();
@@ -181,9 +181,9 @@ public final class ShmQueueBridgeExample {
     }
 
     /**
-     * 场景 4：超过槽位大小的数据应抛 ERR_DATA_TOO_LARGE。
+     * 鍦烘櫙 4锛氳秴杩囨Ы浣嶅ぇ灏忕殑鏁版嵁搴旀姏 ERR_DATA_TOO_LARGE銆?
      *
-     * @return 通过返回 true
+     * @return 閫氳繃杩斿洖 true
      */
     private static boolean runDataTooLarge() {
         String name = uniqueName();
@@ -205,9 +205,9 @@ public final class ShmQueueBridgeExample {
     }
 
     /**
-     * 场景 5：空队列 recvTimeout(50ms) 应抛 ERR_TIMEOUT 且耗时在 40ms~2s 区间。
+     * 鍦烘櫙 5锛氱┖闃熷垪 recvTimeout(50ms) 搴旀姏 ERR_TIMEOUT 涓旇€楁椂鍦?40ms~2s 鍖洪棿銆?
      *
-     * @return 通过返回 true
+     * @return 閫氳繃杩斿洖 true
      */
     private static boolean runRecvTimeout() {
         String name = uniqueName();
@@ -238,9 +238,9 @@ public final class ShmQueueBridgeExample {
     }
 
     /**
-     * 场景 6：attach 已存在队列并读取创建方写入的消息。
+     * 鍦烘櫙 6锛歛ttach 宸插瓨鍦ㄩ槦鍒楀苟璇诲彇鍒涘缓鏂瑰啓鍏ョ殑娑堟伅銆?
      *
-     * @return 通过返回 true
+     * @return 閫氳繃杩斿洖 true
      */
     private static boolean runAttachExisting() {
         String name = uniqueName();
@@ -257,9 +257,9 @@ public final class ShmQueueBridgeExample {
     }
 
     /**
-     * 场景 7：1024 槽 × 4096 字节队列写入并读回 5000 条消息。
+     * 鍦烘櫙 7锛?024 妲?脳 4096 瀛楄妭闃熷垪鍐欏叆骞惰鍥?5000 鏉℃秷鎭€?
      *
-     * @return 通过返回 true
+     * @return 閫氳繃杩斿洖 true
      */
     private static boolean runLargeBurst() {
         String name = uniqueName();
@@ -284,11 +284,11 @@ public final class ShmQueueBridgeExample {
     }
 
     /**
-     * 输出异常明细并返回 false。
+     * 杈撳嚭寮傚父鏄庣粏骞惰繑鍥?false銆?
      *
-     * @param scene 场景名
-     * @param t     异常
-     * @return 固定返回 false
+     * @param scene 鍦烘櫙鍚?
+     * @param t     寮傚父
+     * @return 鍥哄畾杩斿洖 false
      */
     private static boolean detail(String scene, Throwable t) {
         log.info("  fail " + scene + " exception: "
@@ -297,19 +297,19 @@ public final class ShmQueueBridgeExample {
     }
 
     /**
-     * 生成唯一的共享内存对象名。
+     * 鐢熸垚鍞竴鐨勫叡浜唴瀛樺璞″悕銆?
      *
-     * @return 形如 /shmq_ex_<纳秒时间戳> 的名称
+     * @return 褰㈠ /shmq_ex_<绾崇鏃堕棿鎴? 鐨勫悕绉?
      */
     private static String uniqueName() {
         return "/shmq_ex_" + System.nanoTime();
     }
 
     /**
-     * Int 转 4 字节大端数组。
+     * Int 杞?4 瀛楄妭澶х鏁扮粍銆?
      *
-     * @param v 整数值
-     * @return 4 字节数组
+     * @param v 鏁存暟鍊?
+     * @return 4 瀛楄妭鏁扮粍
      */
     private static byte[] intToBytes(int v) {
         return new byte[]{
@@ -321,10 +321,10 @@ public final class ShmQueueBridgeExample {
     }
 
     /**
-     * 4 字节大端数组转 Int。
+     * 4 瀛楄妭澶х鏁扮粍杞?Int銆?
      *
-     * @param b 字节数组
-     * @return 整数值；长度非法返回 -1
+     * @param b 瀛楄妭鏁扮粍
+     * @return 鏁存暟鍊硷紱闀垮害闈炴硶杩斿洖 -1
      */
     private static int bytesToInt(byte[] b) {
         if (b == null || b.length != 4) {

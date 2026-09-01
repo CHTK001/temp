@@ -16,7 +16,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 /**
- * 诊断三张"很不清楚的文字图片"：方向模型分类 → correct 是否旋转 → 识别。
+ * 璇婃柇涓夊紶"寰堜笉娓呮鐨勬枃瀛楀浘鐗?锛氭柟鍚戞ā鍨嬪垎绫?鈫?correct 鏄惁鏃嬭浆 鈫?璇嗗埆銆?
  *@author CH
  *
  * @since 4.0.0.42
@@ -24,16 +24,16 @@ import java.util.List;
 @Slf4j
 public final class OcrUnclearExample {
 
-    /** 创建 OcrUnclearDiag 实例 */
+    /** 鍒涘缓 OcrUnclearDiag 瀹炰緥 */
     private OcrUnclearExample() {
     }
 
     /** Main */
     public static void main(String[] args) throws Exception {
         String[] files = {
-                "很不清楚的文字图片用于测试文字高清修复模型.png",
-                "很不清楚的文字图片用于测试文字高清修复模型1.png",
-                "很不清楚的文字图片用于测试文字高清修复模型2.png"
+                "寰堜笉娓呮鐨勬枃瀛楀浘鐗囩敤浜庢祴璇曟枃瀛楅珮娓呬慨澶嶆ā鍨?png",
+                "寰堜笉娓呮鐨勬枃瀛楀浘鐗囩敤浜庢祴璇曟枃瀛楅珮娓呬慨澶嶆ā鍨?.png",
+                "寰堜笉娓呮鐨勬枃瀛楀浘鐗囩敤浜庢祴璇曟枃瀛楅珮娓呬慨澶嶆ā鍨?.png"
         };
         @SuppressWarnings("unchecked")
         ITranslator<Object, Object> dirT = (ITranslator<Object, Object>)
@@ -50,22 +50,22 @@ public final class OcrUnclearExample {
             byte[] img = Files.readAllBytes(Path.of("G:\\images", name));
             log.info("===== " + name + " =====");
             Mat m0 = ImageUtils.decode(img);
-            log.info("  原图尺寸=" + m0.cols() + "x" + m0.rows());
+            log.info("  鍘熷浘灏哄=" + m0.cols() + "x" + m0.rows());
 
             Object dr = dirT.translate(img);
             String cls = String.valueOf(ReflectUtils.invoke(dr, "getName", Object.class));
             double prob = (double) ReflectUtils.invoke(dr, "getProbability", double.class);
-            log.info("  方向分类=" + cls + " prob=" + String.format("%.3f", prob));
+            log.info("  鏂瑰悜鍒嗙被=" + cls + " prob=" + String.format("%.3f", prob));
 
             byte[] corrected = ocr.correct(img);
             boolean rotated = !equals(img, corrected);
             Mat m1 = ImageUtils.decode(corrected);
-            log.info("  矫正后=" + (rotated ? "已旋转" : "未旋转") + " 尺寸=" + m1.cols() + "x" + m1.rows());
+            log.info("  鐭鍚?" + (rotated ? "宸叉棆杞? : "鏈棆杞?) + " 灏哄=" + m1.cols() + "x" + m1.rows());
             m0.release();
             m1.release();
 
             List<OcrResult> results = ocr.recognizeDetail(img);
-            log.info("  识别块数=" + results.size());
+            log.info("  璇嗗埆鍧楁暟=" + results.size());
             for (OcrResult r : results) {
                 System.out.printf("    [%.2f] '%s'%n", r.confidence(), r.text());
             }

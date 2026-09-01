@@ -18,7 +18,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 /**
- * OCR 旋转诊断：验证车票各旋转角度的方向分类 → 整图矫正 → 检测框角度 → 识别。
+ * OCR 鏃嬭浆璇婃柇锛氶獙璇佽溅绁ㄥ悇鏃嬭浆瑙掑害鐨勬柟鍚戝垎绫?鈫?鏁村浘鐭 鈫?妫€娴嬫瑙掑害 鈫?璇嗗埆銆?
  *@author CH
  *
  * @since 4.0.0.42
@@ -26,17 +26,17 @@ import java.util.List;
 @Slf4j
 public final class OcrAngleExample {
 
-    /** 创建 OcrAngleDiag 实例 */
+    /** 鍒涘缓 OcrAngleDiag 瀹炰緥 */
     private OcrAngleExample() {
     }
 
     /** Main */
     public static void main(String[] args) throws Exception {
         String dir = "G:\\images";
-        String[] files = {"车票.png", "车票ticket_90.png", "车票ticket_180.png", "车票ticket_270.png"};
+        String[] files = {"杞︾エ.png", "杞︾エticket_90.png", "杞︾エticket_180.png", "杞︾エticket_270.png"};
 
         String directionModel = args.length > 0 ? args[0] : "doc-orientation";
-        log.info("[diag] 方向模型=" + directionModel);
+        log.info("[diag] 鏂瑰悜妯″瀷=" + directionModel);
 
         OcrPipeline ocr = OcrPipeline.builder()
                 .detector("paddleocrv6-medium-det")
@@ -54,18 +54,18 @@ public final class OcrAngleExample {
             log.info("===== " + name + " =====");
 
             Object dr = dirT.translate(img);
-            log.info("  方向分类: " + describeDirection(dr));
+            log.info("  鏂瑰悜鍒嗙被: " + describeDirection(dr));
 
             byte[] corrected = ocr.correct(img);
             boolean rotated = !equals(img, corrected);
-            log.info("  整图矫正: " + (rotated ? "已旋转" : "未旋转(跳过或0°)"));
+            log.info("  鏁村浘鐭: " + (rotated ? "宸叉棆杞? : "鏈棆杞?璺宠繃鎴?掳)"));
             Mat correctedMat = decode(corrected);
-            log.info("  矫正后尺寸: " + correctedMat.cols() + "x" + correctedMat.rows());
+            log.info("  鐭鍚庡昂瀵? " + correctedMat.cols() + "x" + correctedMat.rows());
             correctedMat.release();
 
             ImageDetector det = ocr.detector();
             List<DetectionInfo> boxes = det.detect(corrected);
-            log.info("  检测框数: " + boxes.size());
+            log.info("  妫€娴嬫鏁? " + boxes.size());
             int shown = 0;
             for (DetectionInfo b : boxes) {
                 if (shown++ >= 3) {
@@ -76,7 +76,7 @@ public final class OcrAngleExample {
             }
 
             List<OcrResult> results = ocr.recognizeDetail(img);
-            log.info("  识别结果(前3): ");
+            log.info("  璇嗗埆缁撴灉(鍓?): ");
             int n = 0;
             for (OcrResult r : results) {
                 if (n++ >= 3) {

@@ -7,14 +7,14 @@ import static java.util.Arrays.copyOf;
 import static java.util.Arrays.toString;
 
 /**
- * 文本嵌入能力 SPI 示例。
+ * 鏂囨湰宓屽叆鑳藉姏 SPI 绀轰緥銆?
  *
- * <p>通过 {@link EmbeddingClient#create(String, String)} 切换提供商（onnx/minilm/bge/pytorch/llama），
- * 通过 {@code .model(modelId)} 切换模型。</p>
+ * <p>閫氳繃 {@link EmbeddingClient#create(String, String)} 鍒囨崲鎻愪緵鍟嗭紙onnx/minilm/bge/pytorch/llama锛夛紝
+ * 閫氳繃 {@code .model(modelId)} 鍒囨崲妯″瀷銆?/p>
  *
  * <pre>{@code
  *   EmbeddingClientExample list
- *   EmbeddingClientExample onnx bge-small-zh "你好世界"
+ *   EmbeddingClientExample onnx bge-small-zh "浣犲ソ涓栫晫"
  *   EmbeddingClientExample minilm minilm "hello world"
  * }</pre>
  *@author CH
@@ -24,7 +24,7 @@ import static java.util.Arrays.toString;
 @Slf4j
 public final class EmbeddingClientExample extends BaseExample {
 
-    /** 创建 EmbeddingClientExample 实例 */
+    /** 鍒涘缓 EmbeddingClientExample 瀹炰緥 */
     private EmbeddingClientExample() {
     }
 
@@ -38,7 +38,7 @@ public final class EmbeddingClientExample extends BaseExample {
         }
         String provider = args[0];
         String model = args.length > 1 ? args[1] : null;
-        String text = args.length > 2 ? args[2] : "你好世界";
+        String text = args.length > 2 ? args[2] : "浣犲ソ涓栫晫";
 
         EmbeddingClient client = EmbeddingClient.create(provider, "");
         if (model == null) {

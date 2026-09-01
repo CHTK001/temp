@@ -17,12 +17,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.LongAdder;
 
 /**
- * TCP echo 异步压测端：启动目标 TcpServer，用 Vert.x NetClient 异步 keep-alive 打真实吞吐。
+ * TCP echo 寮傛鍘嬫祴绔細鍚姩鐩爣 TcpServer锛岀敤 Vert.x NetClient 寮傛 keep-alive 鎵撶湡瀹炲悶鍚愩€? *
+ * <p>涓?AsyncServerPerfMain锛圚TTP 寮傛锛夊悓鍙ｅ緞锛堝苟鍙?鏃堕暱/瀹㈡埛绔紓姝ワ級锛屽叕骞冲姣?tcp vs http銆?/p>
  *
- * <p>与 AsyncServerPerfMain（HTTP 异步）同口径（并发/时长/客户端异步），公平对比 tcp vs http。</p>
- *
- * <p>用法：{@code java ... AsyncTcpServerPerfMain <type> [durSec] [conc]}，如
- * {@code vertx-tcp 5 2000}、{@code jdk-tcp 5 2000}。</p>
+ * <p>鐢ㄦ硶锛歿@code java ... AsyncTcpServerPerfMain <type> [durSec] [conc]}锛屽
+ * {@code vertx-tcp 5 2000}銆亄@code jdk-tcp 5 2000}銆?/p>
  *
  * @author CH
  * @since 4.0.0.42
@@ -30,11 +29,11 @@ import java.util.concurrent.atomic.LongAdder;
 @Slf4j
 public class AsyncTcpServerPerfExample {
 
-    /** 私有构造，防止实例化 */
+    /** 绉佹湁鏋勯€狅紝闃叉瀹炰緥鍖?*/
     private AsyncTcpServerPerfExample() { }
 
     /** log */
-/** 单次 echo 载荷（64B，与 VertxTcpPerfMain 一致） */
+/** 鍗曟 echo 杞借嵎锛?4B锛屼笌 VertxTcpPerfMain 涓€鑷达級 */
     private static final byte[] PAYLOAD = new byte[64];
 
     static {
@@ -46,20 +45,16 @@ public class AsyncTcpServerPerfExample {
         String type = args.length > 0 ? args[0] : "vertx-tcp";
         int durSec = args.length > 1 ? Integer.parseInt(args[1]) : 5;
         int conc = args.length > 2 ? Integer.parseInt(args[2]) : 2000;
-        // 每连接并发流数：与 HTTP 压测端(并发多 inflight)同口径。
-        // 诊断结论:此前 TCP 压测每连接 1 inflight 串行,受 RTT 限制单连接吞吐,
-        // 远低于 HTTP 每连接并发多流;此处每连接并发 streams 个在途 echo 拉平口径。
-        int streams = args.length > 3 ? Integer.parseInt(args[3]) : 8;
+        // 姣忚繛鎺ュ苟鍙戞祦鏁帮細涓?HTTP 鍘嬫祴绔?骞跺彂澶?inflight)鍚屽彛寰勩€?        // 璇婃柇缁撹:姝ゅ墠 TCP 鍘嬫祴姣忚繛鎺?1 inflight 涓茶,鍙?RTT 闄愬埗鍗曡繛鎺ュ悶鍚?
+        // 杩滀綆浜?HTTP 姣忚繛鎺ュ苟鍙戝娴?姝ゅ姣忚繛鎺ュ苟鍙?streams 涓湪閫?echo 鎷夊钩鍙ｅ緞銆?        int streams = args.length > 3 ? Integer.parseInt(args[3]) : 8;
 
-        // 1. 启动目标 TcpServer（项目自己的实现）
-        Server server = ServerBuilder.create().type(type).host("127.0.0.1").port(0).build();
+        // 1. 鍚姩鐩爣 TcpServer锛堥」鐩嚜宸辩殑瀹炵幇锛?        Server server = ServerBuilder.create().type(type).host("127.0.0.1").port(0).build();
         server.start();
         int port = server.getPort();
-        log.info("[AsyncTcpPerf] 服务器已启动: type={}, port={}, 开始异步压测 dur={}s conc={} streams={}",
+        log.info("[AsyncTcpPerf] 鏈嶅姟鍣ㄥ凡鍚姩: type={}, port={}, 寮€濮嬪紓姝ュ帇娴?dur={}s conc={} streams={}",
                 type, port, durSec, conc, streams);
 
-        // 2. 异步压测端：Vert.x NetClient，每连接 keep-alive 复用，并发回显
-        Vertx vertx = Vertx.vertx(new VertxOptions()
+        // 2. 寮傛鍘嬫祴绔細Vert.x NetClient锛屾瘡杩炴帴 keep-alive 澶嶇敤锛屽苟鍙戝洖鏄?        Vertx vertx = Vertx.vertx(new VertxOptions()
                 .setEventLoopPoolSize(Math.max(Runtime.getRuntime().availableProcessors(), 2))
                 .setPreferNativeTransport(true));
         NetClient client = vertx.createNetClient(new NetClientOptions()
@@ -75,8 +70,7 @@ public class AsyncTcpServerPerfExample {
         long t0 = System.nanoTime();
         long deadline = System.nanoTime() + (long) durSec * 1_000_000_000L;
 
-        // 递归发送：一个 echo 完成 → 若未到期限继续发下一个（连接由 Vert.x 池化复用）
-        java.util.function.BiConsumer<NetSocket, Buffer> fire = new java.util.function.BiConsumer<>() {
+        // 閫掑綊鍙戦€侊細涓€涓?echo 瀹屾垚 鈫?鑻ユ湭鍒版湡闄愮户缁彂涓嬩竴涓紙杩炴帴鐢?Vert.x 姹犲寲澶嶇敤锛?        java.util.function.BiConsumer<NetSocket, Buffer> fire = new java.util.function.BiConsumer<>() {
             @Override
             /** Accept */
             public void accept(NetSocket socket, Buffer buf) {
@@ -92,8 +86,7 @@ public class AsyncTcpServerPerfExample {
             }
         };
 
-        // 建立 conc 个连接，每连接并发 streams 个在途 echo（与 HTTP 压测端并发多流同口径）
-        for (int i = 0; i < conc; i++) {
+        // 寤虹珛 conc 涓繛鎺ワ紝姣忚繛鎺ュ苟鍙?streams 涓湪閫?echo锛堜笌 HTTP 鍘嬫祴绔苟鍙戝娴佸悓鍙ｅ緞锛?        for (int i = 0; i < conc; i++) {
             try {
                 inflight.acquire();
             } catch (InterruptedException e) {
@@ -102,15 +95,14 @@ public class AsyncTcpServerPerfExample {
             }
             client.connect(port, "127.0.0.1").onSuccess(socket -> {
                 socket.handler(data -> {
-                    // 响应到达：计数后补发一个，维持每连接 streams 个在途
-                    ok.increment();
+                    // 鍝嶅簲鍒拌揪锛氳鏁板悗琛ュ彂涓€涓紝缁存寔姣忚繛鎺?streams 涓湪閫?                    ok.increment();
                     inflight.release();
                     next(socket, Buffer.buffer(PAYLOAD));
                 }).exceptionHandler(err -> {
                     errors.increment();
                     inflight.release();
                 });
-                // 每连接预发 streams 个 echo（并发在途）
+                // 姣忚繛鎺ラ鍙?streams 涓?echo锛堝苟鍙戝湪閫旓級
                 for (int s = 0; s < streams; s++) {
                     socket.write(Buffer.buffer(PAYLOAD));
                 }
@@ -124,7 +116,7 @@ public class AsyncTcpServerPerfExample {
         long total = ok.sum();
         long errs = errors.sum();
         double rps = elapsedMs > 0 ? total * 1000.0 / elapsedMs : 0;
-        log.info("[AsyncTcpPerf] {} 吞吐: {} 请求/{}ms = {} req/s, ok={}, errors={}, finished={}",
+        log.info("[AsyncTcpPerf] {} 鍚炲悙: {} 璇锋眰/{}ms = {} req/s, ok={}, errors={}, finished={}",
                 type, total, elapsedMs, Math.round(rps), total, errs, finished);
         client.close();
         vertx.close();
@@ -133,7 +125,7 @@ public class AsyncTcpServerPerfExample {
 
     /** Next */
     private static void next(NetSocket socket, Buffer buf) {
-        // 连接已关时 write 会 fail，由 exceptionHandler 兜底计数，此处直接写
+        // 杩炴帴宸插叧鏃?write 浼?fail锛岀敱 exceptionHandler 鍏滃簳璁℃暟锛屾澶勭洿鎺ュ啓
         if (socket != null) {
             socket.write(buf);
         }

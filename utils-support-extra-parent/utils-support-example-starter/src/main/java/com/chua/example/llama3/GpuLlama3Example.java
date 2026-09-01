@@ -12,12 +12,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * GPU Llama3 示例 — 列出可用模型 + 简单对话。
- *
- * <p>用法：</p>
+ * GPU Llama3 绀轰緥 鈥?鍒楀嚭鍙敤妯″瀷 + 绠€鍗曞璇濄€? *
+ * <p>鐢ㄦ硶锛?/p>
  * <pre>
- *   java --example=gpu-llama3                        # 列出模型
- *   java --example=gpu-llama3 --model=llama-3-2b-it  # 指定模型对话
+ *   java --example=gpu-llama3                        # 鍒楀嚭妯″瀷
+ *   java --example=gpu-llama3 --model=llama-3-2b-it  # 鎸囧畾妯″瀷瀵硅瘽
  *   java --example=gpu-llama3 --gpu=true --ctxSize=8192
  * </pre>
  *
@@ -43,23 +42,22 @@ public final class GpuLlama3Example implements Example {
     public String module() { return "gpu-llama3-starter"; }
     /** Description */
     @Override
-    public String description() { return "列出 GGUF 模型并执行简单对话（支持 CPU/GPU 切换）"; }
+    public String description() { return "鍒楀嚭 GGUF 妯″瀷骞舵墽琛岀畝鍗曞璇濓紙鏀寔 CPU/GPU 鍒囨崲锛?; }
 
     @Override
     public boolean run(Map<String, String> args) {
-        // 1. 列出可用模型
+        // 1. 鍒楀嚭鍙敤妯″瀷
         List<ModelDefinition> models = DeeplearningModels.models("gpu-llama3");
-        log.info("=== 可用模型（engine=gpu-llama3）共 {} 个 ===", models.size());
+        log.info("=== 鍙敤妯″瀷锛坋ngine=gpu-llama3锛夊叡 {} 涓?===", models.size());
         if (models.isEmpty()) {
-            log.warn("  无可用模型，请确认已安装 de.kherud:llama 依赖并在 models/ 目录下放置 GGUF 文件");
+            log.warn("  鏃犲彲鐢ㄦā鍨嬶紝璇风‘璁ゅ凡瀹夎 de.kherud:llama 渚濊禆骞跺湪 models/ 鐩綍涓嬫斁缃?GGUF 鏂囦欢");
             return true;
         }
         for (ModelDefinition md : models) {
             log.info("  - {}  {}", md.getId(), descOf(md));
         }
 
-        // 2. 简单对话
-        String modelId = args.getOrDefault("model", models.get(0).getId());
+        // 2. 绠€鍗曞璇?        String modelId = args.getOrDefault("model", models.get(0).getId());
         boolean useGpu = Boolean.parseBoolean(args.getOrDefault("gpu", "true"));
         int ctxSize  = Integer.parseInt(args.getOrDefault("ctxSize", "4096"));
 
@@ -73,13 +71,13 @@ public final class GpuLlama3Example implements Example {
         log.info("[GPU={} ctxSize={} model={}]", useGpu, ctxSize, modelId);
 
         String prompt = args.containsKey("prompt") ? args.get("prompt")
-                : "你好，用一句话介绍一下你自己。";
+                : "浣犲ソ锛岀敤涓€鍙ヨ瘽浠嬬粛涓€涓嬩綘鑷繁銆?;
         log.info("[INPUT] {}", prompt);
         try {
             String response = client.chatSync(prompt);
             log.info("[OUTPUT] {}", response);
         } catch (Exception e) {
-            log.error("[FAIL] 推理失败: {}", e.getMessage());
+            log.error("[FAIL] 鎺ㄧ悊澶辫触: {}", e.getMessage());
             return false;
         }
         return true;

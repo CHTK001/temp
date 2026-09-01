@@ -15,10 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import static java.util.Arrays.equals;
 
 /**
- * SshClient / SftpClient 测试示例
+ * SshClient / SftpClient 娴嬭瘯绀轰緥
  *
- * <p>连接远程 SSH 服务，覆盖命令执行、交互 Shell、PTY 终端、
- * 文件上传下载、目录操作等场景。</p>
+ * <p>杩炴帴杩滅▼ SSH 鏈嶅姟锛岃鐩栧懡浠ゆ墽琛屻€佷氦浜?Shell銆丳TY 缁堢銆? * 鏂囦欢涓婁紶涓嬭浇銆佺洰褰曟搷浣滅瓑鍦烘櫙銆?/p>
  *
  * @author CH
  * @since 4.0.0.42
@@ -26,22 +25,21 @@ import static java.util.Arrays.equals;
 @Slf4j
 public class SshSftpClientExample {
 
-    /** 私有构造，防止实例化 */
+    /** 绉佹湁鏋勯€狅紝闃叉瀹炰緥鍖?*/
     private SshSftpClientExample() { }
 
-    /** SSH 示例默认端口（演示用） */
+    /** SSH 绀轰緥榛樿绔彛锛堟紨绀虹敤锛?*/
     private static final int DEFAULT_SSH_PORT = 2222;
-    /** SSH 示例默认用户名（演示用） */
+    /** SSH 绀轰緥榛樿鐢ㄦ埛鍚嶏紙婕旂ず鐢級 */
     private static final String DEFAULT_USER = "admin";
-    /** Shell 等待时间(ms) */
+    /** Shell 绛夊緟鏃堕棿(ms) */
     private static final long SHELL_WAIT_MS = 1500L;
 
     /**
-     * 入口方法，演示 SshClient / SftpClient 的常用功能。
+     * 鍏ュ彛鏂规硶锛屾紨绀?SshClient / SftpClient 鐨勫父鐢ㄥ姛鑳姐€?     *
+     * <p>鐢ㄦ硶锛歿@code java com.chua.example.ssh.SshSftpClientExample [host] [port] [user] [pass]}</p>
      *
-     * <p>用法：{@code java com.chua.example.ssh.SshSftpClientExample [host] [port] [user] [pass]}</p>
-     *
-     * @param args 命令行参数，顺序为 host、port、user、pass
+     * @param args 鍛戒护琛屽弬鏁帮紝椤哄簭涓?host銆乸ort銆乽ser銆乸ass
      */
     public static void main(String[] args) {
         String host = args.length > 0 ? args[0] : "172.16.0.40";
@@ -53,19 +51,19 @@ public class SshSftpClientExample {
             pass = "";
         }
 
-        log.info("========== SshClient / SftpClient 测试开始 ==========");
-        log.info("目标: {}@{}:{}", user, host, port);
+        log.info("========== SshClient / SftpClient 娴嬭瘯寮€濮?==========");
+        log.info("鐩爣: {}@{}:{}", user, host, port);
 
         testSshExec(host, port, user, pass);
         testSshShell(host, port, user, pass);
         testSftp(host, port, user, pass);
 
-        log.info("\n========== 测试结束 ==========");
+        log.info("\n========== 娴嬭瘯缁撴潫 ==========");
     }
 
-    /** SshClient exec 命令执行测试 */
+    /** SshClient exec 鍛戒护鎵ц娴嬭瘯 */
     private static void testSshExec(String host, int port, String user, String pass) {
-        log.info("\n--- 1. SshClient 连接与 exec 命令 ---");
+        log.info("\n--- 1. SshClient 杩炴帴涓?exec 鍛戒护 ---");
         try (SshClient ssh = SshClient.builder()
                 .host(host).port(port)
                 .username(user).password(pass)
@@ -74,7 +72,7 @@ public class SshSftpClientExample {
 
             long t0 = System.currentTimeMillis();
             ssh.connect();
-            log.info("PASS: 连接成功 ({} ms)", System.currentTimeMillis() - t0);
+            log.info("PASS: 杩炴帴鎴愬姛 ({} ms)", System.currentTimeMillis() - t0);
 
             // whoami
             String who = ssh.exec().command("whoami").executeAndGetOutput().trim();
@@ -84,22 +82,22 @@ public class SshSftpClientExample {
             String kernel = ssh.exec().command("uname -sr").executeAndGetOutput().trim();
             log.info("PASS: uname = {}", kernel);
 
-            // 退出码验证
+            // 閫€鍑虹爜楠岃瘉
             var okResult = ssh.exec().command("exit 0").execute();
             log.info("PASS: exit 0 -> code={}", okResult.exitCode());
 
             var failResult = ssh.exec().command("ls /nonexistent-dir-xyz").execute();
             boolean stderrOk = failResult.stderr() != null && !failResult.stderr().isEmpty();
-            log.info("PASS: ls 失败路径 -> code={}, stderr 捕获={}", failResult.exitCode(), stderrOk ? "是" : "否");
+            log.info("PASS: ls 澶辫触璺緞 -> code={}, stderr 鎹曡幏={}", failResult.exitCode(), stderrOk ? "鏄? : "鍚?);
 
         } catch (Exception e) {
             log.info("FAIL: {}", e.getMessage());
         }
     }
 
-    /** SshClient shell 交互测试 */
+    /** SshClient shell 浜や簰娴嬭瘯 */
     private static void testSshShell(String host, int port, String user, String pass) {
-        log.info("\n--- 2. SshClient 交互 Shell ---");
+        log.info("\n--- 2. SshClient 浜や簰 Shell ---");
         try (SshClient ssh = SshClient.builder()
                 .host(host).port(port)
                 .username(user).password(pass)
@@ -110,21 +108,21 @@ public class SshSftpClientExample {
             var shell = ssh.shell().connect();
             shell.send("echo SHELL_TEST_OK_$$");
             ThreadUtils.sleep(SHELL_WAIT_MS);
-            // 发送 exit 结束会话使 readAll 返回
+            // 鍙戦€?exit 缁撴潫浼氳瘽浣?readAll 杩斿洖
             shell.send("exit");
             String output = shell.readAll();
             shell.close();
 
             boolean found = output.contains("SHELL_TEST_OK");
-            log.info("{}: shell 输出包含标记={}, 总长 {} 字符", found ? "PASS" : "FAIL", found, output.length());
+            log.info("{}: shell 杈撳嚭鍖呭惈鏍囪={}, 鎬婚暱 {} 瀛楃", found ? "PASS" : "FAIL", found, output.length());
         } catch (Exception e) {
             log.info("FAIL: {}", e.getMessage());
         }
     }
 
-    /** SftpClient 文件操作全链路测试 */
+    /** SftpClient 鏂囦欢鎿嶄綔鍏ㄩ摼璺祴璇?*/
     private static void testSftp(String host, int port, String user, String pass) {
-        log.info("\n--- 3. SftpClient 文件操作 ---");
+        log.info("\n--- 3. SftpClient 鏂囦欢鎿嶄綔 ---");
         Path localFile = null;
         Path localDownload = null;
         try (SftpClient sftp = SftpClient.builder()
@@ -134,40 +132,38 @@ public class SshSftpClientExample {
 
             long t0 = System.currentTimeMillis();
             sftp.connect();
-            log.info("PASS: 连接成功 ({} ms)", System.currentTimeMillis() - t0);
+            log.info("PASS: 杩炴帴鎴愬姛 ({} ms)", System.currentTimeMillis() - t0);
 
-            // 准备本地测试文件
+            // 鍑嗗鏈湴娴嬭瘯鏂囦欢
             localFile = Files.createTempFile("sftp-test-", ".txt");
             String content = "SFTP TEST CONTENT " + System.currentTimeMillis() + "\n".repeat(1);
             Files.writeString(localFile, content.repeat(100));
-            log.info("PASS: 本地测试文件 {} 字节", Files.size(localFile));
+            log.info("PASS: 鏈湴娴嬭瘯鏂囦欢 {} 瀛楄妭", Files.size(localFile));
 
-            // 上传
+            // 涓婁紶
             String remotePath = "/tmp/sftp-test-upload.txt";
             sftp.upload().local(localFile.toString()).remote(remotePath).exec();
-            log.info("PASS: 上传 -> {}", remotePath);
+            log.info("PASS: 涓婁紶 -> {}", remotePath);
 
-            // stat 校验大小
+            // stat 鏍￠獙澶у皬
             Map<String, Object> stat = sftp.stat().path(remotePath).exec();
             long remoteSize = (long) stat.get("size");
             log.info("PASS: stat size={}, isRegularFile={}", remoteSize, stat.get("isRegularFile"));
             if (remoteSize != Files.size(localFile)) {
-                throw new IllegalStateException("上传后大小不一致: " + remoteSize + " != " + Files.size(localFile));
+                throw new IllegalStateException("涓婁紶鍚庡ぇ灏忎笉涓€鑷? " + remoteSize + " != " + Files.size(localFile));
             }
 
-            // 列目录确认文件存在
-            List<Map<String, Object>> entries = sftp.ls().path("/tmp").exec();
+            // 鍒楃洰褰曠‘璁ゆ枃浠跺瓨鍦?            List<Map<String, Object>> entries = sftp.ls().path("/tmp").exec();
             boolean exists = entries.stream()
                     .anyMatch(e -> "sftp-test-upload.txt".equals(e.get("name")));
-            log.info("PASS: ls /tmp 共 {} 项, 目标文件存在={}", entries.size(), exists);
+            log.info("PASS: ls /tmp 鍏?{} 椤? 鐩爣鏂囦欢瀛樺湪={}", entries.size(), exists);
 
-            // 下载并校验内容一致
-            localDownload = Files.createTempFile("sftp-dl-", ".txt");
+            // 涓嬭浇骞舵牎楠屽唴瀹逛竴鑷?            localDownload = Files.createTempFile("sftp-dl-", ".txt");
             sftp.download().remote(remotePath).local(localDownload.toString()).exec();
             boolean same = arraysEquals(Files.readAllBytes(localFile), Files.readAllBytes(localDownload));
-            log.info("PASS: 下载完成, 内容一致={}", same);
+            log.info("PASS: 涓嬭浇瀹屾垚, 鍐呭涓€鑷?{}", same);
             if (!same) {
-                throw new IllegalStateException("下载内容与源不一致");
+                throw new IllegalStateException("涓嬭浇鍐呭涓庢簮涓嶄竴鑷?);
             }
 
             // mkdir
@@ -176,7 +172,7 @@ public class SshSftpClientExample {
                 sftp.mkdir().path(remoteDir).exec();
                 log.info("PASS: mkdir {}", remoteDir);
             } catch (Exception e) {
-                log.info("SKIP: mkdir(可能已存在): {}", e.getMessage());
+                log.info("SKIP: mkdir(鍙兘宸插瓨鍦?: {}", e.getMessage());
             }
 
             // rename
@@ -184,7 +180,7 @@ public class SshSftpClientExample {
             sftp.rename().from(remotePath).to(renamedPath).exec();
             log.info("PASS: rename -> {}", renamedPath);
 
-            // rm 清理
+            // rm 娓呯悊
             sftp.rm().path(renamedPath).exec();
             log.info("PASS: rm {}", renamedPath);
             try {
@@ -197,13 +193,13 @@ public class SshSftpClientExample {
         } catch (Exception e) {
             log.info("FAIL: {}", e.getMessage());
         } finally {
-            // 静默删除临时文件，异常已通过 FileUtils.deleteQuietly 内部吞掉
+            // 闈欓粯鍒犻櫎涓存椂鏂囦欢锛屽紓甯稿凡閫氳繃 FileUtils.deleteQuietly 鍐呴儴鍚炴帀
             FileUtils.deleteQuietly(localFile);
             FileUtils.deleteQuietly(localDownload);
         }
     }
 
-    /** 数组比较 */
+    /** 鏁扮粍姣旇緝 */
     private static boolean arraysEquals(byte[] a, byte[] b) {
         return equals(a, b);
     }

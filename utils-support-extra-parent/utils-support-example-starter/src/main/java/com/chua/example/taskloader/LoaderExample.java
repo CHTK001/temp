@@ -7,10 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import com.chua.example.util.UtilsExample;
 
 /**
- * 惰性加载器 {@link SingletonLoader} 全场景自检示例。
- *
- * <p>覆盖：单例懒加载仅创建一次、并发 get 竞态下单次创建、
- * reset 后重新加载、isLoaded 状态判定、supplier 空参校验。</p>
+ * 鎯版€у姞杞藉櫒 {@link SingletonLoader} 鍏ㄥ満鏅嚜妫€绀轰緥銆? *
+ * <p>瑕嗙洊锛氬崟渚嬫噿鍔犺浇浠呭垱寤轰竴娆°€佸苟鍙?get 绔炴€佷笅鍗曟鍒涘缓銆? * reset 鍚庨噸鏂板姞杞姐€乮sLoaded 鐘舵€佸垽瀹氥€乻upplier 绌哄弬鏍￠獙銆?/p>
  *
  * @author CH
  * @since 4.0.0.42
@@ -93,13 +91,13 @@ public final class LoaderExample {
             passed &= UtilsExample.timed("concurrentGetCreatesOnce", LoaderExample::concurrentGetCreatesOnce);
             passed &= UtilsExample.timed("nullSupplierRejected", LoaderExample::nullSupplierRejected);
             if (!passed) {
-                log.info("[FAIL] Loader 存在失败场景");
+                log.info("[FAIL] Loader 瀛樺湪澶辫触鍦烘櫙");
 System.exit(UtilsExample.FAILURE);
             }
-            log.info("[PASS] Loader 全部场景通过");
+            log.info("[PASS] Loader 鍏ㄩ儴鍦烘櫙閫氳繃");
             System.exit(UtilsExample.SUCCESS);
         } catch (Exception e) {
-            log.info("[FAIL] 未预期异常: " + e);
+            log.info("[FAIL] 鏈鏈熷紓甯? " + e);
             System.exit(UtilsExample.FAILURE);
         }
     }

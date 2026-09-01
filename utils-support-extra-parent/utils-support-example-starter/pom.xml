@@ -11,7 +11,7 @@
     </parent>
     <artifactId>utils-support-example-starter</artifactId>
     <name>Utils Support Example Starter</name>
-    <description>绀轰緥宸ョ▼锛氱粺涓€ CRUD 婕旂ず</description>
+    <description>示例工程：统一 CRUD 演示</description>
     <properties>
         <maven.compiler.parameters>true</maven.compiler.parameters>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -73,7 +73,6 @@
             <artifactId>utils-support-webhook-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- JsonProvider 瀹炵幇鑷锛圝sonProviderExampleSpi / ForySerializerExampleSpi锛?-->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-gson-starter</artifactId>
@@ -96,9 +95,6 @@
             <artifactId>utils-support-fastjson-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- com.alibaba:fastjson 2.0.57 涓?fastjson2 鍏煎灞傦紝渚濊禆 fastjson2 鏍稿績绫伙紱
-             鐖剁骇 dependencyManagement 灏?fastjson2 绠＄悊涓?android 鍙樹綋锛?.0.57.android8锛岀己 util.Wrapper锛夛紝
-             姝ゅ涓?fastjson-starter 淇濇寔涓€鑷达紝鏄惧紡瑕嗙洊涓烘爣鍑嗙増 2.0.57 -->
         <dependency>
             <groupId>com.alibaba.fastjson2</groupId>
             <artifactId>fastjson2</artifactId>
@@ -178,7 +174,6 @@
             <artifactId>utils-support-deeplearning-onnx-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- 宓屽叆寮忎腑鏂囧璇濇ā鍨嬶紙Gemma-3-270M锛寀int8 ONNX ~437MB锛夛紝渚?Gemma3Example 浣跨敤 -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-models-onnx-gemma-3-270m</artifactId>
@@ -221,7 +216,6 @@
             <artifactId>utils-support-models-onnx-image-colorize</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- 瀹夊叏妫€娴嬬被宓屽叆寮忔ā鍨嬶紝渚涘搴旀娴?Example 浣跨敤 -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-models-onnx-safety-helmet</artifactId>
@@ -247,7 +241,6 @@
             <artifactId>utils-support-models-onnx-seal-inspection</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- D-FINE-L 鐩爣妫€娴嬶紙COCO 80 绫伙紝int8 閲忓寲宓屽叆寮忥級锛屼緵 DFineExample 浣跨敤 -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-models-onnx-dfine-l-obj2coco</artifactId>
@@ -278,7 +271,6 @@
             <version>${project.version}</version>
                     <optional>true</optional>
         </dependency>
-        <!-- 鍏变韩鍐呭瓨鐜舰闃熷垪绀轰緥锛圫hmQueueExample锛?-->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-native-shm-queue</artifactId>
@@ -391,13 +383,11 @@
             <artifactId>utils-support-native-video-codec</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- Ngrok 瀹㈡埛绔ず渚?-->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-ngrok-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- FileStorage 棰勮鏈嶅姟锛屼緵 FileStorageExample / FileStorageServer 鐙珛杩愯 -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-filestorage-starter</artifactId>
@@ -420,7 +410,6 @@
             <artifactId>utils-support-undertow-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- Engine 瀹炵幇妯″潡锛屼緵 EngineExample 鐙珛杩愯 -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-nitrite-starter</artifactId>
@@ -506,7 +495,6 @@
             <artifactId>asn-one</artifactId>
             <version>0.6.0</version>
         </dependency>
-        <!-- 鐖櫕妯″潡锛屼緵 SpiderExample / GiteeProjectExample 浣跨敤 -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-spider-starter</artifactId>
@@ -524,7 +512,6 @@
             <artifactId>utils-support-flow-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- jsoup HTML 瑙ｆ瀽锛屼緵鐖櫕绀轰緥浣跨敤锛坰pider-starter 涓负 optional锛?-->
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
@@ -536,13 +523,11 @@
             <artifactId>utils-support-openai-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- Playwright Cookie 鍙嶄唬 ChatClient锛圦wenProxyExample / DoubaoProxyExample锛屽惈娴忚鍣ㄩ┍鍔級 -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-playwright-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- Kimi 缃戦〉鐗堥€嗗悜浠ｇ悊 ChatClient锛圞imiProxyExample锛岀函 HTTP 鏃犻渶娴忚鍣級鈥?涓存椂绂佺敤锛歛rtifact 涓嶅彲鐢?-->
         <!--
         <dependency>
             <groupId>com.chua</groupId>
@@ -550,7 +535,6 @@
             <version>${project.version}</version>
         </dependency>
         -->
-        <!-- Datalake 绀轰緥锛氳鐩?offset / sink / pipeline / server / subscribe / query -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-datalake-sink-starter</artifactId>
@@ -606,13 +590,11 @@
             <artifactId>utils-support-prometheus-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- 瑙嗛澶勭悊婕旂ず -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-video-processor-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- OSHI 鏈満鎸囨爣閲囬泦 -->
         <!-- Syslog 瀹炴椂鏃ュ織鐩戝惉 -->
         <dependency>
             <groupId>com.chua</groupId>
@@ -665,7 +647,6 @@
             <artifactId>grpc-util</artifactId>
             <version>1.73.0</version>
         </dependency>
-        <!-- RPC 鍥涘疄鐜扮ず渚嬶紙RpcExample锛夛細native 瀹炵幇鍦?utils-support-common-starter锛宩son/dubbo/sofa 鍦ㄦ涓?starter -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-rpc-json-starter</artifactId>
@@ -774,19 +755,6 @@
                             <version>${lombok.version}</version>
                         </path>
                     </annotationProcessorPaths>
-                    <excludes>
-                        <exclude>**/image/LaMaFilterExample.java</exclude>
-                        <exclude>**/lang/document/OpenApiExportExample.java</exclude>
-                        <exclude>**/llama3/GpuLlama3Example.java</exclude>
-                        <exclude>**/network/proxy/AsyncTcpServerPerfExample.java</exclude>
-                        <exclude>**/onnx/EmbeddingClientExample.java</exclude>
-                        <exclude>**/onnx/OcrAngleExample.java</exclude>
-                        <exclude>**/onnx/OcrRotateCompareExample.java</exclude>
-                        <exclude>**/onnx/OcrUnclearExample.java</exclude>
-                        <exclude>**/shmqueue/ShmQueueBridgeExample.java</exclude>
-                        <exclude>**/ssh/SshSftpClientExample.java</exclude>
-                        <exclude>**/taskloader/LoaderExample.java</exclude>
-                    </excludes>
                 </configuration>
             </plugin>
         </plugins>

@@ -240,7 +240,7 @@ public class MemorySqlExample {
             }
         } catch (java.io.IOException e) {
             failed++;
-            System.out.println("[FAIL] file 场景 IO 异常: " + e.getMessage());
+            log.error("[FAIL] file 场景 IO 异常: {}", e.getMessage());
         }
     }
 

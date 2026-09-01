@@ -137,7 +137,7 @@ public final class Json5Example {
                 System.exit(1);
             }
             log.info("[PASS] 统一切换: 默认实现一致");
-            if (!(Json5.getImplementation() instanceof JacksonJsonProvider)) {
+            if (!Json5.getImplementation().getClass().getSimpleName().equals("JacksonJsonProvider")) {
                 log.info("[FAIL] 统一切换: 默认实现应为 JacksonJsonProvider");
                 System.exit(1);
             }
@@ -200,12 +200,12 @@ public final class Json5Example {
                 System.exit(1);
             }
             log.info("[PASS] SPI一致性: 名称 jackson 发现实现");
-            if (!(byName instanceof JacksonJsonProvider)) {
+            if (!byName.getClass().getSimpleName().equals("JacksonJsonProvider")) {
                 log.info("[FAIL] SPI一致性: jackson 实现应为 JacksonJsonProvider");
                 System.exit(1);
             }
             log.info("[PASS] SPI一致性: jackson 实现类型正确");
-            if (!(Json5.getImplementation() instanceof JacksonJsonProvider)) {
+            if (!Json5.getImplementation().getClass().getSimpleName().equals("JacksonJsonProvider")) {
                 log.info("[FAIL] SPI一致性: Json5 默认实现应为 JacksonJsonProvider");
                 System.exit(1);
             }

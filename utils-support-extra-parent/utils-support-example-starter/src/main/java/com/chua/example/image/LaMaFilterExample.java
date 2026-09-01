@@ -14,10 +14,10 @@ import static java.util.Arrays.toString;
 
 
 /**
- * LaMa滤镜测试类
+ * LaMa婊ら暅娴嬭瘯绫?
  * <p>
- * 用于测试LaMa图像修复滤镜的基本功能，
- * 不依赖实际的ONNX模型文件，主要测试配置和接口。
+ * 鐢ㄤ簬娴嬭瘯LaMa鍥惧儚淇婊ら暅鐨勫熀鏈姛鑳斤紝
+ * 涓嶄緷璧栧疄闄呯殑ONNX妯″瀷鏂囦欢锛屼富瑕佹祴璇曢厤缃拰鎺ュ彛銆?
  * </p>
  *
  * @author CH
@@ -31,146 +31,146 @@ public class LaMaFilterExample {
 
     /** Main */
     public static void main(String[] args) {
-        log.info("🧪 LaMa滤镜测试");
+        log.info("馃И LaMa婊ら暅娴嬭瘯");
         log.info("=" .repeat(40));
 
         try {
-            // 测试配置类
+            // 娴嬭瘯閰嶇疆绫?
             testConfiguration();
 
-            // 测试图像工具类
+            // 娴嬭瘯鍥惧儚宸ュ叿绫?
             testImageUtils();
 
-            // 测试工厂类
+            // 娴嬭瘯宸ュ巶绫?
             testFactory();
 
-            log.info("\n✅ 所有测试通过！");
+            log.info("\n鉁?鎵€鏈夋祴璇曢€氳繃锛?);
 
         } catch (Exception e) {
-            log.error("测试失败", e);
-            System.err.println("❌ 测试失败: " + e.getMessage());
+            log.error("娴嬭瘯澶辫触", e);
+            System.err.println("鉂?娴嬭瘯澶辫触: " + e.getMessage());
         }
     }
 
     /**
-     * 测试配置类
+     * 娴嬭瘯閰嶇疆绫?
      */
     private static void testConfiguration() {
-        log.info("\n🔧 测试配置类");
+        log.info("\n馃敡 娴嬭瘯閰嶇疆绫?);
 
-        // 测试默认配置
+        // 娴嬭瘯榛樿閰嶇疆
         LaMaConfiguration defaultConfig = LaMaConfiguration.createDefault("test_model.onnx");
-        log.info("默认配置: " + defaultConfig);
+        log.info("榛樿閰嶇疆: " + defaultConfig);
 
-        // 测试高质量配置
+        // 娴嬭瘯楂樿川閲忛厤缃?
         LaMaConfiguration highQualityConfig = LaMaConfiguration.createHighQuality("test_model.onnx");
-        log.info("高质量配置: " + highQualityConfig);
+        log.info("楂樿川閲忛厤缃? " + highQualityConfig);
 
-        // 测试快速配置
+        // 娴嬭瘯蹇€熼厤缃?
         LaMaConfiguration fastConfig = LaMaConfiguration.createFast("test_model.onnx");
-        log.info("快速配置: " + fastConfig);
+        log.info("蹇€熼厤缃? " + fastConfig);
 
-        // 测试GPU配置
+        // 娴嬭瘯GPU閰嶇疆
         LaMaConfiguration gpuConfig = LaMaConfiguration.createGpu("test_model.onnx");
-        log.info("GPU配置: " + gpuConfig);
+        log.info("GPU閰嶇疆: " + gpuConfig);
 
-        // 测试自动mask配置
+        // 娴嬭瘯鑷姩mask閰嶇疆
         int[] targetColor = {255, 255, 255};
         LaMaConfiguration autoMaskConfig = LaMaConfiguration.createAutoMask("test_model.onnx", targetColor);
-        log.info("自动mask配置: " + autoMaskConfig);
+        log.info("鑷姩mask閰嶇疆: " + autoMaskConfig);
 
-        // 测试配置验证
+        // 娴嬭瘯閰嶇疆楠岃瘉
         try {
             LaMaConfiguration invalidConfig = LaMaConfiguration.createDefault("")
                     .setInputSize(-1);
             invalidConfig.validate();
-            log.info("❌ 应该抛出验证异常");
+            log.info("鉂?搴旇鎶涘嚭楠岃瘉寮傚父");
         } catch (IllegalArgumentException e) {
-            log.info("✅ 正确捕获配置验证异常: " + e.getMessage());
+            log.info("鉁?姝ｇ‘鎹曡幏閰嶇疆楠岃瘉寮傚父: " + e.getMessage());
         }
 
-        // 测试配置克隆
+        // 娴嬭瘯閰嶇疆鍏嬮殕
         LaMaConfiguration clonedConfig = defaultConfig.clone();
-        log.info("克隆配置: " + clonedConfig);
+        log.info("鍏嬮殕閰嶇疆: " + clonedConfig);
 
-        log.info("✅ 配置类测试完成");
+        log.info("鉁?閰嶇疆绫绘祴璇曞畬鎴?);
     }
 
     /**
-     * 测试图像工具类
+     * 娴嬭瘯鍥惧儚宸ュ叿绫?
      */
     private static void testImageUtils() {
-        log.info("\n🖼️ 测试图像工具类");
+        log.info("\n馃柤锔?娴嬭瘯鍥惧儚宸ュ叿绫?);
 
-        // 创建测试图像
+        // 鍒涘缓娴嬭瘯鍥惧儚
         BufferedImage testImage = createTestImage(100, 100);
-        log.info("创建测试图像: " + testImage.getWidth() + "x" + testImage.getHeight());
+        log.info("鍒涘缓娴嬭瘯鍥惧儚: " + testImage.getWidth() + "x" + testImage.getHeight());
 
-        // 测试图像调整大小
+        // 娴嬭瘯鍥惧儚璋冩暣澶у皬
         BufferedImage resized = LaMaImageUtils.resizeImage(testImage, 50, 50);
-        log.info("调整大小后: " + resized.getWidth() + "x" + resized.getHeight());
+        log.info("璋冩暣澶у皬鍚? " + resized.getWidth() + "x" + resized.getHeight());
 
-        // 测试RGB转换
+        // 娴嬭瘯RGB杞崲
         BufferedImage rgbImage = LaMaImageUtils.convertToRGB(testImage);
-        log.info("RGB转换: " + rgbImage.getType());
+        log.info("RGB杞崲: " + rgbImage.getType());
 
-        // 测试张量转换
+        // 娴嬭瘯寮犻噺杞崲
         LaMaConfiguration config = LaMaConfiguration.createDefault("test_model.onnx");
         float[] tensorData = LaMaImageUtils.imageToTensor(testImage, config);
-        log.info("张量数据长度: " + tensorData.length);
+        log.info("寮犻噺鏁版嵁闀垮害: " + tensorData.length);
 
-        // 测试张量转图像
+        // 娴嬭瘯寮犻噺杞浘鍍?
         BufferedImage fromTensor = LaMaImageUtils.tensorToImage(tensorData, config);
-        log.info("从张量转换: " + fromTensor.getWidth() + "x" + fromTensor.getHeight());
+        log.info("浠庡紶閲忚浆鎹? " + fromTensor.getWidth() + "x" + fromTensor.getHeight());
 
-        // 测试mask生成
+        // 娴嬭瘯mask鐢熸垚
         float[] maskData = LaMaImageUtils.generateMask(testImage, config);
-        log.info("Mask数据长度: " + maskData.length);
+        log.info("Mask鏁版嵁闀垮害: " + maskData.length);
 
-        // 测试后处理
+        // 娴嬭瘯鍚庡鐞?
         BufferedImage processed = LaMaImageUtils.applyPostProcessing(testImage, config);
-        log.info("后处理完成: " + processed.getWidth() + "x" + processed.getHeight());
+        log.info("鍚庡鐞嗗畬鎴? " + processed.getWidth() + "x" + processed.getHeight());
 
-        log.info("✅ 图像工具类测试完成");
+        log.info("鉁?鍥惧儚宸ュ叿绫绘祴璇曞畬鎴?);
     }
 
     /**
-     * 测试工厂类
+     * 娴嬭瘯宸ュ巶绫?
      */
     private static void testFactory() {
-        log.info("\n🏭 测试工厂类");
+        log.info("\n馃彮 娴嬭瘯宸ュ巶绫?);
 
-        // 设置默认模型路径
+        // 璁剧疆榛樿妯″瀷璺緞
         LaMaFilterFactory.setDefaultModelPath("test_model.onnx");
-        log.info("默认模型路径: " + LaMaFilterFactory.getDefaultModelPath());
+        log.info("榛樿妯″瀷璺緞: " + LaMaFilterFactory.getDefaultModelPath());
 
-        // 测试缓存功能
-        log.info("缓存滤镜数量: " + LaMaFilterFactory.getCachedFilterCount());
+        // 娴嬭瘯缂撳瓨鍔熻兘
+        log.info("缂撳瓨婊ら暅鏁伴噺: " + LaMaFilterFactory.getCachedFilterCount());
 
-        // 测试状态信息
+        // 娴嬭瘯鐘舵€佷俊鎭?
         String status = LaMaFilterFactory.getFactoryStatus();
-        log.info("工厂状态:\n" + status);
+        log.info("宸ュ巶鐘舵€?\n" + status);
 
-        // 测试便捷方法（不实际创建滤镜，因为没有真实模型）
+        // 娴嬭瘯渚挎嵎鏂规硶锛堜笉瀹為檯鍒涘缓婊ら暅锛屽洜涓烘病鏈夌湡瀹炴ā鍨嬶級
         try {
-            // 这些方法会尝试创建滤镜，但由于没有真实模型文件会失败
-            // 我们只测试方法是否存在和可调用
-            log.info("便捷方法测试: 方法存在且可调用");
+            // 杩欎簺鏂规硶浼氬皾璇曞垱寤烘护闀滐紝浣嗙敱浜庢病鏈夌湡瀹炴ā鍨嬫枃浠朵細澶辫触
+            // 鎴戜滑鍙祴璇曟柟娉曟槸鍚﹀瓨鍦ㄥ拰鍙皟鐢?
+            log.info("渚挎嵎鏂规硶娴嬭瘯: 鏂规硶瀛樺湪涓斿彲璋冪敤");
         } catch (Exception e) {
-            log.info("预期的模型文件不存在异常: " + e.getMessage());
+            log.info("棰勬湡鐨勬ā鍨嬫枃浠朵笉瀛樺湪寮傚父: " + e.getMessage());
         }
 
-        log.info("✅ 工厂类测试完成");
+        log.info("鉁?宸ュ巶绫绘祴璇曞畬鎴?);
     }
 
     /**
-     * 创建测试图像
+     * 鍒涘缓娴嬭瘯鍥惧儚
      */
     private static BufferedImage createTestImage(int width, int height) {
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = image.createGraphics();
 
-        // 创建渐变背景
+        // 鍒涘缓娓愬彉鑳屾櫙
         GradientPaint gradient = new GradientPaint(
                 0, 0, Color.BLUE,
                 width, height, Color.RED
@@ -178,7 +178,7 @@ public class LaMaFilterExample {
         g2d.setPaint(gradient);
         g2d.fillRect(0, 0, width, height);
 
-        // 添加一些图形
+        // 娣诲姞涓€浜涘浘褰?
         g2d.setColor(Color.WHITE);
         g2d.fillOval(width / 4, height / 4, width / 2, height / 2);
 
@@ -190,12 +190,12 @@ public class LaMaFilterExample {
     }
 
     /**
-     * 测试配置的各种组合
+     * 娴嬭瘯閰嶇疆鐨勫悇绉嶇粍鍚?
      */
     private static void testConfigurationCombinations() {
-        log.info("\n⚙️ 测试配置组合");
+        log.info("\n鈿欙笍 娴嬭瘯閰嶇疆缁勫悎");
 
-        // 测试链式配置
+        // 娴嬭瘯閾惧紡閰嶇疆
         LaMaConfiguration chainConfig = LaMaConfiguration.createDefault("test_model.onnx")
                 .setInputSize(256)
                 .setThreads(2)
@@ -206,65 +206,65 @@ public class LaMaFilterExample {
                 .setTargetColor(new int[]{255, 0, 0})
                 .setColorTolerance(20);
 
-        log.info("链式配置: " + chainConfig);
+        log.info("閾惧紡閰嶇疆: " + chainConfig);
 
-        // 验证配置
+        // 楠岃瘉閰嶇疆
         try {
             chainConfig.validate();
-            log.info("✅ 配置验证通过");
+            log.info("鉁?閰嶇疆楠岃瘉閫氳繃");
         } catch (Exception e) {
-            log.info("❌ 配置验证失败: " + e.getMessage());
+            log.info("鉂?閰嶇疆楠岃瘉澶辫触: " + e.getMessage());
         }
 
-        // 测试输入形状
+        // 娴嬭瘯杈撳叆褰㈢姸
         long[] inputShape = chainConfig.getInputShape();
         long[] maskShape = chainConfig.getMaskShape();
-        log.info("输入形状: " + toString(inputShape));
-        log.info("Mask形状: " + toString(maskShape));
+        log.info("杈撳叆褰㈢姸: " + toString(inputShape));
+        log.info("Mask褰㈢姸: " + toString(maskShape));
 
-        log.info("✅ 配置组合测试完成");
+        log.info("鉁?閰嶇疆缁勫悎娴嬭瘯瀹屾垚");
     }
 
     /**
-     * 测试边界条件
+     * 娴嬭瘯杈圭晫鏉′欢
      */
     private static void testBoundaryConditions() {
-        log.info("\n🔍 测试边界条件");
+        log.info("\n馃攳 娴嬭瘯杈圭晫鏉′欢");
 
-        // 测试极小图像
+        // 娴嬭瘯鏋佸皬鍥惧儚
         BufferedImage tinyImage = createTestImage(1, 1);
         LaMaConfiguration config = LaMaConfiguration.createDefault("test_model.onnx");
 
         try {
             float[] tensorData = LaMaImageUtils.imageToTensor(tinyImage, config);
-            log.info("✅ 极小图像处理成功，张量长度: " + tensorData.length);
+            log.info("鉁?鏋佸皬鍥惧儚澶勭悊鎴愬姛锛屽紶閲忛暱搴? " + tensorData.length);
         } catch (Exception e) {
-            log.info("❌ 极小图像处理失败: " + e.getMessage());
+            log.info("鉂?鏋佸皬鍥惧儚澶勭悊澶辫触: " + e.getMessage());
         }
 
-        // 测试极大输入尺寸配置
+        // 娴嬭瘯鏋佸ぇ杈撳叆灏哄閰嶇疆
         try {
             LaMaConfiguration largeConfig = LaMaConfiguration.createDefault("test_model.onnx")
                     .setInputSize(2048);
             largeConfig.validate();
-            log.info("✅ 大尺寸配置验证通过");
+            log.info("鉁?澶у昂瀵搁厤缃獙璇侀€氳繃");
         } catch (Exception e) {
-            log.info("❌ 大尺寸配置验证失败: " + e.getMessage());
+            log.info("鉂?澶у昂瀵搁厤缃獙璇佸け璐? " + e.getMessage());
         }
 
-        // 测试边界值
+        // 娴嬭瘯杈圭晫鍊?
         try {
             LaMaConfiguration boundaryConfig = LaMaConfiguration.createDefault("test_model.onnx")
                     .setMaskThreshold(0.0f)
                     .setOutputQuality(1.0f)
                     .setColorTolerance(0);
             boundaryConfig.validate();
-            log.info("✅ 边界值配置验证通过");
+            log.info("鉁?杈圭晫鍊奸厤缃獙璇侀€氳繃");
         } catch (Exception e) {
-            log.info("❌ 边界值配置验证失败: " + e.getMessage());
+            log.info("鉂?杈圭晫鍊奸厤缃獙璇佸け璐? " + e.getMessage());
         }
 
-        log.info("✅ 边界条件测试完成");
+        log.info("鉁?杈圭晫鏉′欢娴嬭瘯瀹屾垚");
     }
 }
 

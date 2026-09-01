@@ -29,7 +29,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 /**
- * 对比 rotate 实现：当前 SPI 版 vs 纯 OpenCV 版，对旋转车票识别票号。
+ * 瀵规瘮 rotate 瀹炵幇锛氬綋鍓?SPI 鐗?vs 绾?OpenCV 鐗堬紝瀵规棆杞溅绁ㄨ瘑鍒エ鍙枫€?
  *@author CH
  *
  * @since 4.0.0.42
@@ -37,43 +37,43 @@ import java.util.List;
 @Slf4j
 public final class OcrRotateCompareExample {
 
-    /** 创建 OcrRotateCompareExample 实例 */
+    /** 鍒涘缓 OcrRotateCompareExample 瀹炰緥 */
     private OcrRotateCompareExample() {
     }
 
     /** Main */
     public static void main(String[] args) throws Exception {
         ImageUtils.load();
-        byte[] img0 = Files.readAllBytes(Path.of("G:\\images\\车票.png"));
-        byte[] img90 = Files.readAllBytes(Path.of("G:\\images\\车票ticket_90.png"));
-        byte[] img270 = Files.readAllBytes(Path.of("G:\\images\\车票ticket_270.png"));
+        byte[] img0 = Files.readAllBytes(Path.of("G:\\images\\杞︾エ.png"));
+        byte[] img90 = Files.readAllBytes(Path.of("G:\\images\\杞︾エticket_90.png"));
+        byte[] img270 = Files.readAllBytes(Path.of("G:\\images\\杞︾エticket_270.png"));
 
-        // 正向原图直接识别
-        recognize("正向原图", img0);
+        // 姝ｅ悜鍘熷浘鐩存帴璇嗗埆
+        recognize("姝ｅ悜鍘熷浘", img0);
 
-        // 用正向原图生成 90° 旋转（无损），再旋转回正向，验证"旋转往返"是否丢 Z
+        // 鐢ㄦ鍚戝師鍥剧敓鎴?90掳 鏃嬭浆锛堟棤鎹燂級锛屽啀鏃嬭浆鍥炴鍚戯紝楠岃瘉"鏃嬭浆寰€杩?鏄惁涓?Z
         byte[] gen90 = ImageUtils.rotate(img0, 90);
         byte[] gen90back = ImageUtils.rotate(gen90, 270);
-        recognize("正向图->转90->转回", gen90back);
+        recognize("姝ｅ悜鍥?>杞?0->杞洖", gen90back);
 
-        // 现有 ticket_90 图旋转回正向
+        // 鐜版湁 ticket_90 鍥炬棆杞洖姝ｅ悜
         byte[] rot90spi = ImageUtils.rotate(img90, 270);
-        recognize("ticket_90图->转回", rot90spi);
+        recognize("ticket_90鍥?>杞洖", rot90spi);
 
-        // 保留旋转回正向的图和生成图，做票号区域像素对比
+        // 淇濈暀鏃嬭浆鍥炴鍚戠殑鍥惧拰鐢熸垚鍥撅紝鍋氱エ鍙峰尯鍩熷儚绱犲姣?
         byte[] genback = ImageUtils.rotate(gen90, 270);
         java.nio.file.Files.write(java.nio.file.Path.of("G:\\images\\output\\diag_ticket90_back.png"), rot90spi);
         java.nio.file.Files.write(java.nio.file.Path.of("G:\\images\\output\\diag_orig.png"), img0);
-        // 将 ticket_90 转回图缩放对齐到正向尺寸后裁剪放大，供肉眼核对 Z 字形
+        // 灏?ticket_90 杞洖鍥剧缉鏀惧榻愬埌姝ｅ悜灏哄鍚庤鍓斁澶э紝渚涜倝鐪兼牳瀵?Z 瀛楀舰
         saveZoomedAligned(img0, rot90spi, 103, 65, 253, 20,
                 "G:\\images\\output\\diag_ticketno_orig.png",
                 "G:\\images\\output\\diag_ticketno_from90.png");
-        log.info("[cmp] 已保存: diag_ticket90_back.png, diag_orig.png, diag_ticketno_orig.png, diag_ticketno_from90.png");
-        log.info("[cmp] 票号区域像素对比(正向原图 vs ticket_90转回):");
+        log.info("[cmp] 宸蹭繚瀛? diag_ticket90_back.png, diag_orig.png, diag_ticketno_orig.png, diag_ticketno_from90.png");
+        log.info("[cmp] 绁ㄥ彿鍖哄煙鍍忕礌瀵规瘮(姝ｅ悜鍘熷浘 vs ticket_90杞洖):");
     }
 
     /**
-     * 保存ZoomedAligned
+     * 淇濆瓨ZoomedAligned
      * @param ref ref
      * @param src src
      * @param x x
@@ -89,7 +89,7 @@ public final class OcrRotateCompareExample {
             ImageUtils.load();
             Mat mr = ImageUtils.decode(ref);
             Mat ms = ImageUtils.decode(src);
-            // 将 src 缩放到 ref 尺寸
+            // 灏?src 缂╂斁鍒?ref 灏哄
             Mat msScaled = new Mat();
             resize(ms, msScaled, new Size(mr.cols(), mr.rows()),
                     0, 0, INTER_LINEAR);
@@ -99,11 +99,11 @@ public final class OcrRotateCompareExample {
             mr.release();
             ms.release();
         } catch (Exception e) {
-            log.info("[cmp] saveZoomedAligned 失败: " + e.getMessage());
+            log.info("[cmp] saveZoomedAligned 澶辫触: " + e.getMessage());
         }
     }
 
-    /** 保存ZoomedHelper */
+    /** 淇濆瓨ZoomedHelper */
     private static void saveZoomedHelper(Mat src, int x, int y, int w, int h, String out) {
         Mat crop = new Mat(src, new org.opencv.core.Rect(x, y, w, h));
         Mat big = new Mat();
@@ -156,13 +156,13 @@ public final class OcrRotateCompareExample {
                     .direction("doc-orientation")
                     .build();
             List<OcrResult> results = ocr.recognizeDetail(img);
-            log.info("[cmp] " + label + " 块数=" + results.size());
+            log.info("[cmp] " + label + " 鍧楁暟=" + results.size());
             for (OcrResult r : results) {
                 String t = r.text();
                 log.info("      '" + t + "' conf=" + String.format("%.2f", r.confidence()));
             }
         } catch (Exception e) {
-            log.info("[cmp] " + label + " 异常: " + e.getMessage());
+            log.info("[cmp] " + label + " 寮傚父: " + e.getMessage());
         }
     }
 

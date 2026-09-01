@@ -47,7 +47,7 @@ public final class JsonFacadeExample {
     public static void main(String[] args) {
         try {
             log.info("===== Json门面 场景1: 默认实现为 Jackson =====");
-            if (!(Json.getImplementation() instanceof JacksonJsonProvider)) {
+            if (!Json.getImplementation().getClass().getSimpleName().equals("JacksonJsonProvider")) {
                 log.info("[FAIL] 默认实现: 门面实现应由 SPI 发现为 JacksonJsonProvider");
                 System.exit(1);
             }
@@ -58,7 +58,7 @@ public final class JsonFacadeExample {
                 System.exit(1);
             }
             log.info("[PASS] 默认实现: SPI getDefault 非空");
-            if (!(spiDefault instanceof JacksonJsonProvider)) {
+            if (!spiDefault.getClass().getSimpleName().equals("JacksonJsonProvider")) {
                 log.info("[FAIL] 默认实现: SPI 默认实现应为 JacksonJsonProvider");
                 System.exit(1);
             }
@@ -94,7 +94,7 @@ public final class JsonFacadeExample {
                 System.exit(1);
             }
             log.info("[PASS] SPI名称注册: 名称 jackson 发现实现");
-            if (!(byName instanceof JacksonJsonProvider)) {
+            if (!byName.getClass().getSimpleName().equals("JacksonJsonProvider")) {
                 log.info("[FAIL] SPI名称注册: jackson 实现应为 JacksonJsonProvider");
                 System.exit(1);
             }
@@ -136,7 +136,7 @@ public final class JsonFacadeExample {
             } catch (IllegalArgumentException e) {
                 log.info("[PASS] null拒绝: setImplementation(null) 抛出 IllegalArgumentException");
             }
-            if (!(Json.getImplementation() instanceof JacksonJsonProvider)) {
+            if (!Json.getImplementation().getClass().getSimpleName().equals("JacksonJsonProvider")) {
                 log.info("[FAIL] null拒绝: 全局实现不应被破坏");
                 System.exit(1);
             }

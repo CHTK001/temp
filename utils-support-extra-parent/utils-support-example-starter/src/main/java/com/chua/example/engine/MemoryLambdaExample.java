@@ -95,7 +95,7 @@ public class MemoryLambdaExample {
             log.error("[FAIL] lambda 场景失败数: {}", failed.get());
             System.exit(1);
         }
-        System.out.println("[PASS] memory-lambda all scenarios covered");
+        log.info("[PASS] memory-lambda all scenarios covered");
         System.exit(0);
     }
 
