@@ -578,13 +578,13 @@
             <artifactId>utils-support-filesearch-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- MQTT 婕旂ず -->
+        <!-- MQTT demo -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-mqtt-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- Prometheus 鎸囨爣閲囬泦婕旂ず -->
+        <!-- Prometheus metric collection demo -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-prometheus-starter</artifactId>
@@ -595,7 +595,7 @@
             <artifactId>utils-support-video-processor-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- Syslog 瀹炴椂鏃ュ織鐩戝惉 -->
+        <!-- Syslog realtime log listen -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-syslog-starter</artifactId>
@@ -621,7 +621,7 @@
             <artifactId>utils-support-milvus-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- 鍚戦噺瀛樺偍 SPI 妯″紡鍒囨崲绀轰緥 -->
+        <!-- Vector storage SPI mode switch sample -->
         <dependency>
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-core</artifactId>
@@ -657,7 +657,7 @@
             <artifactId>utils-support-rpc-dubbo-starter</artifactId>
             <version>${project.version}</version>
             <exclusions>
-                <!-- dubbo 浼犻€掑紩鍏?netty-all 4.2.15锛屼笌 kcp-netty 1.5.2(鍩轰簬 netty 4.1.x) 鍐茬獊瀵艰嚧 NoSuchMethodError -->
+                <!-- dubbo transitively pulls in netty-all 4.2.15, conflicts with kcp-netty 1.5.2 (based on netty 4.1.x) causing NoSuchMethodError -->
                 <exclusion>
                     <groupId>io.netty</groupId>
                     <artifactId>netty-all</artifactId>
@@ -669,16 +669,16 @@
             <artifactId>utils-support-rpc-sofa-starter</artifactId>
             <version>${project.version}</version>
             <exclusions>
-                <!-- sofa-rpc-all 浼犻€掑紩鍏?netty-all 4.2.15锛屼笌 kcp-netty 1.5.2(鍩轰簬 netty 4.1.x) 鍐茬獊 -->
+                <!-- sofa-rpc-all transitively pulls in netty-all 4.2.15, conflicts with kcp-netty 1.5.2 (based on netty 4.1.x) -->
                 <exclusion>
                     <groupId>io.netty</groupId>
                     <artifactId>netty-all</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- SOFA-RPC 鍐呭祵 logback space logger 渚濊禆 logback 1.2.x 鐨?ContextInitializer.configureByResource(URL)
-             API锛?.3+ 宸茬Щ闄わ級锛涢」鐩粯璁よВ鏋?slf4j 2.0.x + logback 1.5.x 浼?NoSuchMethodError銆?
-             姝ゅ鎸?sofa-common-log 瑕佹眰鏄惧紡瀵归綈 slf4j 1.7.36 + logback 1.2.12锛堝疄娴?RPC 鍥涘疄鐜板叏閫氳繃锛夈€?-->
+        <!-- SOFA-RPC embedded logback space logger depends on logback 1.2.x ContextInitializer.configureByResource(URL)
+             API (removed in 1.3+); project default resolves slf4j 2.0.x + logback 1.5.x causing NoSuchMethodError.
+             Per sofa-common-log requirement, explicitly align to slf4j 1.7.36 + logback 1.2.12 (verified, RPC four-impl demo all pass) -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
