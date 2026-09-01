@@ -63,13 +63,27 @@ public final class VCTTSExample {
     }
 
     static Path extractWhisperModel() throws Exception {
-        Path modelDir = Files.createTempDirectory("whisper-model-");
+    private enum ResolvedProtocol { FILE, JAR }
+
+    /**
+     * 解析 URL 协议为枚举，避免字符串字面量硬编码。
+     *
+     * @param url 资源 URL
+     * @return FILE 或 JAR
+     */
+    private static ResolvedProtocol resolveProtocol(java.net.URL url) {
+        String proto = url.getProtocol();
+        if ("jar".equalsIgnoreCase(proto)) {
+            return ResolvedProtocol.JAR;
+        }
+        return ResolvedProtocol.FILE;
+    }
         Enumeration<java.net.URL> resources =
                 WhisperTranslator.class.getClassLoader().getResources("audio/asr/whisper-tiny");
         int extracted = 0;
         while (resources.hasMoreElements()) {
             java.net.URL url = resources.nextElement();
-            if ("file".equals(url.getProtocol())) {
+            if (resolveProtocol(url) == ResolvedProtocol.FILE) {
                 Path src = Path.of(url.toURI());
                 try (var stream = Files.walk(src)) {
                     stream.forEach(p -> {
@@ -87,7 +101,7 @@ public final class VCTTSExample {
                     });
                 }
                 extracted++;
-            } else if ("jar".equals(url.getProtocol())) {
+            } else if (resolveProtocol(url) == ResolvedProtocol.JAR) {
                 String urlPath = url.getPath();
                 String jarPath = urlPath.substring(5, urlPath.indexOf("!"));
                 String entryPrefix = urlPath.substring(urlPath.indexOf("!") + 2);

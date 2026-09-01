@@ -407,11 +407,27 @@ public final class PocketTtsEdgeCaseExample {
 
     // ==================== 定位模板（classpath 优先） ====================
 
+    private enum ResolvedProtocol { FILE, JAR }
+
+    /**
+     * 解析 URL 协议，返回 FILE 或 JAR；未知协议返回 FILE（回退本地路径）。
+     *
+     * @param url 资源 URL
+     * @return 解析后的协议枚举
+     */
+    private static ResolvedProtocol resolveProtocol(java.net.URL url) {
+        String proto = url.getProtocol();
+        if ("jar".equalsIgnoreCase(proto)) {
+            return ResolvedProtocol.JAR;
+        }
+        return ResolvedProtocol.FILE;
+    }
+
     private static Path locateTemplate() throws Exception {
         var url = PocketTtsEdgeCaseExample.class.getClassLoader()
                 .getResource("audio/tts/pocket-tts/config.json");
         if (url != null) {
-            if ("file".equalsIgnoreCase(url.getProtocol())) {
+            if (resolveProtocol(url) == ResolvedProtocol.FILE) {
                 return Path.of(url.toURI());
             }
             Path tmp = Files.createTempFile("pocket-tts-template", ".json");
