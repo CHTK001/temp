@@ -68,6 +68,7 @@ public final class ExampleRunner {
 
     private static Map<String, String> parseArgs(String[] args) {
         Map<String, String> map = new HashMap<>();
+        if (args == null) return map;
         for (String arg : args) {
             if (arg.startsWith("--")) {
                 int eq = arg.indexOf('=');
