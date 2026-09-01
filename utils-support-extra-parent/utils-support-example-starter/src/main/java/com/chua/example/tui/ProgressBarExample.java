@@ -3,15 +3,12 @@ package com.chua.example.tui;
 import com.chua.common.support.lang.process.MultiProgressBar;
 import com.chua.common.support.lang.process.ProgressSimulator;
 import com.chua.common.support.lang.process.ProgressBar;
-import com.chua.common.support.lang.process.ProgressBarBuilder;
 import com.chua.common.support.lang.process.ProgressBarStyle;
 import com.chua.common.support.lang.process.ProgressUnitType;
 
-import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 /**
  * ProgressBar 功能测试示例。
@@ -40,35 +37,27 @@ public class ProgressBarExample {
         System.out.println("[INFO] 注意：每个场景之间有短暂间隔，请按提示操作");
         System.out.println();
 
-        // 场景 1：基本步进
         testBasicStep();
         sleep(1500);
 
-        // 场景 2：Builder 自定义（字节单位 + ASCII 风格）
         testBuilderCustom();
         sleep(1500);
 
-        // 场景 3：不确定模式
         testIndefiniteMode();
         sleep(1500);
 
-        // 场景 4：暂停/恢复/重置
         testPauseResumeReset();
         sleep(1500);
 
-        // 场景 5：包装 Iterable（集合）
         testWrapIterable();
         sleep(1500);
 
-        // 场景 6：包装 Stream + 数组
         testWrapStreamAndArray();
         sleep(1500);
 
-        // 场景 7：多进度条
         testMultiProgressBar();
         sleep(1500);
 
-        // 场景 8：进度模拟器曲线
         testProgressSimulator();
         sleep(1000);
 
@@ -76,9 +65,6 @@ public class ProgressBarExample {
         System.exit(0);
     }
 
-    // ─────────────────────────────────────────────
-    // 场景 1：基本步进
-    // ─────────────────────────────────────────────
     private static void testBasicStep() {
         System.out.println(">>> 场景 1：基本步进操作");
         try (ProgressBar pb = new ProgressBar("下载文件", 100)) {
@@ -92,20 +78,17 @@ public class ProgressBarExample {
         System.out.println("[PASS] 基本步进");
     }
 
-    // ─────────────────────────────────────────────
-    // 场景 2：Builder 自定义
-    // ─────────────────────────────────────────────
     private static void testBuilderCustom() {
         System.out.println(">>> 场景 2：Builder 自定义（ASCII 风格 + 字节单位）");
         try (ProgressBar pb = ProgressBar.builder()
                 .setTaskName("大文件传输")
                 .setInitialMax(50_000_000L)
                 .setUnit(ProgressUnitType.BYTE)
-                .setUnitSize(1024L)
+                .setUnit("KB", 1024L)
                 .setStyle(ProgressBarStyle.ASCII)
-                .setShowSpeed(true)
-                .setContinuousUpdate(true)
-                .setClearDisplayOnFinish(true)
+                .showSpeed()
+                .continuousUpdate()
+                .clearDisplayOnFinish()
                 .build()) {
             for (long i = 0; i <= 50_000_000L; i += 5_000_000L) {
                 pb.stepBy(5_000_000L);
@@ -115,9 +98,6 @@ public class ProgressBarExample {
         System.out.println("[PASS] Builder 自定义");
     }
 
-    // ─────────────────────────────────────────────
-    // 场景 3：不确定模式
-    // ─────────────────────────────────────────────
     private static void testIndefiniteMode() {
         System.out.println(">>> 场景 3：不确定模式（maxHint(-1)）");
         try (ProgressBar pb = new ProgressBar("处理中...", -1)) {
@@ -133,9 +113,6 @@ public class ProgressBarExample {
         System.out.println("[PASS] 不确定模式");
     }
 
-    // ─────────────────────────────────────────────
-    // 场景 4：暂停/恢复/重置
-    // ─────────────────────────────────────────────
     private static void testPauseResumeReset() {
         System.out.println(">>> 场景 4：暂停 / 恢复 / 重置");
         try (ProgressBar pb = new ProgressBar("暂停演示", 100)) {
@@ -156,9 +133,6 @@ public class ProgressBarExample {
         System.out.println("[PASS] 暂停/恢复/重置");
     }
 
-    // ─────────────────────────────────────────────
-    // 场景 5：包装 Iterable
-    // ─────────────────────────────────────────────
     private static void testWrapIterable() {
         System.out.println(">>> 场景 5：包装 Iterable（List<Integer>）");
         List<Integer> items = IntStream.rangeClosed(1, 20).boxed().collect(Collectors.toList());
@@ -172,40 +146,33 @@ public class ProgressBarExample {
         System.out.println("[PASS] Iterable 包装，元素和 = " + total);
     }
 
-    // ─────────────────────────────────────────────
-    // 场景 6：包装 Stream + 数组
-    // ─────────────────────────────────────────────
     private static void testWrapStreamAndArray() {
         System.out.println(">>> 场景 6：包装 Stream + 数组");
-        // Stream 包装
         try (ProgressBar pb = new ProgressBar("Stream 处理", 10)) {
             long sum = ProgressBar.wrap(
-                    IntStream.rangeClosed(1, 10).mapToObj(i -> i * i),
+                    IntStream.rangeClosed(1, 10).mapToObj(i -> (long) i * i),
                     "平方计算"
             ).mapToLong(Long::longValue).sum();
             System.out.println("      Stream 平方和 = " + sum);
         }
-        // 数组包装
         String[] words = {"hello", "world", "foo", "bar", "baz"};
-        int count = 0;
+        long[] counter = {0};
         try (ProgressBar pb = new ProgressBar("数组遍历", words.length)) {
-            for (String w : ProgressBar.wrap(words, "扫描")) {
-                count++;
+            ProgressBar.wrap(words, "扫描").forEach(w -> {
+                counter[0]++;
                 sleep(100);
-            }
+            });
         }
-        System.out.println("[PASS] 数组遍历完成，元素数 = " + count);
+        System.out.println("[PASS] 数组遍历完成，元素数 = " + counter[0]);
     }
 
-    // ─────────────────────────────────────────────
-    // 场景 7：多进度条
-    // ─────────────────────────────────────────────
     private static void testMultiProgressBar() {
         System.out.println(">>> 场景 7：多进度条并排显示");
-        try (MultiProgressBar mpb = new MultiProgressBar(
-                "下载数据", 100,
-                "解析结构", 80,
-                "写入结果", 60)) {
+        try (MultiProgressBar mpb = MultiProgressBar.builder()
+                .addTask("下载数据", 100)
+                .addTask("解析结构", 80)
+                .addTask("写入结果", 60)
+                .build()) {
             for (int i = 0; i <= 100; i += 5) {
                 mpb.stepBy(0, 5);
                 if (i % 5 == 0) mpb.stepBy(1, 4);
@@ -216,9 +183,6 @@ public class ProgressBarExample {
         System.out.println("[PASS] 多进度条");
     }
 
-    // ─────────────────────────────────────────────
-    // 场景 8：进度模拟器
-    // ─────────────────────────────────────────────
     private static void testProgressSimulator() {
         System.out.println(">>> 场景 8：ProgressSimulator 曲线演示");
         try (ProgressBar pb = new ProgressBar("S型曲线", 100)) {
