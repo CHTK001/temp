@@ -2,7 +2,12 @@ package com.chua.example.network.scatter;
 
 import lombok.extern.slf4j.Slf4j;
 
-/** Stub. */
+/**
+ * ScatterTcpClusterExample - demonstrates scatter tcp cluster functionality.
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
 @Slf4j
 public class ScatterTcpClusterExample {
     private ScatterTcpClusterExample() { }

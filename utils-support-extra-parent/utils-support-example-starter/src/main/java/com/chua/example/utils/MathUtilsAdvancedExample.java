@@ -2,7 +2,12 @@ package com.chua.example.utils;
 
 import lombok.extern.slf4j.Slf4j;
 
-/** Stub. */
+/**
+ * MathUtilsAdvancedExample - demonstrates math utils advanced functionality.
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
 @Slf4j
 public class MathUtilsAdvancedExample {
     private MathUtilsAdvancedExample() { }

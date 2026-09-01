@@ -2,7 +2,12 @@ package com.chua.example.engine;
 
 import lombok.extern.slf4j.Slf4j;
 
-/** Stub. */
+/**
+ * SimpleEngineDataSourceExample - demonstrates simple engine data source functionality.
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
 @Slf4j
 public class SimpleEngineDataSourceExample {
     private SimpleEngineDataSourceExample() { }

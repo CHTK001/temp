@@ -2,7 +2,12 @@ package com.chua.example.vector;
 
 import lombok.extern.slf4j.Slf4j;
 
-/** Stub. */
+/**
+ * VectorStorageExample - demonstrates vector storage functionality.
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
 @Slf4j
 public class VectorStorageExample {
     private VectorStorageExample() { }

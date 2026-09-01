@@ -2,7 +2,12 @@ package com.chua.example.concurrent.offset;
 
 import lombok.extern.slf4j.Slf4j;
 
-/** Stub. */
+/**
+ * OffsetFlowExample - demonstrates offset flow functionality.
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
 @Slf4j
 public class OffsetFlowExample {
     private OffsetFlowExample() { }

@@ -2,7 +2,12 @@ package com.chua.example.onnx;
 
 import lombok.extern.slf4j.Slf4j;
 
-/** Stub. */
+/**
+ * DinoV2Fp16Example - demonstrates dino v2 fp16 functionality.
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
 @Slf4j
 public class DinoV2Fp16Example {
     private DinoV2Fp16Example() { }

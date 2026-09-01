@@ -2,7 +2,12 @@ package com.chua.example.media;
 
 import lombok.extern.slf4j.Slf4j;
 
-/** Stub. */
+/**
+ * VideoProcessorSpiExample - demonstrates video processor spi functionality.
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
 @Slf4j
 public class VideoProcessorSpiExample {
     private VideoProcessorSpiExample() { }

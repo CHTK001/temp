@@ -2,7 +2,12 @@ package com.chua.example.onnx;
 
 import lombok.extern.slf4j.Slf4j;
 
-/** Stub. */
+/**
+ * SealInspectionBlackboxExample - demonstrates seal inspection blackbox functionality.
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
 @Slf4j
 public class SealInspectionBlackboxExample {
     private SealInspectionBlackboxExample() { }

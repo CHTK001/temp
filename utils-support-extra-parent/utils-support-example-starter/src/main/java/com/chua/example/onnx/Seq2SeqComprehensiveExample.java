@@ -2,7 +2,12 @@ package com.chua.example.onnx;
 
 import lombok.extern.slf4j.Slf4j;
 
-/** Stub. */
+/**
+ * Seq2SeqComprehensiveExample - demonstrates seq2 seq comprehensive functionality.
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
 @Slf4j
 public class Seq2SeqComprehensiveExample {
     private Seq2SeqComprehensiveExample() { }

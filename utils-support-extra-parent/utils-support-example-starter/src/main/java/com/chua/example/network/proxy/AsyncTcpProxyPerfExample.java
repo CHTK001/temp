@@ -2,7 +2,12 @@ package com.chua.example.network.proxy;
 
 import lombok.extern.slf4j.Slf4j;
 
-/** Stub. */
+/**
+ * AsyncTcpProxyPerfExample - demonstrates async tcp proxy perf functionality.
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
 @Slf4j
 public class AsyncTcpProxyPerfExample {
     private AsyncTcpProxyPerfExample() { }

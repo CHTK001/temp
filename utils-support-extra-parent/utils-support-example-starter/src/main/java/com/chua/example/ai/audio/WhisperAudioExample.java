@@ -2,7 +2,12 @@ package com.chua.example.ai.audio;
 
 import lombok.extern.slf4j.Slf4j;
 
-/** Stub. */
+/**
+ * WhisperAudioExample - demonstrates whisper audio functionality.
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
 @Slf4j
 public class WhisperAudioExample {
     private WhisperAudioExample() { }

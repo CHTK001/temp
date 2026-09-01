@@ -2,7 +2,12 @@ package com.chua.example.taskasync;
 
 import lombok.extern.slf4j.Slf4j;
 
-/** Stub. */
+/**
+ * AsyncDeduplicateExample - demonstrates async deduplicate functionality.
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
 @Slf4j
 public class AsyncDeduplicateExample {
     private AsyncDeduplicateExample() { }

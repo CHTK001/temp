@@ -2,7 +2,12 @@ package com.chua.example.image;
 
 import lombok.extern.slf4j.Slf4j;
 
-/** Stub. */
+/**
+ * ImageProcessorEdgeCaseExample - demonstrates image processor edge case functionality.
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
 @Slf4j
 public class ImageProcessorEdgeCaseExample {
     private ImageProcessorEdgeCaseExample() { }

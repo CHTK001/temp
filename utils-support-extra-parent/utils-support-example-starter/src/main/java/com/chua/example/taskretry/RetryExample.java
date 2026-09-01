@@ -2,7 +2,12 @@ package com.chua.example.taskretry;
 
 import lombok.extern.slf4j.Slf4j;
 
-/** Stub. */
+/**
+ * RetryExample - demonstrates retry functionality.
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
 @Slf4j
 public class RetryExample {
     private RetryExample() { }

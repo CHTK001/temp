@@ -2,7 +2,12 @@ package com.chua.example.network.nio;
 
 import lombok.extern.slf4j.Slf4j;
 
-/** Stub. */
+/**
+ * NioHttpServerExample - demonstrates nio http server functionality.
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
 @Slf4j
 public class NioHttpServerExample {
     private NioHttpServerExample() { }

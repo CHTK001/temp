@@ -2,7 +2,12 @@ package com.chua.example.reid;
 
 import lombok.extern.slf4j.Slf4j;
 
-/** Stub. */
+/**
+ * PersonReidExample - demonstrates person reid functionality.
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
 @Slf4j
 public class PersonReidExample {
     private PersonReidExample() { }

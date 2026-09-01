@@ -2,7 +2,12 @@ package com.chua.example.agentscope;
 
 import lombok.extern.slf4j.Slf4j;
 
-/** Stub. */
+/**
+ * AgentWeatherFileExample - demonstrates agent weather file functionality.
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
 @Slf4j
 public class AgentWeatherFileExample {
     private AgentWeatherFileExample() { }

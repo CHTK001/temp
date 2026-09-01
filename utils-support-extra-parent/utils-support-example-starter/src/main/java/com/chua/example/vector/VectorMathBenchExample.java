@@ -2,7 +2,12 @@ package com.chua.example.vector;
 
 import lombok.extern.slf4j.Slf4j;
 
-/** Stub. */
+/**
+ * VectorMathBenchExample - demonstrates vector math bench functionality.
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
 @Slf4j
 public class VectorMathBenchExample {
     private VectorMathBenchExample() { }

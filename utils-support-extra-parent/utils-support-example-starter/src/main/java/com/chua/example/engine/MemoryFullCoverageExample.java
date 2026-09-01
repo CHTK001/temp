@@ -2,7 +2,12 @@ package com.chua.example.engine;
 
 import lombok.extern.slf4j.Slf4j;
 
-/** Stub. */
+/**
+ * MemoryFullCoverageExample - demonstrates memory full coverage functionality.
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
 @Slf4j
 public class MemoryFullCoverageExample {
     private MemoryFullCoverageExample() { }

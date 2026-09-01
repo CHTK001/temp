@@ -2,7 +2,12 @@ package com.chua.example.utils;
 
 import lombok.extern.slf4j.Slf4j;
 
-/** Stub. */
+/**
+ * IdUtilsBenchmarkExample - demonstrates id utils benchmark functionality.
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
 @Slf4j
 public class IdUtilsBenchmarkExample {
     private IdUtilsBenchmarkExample() { }

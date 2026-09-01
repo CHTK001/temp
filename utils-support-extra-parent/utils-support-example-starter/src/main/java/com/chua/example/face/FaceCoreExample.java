@@ -2,7 +2,12 @@ package com.chua.example.face;
 
 import lombok.extern.slf4j.Slf4j;
 
-/** Stub. */
+/**
+ * FaceCoreExample - demonstrates face core functionality.
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
 @Slf4j
 public class FaceCoreExample {
     private FaceCoreExample() { }

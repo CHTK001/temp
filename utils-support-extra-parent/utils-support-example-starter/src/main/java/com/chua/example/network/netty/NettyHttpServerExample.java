@@ -2,7 +2,12 @@ package com.chua.example.network.netty;
 
 import lombok.extern.slf4j.Slf4j;
 
-/** Stub. */
+/**
+ * NettyHttpServerExample - demonstrates netty http server functionality.
+ *
+ * @author CH
+ * @since 4.0.0.42
+ */
 @Slf4j
 public class NettyHttpServerExample {
     private NettyHttpServerExample() { }
