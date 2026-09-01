@@ -60,7 +60,7 @@ public final class ExampleRunner {
         log.info("Usage: java {} --example=<name> [params...]", ExampleRunner.class.getName());
         log.info("Available examples:");
         log.info("  %-28s %-20s %s", "command", "module", "description");
-        log.info("  " + "-".repeat(90));
+        log.info("  {}", "-".repeat(90));
         for (Example e : examples) {
             log.info("  --example=%-18s %-20s %s", e.name(), e.module(), e.description());
         }

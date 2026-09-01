@@ -2,7 +2,6 @@ package com.chua.example.onnx;
 
 import lombok.extern.slf4j.Slf4j;
 import com.chua.common.support.ai.audio.TextToAudioClient;
-import lombok.extern.slf4j.Slf4j;
 import com.chua.deeplearning.support.onnx.audio.whisper.WhisperTranslator;
 
 import java.nio.file.Files;
@@ -10,41 +9,45 @@ import java.nio.file.Path;
 import java.util.Enumeration;
 
 /**
- * Simple TTS->STT verification (no Lombok dependency).
+ * 简化版 TTS -> STT 验证 Example：从文本合成音频，再用 Whisper 转写，
+ * 验证端到端管线是否能完整 round-trip。
+ *
+ * <p>与 {@link VoiceCloneDebugDemoExample} 的差异：本类只跑完整流程，
+ * 不输出 ClassLoader 资源细节，供快速烟雾测试使用。</p>
  *
  * @author CH
  * @since 4.0.0.42
  */
 @Slf4j
 public final class VoiceCloneSimpleExample {
+
     private VoiceCloneSimpleExample() {}
 
     public static void main(String[] args) throws Exception {
         String text = args.length > 0 ? args[0] : "Hello world";
         log.info("===== TTS->STT Pipeline =====");
-        log.info(String.valueOf("[pipeline] text: " + text));
+        log.info("[pipeline] text: {}", text);
 
         log.info("[tts] synthesizing...");
         byte[] audio = synthesizeTts(text);
-        log.info(String.valueOf("[tts] bytes: " + audio.length));
+        log.info("[tts] bytes: {}", audio.length);
 
         Path wavPath = Files.createTempFile("voice-test-", ".wav");
         Files.write(wavPath, audio);
-        log.info(String.valueOf("[tts] wav: " + wavPath.toFile()).length() + " bytes -> " + wavPath);
+        log.info("[tts] wav: {} ({} bytes)", wavPath, wavPath.toFile().length());
 
         log.info("[stt] transcribing...");
         try {
             String transcript = directTranscribe(wavPath);
-            log.info(String.valueOf("[stt] result: [" + transcript + "]"));
-            log.info(String.valueOf("[stt] length: " + (transcript == null ? 0 : transcript.length())));
+            log.info("[stt] result: [{}]", transcript);
+            log.info("[stt] length: {}", transcript == null ? 0 : transcript.length());
             String cleaned = text.trim().toLowerCase();
             String matched = transcript != null ? transcript.trim().toLowerCase() : "";
-            log.info(String.valueOf("[verify] original: " + cleaned));
-            log.info(String.valueOf("[verify] transcript: " + matched));
-            log.info("[verify] match: " + (cleaned.equals(matched) ? "YES" : "partial/no match"));
+            log.info("[verify] original: {}", cleaned);
+            log.info("[verify] transcript: {}", matched);
+            log.info("[verify] match: {}", cleaned.equals(matched) ? "YES" : "partial/no match");
         } catch (Exception e) {
-            System.err.println("[stt] failed: " + e.getMessage());
-            e.printStackTrace();
+            log.error("[stt] failed: {}", e.getMessage(), e);
             log.info("[verify] match: N/A (STT unavailable)");
         }
     }
