@@ -16,6 +16,8 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Agent + MCP Skill 完整集成测试：天气查询 + 文件写入。
  *
@@ -33,6 +35,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @author CH
  * @since 4.0.0.42
  */
+@Slf4j
 public class AgentWeatherFileExample {
 
     private static Path workDir;
@@ -48,13 +51,13 @@ public class AgentWeatherFileExample {
 
         workDir = Path.of(System.getProperty("java.io.tmpdir"), "agent-test-" + System.currentTimeMillis());
         Files.createDirectories(workDir);
-        System.out.println("[workdir] " + workDir.toAbsolutePath());
+        log.info("[workdir] {}", workDir.toAbsolutePath());
 
         if (useReal) {
-            System.out.println("=== 使用真实 LLM: " + provider + " ===");
+            log.info("=== 使用真实 LLM: {} ===", provider);
             runWithRealLlm(provider);
         } else {
-            System.out.println("=== 使用 Mock LLM ===");
+            log.info("=== 使用 Mock LLM ===");
             runWithMock();
         }
 
@@ -66,7 +69,7 @@ public class AgentWeatherFileExample {
         String baseUrl = System.getenv("OPENAI_BASE_URL");
         
         if (apiKey == null || apiKey.isBlank()) {
-            System.out.println("[ERROR] 未设置 OPENAI_API_KEY 环境变量");
+            log.error("[ERROR] 未设置 OPENAI_API_KEY 环境变量");
             return;
         }
 
@@ -88,7 +91,7 @@ public class AgentWeatherFileExample {
                 .skill("get_weather", "查询指定城市的实时天气（温度、湿度、天气描述）", args -> {
                     String city = (String) args.get("city");
                     String result = queryWeather(city != null ? city : "北京");
-                    System.out.println("[skill] get_weather: " + result);
+                    log.info("[skill] get_weather: {}", result);
                     return com.chua.common.support.ai.skill.SkillResult.success(result);
                 })
                 .skill("save_report", "将文本内容写入指定路径的文件", args -> {
@@ -102,7 +105,7 @@ public class AgentWeatherFileExample {
                         Files.createDirectories(p.getParent());
                         Files.writeString(p, content, StandardCharsets.UTF_8);
                         long size = Files.size(p);
-                        System.out.println("[skill] save_report: 文件已写入 " + p + " (" + size + " bytes)");
+                        log.info("[skill] save_report: 文件已写入 {} ({} bytes)", p, size);
                         return com.chua.common.support.ai.skill.SkillResult.success(
                                 "文件已写入: " + p + " (" + size + " bytes)");
                     } catch (Exception e) {
@@ -111,7 +114,7 @@ public class AgentWeatherFileExample {
                 })
                 .debugHook(event -> {
                     hookEvents.add(event);
-                    System.out.printf("[HOOK] iteration=%s toolCalls=%s tokens=%s elapsed=%dms type=%s%n",
+                    log.info("[HOOK] iteration={} toolCalls={} tokens={} elapsed={}ms type={}",
                             event.getIteration(),
                             event.getToolCallCount(),
                             event.getTotalTokens(),
@@ -119,10 +122,10 @@ public class AgentWeatherFileExample {
                             event.getType());
                 });
 
-        System.out.println(">>> 任务: 查询北京天气并写入报告文件");
+        log.info(">>> 任务: 查询北京天气并写入报告文件");
         AgentResponse response = agent.run(
                 "请查询北京今天的天气情况，并将结果整理成一份报告写入 weather_report.txt 文件，最后告诉我天气摘要和文件路径。");
-        System.out.println(">>> Agent 输出: " + response.getOutput());
+        log.info(">>> Agent 输出: {}", response.getOutput());
     }
 
     private static void runWithMock() {
@@ -143,7 +146,7 @@ public class AgentWeatherFileExample {
                 .skill("get_weather", "查询指定城市的实时天气（温度、湿度、天气描述）", args -> {
                     String city = (String) args.get("city");
                     String result = queryWeather(city != null ? city : "北京");
-                    System.out.println("[skill] get_weather: " + result);
+                    log.info("[skill] get_weather: {}", result);
                     return com.chua.common.support.ai.skill.SkillResult.success(result);
                 })
                 .skill("save_report", "将文本内容写入指定路径的文件", args -> {
@@ -157,7 +160,7 @@ public class AgentWeatherFileExample {
                         Files.createDirectories(p.getParent());
                         Files.writeString(p, content, StandardCharsets.UTF_8);
                         long size = Files.size(p);
-                        System.out.println("[skill] save_report: 文件已写入 " + p + " (" + size + " bytes)");
+                        log.info("[skill] save_report: 文件已写入 {} ({} bytes)", p, size);
                         return com.chua.common.support.ai.skill.SkillResult.success(
                                 "文件已写入: " + p + " (" + size + " bytes)");
                     } catch (Exception e) {
@@ -166,7 +169,7 @@ public class AgentWeatherFileExample {
                 })
                 .debugHook(event -> {
                     hookEvents.add(event);
-                    System.out.printf("[HOOK] iteration=%s toolCalls=%s tokens=%s elapsed=%dms type=%s%n",
+                    log.info("[HOOK] iteration={} toolCalls={} tokens={} elapsed={}ms type={}",
                             event.getIteration(),
                             event.getToolCallCount(),
                             event.getTotalTokens(),
@@ -174,10 +177,10 @@ public class AgentWeatherFileExample {
                             event.getType());
                 });
 
-        System.out.println(">>> 任务: 查询北京天气并写入报告文件");
+        log.info(">>> 任务: 查询北京天气并写入报告文件");
         AgentResponse response = agent.run(
-                "请查询北京今天的天气情况，并将结果整理成一份报告写入 weather_report.txt 文件。");
-        System.out.println(">>> Agent 输出: " + response.getOutput());
+                "请查询北京今天的天气情况，并将结果整理成一份报告写入 weather_report.txt 文件，最后告诉我天气摘要和文件路径。");
+        log.info(">>> Agent 输出: {}", response.getOutput());
     }
 
     private static ChatClient createMockChatClient() {
@@ -258,8 +261,8 @@ public class AgentWeatherFileExample {
     }
 
     private static void printSummary() {
-        System.out.println("\n========== 执行摘要 ==========");
-        System.out.printf("总 Hook 事件数: %d%n", hookEvents.size());
+        log.info("\n========== 执行摘要 ==========");
+        log.info("总 Hook 事件数: {}", hookEvents.size());
         long maxTokens = hookEvents.stream()
                 .mapToLong(e -> e.getTotalTokens() != null ? e.getTotalTokens() : 0)
                 .max().orElse(0);
@@ -274,20 +277,20 @@ public class AgentWeatherFileExample {
         int maxToolCalls = hookEvents.stream()
                 .mapToInt(e -> e.getToolCallCount() != null ? e.getToolCallCount() : 0)
                 .max().orElse(0);
-        System.out.printf("执行轮次: %d%n", distinctIterations);
-        System.out.printf("最大工具调用次数: %d%n", maxToolCalls);
-        System.out.printf("累计最大 Token 数: %d%n", maxTokens);
-        System.out.printf("总耗时: %d ms%n", maxElapsed);
+        log.info("执行轮次: {}", distinctIterations);
+        log.info("最大工具调用次数: {}", maxToolCalls);
+        log.info("累计最大 Token 数: {}", maxTokens);
+        log.info("总耗时: {} ms", maxElapsed);
 
         // 打印文件内容
         if (workDir != null) {
             try {
                 Path report = workDir.resolve("weather_report.txt");
                 if (Files.exists(report)) {
-                    System.out.printf("\n--- 文件内容 (%s) ---%n%s%n", report, Files.readString(report, StandardCharsets.UTF_8));
+                    log.info("\n--- 文件内容 ({}) ---%n%s", report, Files.readString(report, StandardCharsets.UTF_8));
                 }
             } catch (Exception e) {}
         }
-        System.out.println("==============================");
+        log.info("==============================");
     }
 }

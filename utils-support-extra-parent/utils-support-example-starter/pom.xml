@@ -83,7 +83,7 @@
             <artifactId>utils-support-fory-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- Protobuf 搴忓垪鍖栬嚜妫€锛圥rotobufSerializerExampleSpi锛?-->
+        <!-- Protobuf serializer self-check (ProtobufSerializerExampleSpi) -->
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-support-protobuf-starter</artifactId>
