@@ -65,6 +65,13 @@ public final class VoiceCloneResourceInspectExample {
         }
     }
 
+    /**
+     * 使用 Pocket-TTS 将文本合成为音频字节数组。
+     *
+     * @param text 待合成的文本，不能为 null 或空字符串
+     * @return 合成后的 PCM 音频字节数组
+     * @throws Exception 当 TTS 客户端创建或合成失败时
+     */
     static byte[] synthesizeTts(String text) throws Exception {
         try (TextToAudioClient client = TextToAudioClient.create("onnx", "")) {
             client.model("pocket-tts");

@@ -56,6 +56,13 @@ public final class VoiceCloneSimpleExample {
         }
     }
 
+    /**
+     * 使用 Pocket-TTS 将文本合成为音频字节数组。
+     *
+     * @param text 待合成的文本，不能为 null 或空字符串
+     * @return 合成后的 PCM 音频字节数组
+     * @throws Exception 当 TTS 客户端创建或合成失败时
+     */
     static byte[] synthesizeTts(String text) throws Exception {
         try (TextToAudioClient client = TextToAudioClient.create("onnx", "")) {
             client.model("pocket-tts");
@@ -63,6 +70,13 @@ public final class VoiceCloneSimpleExample {
         }
     }
 
+    /**
+     * 使用 Whisper 模型对 WAV 音频文件进行语音转写。
+     *
+     * @param wavPath WAV 音频文件路径，必须指向已存在的有效音频文件
+     * @return 转写得到的文本字符串，转写失败返回 null
+     * @throws Exception 当 Whisper 模型加载或转写失败时
+     */
     static String directTranscribe(Path wavPath) throws Exception {
         WhisperTranslator translator = new WhisperTranslator();
         Path modelDir = extractWhisperModel();
@@ -70,6 +84,15 @@ public final class VoiceCloneSimpleExample {
         return translator.transcribe(wavPath);
     }
 
+    /**
+     * 从 ClassPath 资源中提取 Whisper tiny 模型文件到临时目录。
+     *
+     * <p>支持 file:// 和 jar:// 两种协议的资源定位，
+     * 递归解压模型目录结构到目标路径。</p>
+     *
+     * @return 模型文件所在的本地目录路径
+     * @throws Exception 当 ClassPath 中未找到 whisper-tiny 资源时
+     */
     static Path extractWhisperModel() throws Exception {
         Path outputDir = Path.of(System.getProperty("java.io.tmpdir"), OUTPUT_DIR_NAME);
         Files.createDirectories(outputDir);

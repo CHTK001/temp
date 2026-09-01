@@ -95,7 +95,15 @@ public class AudioRecognitionExample {
     }
 
     /**
-     * 运行 ASR 管线。
+     * 运行指定引擎的 ASR 转写管线。
+     *
+     * @param engine  ASR 引擎标识（如 paraformer-zh-small、sensevoice、whisper-tiny）
+     * @param lang    语言代码（如 zh、en），null 时由引擎自动检测
+     * @param wav     待转写的 WAV 音频文件路径
+     * @param vad     是否启用语音活动检测（VAD）预处理
+     * @param denoise 是否启用降噪预处理
+     * @return 转写文本，转写失败或无结果返回 null
+     * @throws Exception 当引擎加载或转写失败时
      */
     private static String runAsr(String engine, String lang, Path wav,
                                  boolean vad, boolean denoise) throws Exception {
@@ -110,7 +118,12 @@ public class AudioRecognitionExample {
     }
 
     /**
-     * 解析 --key=value 格式参数。
+     * 从命令行参数中解析 --key=value 格式的参数。
+     *
+     * @param args 命令行参数数组
+     * @param key  要查找的参数键名，不能为 null
+     * @param def  未找到时的默认返回值
+     * @return 匹配的参数值，未匹配则返回 def
      */
     private static String parseArg(String[] args, String key, String def) {
         for (String arg : args) {
