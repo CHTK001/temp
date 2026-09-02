@@ -108,8 +108,8 @@ public class AudioRecognitionExample {
     private static String runAsr(String engine, String lang, Path wav,
                                  boolean vad, boolean denoise) throws Exception {
         var builder = AsrPipeline.builder(engine)
-                .vad(vad)
-                .denoise(denoise)
+                .vad(vad ? "energy" : null)
+                .denoise(denoise ? "dfsmn-ans" : null)
                 .postProcess(true);
         if (lang != null) {
             builder.language(lang);
