@@ -78,11 +78,12 @@ public class AudioRecognitionExample {
         double sim = -2;
         try {
             var vp = VoiceprintPipeline.create();
-            vp.enroll("test-speaker-A", zhWav);
-            var hits = vp.search(zhWav, 1);
+            vp.createEnroll().id("test-speaker-A").audio(zhWav).execute();
+            var hits = vp.createSearch().topK(1).query(zhWav).execute();
             if (!hits.isEmpty() && hits.get(0).speakerId().equals("test-speaker-A")) {
                 sim = hits.get(0).similarity();
             }
+            vp.close();
         } catch (Exception e) {
             log.warn("[Voiceprint] 异常: {}", e.getMessage());
         }
